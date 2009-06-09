@@ -1,0 +1,43 @@
+Things to add to PythonCAD, shortcomings to address, feature
+requests, and reminders can go in this file.
+
+Development:
+* Replace GTKImage class with ImageView/ImageWindow classes.
+
+* Write the DWG/DXF->PythonCAD data conversion routines to
+utilize the DWG/DXF reading code so that files in those
+formats can be loaded within PythonCAD.
+
+* Enhance messaging system error handling - a tough problem
+currently "solved" by a try/except block that merely prints
+out the Exception
+
+* Consolidate various routines in the Image and Layer classes
+used for searching and testing entity existence.
+
+* Utilize the Entity parent/child relationship info in the
+Interface code more - a getParent() call will specify the
+Layer an entity is stored in, which could replace various
+find-and-test queries currently performed.
+
+* Rewrite entity moving routines to utilize the move() methods
+on the entities when possible. Also re-examine the issue
+of moving the users of a Point entity (i.e. if the center point
+of a circle is selected and moved, but the circle itself was
+not selected, should the circle be moved or not?) [DONE]
+
+* Make use of scaling - provide some sort of interface for
+adjusting the scale, use the scale value when calculating
+dimensions, etc.
+
+* Make the selection/modifications routines consistent with regard
+to the order of entity selection and operation - either select
+entities before executing an operation or select an operation
+to perform and then select entities on which to apply the
+action. [DONE, mostly]
+
+* Allow for the user preferences to be stored when the 'Preferences'
+dialog is adjusted. The current behavior regarding handling of the
+user preferences is not consistent with most other applications.
+Possibly split the preferences up to be those applicable to all
+Images and then an per-Image dialog?

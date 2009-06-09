@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=PyCAD
+Comment=PythonCAD
+Icon=/usr/share/pixmaps/gtkpycad.png
+Exec=/usr/bin/gtkpycad.py
+Terminal=false
+Type=Application
+Encoding=UTF-8
+X-Desktop-File-Install-Version=0.3
+Categories=Office;Graphics;Application;Utility;X-Red-Hat-Base;
