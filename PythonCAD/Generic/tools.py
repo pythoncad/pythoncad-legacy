@@ -347,7 +347,8 @@ class.
 #
 # The ZoomTool, PasteTool, SelectTool, and DeselectTool classes are
 # subclasses of the Tool class but with no additional functionality (yet)
-
+class ZoomPan(Tool):
+    pass
 class ZoomTool(Tool):
     pass
 

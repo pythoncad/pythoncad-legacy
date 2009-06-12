@@ -53,6 +53,9 @@ getCoefficients(): Return the segment as ax + by + c = 0
 getProjection(): Project a coordinate on to the Segment
 mapCoords(): Test if a coordinate pair is within some distance to a Segment.
 inRegion(): Test if the Segment is visible in some area.
+++ Matteo Boscolo Test
+getMiddlePoint(): return the x,y cord of the segment MiddlePoint
+--
 clone(): Make an identical copy of a Segment.
     """
     __messages = {
@@ -309,7 +312,27 @@ This method returns a tuple of three floats: (a, b, c)
         _b = _x1 - _x2
         _c = (_x2 * _y1) - (_x1 * _y2)
         return _a, _b, _c
-
+#++ Matteo Boscolo
+    def getMiddlePoint(self):
+        """Return the middle point of the segment
+"""
+        _p1,_p2=self.getEndpoints()
+        _x1=util.get_float(_p1.x)
+        _x2=util.get_float(_p2.x)
+        _y1=util.get_float(_p1.y)
+        _y2=util.get_float(_p2.y)
+        _deltax=abs(_x1-_x2)/2.0
+        _deltay=abs(_y1-_y2)/2.0
+        if(_x1<_x2):
+            retX=_x1+_deltax
+        else:
+            retX=_x2+_deltax
+        if(_y1<_y2):
+            retY=_y1+_deltay
+        else:
+            retY=_y2+_deltay
+        return retX,retY
+#--
     def getProjection(self, x, y):
         """Find the projection point of some coordinates on the Segment.
 
