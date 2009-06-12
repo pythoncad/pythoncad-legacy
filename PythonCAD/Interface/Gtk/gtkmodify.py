@@ -2527,3 +2527,18 @@ def zoom_init(gtkimage, tool=None):
     _tool = gtkimage.getImage().getTool()
     _tool.initialize()
     _tool.setHandler("button_press", zoom_button_press_cb)
+#
+# Pan Zoom 
+#
+def zoomPan_init(gtkimage, tool=None):
+    gtkimage.setPrompt(_('Press Left Mause Button To Make Pan'))
+    _tool = gtkimage.getImage().getTool()
+    _tool.initialize()
+    _tool.setHandler("button_press", zoomPan_button_press_cb)
+def zoomPan_button_press_cb(gtkimage, widget, event, tool):
+    gtkimage.setPrompt(_('Press Right Mause Button To Stop Pan'))
+    if(gtkimage.isPan()):
+        gtkimage.StopPanImage()
+    else:    
+        gtkimage.StartPanImage()
+    return True

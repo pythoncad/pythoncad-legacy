@@ -141,8 +141,10 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
         tools.RadialDimensionTool : gtkdimension.radial_mode_init,
         tools.AngularDimensionTool : gtkdimension.angular_mode_init,
         tools.PlotTool : gtkprinting.plot_mode_init,
+        tools.ZoomPan : gtkmodify.zoomPan_init,
         }
-    
+   
+
     def __init__(self, image):
         debug_print("Initialized another GTKImage class instance...")
         if not isinstance(image, Image):
@@ -153,6 +155,14 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
+        #++ Matteo Boscolo Default Value 
+        #
+        # Zooming Moving global Variable Definition
+        #
+        self.__StartZooming= False
+        self.__StartMoving = False
+        self.StopMove=False
+        #-- Matteo Boscolo
         _width = min(1024, int(0.8 * float(gtk.gdk.screen_width())))
         _height = min(768, int(0.8 * float(gtk.gdk.screen_height())))
         self.__window.set_default_size(_width, _height)
@@ -310,7 +320,7 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
                 _child.connect('change_pending', self.__objChangePending)
                 _child.connect('change_complete', self.__objChangeComplete)
             _layers.extend(_layer.getSublayers())
-
+    
     #------------------------------------------------------------------
     def close(self):
         """Release the entites stored in the drawing.
@@ -475,8 +485,15 @@ close()
     def __daEvent(self, widget, event, data=None):
         _rv = False
         _type = event.type
-        # debug_print("__daEvent(): Event type: %d" % _type)
+        debug_print("__daEvent(): Event type: %d" % _type)
         _tool = self.__image.getTool()
+        if _type==31:
+            if event.direction == gtk.gdk.SCROLL_UP: 
+                debug_print("BUTTON_PRESSS CROLL_UP")
+                self.ZoomIn()
+            if event.direction == gtk.gdk.SCROLL_DOWN: 
+                debug_print("BUTTON_PRESSS SCROLL_DOWN")
+                self.ZoomOut()
         if _type == gtk.gdk.BUTTON_PRESS:
             self.setToolpoint(event)
             _button = event.button
@@ -484,6 +501,10 @@ close()
                 if _tool is not None and _tool.hasHandler("button_press"):
                     _rv = _tool.getHandler("button_press")(self, widget,
                                                            event, _tool)
+            #++Matteo Boscolo
+            debug_print("__Move BUTTON_PRESS")
+            self.__Move(widget, event)
+            #--Matteo Boscolo
         elif _type == gtk.gdk.BUTTON_RELEASE:
             self.setToolpoint(event)
             _button = event.button
@@ -491,11 +512,20 @@ close()
                 if _tool is not None and _tool.hasHandler("button_release"):
                     _rv =_tool.getHandler("button_release")(self, widget,
                                                             event, _tool)
+            #++Matteo Boscolo
+            debug_print("__Move BUTTON_RELEASE")
+            self.__Move(widget, event)
+            #--Matteo Boscolo
         elif _type == gtk.gdk.MOTION_NOTIFY:
             self.setToolpoint(event)
             if _tool is not None and _tool.hasHandler("motion_notify"):
                 _rv = _tool.getHandler('motion_notify')(self, widget,
                                                         event, _tool)
+            #++Matteo Boscolo
+            debug_print("__Move MOTION_NOTIFY")
+            self.__MakeMove(widget,event)
+            self.__ActiveSnapEvent(widget,event)
+            #--Matteo Boscolo
         elif _type == gtk.gdk.KEY_PRESS:
             debug_print("In __daEvent(), got key press!")
             _key = event.keyval
@@ -506,6 +536,7 @@ close()
                 _key == gtk.keysyms.Up or
                 _key == gtk.keysyms.Down):
                 debug_print("Got Arrow/PageUp/PageDown key")
+                #KeyMoveDrawing(_key) # Matteo Boscolo 12-05-2009
                 pass # handle moving the drawing in some fashion ...
             elif _key == gtk.keysyms.Escape:
                 debug_print("Got escape key")
@@ -531,7 +562,32 @@ close()
             debug_print("Got type %d" % _type)
             pass
         return _rv
-
+    
+    def KeyMoveDrawing(self,key):
+        """Make A Move when the user press arrows keys"""
+        self.__MovmentStep=10 #This mast be a global settings that the user can change
+        actualStep=self.__MovmentStep
+        actualX=self.__activeX
+        actualY=self.__activeY
+        newX=actualX
+        newY=actualY
+        if (key == gtk.keysyms.Page_Up):
+            print("ZoomUp")
+        if (key == gtk.keysyms.Page_Down):
+            print("ZoomDown")
+        if (key == gtk.keysyms.Left):
+            newX=actualX-actualStep
+            newY=actualY
+        if (key == gtk.keysyms.Right):
+            newX=actualX+actualStep
+            newY=actualY
+        if (key == gtk.keysyms.Up):
+            newX=actualX
+            newY=actualY+actualStep
+        if (key == gtk.keysyms.Down):
+            newX=actualX
+            newY=actualY-actualStep
+        self.MoveFromTo(actualX,actualY,newX,newY)
     #------------------------------------------------------------------
     def __focusInEvent(self, widget, event, data=None):
         debug_print("in GTKImage::__focusInEvent()")
@@ -1106,6 +1162,32 @@ redraw()
                 _obj.draw(self, _col)
 
     #------------------------------------------------------------------
+    def ZoomIn(self,scaleFactor=None):
+        _xmin, _ymin, _xmax, _ymax = self.getView()
+        if(scaleFactor==None):
+            _scale = self.getUnitsPerPixel()
+        else:
+            _scale=scaleFactor
+        _xdiff = abs(_xmax - _xmin)
+        _ydiff = abs(_ymax - _ymin)
+        _xmin = (_xmin + _xmax)/2.0 - _xdiff/4.0
+        _ymin = (_ymin + _ymax)/2.0 - _ydiff/4.0
+        self.setView(_xmin, _ymin, (_scale/2))
+
+    #------------------------------------------------------------------
+    def ZoomOut(self,scaleFactor=None):
+        _xmin, _ymin, _xmax, _ymax = self.getView()
+        if(scaleFactor==None):
+            _scale = self.getUnitsPerPixel()
+        else:
+            _scale=scaleFactor
+        _xdiff = abs(_xmax - _xmin)
+        _ydiff = abs(_ymax - _ymin)
+        _xmin = (_xmin + _xmax)/2.0 - _xdiff
+        _ymin = (_ymin + _ymax)/2.0 - _ydiff
+        self.setView(_xmin, _ymin, (_scale * 2))
+
+    #------------------------------------------------------------------
     def reset(self):
         """Set the image to an initial drawing state.
 
@@ -1241,7 +1323,121 @@ reset()
         if not obj.isVisible() or not obj.getParent().isVisible():
             _col = self.__image.getOption('BACKGROUND_COLOR')
         self.__drawObject(obj, _col)
-
+    #++ Matteo Boscolo
+    def __Move(self, widget, event):
+        """
+            set the Global Variable for controlling the zoom and  moving
+            of the drawing
+__Move()
+"""
+        if(self.StopMove):
+            return
+        _type = event.type
+        _button = event.button
+        if(_button==3):
+            if(_type==4):
+                self.__activeX=event.x
+                self.__activeY=event.y
+                self.__StartMoving = True
+            if(_type==7):
+                self.__StartMoving = False
+        if(_button==2):
+            if(_type==4):
+                self.__StartZooming = True
+            if(_type==7):
+                self.__StartZooming= False
+                
+    def __MakeMove(self, widget, event):
+        if(self.__StartZooming):
+            ActiveScale = self.getUnitsPerPixel()
+            midX=abs(self.__xmin-self.__xmax)/2
+            midY=abs(self.__ymin-self.__ymax)/2            
+            if(self.__activeY>event.y):
+                ActiveScale=ActiveScale*1.05
+                #self.setView(midX,midY,ActiveScale)
+                self.ZoomScale(ActiveScale)
+            elif(self.__activeY<event.y):
+                ActiveScale=ActiveScale*0.95               
+                #self.setView(midX,midY,ActiveScale)
+                self.ZoomScale(ActiveScale)
+        if(self.__StartMoving):
+            self.MoveFromTo(self.__activeX,self.__activeY,event.x,event.y)
+        self.__activeX=event.x
+        self.__activeY=event.y      
+    def ZoomIn(self):
+        ActiveScale = self.getUnitsPerPixel()
+        ActiveScale=ActiveScale*1.05
+        self.ZoomScale(ActiveScale)
+    def ZoomOut(self):
+        ActiveScale = self.getUnitsPerPixel()
+        ActiveScale=ActiveScale*0.95 
+        self.ZoomScale(ActiveScale)        
+    def MoveFromTo(self,xFrom,yFrom,xTo,yTo):
+        """
+            Do the Zoom or Move action
+MoveFromTo()
+"""
+        deltaX=abs(xFrom-xTo)*self.__units_per_pixel
+        deltaY=abs(yFrom-yTo)*self.__units_per_pixel
+        if(xFrom>xTo):
+            self.__xmin=self.__xmin+deltaX
+            self.__xmax=self.__xmax+deltaX
+        else:
+            self.__xmin=self.__xmin-deltaX
+            self.__xmax=self.__xmax-deltaX
+        if(yFrom>yTo):
+            self.__ymin=self.__ymin-deltaY
+            self.__ymax=self.__ymax-deltaY
+        else:
+            self.__ymin=self.__ymin+deltaY
+            self.__ymax=self.__ymax+deltaY                   
+        self.redraw()
+    def ZoomScale(self,scale):
+        """
+            Make a drawing zoom of the scale quantity
+ZoomScale()
+"""
+        _fw = float(self.__disp_width)
+        _fh = float(self.__disp_height)       
+        _xdiff = abs(self.__xmax-self.__xmin)
+        _ydiff = abs(self.__ymax-self.__ymin)
+        _xmid = (self.__xmin + self.__xmax)/2.0
+        _ymid = (self.__ymin + self.__ymax)/2.0
+        _xm = _xmid - (_fw/2.0) * scale
+        _ym = _ymid - (_fh/2.0) * scale
+        self.setView(_xm, _ym, scale)
+    def StartPanImage(self):
+        """Start Pan Image
+StartPanImage()
+        """
+        self.StopMove=True
+        self.__StartMoving=True
+    def StopPanImage(self):
+        """ Stop Pan Operation
+StopPanImage()
+"""
+        self.StopMove=False
+        self.__StartMoving=False
+    def isPan(self):
+        """ Return the active pan status
+isPan()
+"""
+        return self.StopMove
+    
+    def __ActiveSnapEvent(self,drwArea,event):
+        _tol = self.getTolerance()
+        _image = self.getImage()
+        _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
+        _crosCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW) # gtk.gdk.TCROSS)
+        _x, _y = _image.getCurrentPoint()
+        _responce = _image.getSnapPoint(_x, _y, tolerance=_tol)
+        _win=drwArea.get_parent_window()
+        if _responce :
+            _win.set_cursor(_snapCursor)
+        else:
+            _win.set_cursor(_crosCursor)
+    #Working here
+    #-- Matteo Boscolo
 #------------------------------------------------------------------
 def debug_print(string):
     if _debug is True:

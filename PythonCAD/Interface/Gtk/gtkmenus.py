@@ -1140,26 +1140,37 @@ def zoom_cb(menuitem, gtkimage):
     gtkimage.getImage().setTool(_tool)
 
 def zoom_in_cb(menuitem, gtkimage):
-    _xmin, _ymin, _xmax, _ymax = gtkimage.getView()
-    _scale = gtkimage.getUnitsPerPixel()
-    _xdiff = abs(_xmax - _xmin)
-    _ydiff = abs(_ymax - _ymin)
-    _xmin = (_xmin + _xmax)/2.0 - _xdiff/4.0
-    _ymin = (_ymin + _ymax)/2.0 - _ydiff/4.0
-    gtkimage.setView(_xmin, _ymin, (_scale/2.0))
-
+    #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
+    #_scale = gtkimage.getUnitsPerPixel()
+    #_xdiff = abs(_xmax - _xmin)
+    #_ydiff = abs(_ymax - _ymin)
+    #_xmin = (_xmin + _xmax)/2.0 - _xdiff/4.0
+    #_ymin = (_ymin + _ymax)/2.0 - _ydiff/4.0
+    #gtkimage.setView(_xmin, _ymin, (_scale/2.0))
+    ActiveScale = gtkimage.getUnitsPerPixel()
+    ActiveScale = ActiveScale*0.5 #This Value here could be a global variable to put in the application option
+    gtkimage.ZoomScale(ActiveScale)
+    
 def zoom_out_cb(menuitem, gtkimage):
-    _xmin, _ymin, _xmax, _ymax = gtkimage.getView()
-    _scale = gtkimage.getUnitsPerPixel()
-    _xdiff = abs(_xmax - _xmin)
-    _ydiff = abs(_ymax - _ymin)
-    _xmin = (_xmin + _xmax)/2.0 - _xdiff
-    _ymin = (_ymin + _ymax)/2.0 - _ydiff
-    gtkimage.setView(_xmin, _ymin, (_scale * 2.0))
-
+    #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
+    #_scale = gtkimage.getUnitsPerPixel()
+    #_xdiff = abs(_xmax - _xmin)
+    #_ydiff = abs(_ymax - _ymin)
+    #_xmin = (_xmin + _xmax)/2.0 - _xdiff
+    #_ymin = (_ymin + _ymax)/2.0 - _ydiff
+    #gtkimage.setView(_xmin, _ymin, (_scale * 2.0))
+    ActiveScale = gtkimage.getUnitsPerPixel()
+    ActiveScale = ActiveScale*2 #This Value here could be a global variable to put in the application option
+    gtkimage.ZoomScale(ActiveScale)
+    
 def zoom_fit_cb(menuitem, gtkimage):
     gtkimage.fitImage()
-
+#++Matteo Boscolo
+def zoom_pan_cb(menuitem, gtkimage):
+    _tool = tools.ZoomPan()
+    #gtkimage.panImage()
+    gtkimage.getImage().setTool(_tool)
+#--Matteo Boscolo    
 def dimension_linear_cb(menuitem, gtkimage):
     _tool = tools.LinearDimensionTool()
     gtkimage.getImage().setTool(_tool)
@@ -2440,6 +2451,10 @@ def _make_modify_menu(actiongroup, gtkimage):
         _add_accelerators(_act, _item, _accel)
     _menu.append(_item)
     #
+    _act = gtk.Action('ZoomPan', _('Zoom _Pan'), None, None)
+    _act.connect('activate', zoom_pan_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
     return _menu
 
 #############################################################################
