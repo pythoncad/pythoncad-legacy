@@ -1981,6 +1981,3 @@ class ImageLog(entity.EntityLog):
         _layer.setScale(_scale)
         return _layer
     
-
-
-    
