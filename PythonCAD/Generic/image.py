@@ -771,6 +771,7 @@ were found.
         """
         _t=5.0
         if 'tolerance' in kw:
+<<<<<<< HEAD:PythonCAD/Generic/image.py
             _t=util.get_float(kw['tolerance'])
         _sobj=self.GetSnapObject()
         _ix, _iy,validate=_sobj.GetSnap(x,y,_t)
@@ -782,6 +783,217 @@ were found.
             return the snap object 
         """
         return self.__snap
+=======
+            _val = util.get_float(kw['tolerance'])
+            if _val < 0.0:
+                raise ValueError, "Invalid negative tolerance: %f" % _val
+            _t = _val
+        _types = {'point' : True}
+        _active_layer = self.__active_layer
+        _cp = _sep = None
+        _hits = _active_layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+        if len(_hits) > 0:
+            for _obj, _pt in _hits:
+                _px, _py = _obj.getCoords()
+                _sqlen = pow((_x - _px), 2) + pow((_y - _py), 2)
+                if _sep is None or _sqlen < _sep:
+                    _sep = _sqlen
+                    _cp = _obj
+            return _cp, None
+        #
+        # see if any other Layer contains a Point ...
+        #
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            if _layer is not _active_layer:
+                _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+                if len(_hits) > 0:
+                    for _obj, _pt in _hits:
+                        _px, _py = _obj.getCoords()
+                        _sqlen = pow((_x - _px), 2) + pow((_y - _py), 2)
+                        if _sep is None or _sqlen < _sep:
+                            _sep = _sqlen
+                            _cp = _pt
+            _layers.extend(_layer.getSublayers())
+        if _cp is not None:
+            return None, (_cp.x, _cp.y)            
+        #
+        # Looking for Middle line point
+        #        
+        _types = {'segment' : True}
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    _ix,_iy=_obj.getMiddlePoint()
+                    if ((abs(_ix - _x) < _t) and
+                        (abs(_iy - _y) < _t)):
+                        return None, (_ix, _iy)        
+        #
+        # no Point entities found so try for object intersections and
+        # mapped points
+        #
+        _objlist = []
+        _intlist = []
+        _types = {'point' : False,
+                  'segment' : True,
+                  'circle' : True,
+                  'arc' : True,
+                  'polyline' : True,
+                  'hcline' : True,
+                  'vcline' : True,
+                  'acline' : True,
+                  'cline' : True,
+                  'ccircle' : True,
+                  }
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    if _obj is _pt: # should have been seen above ...
+                        if _layer is _active_layer:
+                            return _obj, None
+                        else:
+                            return None, (_pt.x, _pt.y)
+                    else:
+                        for _tobj, _mp in _objlist:
+                            for _ix, _iy in intersections.find_intersections(_tobj, _obj):
+                                if ((abs(_ix - _x) < _t) and
+                                    (abs(_iy - _y) < _t)):
+                                    _sqlen = pow((_x - _ix), 2) + pow((_y - _iy), 2)
+                                    _intlist.append((_sqlen, (_ix, _iy)))
+                    _objlist.append((_obj, _pt))
+            _layers.extend(_layer.getSublayers())
+        #
+        # use the nearest intersection point if one is available
+        #
+        if len(_intlist):
+            _intlist.sort()
+            _cp = _intlist[0][1]
+        #
+        # look for the mapped point if no intersection was available
+        #
+        if _cp is None and len(_objlist):
+            for _obj, _pt in _objlist:
+                _px, _py = _pt
+                _sqlen = pow((_x - _px), 2) + pow((_y - _py), 2)
+                if _sep is None or _sqlen < _sep:
+                    _sep = _sqlen
+                    _cp = (_px, _py)
+        if _cp is None:
+            _cp = (_x, _y)
+        return None, _cp
+#++ 31-05-2008 Matteo Boscolo 
+    def getSnapPoint(self,x,y, **kw):
+        """Return True if the cord x,y are nearly a snap point
+
+"""
+        _x = util.get_float(x)
+        _y = util.get_float(y)
+        _t = tolerance.TOL
+        if 'tolerance' in kw:
+            _val = util.get_float(kw['tolerance'])
+            if _val < 0.0:
+                raise ValueError, "Invalid negative tolerance: %f" % _val
+            _t = _val
+        _types = {'point' : True}
+        _active_layer = self.__active_layer
+        _cp = _sep = None
+        _hits = _active_layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+        if len(_hits) > 0:
+            for _obj, _pt in _hits:
+                _px, _py = _obj.getCoords()
+                _sqlen = pow((_x - _px), 2) + pow((_y - _py), 2)
+                if _sep is None or _sqlen < _sep:
+                    _sep = _sqlen
+                    _cp = _obj
+            return True
+        #
+        # see if any other Layer contains a Point ...
+        #
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            if _layer is not _active_layer:
+                _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+                if len(_hits) > 0:
+                    for _obj, _pt in _hits:
+                        _px, _py = _obj.getCoords()
+                        _sqlen = pow((_x - _px), 2) + pow((_y - _py), 2)
+                        if _sep is None or _sqlen < _sep:
+                            _sep = _sqlen
+                            _cp = _pt
+            _layers.extend(_layer.getSublayers())
+        if _cp is not None:
+            return True  
+        #
+        # Looking for Middle line point
+        #        
+        _types = {'segment' : True}
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    _ix,_iy=_obj.getMiddlePoint()
+                    if ((abs(_ix - _x) < _t) and
+                        (abs(_iy - _y) < _t)):
+                        return True
+        #
+        # no Point entities found so try for object intersections and
+        # mapped points
+        #
+        _objlist = []
+        _intlist = []
+        _types = {'point' : False,
+                  'segment' : True,
+                  'circle' : True,
+                  'arc' : True,
+                  'polyline' : True,
+                  'hcline' : True,
+                  'vcline' : True,
+                  'acline' : True,
+                  'cline' : True,
+                  'ccircle' : True,
+                  }
+        _layers = [self.__top_layer]
+        while len(_layers):
+            _layer = _layers.pop()
+            _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    if _obj is _pt: # should have been seen above ...
+                        if _layer is _active_layer:
+                            return True
+                        else:
+                            return False
+                    else:
+                        for _tobj, _mp in _objlist:
+                            for _ix, _iy in intersections.find_intersections(_tobj, _obj):
+                                if ((abs(_ix - _x) < _t) and
+                                    (abs(_iy - _y) < _t)):
+                                    _sqlen = pow((_x - _ix), 2) + pow((_y - _iy), 2)
+                                    _intlist.append((_sqlen, (_ix, _iy)))
+                    _objlist.append((_obj, _pt))
+            _layers.extend(_layer.getSublayers())
+        #
+        # use the nearest intersection point if one is available
+        #
+        if len(_intlist):
+            _intlist.sort()
+            _cp = _intlist[0][1]
+        if _cp is None:
+            return False
+        else:
+            return True
+#--MAtteo Boscolo
+>>>>>>> 80c236b2356a8c03e31640230bb004e5a640998a:PythonCAD/Generic/image.py
     def findPoint(self, x, y, tol=tolerance.TOL):
         """Return a Point object found at the x-y coordinates.
 
