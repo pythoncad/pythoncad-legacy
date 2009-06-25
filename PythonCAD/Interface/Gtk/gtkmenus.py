@@ -4,7 +4,7 @@
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the termscl_bo of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
@@ -468,100 +468,125 @@ def style_cb(menuitem, gtkimage):
                                globals.prefs['LINETYPES'])
     
 def textstyle_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     gtktextprefs.textstyle_dialog(gtkimage, globals.prefs['TEXTSTYLES'])
 
 def dimstyle_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     gtkdimprefs.dimstyle_dialog(gtkimage, globals.prefs['DIMSTYLES'])
 
 def draw_point_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.PointTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_segment_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.SegmentTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_rectangle_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.RectangleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_circle_center_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.CircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_circle_tp_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TwoPointCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_arc_center_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.ArcTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_hcl_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.HCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_vcl_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.VCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_acl_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.ACLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_cl_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.CLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_perpendicular_cline_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.PerpendicularCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_cline_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TangentCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_two_ccircles_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.CCircleTangentLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_poffset_cline_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.ParallelOffsetTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_ccirc_cp_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.CCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_ccirc_tp_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TwoPointCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_single_conobj_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TangentCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_two_conobjs_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TwoPointTangentCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_chamfer_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.ChamferTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_fillet_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.FilletTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_leader_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.LeaderTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_polyline_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.PolylineTool()
     gtkimage.getImage().setTool(_tool)
 
 def _get_polygon_side_count(gtkimage):
+    gtkimage.ActivateSnap()
     _sides = 0
     _window = gtkimage.getWindow()
     _dialog = gtk.Dialog(_('Polygon Sides'), _window,
@@ -588,6 +613,7 @@ def _get_polygon_side_count(gtkimage):
     return _sides
 
 def draw_polygon_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _sides = _get_polygon_side_count(gtkimage)
     if _sides > 0:
         _tool = tools.PolygonTool()
@@ -595,6 +621,7 @@ def draw_polygon_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def draw_ext_polygon_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _sides = _get_polygon_side_count(gtkimage)
     if _sides > 0:
         _tool = tools.PolygonTool()
@@ -615,6 +642,7 @@ def draw_set_thickness_cb(menuitem, gtkimage):
     gtkentities.set_line_thickness(gtkimage)
 
 def draw_text_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _text = gtktext.text_add_dialog(gtkimage)
     if _text is not None:
         _tool = tools.TextTool()
@@ -622,42 +650,52 @@ def draw_text_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def move_horizontal_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.HorizontalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_vertical_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.VerticalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_twopoint_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.MoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_horiz_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.HorizontalStretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_vert_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.VerticalStretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_twopoint_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.StretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def transfer_object_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.TransferTool()
     gtkimage.getImage().setTool(_tool)
 
 def rotate_object_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.RotateTool()
     gtkimage.getImage().setTool(_tool)
     
 def split_object_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.SplitTool()
     gtkimage.getImage().setTool(_tool)
 
 def mirror_object_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.MirrorTool()
     gtkimage.getImage().setTool(_tool)
 
@@ -1165,29 +1203,31 @@ def zoom_out_cb(menuitem, gtkimage):
     
 def zoom_fit_cb(menuitem, gtkimage):
     gtkimage.fitImage()
-#++Matteo Boscolo
 def zoom_pan_cb(menuitem, gtkimage):
     _tool = tools.ZoomPan()
-    #gtkimage.panImage()
     gtkimage.getImage().setTool(_tool)
-#--Matteo Boscolo    
 def dimension_linear_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_horizontal_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.HorizontalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_vertical_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.VerticalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_radial_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.RadialDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_angular_cb(menuitem, gtkimage):
+    gtkimage.ActivateSnap()
     _tool = tools.AngularDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
@@ -2348,8 +2388,6 @@ def _modify_menu_init(menuitem, gtkimage):
         _act = _group.get_action('ZoomFit')
         if _act is not None:
             _act.set_property('sensitive', _active.hasEntities())
-
-
 #############################################################################
 #  Top level modify menu
 #############################################################################
@@ -2412,18 +2450,25 @@ def _make_modify_menu(actiongroup, gtkimage):
     _item = _act.create_menu_item()
     _item.set_submenu(_make_modify_change_menu(actiongroup, gtkimage))
     _menu.append(_item)
+    return _menu
+#############################################################################
+#  Initialize top level view menu -- this handles greying out non-active items.
+#############################################################################
+def _view_menu_init(menuitem, gtkimage):
+    _group = gtkimage.getGroup('View')
+    if _group is not None:
+        _image = gtkimage.getImage()
+        _active = _image.getActiveLayer()
+        _act = _group.get_action('ZoomFit')
+        if _act is not None:
+            _act.set_property('sensitive', _active.hasEntities())
+#############################################################################
+#  Top level view menu
+#############################################################################
+def _make_view_menu(actiongroup, gtkimage):
+    _accel = gtkimage.accel
+    _menu = gtk.Menu()
     #
-    _item = gtk.SeparatorMenuItem()
-    _item.show()
-    _menu.append(_item)
-    #
-    _act = gtk.Action('ZoomWindow', _('Zoom _Window'), None, None)
-    _act.connect('activate', zoom_cb, gtkimage)
-    actiongroup.add_action(_act)
-    _menu.append(_act.create_menu_item())
-    #
-    ############  SDB notes:  Create separate "view" menu with zoom
-    ############  and option to move viewing center.
     _act = gtk.Action('ZoomIn', _('_Zoom In'), None, gtk.STOCK_ZOOM_IN)
     _act.connect('activate', zoom_in_cb, gtkimage)
     _act.set_accel_group(_accel)
@@ -2455,8 +2500,51 @@ def _make_modify_menu(actiongroup, gtkimage):
     _act.connect('activate', zoom_pan_cb, gtkimage)
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
+    #
+    _act = gtk.Action('ZoomWindow', _('Zoom _Window'), None, None)
+    _act.connect('activate', zoom_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
+    return _menu
+#############################################################################
+#  Initialize top level snap menu -- this handles greying out non-active items.
+#############################################################################
+def _snap_menu_init(menuitem, gtkimage):
+    return
+    
+#############################################################################
+#   Top level snap menu
+#############################################################################
+def _make_snap_menu(actiongroup, gtkimage):
+    _group = gtkimage.getGroup('Snap')
+    _menu = gtk.Menu()
+    #
+    _act = gtk.Action('OneShotSnap', _('_One Shot Snap'), None, None)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _item.set_submenu(_make_snap_oneshot_menu(actiongroup, gtkimage))
+    _menu.append(_item)
     return _menu
 
+def _make_snap_oneshot_menu(actiongroup, gtkimage):
+    _group = gtkimage.getGroup('SnapOneShot')
+    _menu = gtk.Menu()
+    #
+    _act = gtk.Action('MidPoint', _('_Mid Point'), None, None)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)
+    #
+    _act = gtk.Action('EndPoint', _('_End Point'), None, None)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)
+    #
+    _act = gtk.Action('IntersectionPoint', _('_Intersection Point'), None, None)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)
+    return _menu
 #############################################################################
 #  Init top level Dimensions menu
 #############################################################################
@@ -2615,6 +2703,28 @@ def fill_menubar(mb, gtkimage):
     _act.connect_proxy(_item)
     _act.connect('activate', _modify_menu_init, gtkimage)
     _menu = _make_modify_menu(_group, gtkimage)
+    _item.set_submenu(_menu)
+    mb.append(_item)
+    # View
+    _group = gtk.ActionGroup('View')
+    gtkimage.addGroup(_group)
+    _act = gtk.Action('ViewMenu', _('_View'), None, None)
+    _group.add_action(_act)
+    _item = gtk.MenuItem()
+    _act.connect_proxy(_item)
+    _act.connect('activate', _view_menu_init, gtkimage)
+    _menu = _make_view_menu(_group, gtkimage)
+    _item.set_submenu(_menu)
+    mb.append(_item)
+    # Snap
+    _group = gtk.ActionGroup('Snap')
+    gtkimage.addGroup(_group)
+    _act = gtk.Action('SnapMenu', _('_Snap'), None, None)
+    _group.add_action(_act)
+    _item = gtk.MenuItem()
+    _act.connect_proxy(_item)
+    _act.connect('activate', _snap_menu_init, gtkimage)
+    _menu = _make_snap_menu(_group, gtkimage)
     _item.set_submenu(_menu)
     mb.append(_item)
     # Dimensioning

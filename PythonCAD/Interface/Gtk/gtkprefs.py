@@ -547,6 +547,8 @@ def tree_select_cb(selection, prefstate):
                     _new_container = _make_primary_opts(prefstate)
                 elif _pstring == 'secondary':
                     _new_container = _make_secondary_opts(prefstate)
+                elif _pstring == 'snap':
+                    _new_container = _make_snap_opts(prefstate)
                 else:
                     print "unexpected string: '%s'" % _pstring
             if _new_container is not None:
@@ -1069,6 +1071,66 @@ def _make_primary_opts(prefstate):
                   2, 2)
     _vbox.pack_start(_frame, False, False, 5)
     return _vbox
+
+def _make_snap_opts(prefstate):
+    """
+        Populate the left side of pref panel
+    """
+    _vbox = gtk.VBox(False, 2)
+    _frame = gtk.Frame()
+    _frame.set_shadow_type(gtk.SHADOW_IN)
+    #
+    # Headers
+    #
+    _text = "<span weight='bold' size='16000'>%s</span>" % _('Snap Options')
+    _label = gtk.Label(_text)
+    _label.set_use_markup(True)
+    _frame.add(_label)
+    _vbox.pack_start(_frame, False, True, 5)
+    #
+    # Create Snap option Container
+    #
+    _snapFrame = gtk.Frame("Snap")
+    _snapFrame.set_shadow_type(gtk.SHADOW_IN)
+    verticalBoxItem=len(globals.snapOption)
+    snapFrameVbox = gtk.VBox(True, verticalBoxItem)
+    #
+    # Fill Up snap Options
+    #
+    for key in globals.snapOption.keys():
+        newButton=createButtonOption(key,globals.snapOption[key])
+        newButton.connect("clicked", changeSnapState, None)
+        snapFrameVbox.add(newButton)
+    #
+    # Fill Up snap  Functionality
+    #
+    _vbox.pack_start(snapFrameVbox, False, False, 5)
+    _label.show()
+    _frame.show()
+    _vbox.show()
+    return _vbox
+
+def changeSnapState(self, widget, data=None):
+    """
+        Change the state of the Global variable  button
+    """
+    # todo capire come fare a cambiare 
+    #    globals.snapOption
+    # per il settaggio dei valori
+    #
+    ret=self.get_active()
+    if self.get_label() in globals.snapOption:
+        globals.snapOption[self.get_label()]=ret
+    return
+    
+def createButtonOption(key,state):
+    """
+        Create a button that show the snap state
+    """
+    button=gtk.ToggleButton(key)
+    button.set_active(state)
+    button.show()
+    return button
 
 def _make_secondary_opts(prefstate):
     _vbox = gtk.VBox(False, 2)
@@ -2155,8 +2217,14 @@ def _make_pref_tree(hbox, prefstate):
     _iter1 = _tree_store.append(None)
     _tree_store.set(_iter1, 0, _('Text'))
     _tree_store.set(_iter1, 1, 'text')
+    #_tree_view = gtk.TreeView(_tree_store)
+    _iter1 = _tree_store.append(None)
+    # Snap
+    _tree_store.set(_iter1, 0, _('Snap'))
+    _tree_store.set(_iter1, 1, 'snap')
     _tree_view = gtk.TreeView(_tree_store)
     _iter1 = _tree_store.append(None)
+    # Dimension
     _tree_store.set(_iter1, 0, _('Dimensions'))
     _tree_store.set(_iter1, 1, 'dimensions')
     _iter2 = _tree_store.append(_iter1)
@@ -2205,7 +2273,8 @@ def _set_dim_color(prefstate):
     else:
         raise TypeError, "Unexpected widget for DIM_COLOR: " + `type(_widget)`
     _r, _g, _b = _get_rgb_values(_color)
-    globals.prefs['DIM_COLOR'] = get_color(_r, _g, _b)
+    _dimcolor = get_color(_r, _g, _b)
+    globals.prefs['DIM_EXTENSION'] = get_color(_r, _g, _b)
 
 def _set_background_color(prefstate):
     _widget = prefstate.getWidget('BACKGROUND_COLOR')
@@ -2623,6 +2692,11 @@ def _set_dim_secondary_font(prefstate):
     globals.prefs['DIM_SECONDARY_TEXT_SIZE'] = float(_size) # fixme
     globals.prefs['DIM_SECONDARY_FONT_STYLE'] = _style
     globals.prefs['DIM_SECONDARY_FONT_WEIGHT'] = _weight
+
+def _set_snap_option(prefstate):
+    """
+        set Snap Option
+    """
     
 _keymap = {
     'DIM_OFFSET' : _set_dim_offset,
@@ -2686,9 +2760,13 @@ _keymap = {
     'DIM_POSITION' : _set_dim_position,
     'DIM_DUAL_MODE_OFFSET' : _set_dim_dual_mode_offset,
     'DIM_POSITION_OFFSET' : _set_dim_position_offset,
+    'SNAP_OPTION' : _set_snap_option,
     }
 
 def apply_prefs(prefstate):
+    """
+        apply preferences to from the dialog
+    """
     for _key in prefstate.getWidgetKeys():
         # print "widget key: " + _key
         if _key in _keymap:
@@ -2698,6 +2776,9 @@ def apply_prefs(prefstate):
             # print "no function for " + _key
 
 def prefs_dialog(gtkimage):
+    """
+        Create Preferences dialog
+    """
     _window = gtkimage.getWindow()
     _prefstate = Prefstate()
     _prefstate.setImage(gtkimage.image)

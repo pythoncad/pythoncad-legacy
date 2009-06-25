@@ -53,7 +53,7 @@ getCoefficients(): Return the segment as ax + by + c = 0
 getProjection(): Project a coordinate on to the Segment
 mapCoords(): Test if a coordinate pair is within some distance to a Segment.
 inRegion(): Test if the Segment is visible in some area.
-++ Matteo Boscolo Test
+++Matteo Boscolo
 getMiddlePoint(): return the x,y cord of the segment MiddlePoint
 --
 clone(): Make an identical copy of a Segment.

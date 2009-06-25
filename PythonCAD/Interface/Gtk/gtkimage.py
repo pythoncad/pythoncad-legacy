@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007 Art Haas
-#
+# Copyright (c) 2009 Matteo Boscolo
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -57,32 +57,33 @@ globals.gtkcolors = {}
 globals.gtklinetypes = {}
 
 class GTKImage(object):
-    """The GTK wrapping around an Image
+    """
+        The GTK wrapping around an Image
 
-The GTKImage class is derived from the Image class, so it shares all
-the attributes and methods of that class. The GTKImage class has the
-following addtional methods:
+        The GTKImage class is derived from the Image class, so it shares all
+        the attributes and methods of that class. The GTKImage class has the
+        following addtional methods:
 
-close(): Close a GTKImage.
-getWindow(): Get the GTK Window used in the GTKImage.
-getEntry(): Get the GTK Entry used in the GTKImage.
-getDA(): Get the GTK Drawing Area used in the GTKImage.
-{get/set}Pixmap(): Get/Set the GTK Pixmap used in the GTKImage.
-{get/set}Prompt(): Get/Set the prompt.
-{get/set}Tool(): Get/Set the tool used for working in the GTKImage.
-{get/set}UnitsPerPixel(): Get/Set this display parameter.
-{get/set}View(): Get/Set the current view seen in the GTKImage.
-getTolerance(): Get the current drawing tolerance.
-{get/set}GC(): Get/Set the graphic context used in the GTKImage.
-{get/set}Point(): Get/Set the current coordinates of the tool.
-{get/set}Size(): Get/Set the size of the drawing area.
-pixToCoordTransform(): Convert pixels to x/y coordinates.
-coordToPixTransform(): Convert x/y coordinates to pixels.
-refresh(): Redraw the screen using the current pixmap.
-redraw(): Recalculate the visible entities and redraw the screen.
-addGroup(): Add a new ActionGroup to the GTKImage.
-getGroup(): Retrieve an ActionGroup from the GTKImage.
-deleteGroup(): Remove an ActionGroup from the GTKImage.
+        close(): Close a GTKImage.
+        getWindow(): Get the GTK Window used in the GTKImage.
+        getEntry(): Get the GTK Entry used in the GTKImage.
+        getDA(): Get the GTK Drawing Area used in the GTKImage.
+        {get/set}Pixmap(): Get/Set the GTK Pixmap used in the GTKImage.
+        {get/set}Prompt(): Get/Set the prompt.
+        {get/set}Tool(): Get/Set the tool used for working in the GTKImage.
+        {get/set}UnitsPerPixel(): Get/Set this display parameter.
+        {get/set}View(): Get/Set the current view seen in the GTKImage.
+        getTolerance(): Get the current drawing tolerance.
+        {get/set}GC(): Get/Set the graphic context used in the GTKImage.
+        {get/set}Point(): Get/Set the current coordinates of the tool.
+        {get/set}Size(): Get/Set the size of the drawing area.
+        pixToCoordTransform(): Convert pixels to x/y coordinates.
+        coordToPixTransform(): Convert x/y coordinates to pixels.
+        refresh(): Redraw the screen using the current pixmap.
+        redraw(): Recalculate the visible entities and redraw the screen.
+        addGroup(): Add a new ActionGroup to the GTKImage.
+        getGroup(): Retrieve an ActionGroup from the GTKImage.
+        deleteGroup(): Remove an ActionGroup from the GTKImage.
     """
     
     #
@@ -162,6 +163,7 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
         self.__StartZooming= False
         self.__StartMoving = False
         self.StopMove=False
+        self._activateSnap=False
         #-- Matteo Boscolo
         _width = min(1024, int(0.8 * float(gtk.gdk.screen_width())))
         _height = min(768, int(0.8 * float(gtk.gdk.screen_height())))
@@ -221,7 +223,6 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
         #
         # drawing area
         #
-
         self.__disp_width = None
         self.__disp_height = None
         self.__units_per_pixel = 1.0
@@ -230,9 +231,28 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
         black = gtk.gdk.color_parse('black')
         self.__da.modify_fg(gtk.STATE_NORMAL, black)
         self.__da.modify_bg(gtk.STATE_NORMAL, black)
-        pane.pack2(self.__da, True, False)
+        #pane.pack2(self.__da, True, False)
+        #self.__da.set_flags(gtk.CAN_FOCUS)
+        
+        #++Matteo Boscolo
+        self.__da = gtk.DrawingArea()
+        self.__da.set_size_request(400, 300)
+        self.pangolayout = self.__da.create_pango_layout("")
+        self.sw = gtk.ScrolledWindow()
+        self.sw.add_with_viewport(self.__da)
+        self.table = gtk.Table(2,2)
+        self.hruler = gtk.HRuler()
+        self.vruler = gtk.VRuler()
+        self.hruler.set_range(0, 400, 0, 400)
+        self.vruler.set_range(0, 300, 0, 300)
+        self.table.attach(self.hruler, 1, 2, 0, 1, yoptions=0)
+        self.table.attach(self.vruler, 0, 1, 1, 2, xoptions=0)
+        self.table.attach(self.sw, 1, 2, 1, 2)
+        #self.__window.add(self.table)
+        pane.pack2(self.table, True, False)
         self.__da.set_flags(gtk.CAN_FOCUS)
-
+        #--Matteo Boscolo
+        #
         self.__da.connect("event", self.__daEvent)
         self.__da.connect("expose_event", self.__exposeEvent)
         self.__da.connect("realize", self.__realizeEvent)
@@ -320,7 +340,6 @@ deleteGroup(): Remove an ActionGroup from the GTKImage.
                 _child.connect('change_pending', self.__objChangePending)
                 _child.connect('change_complete', self.__objChangeComplete)
             _layers.extend(_layer.getSublayers())
-    
     #------------------------------------------------------------------
     def close(self):
         """Release the entites stored in the drawing.
@@ -385,13 +404,19 @@ close()
             if event.keyval == gtk.keysyms.Escape:
                 debug_print("Got escape key")
                 self.reset()
+                self._activateSnap=False
                 return True
         elif _type == gtk.gdk.KEY_RELEASE:
             debug_print("KEY_RELEASE")
         else:
             pass
         return False
-
+    #------------------------------------------------------------------
+    def ActivateSnap(self):
+        """
+            Activate the snap functionality
+        """
+        self._activateSnap=True
     #------------------------------------------------------------------
     def __entryEvent(self, widget, data=None):
         #
@@ -1423,20 +1448,29 @@ StopPanImage()
 isPan()
 """
         return self.StopMove
-    
-    def __ActiveSnapEvent(self,drwArea,event):
-        _tol = self.getTolerance()
-        _image = self.getImage()
-        _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
-        _crosCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW) # gtk.gdk.TCROSS)
-        _x, _y = _image.getCurrentPoint()
-        _responce = _image.getSnapPoint(_x, _y, tolerance=_tol)
+    def SetCursor(self,drwArea,snapActive):
+        """
+            active Snap cursor shape
+        """
         _win=drwArea.get_parent_window()
-        if _responce :
+        if snapActive :
+            _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
             _win.set_cursor(_snapCursor)
         else:
+            _crosCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
             _win.set_cursor(_crosCursor)
-    #Working here
+    def __ActiveSnapEvent(self,drwArea,event):
+        """
+            Snap Event
+        """
+        if(self._activateSnap):
+            _x, _y = self.__image.getCurrentPoint()
+            _sn=self.__image.GetSnapObject()
+            _dummyX,_dummyY,_responce = _sn.GetSnap(_x, _y,self.__tolerance)
+        else:
+            _responce=False
+        self.SetCursor(drwArea,_responce)
+        
     #-- Matteo Boscolo
 #------------------------------------------------------------------
 def debug_print(string):

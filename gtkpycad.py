@@ -157,6 +157,13 @@ def _initialize_colors():
     _color = color.Color(0, 0, 0) # black
     globals.colors[_color] = _color
 
+def _inizialize_snap():
+    """
+        Inizialize Global Snap Erray
+    """
+    globals.snapOption={'mid':True,'end':True,'intersection':True}
+
+    
 def _initialize_globals():
     #
     # define globals
@@ -173,7 +180,8 @@ def _initialize_globals():
     _initialize_image_colors()
     _initialize_sizes()
     _initialize_booleans()
-    
+    _inizialize_snap()
+
 def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "version"])
