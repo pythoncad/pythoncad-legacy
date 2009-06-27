@@ -161,8 +161,8 @@ def _inizialize_snap():
     """
         Inizialize Global Snap Erray
     """
-    #globals.snapOption={'mid':True,'end':True,'intersection':True,'origin':False}
-    globals.snapOption={'mid':True,'end':True,'intersection':True}
+    globals.snapOption={'mid':True,'end':True,'intersection':True,'origin':False}
+    #globals.snapOption={'mid':True,'end':True,'intersection':True}
 
 def _initialize_globals():
     #

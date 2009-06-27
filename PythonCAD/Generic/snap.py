@@ -67,7 +67,6 @@ class Snap:
                 _X,_Y,found=self.GetIntersection(_x,_y,t)
                 if(found):
                     return _X,_Y,found
-        return None,None,False
         if('origin' in  sn):
             if(sn['origin']):
                 _X,_Y,found=self.GetOrigin()

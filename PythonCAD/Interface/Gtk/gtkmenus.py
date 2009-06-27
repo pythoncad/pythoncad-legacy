@@ -2568,10 +2568,10 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     _item = _act.create_menu_item()
     _menu.append(_item)
     #
-    #_act = gtk.Action('OriginPoint', _('_Origin Point'), None, None)
-    #_act.connect('activate', oneShotOriginSnap, gtkimage)
-    #actiongroup.add_action(_act)
-    #_item = _act.create_menu_item()
+    _act = gtk.Action('OriginPoint', _('_Origin Point'), None, None)
+    _act.connect('activate', oneShotOriginSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
     _menu.append(_item)
     return _menu
 #############################################################################
