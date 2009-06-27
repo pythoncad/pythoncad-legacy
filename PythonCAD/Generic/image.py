@@ -774,6 +774,7 @@ were found.
             _t=util.get_float(kw['tolerance'])
         _sobj=self.GetSnapObject()
         _ix, _iy,validate=_sobj.GetSnap(x,y,_t)
+        _sobj.StopOneShutSnap()
         if(validate):
             return None,(_ix, _iy)     
         return None,(x, y)

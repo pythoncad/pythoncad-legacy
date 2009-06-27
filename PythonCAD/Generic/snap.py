@@ -36,6 +36,9 @@ class Snap:
         """
         self._topLayer=topLayer
         self._sn=snapOption
+        self._oneShutSnap=snapOption.copy() 
+        self._computeOneShutSnap=False
+
     def GetSnap(self,x,y,tollerance):
         """
             Get the snap point 
@@ -43,24 +46,35 @@ class Snap:
         _x=util.get_float(x)
         _y=util.get_float(y)
         t=util.get_float(tollerance)
+        if(self._computeOneShutSnap):
+            sn=self._oneShutSnap
+        else:
+            sn=self._sn
         if t < 0.0:
             raise ValueError, "Invalid negative tolerance: %f" % t
-        if('mid' in  self._sn):
-            if(self._sn['mid']):
+        if('mid' in  sn):
+            if(sn['mid']):
                 _X,_Y,found=self.GetMid(_x,_y,t)
                 if(found):
                     return _X,_Y,found
-        if('end' in  self._sn):
-            if(self._sn['end']):
+        if('end' in  sn):
+            if(sn['end']):
                 _X,_Y,found=self.GetEnd(_x,_y,t)
                 if(found):
                     return _X,_Y,found
-        if('intersection' in  self._sn):
-            if(self._sn['intersection']):
+        if('intersection' in  sn):
+            if(sn['intersection']):
                 _X,_Y,found=self.GetIntersection(_x,_y,t)
                 if(found):
                     return _X,_Y,found
         return None,None,False
+        if('origin' in  sn):
+            if(sn['origin']):
+                _X,_Y,found=self.GetOrigin()
+                if(found):
+                    return _X,_Y,found
+        return None,None,False
+    
     def GetMid(self,x,y,_t):
         """"
             Calculate the mid point 
@@ -77,7 +91,7 @@ class Snap:
                         (abs(_iy - y) < _t)):
                         return _ix,_iy,True
         return None,None,False
-
+    
     def GetEndPoint(self,x,y,entityHits):
         """
             Looking for a specifiePoint             
@@ -157,3 +171,32 @@ class Snap:
             if _cp is not None:
                 return _cp[0],_cp[1],True
         return None,None,False
+    
+    def GetOrigin(self):
+        """
+            Return the drawing origin point 
+        """
+        return 0.0,0.0,True
+    
+    def SetOneShutSnap(self,activeSnap):
+        """
+            Set One Shot snap 
+        """       
+        for key in self._oneShutSnap.keys():
+            if(key==activeSnap):
+                self._oneShutSnap[key]=True
+            else:
+                self._oneShutSnap[key]=False
+        self.ComputeOneShutSnap()
+
+    def ComputeOneShutSnap(self):
+        """
+            Activate Compute One ShotSnap
+        """
+        self._computeOneShutSnap=True
+
+    def StopOneShutSnap(self):
+        """
+            Stop Computetion One ShutSnap
+        """
+        self._computeOneShutSnap=False

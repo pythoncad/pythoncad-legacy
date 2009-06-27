@@ -417,6 +417,14 @@ close()
             Activate the snap functionality
         """
         self._activateSnap=True
+    def ActivateOneShotSnap(self,snapName):
+        """
+            Activate one shut Snap
+        """
+        _sn=self.__image.GetSnapObject()
+        _sn.SetOneShutSnap(snapName)
+        self.ActivateSnap()
+        
     #------------------------------------------------------------------
     def __entryEvent(self, widget, data=None):
         #

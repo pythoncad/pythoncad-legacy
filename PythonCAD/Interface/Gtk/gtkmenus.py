@@ -1206,6 +1206,26 @@ def zoom_fit_cb(menuitem, gtkimage):
 def zoom_pan_cb(menuitem, gtkimage):
     _tool = tools.ZoomPan()
     gtkimage.getImage().setTool(_tool)
+def oneShotMidSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap mid
+    """
+    gtkimage.ActivateOneShotSnap('mid')
+def oneShotEndSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap end
+    """
+    gtkimage.ActivateOneShotSnap('end')
+def oneShotIntersectionSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap intersection
+    """
+    gtkimage.ActivateOneShotSnap('intersection')
+def oneShotOriginSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap origin
+    """
+    gtkimage.ActivateOneShotSnap('origin')
 def dimension_linear_cb(menuitem, gtkimage):
     gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
@@ -2531,18 +2551,27 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     _menu = gtk.Menu()
     #
     _act = gtk.Action('MidPoint', _('_Mid Point'), None, None)
+    _act.connect('activate', oneShotMidSnap, gtkimage)
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)
     #
     _act = gtk.Action('EndPoint', _('_End Point'), None, None)
+    _act.connect('activate', oneShotEndSnap, gtkimage)
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)
     #
     _act = gtk.Action('IntersectionPoint', _('_Intersection Point'), None, None)
+    _act.connect('activate', oneShotIntersectionSnap, gtkimage)
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
+    _menu.append(_item)
+    #
+    #_act = gtk.Action('OriginPoint', _('_Origin Point'), None, None)
+    #_act.connect('activate', oneShotOriginSnap, gtkimage)
+    #actiongroup.add_action(_act)
+    #_item = _act.create_menu_item()
     _menu.append(_item)
     return _menu
 #############################################################################
