@@ -309,7 +309,7 @@ def ccircle_tpmode_init(gtkimage, tool=None):
 def perp_cline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _pt,_pc  = _image.getCurrentPoint()
     _active_layer = _image.getActiveLayer()
     _hits = _active_layer.mapPoint((_x, _y), _tol, 1)
     if len(_hits):

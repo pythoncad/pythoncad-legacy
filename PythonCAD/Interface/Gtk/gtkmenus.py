@@ -1226,6 +1226,12 @@ def oneShotOriginSnap(menuitem, gtkimage):
         Activate one shot snap origin
     """
     gtkimage.ActivateOneShotSnap('origin')
+
+def oneShotPerpendicularSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap Perpendicular
+    """
+    gtkimage.ActivateOneShotSnap('perpendicular')
 def dimension_linear_cb(menuitem, gtkimage):
     gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
@@ -2570,6 +2576,12 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     #
     _act = gtk.Action('OriginPoint', _('_Origin Point'), None, None)
     _act.connect('activate', oneShotOriginSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)
+    #
+    _act = gtk.Action('PerpendicularPoint', _('_Perpendicular Point'), None, None)
+    _act.connect('activate', oneShotPerpendicularSnap, gtkimage)
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)

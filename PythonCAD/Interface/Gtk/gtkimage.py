@@ -233,26 +233,6 @@ class GTKImage(object):
         self.__da.modify_bg(gtk.STATE_NORMAL, black)
         pane.pack2(self.__da, True, False)
         self.__da.set_flags(gtk.CAN_FOCUS)
-        
-        #++Matteo Boscolo
-        #self.__da = gtk.DrawingArea()
-        #self.__da.set_size_request(400, 300)
-        #self.pangolayout = self.__da.create_pango_layout("")
-        #self.sw = gtk.ScrolledWindow()
-        #self.sw.add_with_viewport(self.__da)
-        #self.table = gtk.Table(2,2)
-        #self.hruler = gtk.HRuler()
-        #self.vruler = gtk.VRuler()
-        #self.hruler.set_range(0, 400, 0, 400)
-        #self.vruler.set_range(0, 300, 0, 300)
-        #self.table.attach(self.hruler, 1, 2, 0, 1, yoptions=0)
-        #self.table.attach(self.vruler, 0, 1, 1, 2, xoptions=0)
-        #self.table.attach(self.sw, 1, 2, 1, 2)
-        #self.__window.add(self.table)
-        #pane.pack2(self.table, True, False)
-        #self.__da.set_flags(gtk.CAN_FOCUS)
-        #--Matteo Boscolo
-        #
         self.__da.connect("event", self.__daEvent)
         self.__da.connect("expose_event", self.__exposeEvent)
         self.__da.connect("realize", self.__realizeEvent)
@@ -1361,8 +1341,7 @@ reset()
         """
             set the Global Variable for controlling the zoom and  moving
             of the drawing
-__Move()
-"""
+        """
         if(self.StopMove):
             return
         _type = event.type

@@ -25,6 +25,7 @@ import warnings
 
 from PythonCAD.Generic import util
 from PythonCAD.Generic import intersections
+from PythonCAD.Generic.segment import Segment
 
 class Snap:
     """
@@ -38,6 +39,9 @@ class Snap:
         self._sn=snapOption
         self._oneShutSnap=snapOption.copy() 
         self._computeOneShutSnap=False
+        self.__DinamicSnap=False
+        self.__FirstEnt=None
+        self.__FirstPoint=None,None
 
     def GetSnap(self,x,y,tollerance):
         """
@@ -72,6 +76,11 @@ class Snap:
                 _X,_Y,found=self.GetOrigin()
                 if(found):
                     return _X,_Y,found
+        if('perpendicular' in  sn):
+            if(sn['perpendicular']):
+                if(self.GetEnt(_x,_y,t)!=None):
+                    self.__DinamicSnap=True
+                    return None,None,True
         return None,None,False
     
     def GetMid(self,x,y,_t):
@@ -90,7 +99,6 @@ class Snap:
                         (abs(_iy - y) < _t)):
                         return _ix,_iy,True
         return None,None,False
-    
     def GetEndPoint(self,x,y,entityHits):
         """
             Looking for a specifiePoint             
@@ -176,7 +184,33 @@ class Snap:
             Return the drawing origin point 
         """
         return 0.0,0.0,True
-    
+
+    def GetEnt(self,x,y,_t):
+        """
+            Get The Entity Under the Mouse Pointer
+        """
+        _objlist = []
+        _intlist = []
+        _types = {'point' : False,
+                  'segment' : True,
+                  'circle' : True,
+                  'arc' : True,
+                  'polyline' : True,
+                  'hcline' : True,
+                  'vcline' : True,
+                  'acline' : True,
+                  'cline' : True,
+                  'ccircle' : True,
+                  }
+        _layers = [self._topLayer]
+        while len(_layers):
+            _layer = _layers.pop()
+            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    if(_obj != None):
+                        return _obj
+        return None
     def SetOneShutSnap(self,activeSnap):
         """
             Set One Shot snap 
@@ -199,3 +233,71 @@ class Snap:
             Stop Computetion One ShutSnap
         """
         self._computeOneShutSnap=False
+    def DinamicSnap(self):
+        """
+            Indicate if snap Compute the point
+        """
+        return self.__DinamicSnap
+    def ResetDinamicSnap(self):
+        """
+            Indicate if snap Compute the point
+        """
+        self.__DinamicSnap=False
+        self.__FirstEnt=None
+        self.__FirstPoint=None,None
+        self.StopOneShutSnap()
+    def StopDinamicSnap(self):
+        """
+            stop using dianmic snap
+        """
+        self.__DinamicSnap=False
+    def GetCoords(self,px,py,_t):
+        """
+            Get The Cordinate for Building the segment 
+            used for the Preview too
+        """
+        _x=int(px)
+        _y=int(py)
+        if(self.__FirstEnt!=None):
+            if(isinstance(self.__FirstEnt,Segment)):
+                firstObj=self.__FirstEnt
+                x,y,found=self.GetSnap(_x,_y,_t)
+                if(x is None):
+                    pjPoint=firstObj.getProjection(_x,_y)
+                    x,y=_x,_y
+                else:
+                    pjPoint=firstObj.getProjection(x,y)
+                if(pjPoint!=None):
+                    x1,y1=pjPoint
+                else:
+                    x1=firstObj.getP1().x #Convention get the first endline point
+                    y1=firstObj.getP1().y
+                return x,y,x1,y1        
+        if(self.__FirstPoint!=(None,None)):
+            obj=self.GetEnt(_x,_y,_t)
+            x,y=self.__FirstPoint
+            x1,y1=_x,_y 
+            if(obj!=None):
+                if(isinstance(obj,Segment)):
+                    x1,y1=obj.getProjection(x,y)
+                    print("Set Projection")
+            return int(x),int(y),int(x1),int(y1)
+        print("Seeee !!")
+        return _x,_y,_x+10,_y+10
+    
+    def SetFirstClick(self,_x,_y,_t):
+        """
+            set First Click 
+        """
+        obj=self.GetEnt(_x,_y,_t)
+        if(obj!=None and self.DinamicSnap()):
+            self.__FirstEnt=obj
+            self.__FirstPoint=None,None
+        else:
+            print("set First Point")
+            self.__FirstEnt=None
+            x,y,found=self.GetSnap(_x,_y,_t)
+            if(x is None):
+                self.__FirstPoint=_x,_y
+            else:
+                self.__FirstPoint=x,y

@@ -93,17 +93,28 @@ def point_mode_init(gtkimage, tool=None):
 
 def segment_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _x1, _y1 = tool.getFirstPoint()
-    _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
+    _snap=gtkimage.getImage().GetSnapObject()
     _gc = gtkimage.getGC()
     _x = int(event.x)
     _y = int(event.y)
-    _cp = tool.getCurrentPoint()
-    if _cp is not None:
-        _xc, _yc = _cp
-        _segs.append((_px1, _py1, _xc, _yc))
-    tool.setCurrentPoint(_x, _y)
-    _segs.append((_px1, _py1, _x, _y))
+    if(_snap.DinamicSnap()!=True):
+        _x1, _y1 = tool.getFirstPoint()
+        _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
+        _cp = tool.getCurrentPoint()
+        if _cp is not None:
+            _xc, _yc = _cp            
+            _segs.append((_px1, _py1, _xc, _yc))    
+        tool.setCurrentPoint(_x, _y)   
+        _px2, _py2 = _x, _y
+    else: 
+        _tol = gtkimage.getTolerance()        
+        _px1, _py1, _px2, _py2 =_snap.GetCoords(_x,_y,_tol)
+        tool.setFirstPoint(_px1, _py1)
+        tool.setCurrentPoint(_px2, _py2) 
+        _px1, _py1 = gtkimage.coordToPixTransform(_px1, _py1)
+        _px2, _py2 = gtkimage.coordToPixTransform(_py2, _px2) 
+        _segs.append((_px1, _py1, _px2, _py2))
+    _segs.append((_px1, _py1, _px2, _py2))
     widget.window.draw_segments(_gc, _segs)
     return True
 
@@ -132,36 +143,47 @@ def segment_first_entry_event_cb(gtkimage, widget, tool):
 def segment_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
+    _snap = _image.GetSnapObject()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
+    if(_snap.DinamicSnap()):
+        _x1,_y1,_x,_y=_snap.GetCoords(_x,_y,_tol)
+        tool.setFirstPoint(_x1, _y1)
     else:
-        _x, _y = _pc
+        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
+        if _pt is not None:
+            _x, _y = _pt.getCoords()
+        else:
+            _x, _y = _pc
     tool.setSecondPoint(_x, _y)
     create_entity(gtkimage)
+    _snap.ResetDinamicSnap()    
     return True
 
 def segment_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
+    _snap = _image.GetSnapObject()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)    
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
-    tool.setFirstPoint(_x, _y)
+    _snap.SetFirstClick(_x,_y,_tol)
+    if(_snap.DinamicSnap()!=True):
+        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)    
+        if _pt is not None:
+            _x, _y = _pt.getCoords()
+        else:
+            _x, _y = _pc
+        tool.setFirstPoint(_x, _y)
     tool.setHandler("button_press", segment_second_button_press_cb)
     tool.setHandler("entry_event", segment_second_entry_event_cb)
     tool.setHandler("motion_notify", segment_motion_notify_cb)
     gtkimage.setPrompt(_('Enter the second point or click in the drawing area'))
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
+    _snap.StopOneShutSnap()
     return True
 
 def segment_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()
+    gtkimage.getImage().GetSnapObject().ResetDinamicSnap
     _tool.setHandler("initialize", segment_mode_init)
     _tool.setHandler("button_press", segment_first_button_press_cb)
     _tool.setHandler("entry_event", segment_first_entry_event_cb)

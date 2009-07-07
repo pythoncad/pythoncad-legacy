@@ -82,6 +82,7 @@ t = Tool()
         self.__xpts = array.array('d')
         self.__ypts = array.array('d')
         self.__shift = None
+        self.__SnapObj=None
 
     def __len__(self):
         """Return the number of objects in the list via len().
