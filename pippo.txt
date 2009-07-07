@@ -1,4 +1,5 @@
-aa
-aaa
-:wq
+This is a test file You Can use it for testing git repository
 
+Test GGR.
+
+Test GGR on OSX!
