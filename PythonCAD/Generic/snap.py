@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2002, 2004, 2006 Art Haas 2009 Matteo Boscolo
+# Copyright (c) 2009 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -42,7 +42,6 @@ class Snap:
         self.__DinamicSnap=False
         self.__FirstEnt=None
         self.__FirstPoint=None,None
-
     def GetSnap(self,x,y,tollerance):
         """
             Get the snap point 
@@ -242,22 +241,25 @@ class Snap:
         """
             Indicate if snap Compute the point
         """
-        self.__DinamicSnap=False
         self.__FirstEnt=None
         self.__FirstPoint=None,None
         self.StopOneShutSnap()
+        self.StopDinamicSnap()
     def StopDinamicSnap(self):
         """
             stop using dianmic snap
         """
         self.__DinamicSnap=False
+        for key in self._oneShutSnap.keys():
+            self._oneShutSnap[key]=False
+        
     def GetCoords(self,px,py,_t):
         """
             Get The Cordinate for Building the segment 
             used for the Preview too
         """
-        _x=int(px)
-        _y=int(py)
+        _x=util.get_float(px)
+        _y=util.get_float(py)
         if(self.__FirstEnt!=None):
             if(isinstance(self.__FirstEnt,Segment)):
                 firstObj=self.__FirstEnt
@@ -272,7 +274,9 @@ class Snap:
                 else:
                     x1=firstObj.getP1().x #Convention get the first endline point
                     y1=firstObj.getP1().y
-                return x,y,x1,y1        
+                return x,y,x1,y1 
+            else:
+                print("is Not a segment")       
         if(self.__FirstPoint!=(None,None)):
             obj=self.GetEnt(_x,_y,_t)
             x,y=self.__FirstPoint
@@ -301,3 +305,7 @@ class Snap:
                 self.__FirstPoint=_x,_y
             else:
                 self.__FirstPoint=x,y
+
+
+        
+        
