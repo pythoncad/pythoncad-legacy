@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas
+# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas 2009 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -33,7 +33,8 @@ from PythonCAD.Generic import color
 from PythonCAD.Generic import point
 from PythonCAD.Generic import util
 from PythonCAD.Generic import quadtree
-
+from PythonCAD.Generic import pyGeoLib
+  
 class Segment(graphicobject.GraphicObject):
     """A class representing a line segment.
 
@@ -354,7 +355,25 @@ Arguments 'x' and 'y' should be float values.
         _px = _x1 + _r * (_x2 - _x1)
         _py = _y1 + _r * (_y2 - _y1)
         return _px, _py
-
+    
+    def GetLineProjection(self,x,y):
+        """
+            get Projection of the point x,y in the line 
+        """
+        _x = util.get_float(x)
+        _y = util.get_float(y)
+        _x1, _y1 = self.__p1.getCoords()
+        _x2, _y2 = self.__p2.getCoords()        
+        p1=pyGeoLib.Point(_x1, _y1)
+        p2=pyGeoLib.Point(_x2, _y2)
+        v=pyGeoLib.Vector(p1,p2)
+        pjPoint=v.Map(_x, _y).Point()
+        print("point",str(_x),str(_y))
+        print("segment" ,str(_x1),str( _y1),str(_x2),str( _y2))
+        x,y =pjPoint.Coord()
+        print("prjPoint",str(x),str(y))
+        return x,y
+        
     def mapCoords(self, x, y, tol=tolerance.TOL):
         """Return the nearest Point on the Segment to a coordinate pair.
 

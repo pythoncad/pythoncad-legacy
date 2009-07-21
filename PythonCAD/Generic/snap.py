@@ -265,10 +265,12 @@ class Snap:
                 firstObj=self.__FirstEnt
                 x,y,found=self.GetSnap(_x,_y,_t)
                 if(x is None):
-                    pjPoint=firstObj.getProjection(_x,_y)
-                    x,y=_x,_y
+                    pjPoint=firstObj.GetLineProjection(_x,_y)
+                    x1,y1=pjPoint
+                    #pjPoint=firstObj.getProjection(_x,_y)
                 else:
-                    pjPoint=firstObj.getProjection(x,y)
+                    pjPoint=firstObj.GetLineProjection(x,y)
+                    #pjPoint=firstObj.getProjection(x,y)
                 if(pjPoint!=None):
                     x1,y1=pjPoint
                 else:
@@ -283,10 +285,10 @@ class Snap:
             x1,y1=_x,_y 
             if(obj!=None):
                 if(isinstance(obj,Segment)):
-                    x1,y1=obj.getProjection(x,y)
-                    print("Set Projection")
-            return int(x),int(y),int(x1),int(y1)
-        print("Seeee !!")
+                    pjPoint=obj.GetLineProjection(x,y)
+                    x1,y1=pjPoint
+                    #x1,y1=obj.getProjection(x,y)
+            return x,y,x1,y1
         return _x,_y,_x+10,_y+10
     
     def SetFirstClick(self,_x,_y,_t):
@@ -306,6 +308,3 @@ class Snap:
             else:
                 self.__FirstPoint=x,y
 
-
-        
-        
