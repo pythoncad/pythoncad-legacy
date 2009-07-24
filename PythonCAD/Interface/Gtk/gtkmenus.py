@@ -58,6 +58,7 @@ from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject
 from PythonCAD.Generic import dimension
+from PythonCAD.Generic import extFormat
 
 from PythonCAD.Generic.image import Image
 from PythonCAD.Interface.Gtk import gtkdimprefs
@@ -151,7 +152,41 @@ def file_open_cb(menuitem, gtkimage):
         _window.set_title(os.path.basename(_fname))
         _window.show_all()
         _gtkimage.fitImage()
-
+#------------------------------------------------------------
+def file_inport_cb(menuitem, gtkimage):
+    """
+        Temporary Call back for testing the import of a dxfDwgFile
+    """
+    _open = False
+    _fname = None
+    _dialog = gtk.FileSelection(_('Import File ...'))
+    _dialog.set_transient_for(gtkimage.getWindow())
+    # _dialog.hide_fileop_buttons()
+    while not _open:
+        _response = _dialog.run()
+        if _response == gtk.RESPONSE_OK:
+            _fname = _dialog.get_filename()
+            if os.path.isdir(_fname):
+                _fname += "/"
+                _dialog.set_filename(_fname)
+                _response = _dialog.run()
+            else:
+                _open = True
+        else:
+            break
+    _dialog.destroy()
+    if _open:
+        try:
+            exf=extFormat.ExtFormat(gtkimage)
+            exf.Open(_fname)
+        except (IOError, OSError), e:
+            _errmsg = "Error opening '%s' : %s'" % (_fname, e)
+            _error_dialog(gtkimage, _errmsg)
+            return     
+        except StandardError, e:
+            _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
+            _error_dialog(gtkimage, _errmsg)
+            return
 #------------------------------------------------------------
 def file_close_cb(menuitem, gtkimage):
     for _i in xrange(len(globals.imagelist)):
@@ -1343,6 +1378,15 @@ def _make_file_menu(actiongroup, gtkimage):
     #
     _act = gtk.Action('Open', _('_Open'), None, gtk.STOCK_OPEN)
     _act.connect('activate', file_open_cb, gtkimage)
+    _act.set_accel_group(_accel)
+    actiongroup.add_action_with_accel(_act, None)
+    _item = _act.create_menu_item()
+    if isinstance(_act, gtkactions.stdAction):
+        _add_accelerators(_act, _item, _accel)
+    _menu.append(_item)
+    #
+    _act = gtk.Action('Inport', _('_Inport'), None, gtk.STOCK_OPEN)
+    _act.connect('activate', file_inport_cb, gtkimage)
     _act.set_accel_group(_accel)
     actiongroup.add_action_with_accel(_act, None)
     _item = _act.create_menu_item()
