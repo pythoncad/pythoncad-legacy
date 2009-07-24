@@ -261,25 +261,27 @@ class Snap:
         _x=util.get_float(px)
         _y=util.get_float(py)
         if(self.__FirstEnt!=None):
+            print("GetCoords Ent")
             if(isinstance(self.__FirstEnt,Segment)):
                 firstObj=self.__FirstEnt
                 x,y,found=self.GetSnap(_x,_y,_t)
                 if(x is None):
                     pjPoint=firstObj.GetLineProjection(_x,_y)
-                    x1,y1=pjPoint
                     #pjPoint=firstObj.getProjection(_x,_y)
                 else:
                     pjPoint=firstObj.GetLineProjection(x,y)
                     #pjPoint=firstObj.getProjection(x,y)
                 if(pjPoint!=None):
-                    x1,y1=pjPoint
+                    #x1,y1=pjPoint
+                    x,y=pjPoint
                 else:
                     x1=firstObj.getP1().x #Convention get the first endline point
                     y1=firstObj.getP1().y
-                return x,y,x1,y1 
+                return x,y,_x,_y 
             else:
                 print("is Not a segment")       
         if(self.__FirstPoint!=(None,None)):
+            print("GetCoords Point")
             obj=self.GetEnt(_x,_y,_t)
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
@@ -297,6 +299,7 @@ class Snap:
         """
         obj=self.GetEnt(_x,_y,_t)
         if(obj!=None and self.DinamicSnap()):
+            print("set First Object")
             self.__FirstEnt=obj
             self.__FirstPoint=None,None
         else:
