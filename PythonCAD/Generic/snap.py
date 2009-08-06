@@ -23,9 +23,14 @@ import math
 import types
 import warnings
 
+import pygtk
+pygtk.require('2.0')
+import gtk
+
 from PythonCAD.Generic import util
 from PythonCAD.Generic import intersections
 from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic import point
 
 class Snap:
     """
@@ -42,45 +47,86 @@ class Snap:
         self.__DinamicSnap=False
         self.__FirstEnt=None
         self.__FirstPoint=None,None
-    def GetSnap(self,x,y,tollerance):
+        self.__Cursor=None
+    def GetSnap(self,x,y,tollerance,windows):
         """
             Get the snap point 
         """
+        if(self.__Cursor==None):
+            self.__Cursor=snapCursor(windows)
         _x=util.get_float(x)
         _y=util.get_float(y)
         t=util.get_float(tollerance)
+
         if(self._computeOneShutSnap):
             sn=self._oneShutSnap
         else:
             sn=self._sn
         if t < 0.0:
             raise ValueError, "Invalid negative tolerance: %f" % t
+        exitValue={'point':None,'responce':False,'cursor':None,'name':"noname"}
+        mousePoint=point.Point(_x,_y)
         if('mid' in  sn):
             if(sn['mid']):
                 _X,_Y,found=self.GetMid(_x,_y,t)
                 if(found):
-                    return _X,_Y,found
+                    newSnap=point.Point(_X,_Y)
+                    exitValue['point']=newSnap
+                    exitValue['responce']=found
+                    exitValue['cursor']=self.__Cursor.MidPoint()
+                    exitValue['name']="MId"
         if('end' in  sn):
             if(sn['end']):
                 _X,_Y,found=self.GetEnd(_x,_y,t)
                 if(found):
-                    return _X,_Y,found
+                    newSnap=point.Point(_X,_Y)
+                    cursor=self.__Cursor.EndPoint()
+                    if(exitValue['point']==None):
+                        exitValue['point']=newSnap
+                        exitValue['responce']=found
+                        exitValue['cursor']=cursor
+                        exitValue['name']="End"
+                    else:
+                        if(newSnap.Dist(mousePoint)<exitValue['point'].Dist(mousePoint)):
+                            exitValue['point']=newSnap
+                            exitValue['responce']=found
+                            exitValue['cursor']=cursor
+                            exitValue['name']="End"
         if('intersection' in  sn):
             if(sn['intersection']):
                 _X,_Y,found=self.GetIntersection(_x,_y,t)
                 if(found):
-                    return _X,_Y,found
+                    newSnap=point.Point(_X,_Y)
+                    cursor=self.__Cursor.IntersectionPoint()
+                    if(exitValue['point']==None):
+                        exitValue['point']=newSnap
+                        exitValue['responce']=found
+                        exitValue['cursor']=cursor
+                        exitValue['name']="Intersection"
+                    else:
+                        if(newSnap.Dist(mousePoint)<exitValue['point'].Dist(mousePoint)):
+                            exitValue['point']=newSnap
+                            exitValue['responce']=found
+                            exitValue['cursor']=cursor
+                            exitValue['name']="Intersection"
         if('origin' in  sn):
             if(sn['origin']):
-                _X,_Y,found=self.GetOrigin()
-                if(found):
-                    return _X,_Y,found
+                newSnap=point.Point(0.0,0.0)
+                exitValue['point']=newSnap
+                exitValue['responce']=True
+                exitValue['cursor']=self.__Cursor.ZeroZeroPoint()
+                exitValue['name']="Origin"
         if('perpendicular' in  sn):
             if(sn['perpendicular']):
                 if(self.GetEnt(_x,_y,t)!=None):
                     self.__DinamicSnap=True
-                    return None,None,True
-        return None,None,False
+                    exitValue['point']=None
+                    exitValue['responce']=True
+                    exitValue['cursor']=self.__Cursor.PerpendicularPoint()
+                    exitValue['name']="Perpendicular"
+        if(exitValue['point']!=None): retX,RetY=exitValue['point'].getCoords()
+        else: retX,RetY=(None,None)
+        return retX,RetY,exitValue['responce'],exitValue['cursor']
     
     def GetMid(self,x,y,_t):
         """"
@@ -94,29 +140,37 @@ class Snap:
             if len(_hits) > 0:
                 for _obj, _pt in _hits:
                     _ix,_iy=_obj.getMiddlePoint()
-                    if ((abs(_ix - x) < _t) and
-                        (abs(_iy - y) < _t)):
-                        return _ix,_iy,True
+                    #if ((abs(_ix - x) < _t) and
+                        #(abs(_iy - y) < _t)):
+                    #trovare il piu vicino al maus
+                    return _ix,_iy,True
         return None,None,False
+
     def GetEndPoint(self,x,y,entityHits):
         """
             Looking for a specifiePoint             
         """
-        _sep = None
+        nearestPoint = (None,None)
+        mousePoint=point.Point(x,y)
         if len(entityHits) > 0:
             for _obj, _pt in entityHits:
-                _px,_py = _obj.getCoords()
-                _sqlen = pow((x - _px), 2) + pow((y - _py), 2)
-                if _sep is None or _sqlen < _sep:
-                    _sep = _sqlen
-                    return _px, _py ,True
+                _op1, _op2 = _obj.getEndpoints()
+                if(mousePoint.Dist(_op1)<mousePoint.Dist(_op2)):
+                    nPoint=_op1
+                else:
+                    nPoint=_op2
+                distance=nPoint.Dist(mousePoint)
+                if nearestPoint[0] is None or distance < nearestPoint[1]: 
+                    nearestPoint = nPoint,distance
+            _ex,_ey=nearestPoint[0].getCoords()
+            return _ex,_ey ,True 
         return None,None,False
     
     def GetEnd(self,x,y,_t):
         """
             Calculate the end point
         """
-        _types = {'point' : True}
+        _types = {'segment' : True}
         _active_layer = self._topLayer
         _sep = None
         _hits = _active_layer.mapCoords(x, y, tolerance=_t, types=_types)
@@ -264,7 +318,7 @@ class Snap:
             print("GetCoords Ent")
             if(isinstance(self.__FirstEnt,Segment)):
                 firstObj=self.__FirstEnt
-                x,y,found=self.GetSnap(_x,_y,_t)
+                x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
                 if(x is None):
                     pjPoint=firstObj.GetLineProjection(_x,_y)
                     #pjPoint=firstObj.getProjection(_x,_y)
@@ -305,9 +359,237 @@ class Snap:
         else:
             print("set First Point")
             self.__FirstEnt=None
-            x,y,found=self.GetSnap(_x,_y,_t)
+            x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
             if(x is None):
                 self.__FirstPoint=_x,_y
             else:
                 self.__FirstPoint=x,y
 
+class snapCursor:
+    """
+        This class provide a cursor object for each snap
+    """
+    def __init__(self,windows):
+        """
+            Base Constructor
+        """
+        #self.__pm = gtk.gdk.Pixmap(None,15,15,1)
+        #self.__mask = gtk.gdk.Pixmap(None,15,15,1)
+        #colormap = gtk.gdk.colormap_get_system()
+        #black = colormap.alloc_color('black')
+        #white = colormap.alloc_color('white')
+        #self.__bgc = self.__pm.new_gc(foreground=black)
+        #self.__wgc = self.__pm.new_gc(foreground=white)
+        #self.__mask.draw_rectangle(self.__bgc,True,0,0,15,15)
+        #self.__pm.draw_rectangle(self.__wgc,True,0,0,15,15)
+        self.__pm = None
+        self.__mask = None
+        self.__Draw=windows
+        self.__style=gtk.Style()
+    def Cursor(self):
+        """
+            set The Cursor at the window
+        """
+        if(self.__pm==None or self.__mask==None):
+            print("NonePixmaps")
+        #cur=gtk.gdk.Cursor(self.__pm,self.__mask,gtk.gdk.color_parse("black"),gtk.gdk.color_parse("white"),1,1)
+        cur=gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
+        return cur
+    def UpdatePixmap(self,pixmapName):
+        """
+            Create a pixmap from a vector
+        """
+        try:
+            self.__pm, self.__mask = gtk.gdk.pixmap_create_from_xpm_d(
+                self.__Draw,self.__style.bg[gtk.STATE_NORMAL], pixmapName)
+        except:
+            print("Unable to create the pixmap")
+    def EndPoint(self):
+        """
+            Define the endPoint Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "..@@@@@@@@@@@..",
+         ".@@@@@@@@@@@@@.",
+         "@@@@@@@.@@@@@@@",
+         "@@@@.......@@@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@@@.......@@@@",
+         "@@@@@@@.@@@@@@@",
+         ".@@@@@@@@@@@@@.",
+         "..@@@@@@@@@@@.."
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.DOTBOX)
+    def MidPoint(self):
+        """
+            Define the Mid point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@",
+         "@@..........@@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@@..........@@",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@"
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.ICON)
+    def ZeroZeroPoint(self):
+        """
+            Define the Origin point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "...............",
+         "...............",
+         "...............",
+         "...............",
+         ".@@.........@@.",
+         "@..@.......@..@",
+         "@..@.......@..@",
+         "@..@.......@..@",
+         ".@@....@....@@.",
+         "...............",
+         "...............",
+         "...............",
+         "...............",
+         "...............",
+         "..............."
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.DRAPED_BOX)
+    def PerpendicularPoint(self):
+        """
+            Define the perpendicular point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@.........",
+         "...@@@@@@@@@@..",
+         "...@@@@@@@@@@..",
+         "...@@@...@@@@..",
+         "...@@@....@@@..",
+         "...@@@....@@@..",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@"
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.BOTTOM_TEE)
+    def IntersectionPoint(self):
+        """
+            Define the perpendicular point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "@............@@",
+         "@@..........@@.",
+         ".@@........@@..",
+         "..@@......@@...",
+         "...@@....@@....",
+         "....@@..@@.....",
+         ".....@@@@......",
+         "......@@.......",
+         ".....@@@@......",
+         "....@@..@@.....",
+         "...@@....@@....",
+         "..@@......@@...",
+         ".@@........@@..",
+         "@@..........@@.",
+         "@............@@"
+        ]
+        mask=self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
+    def TangentPoint(self):
+        """
+            Define the perpendicular point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "...............",
+         "...............",
+         "...............",
+         ".....@@@@@.....",
+         "...@@@@.@@@@...",
+         "..@@@@...@@@@..",
+         ".@@@.......@@@.",
+         "@@@.........@@@",
+         "@@@.........@@@",
+         ".@@@.......@@@.",
+         "..@@@.....@@@..",
+         "...@@@...@@@...",
+         "@@@@@@@@@@@@@@@",
+         "@@@@@@@@@@@@@@@",
+         "..............."
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
+    def OnCurvePoint(self):
+        """
+            Define the perpendicular point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "...............",
+         "...............",
+         "@@.............",
+         ".@@............",
+         "..@@...........",
+         "..@@@@@@@@.....",
+         "..@.@@@@.@.....",
+         "..@....@@@@....",
+         "..@......@@@...",
+         "..@@@@@@@@..@@@",
+         ".............@@",
+         "..............@",
+         "...............",
+         "...............",
+         "..............."
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.X_CURSOR)

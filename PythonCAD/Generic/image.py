@@ -743,37 +743,38 @@ The argument 'l' should be a float equal or greater than 0.0.
         return self.__units.toMillimeters(_l)
 
     def getClosestPoint(self, x, y, **kw):
-        """Return a Point or (x, y) coordinate tuple in the Image.
+        """
+            Return a Point or (x, y) coordinate tuple in the Image.
 
-getClosestPoint(self, x, y [,**kw])
+            getClosestPoint(self, x, y [,**kw])
 
-The function has two required arguments
+            The function has two required arguments
 
-x: A float representing the x-coordinate
-y: A float representing the y-coordinate
+            x: A float representing the x-coordinate
+            y: A float representing the y-coordinate
 
-The accepted keyword arguements are:
+            The accepted keyword arguements are:
 
-tolerance: The distance between the existing objects and the 'x'
-           and 'y' arguments. The default value is 1e-10.
+            tolerance: The distance between the existing objects and the 'x'
+                       and 'y' arguments. The default value is 1e-10.
 
-This method returns a tuple of two values, one of which
-will be None. If an existing Point was found in the active
-layer, the first value in the tuple is the point, and the
-second value is None. If no point was found, the first
-value will be None and the second value will be a tuple
-of (x, y) coordinates where a new Point could be created.
-When the method returns the coordinate tuple, the location
-could be a projected point onto an Entity found in the Layer,
-or possibly the intersection of two or more entities, or
-simply a distinct point in the Layer if no nearby entities
-were found.
+            This method returns a tuple of two values, one of which
+            will be None. If an existing Point was found in the active
+            layer, the first value in the tuple is the point, and the
+            second value is None. If no point was found, the first
+            value will be None and the second value will be a tuple
+            of (x, y) coordinates where a new Point could be created.
+            When the method returns the coordinate tuple, the location
+            could be a projected point onto an Entity found in the Layer,
+            or possibly the intersection of two or more entities, or
+            simply a distinct point in the Layer if no nearby entities
+            were found.
         """
         _t=5.0
         if 'tolerance' in kw:
             _t=util.get_float(kw['tolerance'])
         _sobj=self.GetSnapObject()
-        _ix, _iy,validate=_sobj.GetSnap(x,y,_t)
+        _ix, _iy,validate,cursor=_sobj.GetSnap(x,y,_t,None)
         _sobj.StopOneShutSnap()
         if(validate):
             return None,(_ix, _iy)     

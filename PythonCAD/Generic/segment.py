@@ -364,19 +364,19 @@ Arguments 'x' and 'y' should be float values.
         _y = util.get_float(y)
         _x1, _y1 = self.__p1.getCoords()
         _x2, _y2 = self.__p2.getCoords()        
-        p1=pyGeoLib.Point(_x1, _y1)
-        p2=pyGeoLib.Point(_x2, _y2)
-        p3=pyGeoLib.Point(_x, _y)
+        p1=point.Point(_x1, _y1)
+        p2=point.Point(_x2, _y2)
+        p3=point.Point(_x, _y)
         v=pyGeoLib.Vector(p1,p2)
         v1=pyGeoLib.Vector(p1,p3)
-        xp,yp=v1.Point().Coord()
+        xp,yp=v1.Point().getCoords()
         pjPoint=v.Map(xp,yp).Point()
-        print("point",str(_x),str(_y))
-        print("segment" ,str(_x1),str( _y1),str(_x2),str( _y2))
-        x,y =pjPoint.Coord()
+        #print("point",str(_x),str(_y))
+        #print("segment" ,str(_x1),str( _y1),str(_x2),str( _y2))
+        x,y =pjPoint.getCoords()
         x=x+_x1
         y=y+_y1
-        print("prjPoint",str(x),str(y))
+        #print("prjPoint",str(x),str(y))
         return x,y
         
     def mapCoords(self, x, y, tol=tolerance.TOL):

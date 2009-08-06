@@ -469,6 +469,7 @@ a ValueError exception is raised.
         """
         if self.__first_point is None:
             raise ValueError, "SegmentTool first point is not set."
+        print("x: %s y: %s"%(str(x),str(y)))
         _x = util.get_float(x)
         _y = util.get_float(y)
         self.__second_point = (_x, _y)

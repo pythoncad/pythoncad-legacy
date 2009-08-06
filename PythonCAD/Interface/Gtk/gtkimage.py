@@ -1435,28 +1435,30 @@ StopPanImage()
 isPan()
 """
         return self.StopMove
-    def SetCursor(self,drwArea,snapActive):
+    def SetCursor(self,drwArea,snapActive,cursor):
         """
             active Snap cursor shape
         """
         _win=drwArea.get_parent_window()
         if snapActive :
-            _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
+            if(cursor==None): _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
+            else: _snapCursor=cursor
             _win.set_cursor(_snapCursor)
         else:
-            _crosCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
-            _win.set_cursor(_crosCursor)
+            _arrowCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
+            _win.set_cursor(_arrowCursor)
     def __ActiveSnapEvent(self,drwArea,event):
         """
             Snap Event
         """
+        cursor=None
         if(self._activateSnap):
             _x, _y = self.__image.getCurrentPoint()
             _sn=self.__image.GetSnapObject()
-            _dummyX,_dummyY,_responce = _sn.GetSnap(_x, _y,self.__tolerance)
+            _dummyX,_dummyY,_responce,cursor = _sn.GetSnap(_x, _y,self.__tolerance,drwArea.get_parent_window())
         else:
             _responce=False
-        self.SetCursor(drwArea,_responce)
+        self.SetCursor(drwArea,_responce,cursor)
         
     #-- Matteo Boscolo
 #------------------------------------------------------------------
