@@ -142,5 +142,3 @@ class Vector:
         vSelfMag=self.Mag()
         vSelfMag.Mult(projectionUnitDistance)
         return vSelfMag    
-
- 

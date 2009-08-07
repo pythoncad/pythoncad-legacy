@@ -29,7 +29,8 @@ import gtk
 
 from PythonCAD.Generic import util
 from PythonCAD.Generic import intersections
-from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic.segment  import Segment
+from PythonCAD.Generic.circle   import Circle
 from PythonCAD.Generic import point
 
 class Snap:
@@ -64,7 +65,7 @@ class Snap:
             sn=self._sn
         if t < 0.0:
             raise ValueError, "Invalid negative tolerance: %f" % t
-        exitValue={'point':None,'responce':False,'cursor':None,'name':"noname"}
+        exitValue={'point':None,'responce':False,'cursor':None,'name':"noname"}        
         mousePoint=point.Point(_x,_y)
         if('mid' in  sn):
             if(sn['mid']):
@@ -74,7 +75,7 @@ class Snap:
                     exitValue['point']=newSnap
                     exitValue['responce']=found
                     exitValue['cursor']=self.__Cursor.MidPoint()
-                    exitValue['name']="MId"
+                    exitValue['name']="Mid"
         if('end' in  sn):
             if(sn['end']):
                 _X,_Y,found=self.GetEnd(_x,_y,t)
@@ -124,6 +125,15 @@ class Snap:
                     exitValue['responce']=True
                     exitValue['cursor']=self.__Cursor.PerpendicularPoint()
                     exitValue['name']="Perpendicular"
+        if('tangent' in sn):
+            if(sn['tangent']):
+                if(self.GetEnt(_x,_y,t)!=None):
+                    self.__DinamicSnap=True
+                    exitValue['point']=None
+                    exitValue['responce']=True
+                    exitValue['cursor']=self.__Cursor.TangentPoint()
+                    exitValue['name']="Tangent"
+        self.__exitValue=exitValue
         if(exitValue['point']!=None): retX,RetY=exitValue['point'].getCoords()
         else: retX,RetY=(None,None)
         return retX,RetY,exitValue['responce'],exitValue['cursor']
@@ -315,37 +325,39 @@ class Snap:
         _x=util.get_float(px)
         _y=util.get_float(py)
         if(self.__FirstEnt!=None):
-            print("GetCoords Ent")
             if(isinstance(self.__FirstEnt,Segment)):
                 firstObj=self.__FirstEnt
                 x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
                 if(x is None):
                     pjPoint=firstObj.GetLineProjection(_x,_y)
-                    #pjPoint=firstObj.getProjection(_x,_y)
                 else:
                     pjPoint=firstObj.GetLineProjection(x,y)
-                    #pjPoint=firstObj.getProjection(x,y)
                 if(pjPoint!=None):
-                    #x1,y1=pjPoint
                     x,y=pjPoint
-                else:
-                    x1=firstObj.getP1().x #Convention get the first endline point
+                else: #Convention get the first endline point
+                    x1=firstObj.getP1().x 
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
+            if(isinstance(self.__FirstEnt,Circle)):
+                print("is a Circle")       
             else:
-                print("is Not a segment")       
-        if(self.__FirstPoint!=(None,None)):
-            print("GetCoords Point")
-            obj=self.GetEnt(_x,_y,_t)
+                print("is Not a snap Known Entitis")       
+        if(self.__FirstPoint!=(None,None)): #First pick is a point
+            obj=self.GetEnt(_x,_y,_t)       #Evaluate the sencond
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
             if(obj!=None):
                 if(isinstance(obj,Segment)):
-                    pjPoint=obj.GetLineProjection(x,y)
-                    x1,y1=pjPoint
-                    #x1,y1=obj.getProjection(x,y)
+                    if(self.__exitValue['name']=="Perpendicular"):
+                        pjPoint=obj.GetLineProjection(x,y)
+                        x1,y1=pjPoint
+                if(isinstance(obj,Circle)):
+                    if(self.__exitValue['name']=="Tangent"):
+                        pjPoint=obj.GetTangentPoint(x1,y1,x,y)
+                        if(pjPoint!=None):
+                            x1,y1=pjPoint.getCoords()            
             return x,y,x1,y1
-        return _x,_y,_x+10,_y+10
+        raise "No solution found in GetCoords"
     
     def SetFirstClick(self,_x,_y,_t):
         """

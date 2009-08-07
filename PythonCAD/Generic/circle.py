@@ -34,6 +34,8 @@ from PythonCAD.Generic import linetype
 from PythonCAD.Generic import color
 from PythonCAD.Generic import quadtree
 from PythonCAD.Generic import util
+from PythonCAD.Generic import tangent
+from PythonCAD.Generic.pyGeoLib import Vector
 
 class Circle(graphicobject.GraphicObject):
     """A base-class for Circles and Arcs
@@ -260,7 +262,47 @@ circumference()
 area()
         """
         return math.pi * pow(self.__radius, 2)
-
+    def GetTangentPoint(self,x,y,outx,outy):
+        """
+            Get the tangent from an axternal point
+            args:
+                x,y is a point near the circle
+                xout,yout is a point far from the circle
+            return:
+                a tuple(x,y,x1,xy) that define the tangent line
+        """
+        fromPoint=point.Point(outx,outy)
+        twoPointDistance=self.__center.Dist(fromPoint)
+        if(twoPointDistance<self.__radius):
+            return None,None
+        originPoint=point.Point(0.0,0.0)        
+        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
+        print("Radius R: %s Module %s"%(self.__radius,tanMod))
+        tgAngle=math.asin(self.__radius/twoPointDistance)
+        print("ang: %s"%str(tgAngle))
+        #Compute the x versor
+        xPoint=point.Point(1.0,0.0)
+        xVector=Vector(originPoint,xPoint)
+        twoPointVector=Vector(fromPoint,self.__center)
+        rightAngle=twoPointVector.Ang(xVector)        
+        print("Right Angle: %s"%str(rightAngle))
+        tgAngle=tgAngle+rightAngle
+        #Compute the tangent Vector
+        xCord=math.cos(tgAngle)
+        yCord=math.sin(tgAngle)
+        dirPoint=point.Point(xCord,yCord) #Versor that point at the tangentPoint
+        ver=Vector(originPoint,dirPoint)
+        ver.Mult(tanMod)
+        tangVectorPoint=ver.Point()
+        return point.Point(tangVectorPoint+(outx,outy))
+        
+        
+        
+        #creare un vector che punta al punto con angolo tgAngle
+        #una volta negativo una volta positivo le tangenti sono 2 nel caso di 
+        #distanze maggiore del raggio
+        #con due punti trovati ritornare quello piu vicino al maus
+        
     def mapCoords(self, x, y, tol=tolerance.TOL):
         """Return the nearest Point on the Circle to a coordinate pair.
 

@@ -1267,6 +1267,11 @@ def oneShotPerpendicularSnap(menuitem, gtkimage):
         Activate one shot snap Perpendicular
     """
     gtkimage.ActivateOneShotSnap('perpendicular')
+def oneShotTangentSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap Tangent
+    """
+    gtkimage.ActivateOneShotSnap('tangent')
 def dimension_linear_cb(menuitem, gtkimage):
     gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
@@ -2629,6 +2634,12 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)
+    #
+    _act = gtk.Action('TangentPoint', _('_Tangent Point'), None, None)
+    _act.connect('activate', oneShotTangentSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)    
     return _menu
 #############################################################################
 #  Init top level Dimensions menu

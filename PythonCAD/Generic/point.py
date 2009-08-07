@@ -123,12 +123,12 @@ way to find the distance between two Point objects.
         """
         if not isinstance(obj, Point):
             if isinstance(obj, tuple):
-                _x, _y = util.tuple_to_two_floats(obj)
+                x, y = util.tuple_to_two_floats(obj)
             else:
                  raise TypeError,"Invalid Argument obj: Point or tuple Required"
         else:
-            x,y=obj.getCoords()
-        return self.getx+x,self.gety+y
+            x,y = obj.getCoords()
+        return self.__x+x,self.__y+y
     
     def finish(self):
         self.x = self.y = None
