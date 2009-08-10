@@ -271,6 +271,7 @@ area()
             return:
                 a tuple(x,y,x1,xy) that define the tangent line
         """
+        firstPoint=point.Point(x,y)
         fromPoint=point.Point(outx,outy)
         twoPointDistance=self.__center.Dist(fromPoint)
         if(twoPointDistance<self.__radius):
@@ -284,24 +285,33 @@ area()
         xPoint=point.Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
         twoPointVector=Vector(fromPoint,self.__center)
-        rightAngle=twoPointVector.Ang(xVector)        
+        rightAngle=twoPointVector.Ang(xVector)                
+        cx,cy=self.__center.getCoords()        
+        if(outy>cy): #stupid situation 
+            rightAngle=-rightAngle
         print("Right Angle: %s"%str(rightAngle))
-        tgAngle=tgAngle+rightAngle
-        #Compute the tangent Vector
-        xCord=math.cos(tgAngle)
-        yCord=math.sin(tgAngle)
-        dirPoint=point.Point(xCord,yCord) #Versor that point at the tangentPoint
+        posAngle=rightAngle+tgAngle
+        negAngle=rightAngle-tgAngle
+        #Compute the Positive Tangent
+        xCord=math.cos(posAngle)
+        yCord=math.sin(posAngle)
+        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
         ver.Mult(tanMod)
         tangVectorPoint=ver.Point()
-        return point.Point(tangVectorPoint+(outx,outy))
-        
-        
-        
-        #creare un vector che punta al punto con angolo tgAngle
-        #una volta negativo una volta positivo le tangenti sono 2 nel caso di 
-        #distanze maggiore del raggio
-        #con due punti trovati ritornare quello piu vicino al maus
+        posPoint=point.Point(tangVectorPoint+(outx,outy))
+        #Compute the Negative Tangent
+        xCord=math.cos(negAngle)
+        yCord=math.sin(negAngle)
+        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
+        ver=Vector(originPoint,dirPoint)
+        ver.Mult(tanMod)
+        tangVectorPoint=ver.Point()
+        negPoint=point.Point(tangVectorPoint+(outx,outy))
+        if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
+            return posPoint
+        else:
+            return negPoint
         
     def mapCoords(self, x, y, tol=tolerance.TOL):
         """Return the nearest Point on the Circle to a coordinate pair.
