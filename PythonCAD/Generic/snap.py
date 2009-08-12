@@ -48,6 +48,7 @@ class Snap:
         self.__DinamicSnap=False
         self.__FirstEnt=None
         self.__FirstPoint=None,None
+        self.__FirstType=None
         self.__Cursor=None
     def GetSnap(self,x,y,tollerance,windows):
         """
@@ -339,7 +340,13 @@ class Snap:
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
             if(isinstance(self.__FirstEnt,Circle)):
-                print("is a Circle")       
+                if(self.__FirstType=="Tangent"): #Firts snap is a tangent
+                    obj=self.__FirstEnt
+                    x,y=self.__FirstPoint
+                    pjPoint=obj.GetTangentPoint(x,y,_x,_y)
+                    if(pjPoint!=None):
+                        x1,y1=pjPoint.getCoords()         
+                        return _x,_y,x1,y1
             else:
                 print("is Not a snap Known Entitis")       
         if(self.__FirstPoint!=(None,None)): #First pick is a point
@@ -364,10 +371,11 @@ class Snap:
             set First Click 
         """
         obj=self.GetEnt(_x,_y,_t)
+        self.__FirstType=self.__exitValue['name']
         if(obj!=None and self.DinamicSnap()):
             print("set First Object")
             self.__FirstEnt=obj
-            self.__FirstPoint=None,None
+            self.__FirstPoint=_x,_y
         else:
             print("set First Point")
             self.__FirstEnt=None
