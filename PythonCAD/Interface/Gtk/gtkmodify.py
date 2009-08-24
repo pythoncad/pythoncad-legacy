@@ -380,6 +380,7 @@ def delete_button_press_cb(gtkimage, widget, event, tool):
                     _active_layer.delObject(_dim)
         finally:
             _image.endAction()
+            gtkimage.redraw()
     else:
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
