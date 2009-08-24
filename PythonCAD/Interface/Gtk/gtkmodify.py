@@ -353,8 +353,9 @@ def delete_region_end_cb(gtkimage, widget, event, tool):
             PythonCAD.Generic.delete.delete_objects(_objs)
         finally:
             _image.endAction()
-        tool.reset()
+    tool.reset()
     delete_mode_init(gtkimage)
+    gtkimage.redraw()
     
 def delete_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
