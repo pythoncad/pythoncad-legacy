@@ -131,9 +131,11 @@ way to find the distance between two Point objects.
         return self.__x+x,self.__y+y
     
     def finish(self):
-        self.x = self.y = None
-        super(Point, self).finish()
-
+        try: #Fix the setx to None exeption
+            self.x = self.y = None
+            super(Point, self).finish()
+        except:
+            return
     def getValues(self):
         """
             Return values comprising the Point.

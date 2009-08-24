@@ -2123,7 +2123,7 @@ def _make_change_secondary_dimstring_menu(actiongroup, gtkimage):
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
     #
-    _act = gtk.Action('ChangeSDimStringPrecision', _('Units'), None, None)
+    _act = gtk.Action('ChangeSDimStringUnits', _('Units'), None, None)
     _act.connect('activate', change_dim_secondary_units_cb, gtkimage)
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())

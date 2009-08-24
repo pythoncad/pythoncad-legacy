@@ -133,8 +133,9 @@ def _erase_point(self, gimage):
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
-        _r, _g, _b = _col.getColors()
-        _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
+        if(_col!=None):
+            _r, _g, _b = _col.getColors()
+            _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
         _ctx.move_to(_px, _py)
         _ctx.line_to(_px, _py)
         _ctx.stroke()
