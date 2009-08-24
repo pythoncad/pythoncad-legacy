@@ -333,12 +333,17 @@ def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _image = gtkimage.getImage()
+    _snap = _image.GetSnapObject()
     _cx, _cy = tool.getCenter()
+    if(_snap.DinamicSnap()):
+        _x,_y=_snap.getProjection(_cx, _cy,_x, _y,_tol)
+    else:
+        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
+        if _pt is not None:
+            _x, _y = _pt.getCoords()
+        else:
+            _x, _y = _pc
     _radius = hypot((_cx - _x), (_cy - _y))
     tool.setRadius(_radius)
     create_entity(gtkimage)

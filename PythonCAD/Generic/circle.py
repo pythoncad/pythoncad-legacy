@@ -311,8 +311,23 @@ area()
         if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
             return posPoint
         else:
-            return negPoint
-        
+            return negPoint.getCoords()        
+    def GetRadiusPointFromExt(self,x,y):
+        """
+            get The intersecrion point from the line(x,y,cx,cy) and the circle
+        """
+        _cx, _cy = self.__center.getCoords()
+        _r = self.__radius
+        centerPoint=point.Point(_cx,_cy)
+        outPoint=point.Point(x,y)
+        vector=Vector(outPoint,centerPoint)
+        vNorm=vector.Norm()
+        newNorm=abs(vNorm-_r)
+        magVector=vector.Mag()
+        magVector.Mult(newNorm)
+        newPoint=magVector.Point()
+        intPoint=point.Point(outPoint+newPoint)
+        return intPoint.getCoords()        
     def mapCoords(self, x, y, tol=tolerance.TOL):
         """Return the nearest Point on the Circle to a coordinate pair.
 

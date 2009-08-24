@@ -326,7 +326,9 @@ class Snap:
         _x=util.get_float(px)
         _y=util.get_float(py)
         if(self.__FirstEnt!=None):
+            print("First Point/Ent")
             if(isinstance(self.__FirstEnt,Segment)):
+                print("Is a Segment")
                 firstObj=self.__FirstEnt
                 x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
                 if(x is None):
@@ -350,6 +352,7 @@ class Snap:
             else:
                 print("is Not a snap Known Entitis")       
         if(self.__FirstPoint!=(None,None)): #First pick is a point
+            print("Second Point/Ent")            
             obj=self.GetEnt(_x,_y,_t)       #Evaluate the sencond
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
@@ -365,7 +368,24 @@ class Snap:
                             x1,y1=pjPoint.getCoords()            
             return x,y,x1,y1
         raise "No solution found in GetCoords"
-    
+
+    def getProjection(self,fromX,fromY,mauseX,mauseY,t):
+        """
+            get the projection of the point fromX,fromY,to the entity found 
+            under mauseX,mauseY
+        """
+        obj=self.GetEnt(mauseX,mauseY,t)
+        if(obj!=None):
+            if(isinstance(obj,Segment)):
+                if(self.__exitValue['name']=="Tangent"):
+                    pjPoint=obj.GetLineProjection(fromX,fromY)
+                    x1,y1=pjPoint  
+                    return x1,y1
+            if(isinstance(obj,Circle)):
+                if(self.__exitValue['name']=="Tangent"):
+                    return obj.GetRadiusPointFromExt(fromX,fromY)
+            
+        return mauseX,mauseY
     def SetFirstClick(self,_x,_y,_t):
         """
             set First Click 
