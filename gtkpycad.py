@@ -167,6 +167,7 @@ def _inizialize_snap():
 def _initialize_globals():
     #
     # define globals
+    #
     globals.imagelist = []
     globals.prefs = {}
     globals.colors = baseobject.TypedDict(color.Color, color.Color)

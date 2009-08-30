@@ -177,14 +177,14 @@ class Snap:
             return _ex,_ey ,True 
         return None,None,False
     
-    def GetEnd(self,x,y,_t):
+    def GetEnd(self,x,y,t):
         """
             Calculate the end point
         """
         _types = {'segment' : True}
         _active_layer = self._topLayer
         _sep = None
-        _hits = _active_layer.mapCoords(x, y, tolerance=_t, types=_types)
+        _hits = _active_layer.mapCoords(x, y, tolerance=t, types=_types)
         retX,retY,validate=self.GetEndPoint(x,y,_hits)
         if(validate):
             return retX,retY,validate
@@ -195,7 +195,7 @@ class Snap:
         while len(_layers):
             _layer = _layers.pop()
             if _layer is not _active_layer:
-                _hits = _layer.mapCoords(_x, _y, tolerance=_t, types=_types)
+                _hits = _layer.mapCoords(x, y, tolerance=t, types=_types)
                 retX,retY,validate=self.GetEndPoint(x,y,_hits)
                 if(validate):
                     return retX,retY,validate

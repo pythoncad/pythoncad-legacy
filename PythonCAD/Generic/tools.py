@@ -903,8 +903,25 @@ class ChamferTool(Tool):
     pass
         
 class FilletTool(Tool):
-    pass
-
+    """
+     A specifie tool for drawing Fillet used to manage radius imput
+    """
+    def __init__(self):
+        super(FilletTool, self).__init__()
+        self.__Radius=None
+    def GetRadius(self):
+        """
+            get the fillet radius
+        """
+        return self.__Radius
+    def SetRadius(self,rad):
+        """
+            set the fillet radius
+        """
+        self.__Radius=rad
+        
+    rad=property(GetRadius,SetRadius,None,"Get The Fillet Radius.")
+    
 class LeaderTool(Tool):
     """A specialized tool for drawing Leader objects.
 

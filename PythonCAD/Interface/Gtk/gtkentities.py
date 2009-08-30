@@ -759,7 +759,10 @@ def fillet_button_press_cb(gtkimage, widget, event, tool):
                 _s1 = _user
             else:
                 _s2 = _user
-        _rad = _image.getOption('FILLET_RADIUS')
+        if(tool.rad!=None):
+            _rad = tool.rad
+        else:        
+            _rad = _image.getOption('FILLET_RADIUS')
         _s = _image.getOption('LINE_STYLE')
         _l = _image.getOption('LINE_TYPE')
         _c = _image.getOption('LINE_COLOR')
@@ -810,11 +813,32 @@ def fillet_button_press_cb(gtkimage, widget, event, tool):
                 _image.endAction()
     return True
 
+def fillet_radius_entry_event_cb(gtkimage, widget, tool):
+    """
+        Manage the radius entered from the entry
+    """
+    _entry = gtkimage.getEntry()
+    _text = _entry.get_text()
+    _entry.delete_text(0,-1)
+    if len(_text):
+        rad=float(_text)
+        tool.rad=rad
+        _msg = 'Click on the points where you want a fillet(r: ' + _text + ' ) or enter the Radius.'
+        gtkimage.setPrompt(_msg)
+
 def fillet_mode_init(gtkimage, tool=None):
-    gtkimage.setPrompt(_('Click on the points where you want a fillet.'))
+    """
+        init function for the fillet comand
+    """
+    _image = gtkimage.getImage()
+    _rad = _image.getOption('FILLET_RADIUS')   
+    _msg  =  'Click on the points where you want a fillet(r: '+ str(_rad) +' ) or enter the Radius.'
+    gtkimage.setPrompt(_msg)
     _tool = gtkimage.getImage().getTool()
     _tool.initialize()
+    _tool.setHandler("initialize", fillet_mode_init)
     _tool.setHandler("button_press", fillet_button_press_cb)
+    _tool.setHandler("entry_event", fillet_radius_entry_event_cb)
 
 #
 # leader lines
