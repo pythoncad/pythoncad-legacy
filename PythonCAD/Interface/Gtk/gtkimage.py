@@ -153,6 +153,7 @@ class GTKImage(object):
         self.__image = image
         self.__window = gtk.Window()
         self.__window.set_title("Untitled")
+        self.__window.set_icon_from_file("gtkpycad.png")
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
