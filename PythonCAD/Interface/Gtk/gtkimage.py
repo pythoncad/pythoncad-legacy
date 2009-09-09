@@ -108,6 +108,7 @@ class GTKImage(object):
         tools.ArcTool : gtkentities.arc_center_mode_init,
         tools.ChamferTool : gtkentities.chamfer_mode_init,
         tools.FilletTool: gtkentities.fillet_mode_init,
+        tools.FilletTwoLineTool: gtkentities.fillet_two_line_mode_init,
         tools.LeaderTool : gtkentities.leader_mode_init,
         tools.PolylineTool : gtkentities.polyline_mode_init,
         tools.PolygonTool : gtkentities.polygon_mode_init,
@@ -1436,6 +1437,7 @@ StopPanImage()
 isPan()
 """
         return self.StopMove
+    
     def SetCursor(self,drwArea,snapActive,cursor):
         """
             active Snap cursor shape
@@ -1448,6 +1450,7 @@ isPan()
         else:
             _arrowCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
             _win.set_cursor(_arrowCursor)
+
     def __ActiveSnapEvent(self,drwArea,event):
         """
             Snap Event

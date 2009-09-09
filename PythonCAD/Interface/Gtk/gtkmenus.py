@@ -606,8 +606,17 @@ def draw_chamfer_cb(menuitem, gtkimage):
     gtkimage.getImage().setTool(_tool)
 
 def draw_fillet_cb(menuitem, gtkimage):
+    """
+        Start Point fillet comand
+    """
     gtkimage.ActivateSnap()
     _tool = tools.FilletTool()
+    gtkimage.getImage().setTool(_tool)
+def draw_fillet_two_cb(menuitem, gtkimage):
+    """
+        Start two line fillet comand
+    """
+    _tool = tools.FilletTwoLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_leader_cb(menuitem, gtkimage):
@@ -1798,6 +1807,23 @@ def _make_draw_set_menu(actiongroup, gtkimage):
     _menu.append(_item)
     #
     return _menu
+#############################################################################
+#  Draw-> Fillet sub menu .  .
+#############################################################################
+def _make_draw_fillets_menu(actiongroup, gtkimage):
+    _menu = gtk.Menu()
+    #
+    _act = gtk.Action('PointFillet', _('_Point..'), None, None)
+    _act.connect('activate', draw_fillet_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
+    #
+    _act = gtk.Action('TwoLineFillet', _('_Two Line'), None, None)
+    _act.connect('activate', draw_fillet_two_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
+    return _menu
+
 
 #############################################################################
 #  Draw . . .  .
@@ -1850,12 +1876,13 @@ def _make_draw_menu(actiongroup, gtkimage):
     _act.connect('activate', draw_chamfer_cb, gtkimage)
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
-    #
-    _act = gtk.Action('Fillets', _('_Fillet'), None, None)
-    _act.connect('activate', draw_fillet_cb, gtkimage)
+    # 
+    _act = gtk.Action('Fillets', _('_Fillets'), None, None)
     actiongroup.add_action(_act)
-    _menu.append(_act.create_menu_item())
-    #
+    _item = _act.create_menu_item()
+    _item.set_submenu(_make_draw_fillets_menu(actiongroup, gtkimage))
+    _menu.append(_item)
+    # 
     _item = gtk.SeparatorMenuItem()
     _item.show()
     _menu.append(_item)

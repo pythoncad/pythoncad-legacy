@@ -741,6 +741,20 @@ def chamfer_mode_init(gtkimage, tool=None):
 # fillet
 #
 
+def fillet_radius_entry_event_cb(gtkimage, widget, tool):
+    """
+        Manage the radius entered from the entry
+    """
+    _entry = gtkimage.getEntry()
+    _text = _entry.get_text()
+    _entry.delete_text(0,-1)
+    if len(_text):
+        rad=float(_text)
+        tool.rad=rad
+        _oldMsg=gtkimage.getPrompt()
+        _msg =_oldMsg.split('(')[0] + '(r: ' + _text + ' )' + _oldMsg.split(')')[1]
+        gtkimage.setPrompt(_msg)
+        
 def fillet_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -811,35 +825,106 @@ def fillet_button_press_cb(gtkimage, widget, event, tool):
                 _active_layer.addObject(_fillet)
             finally:
                 _image.endAction()
+                gtkimage.redraw()
     return True
-
-def fillet_radius_entry_event_cb(gtkimage, widget, tool):
-    """
-        Manage the radius entered from the entry
-    """
-    _entry = gtkimage.getEntry()
-    _text = _entry.get_text()
-    _entry.delete_text(0,-1)
-    if len(_text):
-        rad=float(_text)
-        tool.rad=rad
-        _msg = 'Click on the points where you want a fillet(r: ' + _text + ' ) or enter the Radius.'
-        gtkimage.setPrompt(_msg)
 
 def fillet_mode_init(gtkimage, tool=None):
     """
-        init function for the fillet comand
+        Init function for the fillet comand
     """
     _image = gtkimage.getImage()
-    _rad = _image.getOption('FILLET_RADIUS')   
+    if tool!= None and tool.rad!=None:
+        _rad = tool.rad
+    else:        
+        _rad = _image.getOption('FILLET_RADIUS')  
+        _tool = gtkimage.getImage().getTool()
     _msg  =  'Click on the points where you want a fillet(r: '+ str(_rad) +' ) or enter the Radius.'
     gtkimage.setPrompt(_msg)
-    _tool = gtkimage.getImage().getTool()
     _tool.initialize()
     _tool.setHandler("initialize", fillet_mode_init)
     _tool.setHandler("button_press", fillet_button_press_cb)
     _tool.setHandler("entry_event", fillet_radius_entry_event_cb)
+#
+# Fillet two line
+#
+def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
+    """
+        Second selection commad
+    """
+    _image = gtkimage.getImage()
+    _objs=getSelections(gtkimage,Segment)  
+    if _objs!=None:
+        _image.startAction()
+        try:
+            tool.SecondLine=_objs
+            tool.Create(_image)
+        finally:
+            _image.endAction()
+            fillet_two_line_mode_init(gtkimage,tool)
+        
+def fillet_two_button_press_cb(gtkimage, widget, event, tool):
+    """
+       First Entity selected
+    """
+    _image = gtkimage.getImage()
+    _objs=getSelections(gtkimage,Segment)
+    if _objs!=None:
+        _image.startAction()
+        try:
+            tool.FirstLine=_objs
+            if(tool.rad!=None):
+                _rad = tool.rad
+            else:        
+                _rad = _image.getOption('FILLET_RADIUS')
+            _msg  =  'Click on the Second Entity (r: '+ str(_rad) +' ) or enter the Radius.'
+            gtkimage.setPrompt(_msg)
+            tool.setHandler("button_press", fillet_two_button_second_press_cb)
+            #
+        finally:
+            _image.endAction()
 
+def getSelections(gtkimage,objFilter):
+    """
+        get the object preselected or selected
+    """
+    _retVal=[]
+    _tol = gtkimage.getTolerance()
+    _image = gtkimage.getImage()
+    if _image.hasSelection():
+        _objs= _image.getSelectedObjects()
+    else:
+        _x, _y = _image.getCurrentPoint()
+        _active_layer = _image.getActiveLayer()
+        objects=_active_layer.mapPoint((_x, _y), _tol)
+        if len(objects):
+            _mapObj ,point = objects[0]   
+            if isinstance(_mapObj,Segment):
+                print "is A segment"
+                return _mapObj
+    return None
+
+def fillet_two_line_mode_init(gtkimage, tool=None):
+    """
+        init function for the fillet two line comand
+    """
+    _image = gtkimage.getImage()
+    _snapObj=_image.GetSnapObject()
+    if tool !=None and tool.rad!=None:
+        _rad = tool.rad
+        _tool=tool
+    else:        
+        _rad = _image.getOption('FILLET_RADIUS') 
+        _tool = gtkimage.getImage().getTool()
+    _msg  =  'Click on the first Entity (r: '+ str(_rad) +' ) or enter the Radius.'
+    gtkimage.setPrompt(_msg)
+    _tool.initialize()
+    _tool.rad=_rad
+    _tool.setHandler("initialize", fillet_two_line_mode_init)
+    _tool.setHandler("button_press", fillet_two_button_press_cb)
+    _tool.setHandler("entry_event", fillet_radius_entry_event_cb)
+    # switch off the snap 
+    _snapObj.ResetDinamicSnap()
+    gtkimage._activateSnap=False
 #
 # leader lines
 #
