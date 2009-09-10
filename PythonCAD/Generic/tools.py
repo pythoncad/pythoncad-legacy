@@ -44,6 +44,8 @@ from PythonCAD.Generic.text import TextStyle, TextBlock
 from PythonCAD.Generic import dimension
 from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic import tangent
+from PythonCAD.Generic import intersections 
+from PythonCAD.Generic.segjoint import Chamfer, Fillet
 
 class Tool(object):
     """A generic tool object.
@@ -921,7 +923,75 @@ class FilletTool(Tool):
         self.__Radius=rad
         
     rad=property(GetRadius,SetRadius,None,"Get The Fillet Radius.")
-    
+
+class FilletTwoLineTool(FilletTool):
+    """
+        A specifie tool for drawing fillet using two segment
+    """
+    def __init__(self):
+        super(FilletTwoLineTool, self).__init__()
+        self.__FirstLine=None
+        self.__SecondLine=None
+    def GetFirstLine(self):
+        return self.__FirstLine
+    def SetFirstLine(self,obj):
+        if obj==None:
+            raise "None Object"        
+        if not isinstance(obj,Segment):
+            raise "Invalid object Need Segment or CLine"
+        self.__FirstLine=obj
+    def GetSecondLine(self):
+        return self.__SecondLine
+    def SetSecondtLine(self,obj):
+        if obj==None:
+            raise "None Object"
+        if not isinstance(obj,Segment):
+            raise "Invalid object Need Segment or CLine"
+        self.__SecondLine=obj            
+    FirstLine=property(GetFirstLine,SetFirstLine,None,"Set first line object in the tool")
+    SecondLine=property(GetSecondLine,SetSecondtLine,None,"Set second line object in the tool")
+    def Create(self,image):
+        """
+            Create the Fillet
+        """
+        interPnt=[]
+        if self.FirstLine != None and self.SecondLine != None :
+            intersections._seg_seg_intersection(interPnt,self.__FirstLine,self.__SecondLine)
+        else:
+            if self.FirstLine==None:
+                print("First  obj is null")
+            if self.SecondLine==None:
+                print("Second obj is null")
+        if(len(interPnt)):
+            _s = image.getOption('LINE_STYLE')
+            _l = image.getOption('LINE_TYPE')
+            _c = image.getOption('LINE_COLOR')
+            _t = image.getOption('LINE_THICKNESS')
+            p1,p2=self.FirstLine.getEndpoints()
+            p11,p12=self.SecondLine.getEndpoints()
+            interPoint=Point(interPnt[0])
+            ldist=interPoint.Dist(p1)
+            if(ldist<interPoint.Dist(p2)):
+                self.FirstLine.p1=interPoint
+            else:
+                self.FirstLine.p2=interPoint
+            ldist=interPoint.Dist(p11)
+            if(ldist<interPoint.Dist(p12)):
+                self.SecondLine.p11=interPoint
+            else:
+                self.SecondLine.p12=interPoint  
+            print "Radius :" + str(self.rad)
+            _fillet=Fillet(self.FirstLine, self.SecondLine,self.rad, _s)
+            if _l != _s.getLinetype():
+                _fillet.setLinetype(_l)
+            if _c != _s.getColor():
+                _fillet.setColor(_c)
+            if abs(_t - _s.getThickness()) > 1e-10:
+                _fillet.setThickness(_t)            
+            _active_layer = image.getActiveLayer()            
+            _active_layer.addObject(_fillet)            
+            print("fillet Created")
+        
 class LeaderTool(Tool):
     """A specialized tool for drawing Leader objects.
 
