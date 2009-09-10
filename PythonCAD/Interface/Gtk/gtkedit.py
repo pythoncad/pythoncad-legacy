@@ -338,22 +338,37 @@ def paste_button_press_cb(gtkimage, widget, event, tool):
                         _ccl.setP2(_ep)
                     _active_layer.addObject(_ccl)
             elif isinstance(_obj, LinearDimension):
-                if _active_layer.findObject(_obj) is None:
-                    _l1, _l2 = _obj.getDimLayers()
-                    if _image.hasLayer(_l1) and _image.hasLayer(_l2):
-                        _p1, _p2 = _obj.getDimPoints()
-                        _p1.move(_dx, _dy)
-                        _p2.move(_dx, _dy)
-                        _ds = _obj.getDimStyle()
-                        if isinstance(_obj, HorizontalDimension):
-                            _dtype = HorizontalDimension
-                        elif isinstance(_obj, VerticalDimension):
-                            _dtype = VerticalDimension
-                        else:
-                            _dtype = LinearDimension
-                        #_dim = _dtype(_l1, _p1, _l2, _p2, _x + _dx, _y + _dy, _ds)
-                        _dim = _dtype(_p1, _p2, _x + _dx, _y + _dy,_ds)
-                        _active_layer.addObject(_dim)
+                #these checks were wrongly placed and seem unecessary...
+                #keep them here just in case...
+                #if _active_layer.findObject(_obj) is None:
+                #_l1, _l2 = _obj.getDimLayers()
+                #if _image.hasLayer(_l1) and _image.hasLayer(_l2):
+                _p1, _p2 = _obj.getDimPoints()
+                dimpoint1 = Point(_p1.getx() + _dx, _p1.gety() + _dy)
+                dimpoint2 = Point(_p2.getx() + _dx, _p2.gety() + _dy)
+                dimx, dimy = _obj.getLocation()
+                
+                #check if points already exist in drawing
+                _ep = _active_layer.findObject(dimpoint1)
+                if _ep is None:
+                    _active_layer.addObject(dimpoint1)
+                else:
+                    dimpoint1 = _ep
+                _ep = _active_layer.findObject(dimpoint2)
+                if _ep is None:
+                    _active_layer.addObject(dimpoint2)
+                else:
+                    dimpoint2 = _ep
+                    
+                _ds = _obj.getDimStyle()
+                if isinstance(_obj, HorizontalDimension):
+                    _dtype = HorizontalDimension
+                elif isinstance(_obj, VerticalDimension):
+                    _dtype = VerticalDimension
+                else:
+                    _dtype = LinearDimension
+                _dim = _dtype(dimpoint1, dimpoint2, dimx + _dx, dimy + _dy,_ds)
+                _active_layer.addObject(_dim)
             elif isinstance(_obj, RadialDimension):
                 if _active_layer.findObject(_obj) is None:
                     _lyr = _obj.getDimLayer()
@@ -413,10 +428,15 @@ def determine_center(_objectarray):
             _sumx += _midpoint.getx()
             _sumy += _midpoint.gety()
         elif isinstance(_obj, LinearDimension):
+            #linear dimensions don't count since they are connected to another
+            #object
             _objectnumber -= 1
         #elif isinstance(_obj, RadialDimension):
         #elif isinstance(_obj, AngularDimension):
-        #elif isinstance(_obj, text.TextBlock):
+        elif isinstance(_obj, text.TextBlock):
+            _location = _obj.getLocation()
+            _sumx += _location[0]
+            _sumy += _location[1]
         elif isinstance(_obj, DimString):
             _objectnumber -= 1
         else:
