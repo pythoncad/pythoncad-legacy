@@ -39,6 +39,7 @@ from PythonCAD.Generic.dimension import HorizontalDimension
 from PythonCAD.Generic.dimension import VerticalDimension
 from PythonCAD.Generic.dimension import RadialDimension
 from PythonCAD.Generic.dimension import AngularDimension
+from PythonCAD.Generic.dimension import DimString
 from PythonCAD.Generic import text
 import PythonCAD.Generic.globals
 
@@ -321,7 +322,7 @@ def paste_button_press_cb(gtkimage, widget, event, tool):
                     _active_layer.addObject(_ccl)
             elif isinstance(_obj, CLine):
                 _ccl = _obj.clone()
-                _ccl.move(_x, _y)
+                _ccl.move(_dx, _dy)
                 _ecl = _active_layer.findObject(_ccl)
                 if _ecl is None:
                     _p1, _p2 = _ccl.getKeypoints()
@@ -341,6 +342,8 @@ def paste_button_press_cb(gtkimage, widget, event, tool):
                     _l1, _l2 = _obj.getDimLayers()
                     if _image.hasLayer(_l1) and _image.hasLayer(_l2):
                         _p1, _p2 = _obj.getDimPoints()
+                        _p1.move(_dx, _dy)
+                        _p2.move(_dx, _dy)
                         _ds = _obj.getDimStyle()
                         if isinstance(_obj, HorizontalDimension):
                             _dtype = HorizontalDimension
@@ -348,7 +351,8 @@ def paste_button_press_cb(gtkimage, widget, event, tool):
                             _dtype = VerticalDimension
                         else:
                             _dtype = LinearDimension
-                        _dim = _dtype(_l1, _p1, _l2, _p2, _x, _y, _ds)
+                        #_dim = _dtype(_l1, _p1, _l2, _p2, _x + _dx, _y + _dy, _ds)
+                        _dim = _dtype(_p1, _p2, _x + _dx, _y + _dy,_ds)
                         _active_layer.addObject(_dim)
             elif isinstance(_obj, RadialDimension):
                 if _active_layer.findObject(_obj) is None:
@@ -385,7 +389,7 @@ def paste_mode_init(gtkimage, tool=None):
 
 def determine_center(_objectarray):
     #determine "center" of n points - simplest method: average values of
-    # coordinates
+    #coordinates of center points of each object
     _sumx, _sumy, _objectnumber = 0, 0, 0
     for _obj in _objectarray:
         _objectnumber += 1
@@ -404,12 +408,18 @@ def determine_center(_objectarray):
             _center = _obj.getLocation()
             _sumx += _center.getx()
             _sumy += _center.gety()
-        #elif isinstance(_obj, CLine):
-        #elif isinstance(_obj, LinearDimension):
+        elif isinstance(_obj, CLine):
+            _midpoint = _obj.getMiddlePoint()
+            _sumx += _midpoint.getx()
+            _sumy += _midpoint.gety()
+        elif isinstance(_obj, LinearDimension):
+            _objectnumber -= 1
         #elif isinstance(_obj, RadialDimension):
         #elif isinstance(_obj, AngularDimension):
         #elif isinstance(_obj, text.TextBlock):
+        elif isinstance(_obj, DimString):
+            _objectnumber -= 1
         else:
-            print "Unexpected type for pasting: " + `type(_obj)`
+            print "Unexpected type for center determination: " + `type(_obj)`
             _objectnumber -= 1
     return _sumx / _objectnumber, _sumy / _objectnumber

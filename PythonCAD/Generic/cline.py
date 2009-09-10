@@ -509,7 +509,12 @@ clone()
         if m in CLine.__messages:
             return True
         return super(CLine, self).sendsMessage(m)
-
+    
+    def getMiddlePoint(self):
+        _x = (self.__p1.getx() + self.__p2.getx()) / 2
+        _y = (self.__p1.gety() + self.__p2.gety()) / 2
+        _point = point.Point(_x, _y)
+        return _point
 def intersect_region(cl, xmin, ymin, xmax, ymax):
     if not isinstance(cl, CLine):
         raise TypeError, "Invalid CLine: " + `type(cl)`
