@@ -389,7 +389,8 @@ def paste_button_press_cb(gtkimage, widget, event, tool):
                         _active_layer.addObject(_dim)
             elif isinstance(_obj, text.TextBlock):
                 _ntb = _obj.clone()
-                _ntb.setLocation(_x, _y)
+                _origpos = _obj.getLocation()
+                _ntb.setLocation(_origpos[0] + _dx, _origpos[1] + _dy)
                 _active_layer.addObject(_ntb)
             else:
                 print "Unexpected type for pasting: " + `type(_obj)`
