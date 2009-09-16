@@ -326,9 +326,7 @@ class Snap:
         _x=util.get_float(px)
         _y=util.get_float(py)
         if(self.__FirstEnt!=None):
-            print("First Point/Ent")
             if(isinstance(self.__FirstEnt,Segment)):
-                print("Is a Segment")
                 firstObj=self.__FirstEnt
                 x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
                 if(x is None):
@@ -351,8 +349,7 @@ class Snap:
                         return _x,_y,x1,y1
             else:
                 print("is Not a snap Known Entitis")       
-        if(self.__FirstPoint!=(None,None)): #First pick is a point
-            print("Second Point/Ent")            
+        if(self.__FirstPoint!=(None,None)): #First pick is a point     
             obj=self.GetEnt(_x,_y,_t)       #Evaluate the sencond
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
@@ -386,6 +383,7 @@ class Snap:
                     return obj.GetRadiusPointFromExt(fromX,fromY)
             
         return mauseX,mauseY
+
     def SetFirstClick(self,_x,_y,_t):
         """
             set First Click 
@@ -393,11 +391,9 @@ class Snap:
         obj=self.GetEnt(_x,_y,_t)
         self.__FirstType=self.__exitValue['name']
         if(obj!=None and self.DinamicSnap()):
-            print("set First Object")
             self.__FirstEnt=obj
             self.__FirstPoint=_x,_y
         else:
-            print("set First Point")
             self.__FirstEnt=None
             x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
             if(x is None):

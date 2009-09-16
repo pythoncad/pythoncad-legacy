@@ -38,6 +38,17 @@ from PythonCAD.Generic import color
 from PythonCAD.Generic import util
 from PythonCAD.Generic import units
 
+
+def _error_dialog(gtkimage, errmsg):
+    _window = gtkimage.getWindow()
+    _dialog = gtk.MessageDialog( _window,
+                                 gtk.DIALOG_DESTROY_WITH_PARENT,
+                                 gtk.MESSAGE_ERROR,
+                                 gtk.BUTTONS_CLOSE,
+                                 errmsg)
+    _dialog.run()
+    _dialog.destroy()
+
 def make_tuple(text, gdict):
     _tpl = eval(text, gdict)
     if not isinstance(_tpl, tuple):
@@ -852,14 +863,22 @@ def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
         Second selection commad
     """
     _image = gtkimage.getImage()
-    _objs=getSelections(gtkimage,Segment)  
-    if _objs!=None:
+    _objs,pnt=getSelections(gtkimage,Segment)  
+    if _objs!=None and pnt!=None:
         _image.startAction()
         try:
             tool.SecondLine=_objs
+            tool.SecondPoint=pnt
             tool.Create(_image)
+        except ValueError,err:
+            _errmsg = "Fillet error: %s" % str(err)
+            _error_dialog(gtkimage,_errmsg )
+        except:
+            _errmsg = "Fillet error: %s" % str( sys.exc_info()[0])
+            _error_dialog(gtkimage,_errmsg )
         finally:
             _image.endAction()
+            gtkimage.redraw()
             fillet_two_line_mode_init(gtkimage,tool)
         
 def fillet_two_button_press_cb(gtkimage, widget, event, tool):
@@ -867,11 +886,12 @@ def fillet_two_button_press_cb(gtkimage, widget, event, tool):
        First Entity selected
     """
     _image = gtkimage.getImage()
-    _objs=getSelections(gtkimage,Segment)
-    if _objs!=None:
+    _objs,pnt=getSelections(gtkimage,Segment)
+    if _objs!=None and pnt!=None:
         _image.startAction()
         try:
             tool.FirstLine=_objs
+            tool.FirstPoint=pnt
             if(tool.rad!=None):
                 _rad = tool.rad
             else:        
@@ -899,8 +919,7 @@ def getSelections(gtkimage,objFilter):
         if len(objects):
             _mapObj ,point = objects[0]   
             if isinstance(_mapObj,Segment):
-                print "is A segment"
-                return _mapObj
+                return _mapObj,point
     return None
 
 def fillet_two_line_mode_init(gtkimage, tool=None):

@@ -46,6 +46,7 @@ from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic import tangent
 from PythonCAD.Generic import intersections 
 from PythonCAD.Generic.segjoint import Chamfer, Fillet
+from PythonCAD.Generic import pyGeoLib 
 
 class Tool(object):
     """A generic tool object.
@@ -932,6 +933,8 @@ class FilletTwoLineTool(FilletTool):
         super(FilletTwoLineTool, self).__init__()
         self.__FirstLine=None
         self.__SecondLine=None
+        self.__SecondPoint=None
+        self.__FirstPoint=None
     def GetFirstLine(self):
         return self.__FirstLine
     def SetFirstLine(self,obj):
@@ -950,6 +953,37 @@ class FilletTwoLineTool(FilletTool):
         self.__SecondLine=obj            
     FirstLine=property(GetFirstLine,SetFirstLine,None,"Set first line object in the tool")
     SecondLine=property(GetSecondLine,SetSecondtLine,None,"Set second line object in the tool")
+    def GetFirstPoint(self):
+        """
+            Return the first toolpoint
+        """
+        return self.__FirstPoint
+    def SetFirstPoint(self,point):
+        """
+            Set the first toolpoint
+        """
+        if point==None:
+            raise "None Object"
+        if not isinstance(point,Point):
+            raise "Invalid object Need Point"
+        self.__FirstPoint=point
+    def GetSecondPoint(self):
+        """
+            Return the second toolpoint
+        """
+        return self.__SecondPoint
+    def SetSecondPoint(self,point):
+        """
+            Set the second toolpoint
+        """
+        if point==None:
+            raise "None Object"
+        if not isinstance(point,Point):
+            raise "Invalid object Need Point"
+        self.__SecondPoint=point
+    FirstPoint=property(GetFirstPoint,SetFirstPoint,None,"Set first line object in the tool")
+    SecondPoint=property(GetSecondPoint,SetSecondPoint,None,"Set second line object in the tool")
+
     def Create(self,image):
         """
             Create the Fillet
@@ -959,39 +993,62 @@ class FilletTwoLineTool(FilletTool):
             intersections._seg_seg_intersection(interPnt,self.__FirstLine,self.__SecondLine)
         else:
             if self.FirstLine==None:
-                print("First  obj is null")
+                raise "tools.fillet.Create: First  obj is null"
             if self.SecondLine==None:
-                print("Second obj is null")
+                raise "tools.fillet.Create: Second  obj is null"
         if(len(interPnt)):
+            _active_layer = image.getActiveLayer() 
             _s = image.getOption('LINE_STYLE')
             _l = image.getOption('LINE_TYPE')
             _c = image.getOption('LINE_COLOR')
             _t = image.getOption('LINE_THICKNESS')
-            p1,p2=self.FirstLine.getEndpoints()
-            p11,p12=self.SecondLine.getEndpoints()
-            interPoint=Point(interPnt[0])
-            ldist=interPoint.Dist(p1)
-            if(ldist<interPoint.Dist(p2)):
-                self.FirstLine.p1=interPoint
-            else:
-                self.FirstLine.p2=interPoint
-            ldist=interPoint.Dist(p11)
-            if(ldist<interPoint.Dist(p12)):
-                self.SecondLine.p11=interPoint
-            else:
-                self.SecondLine.p12=interPoint  
-            print "Radius :" + str(self.rad)
+            p1,p2=self.FirstLine.getEndpoints()            
+            p11,p12=self.SecondLine.getEndpoints()            
+            #
+            interPoint1=Point(interPnt[0]) 
+            _active_layer.addObject(interPoint1)    
+            interPoint2=Point(interPnt[0]) 
+            _active_layer.addObject(interPoint2)  
+            # 
+            # new function for calculating the new 2 points
+            #
+            self.setRightPoint(image,self.FirstLine,self.FirstPoint,interPoint1)                   
+            self.setRightPoint(image,self.SecondLine,self.SecondPoint,interPoint2)
             _fillet=Fillet(self.FirstLine, self.SecondLine,self.rad, _s)
             if _l != _s.getLinetype():
                 _fillet.setLinetype(_l)
             if _c != _s.getColor():
                 _fillet.setColor(_c)
             if abs(_t - _s.getThickness()) > 1e-10:
-                _fillet.setThickness(_t)            
-            _active_layer = image.getActiveLayer()            
-            _active_layer.addObject(_fillet)            
-            print("fillet Created")
-        
+                _fillet.setThickness(_t)             
+            _active_layer.addObject(_fillet)    
+            
+    def setRightPoint(self,image,objSegment,objPoint,objInterPoint):
+        """
+            Get the point used for the trim
+        """
+        _p1 , _p2 = objSegment.getEndpoints()            
+        _x,_y = objPoint.getCoords()
+        opjPoint=Point(objSegment.GetLineProjection(_x,_y))
+        pickIntVect=pyGeoLib.Vector(objInterPoint,opjPoint).Mag()            
+        p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).Mag()            
+        if(pickIntVect==p1IntVect):
+            objSegment.p2=objInterPoint
+            image.delObject(_p2)
+            return
+        p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).Mag()
+        if(pickIntVect==p2IntVect):
+            objSegment.p1=objInterPoint
+            image.delObject(_p1)
+            return
+        ldist=interPoint1.Dist(_p1)
+        if(ldist<interPoint1.Dist_(p2)):
+            self.FirstLine.p1=objInterPoint
+            image.delObject(_p1)
+        else:
+            self.FirstLine.p2=objInterPoint
+            image.delObject(_p2)
+    
 class LeaderTool(Tool):
     """A specialized tool for drawing Leader objects.
 
