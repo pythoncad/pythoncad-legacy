@@ -37,17 +37,23 @@ from PythonCAD.Generic.segjoint import Chamfer, Fillet
 from PythonCAD.Generic import color
 from PythonCAD.Generic import util
 from PythonCAD.Generic import units
+from PythonCAD.Interface.Gtk import gtkDialog
+from PythonCAD.Generic import tools   
 
-
-def _error_dialog(gtkimage, errmsg):
-    _window = gtkimage.getWindow()
-    _dialog = gtk.MessageDialog( _window,
-                                 gtk.DIALOG_DESTROY_WITH_PARENT,
-                                 gtk.MESSAGE_ERROR,
-                                 gtk.BUTTONS_CLOSE,
-                                 errmsg)
-    _dialog.run()
-    _dialog.destroy()
+#def _error_dialog(gtkimage, errmsg):
+#    """
+#        Show an error dialog
+#    """
+#    _window = gtkimage.getWindow()
+#    #_window.set_title("PythonCad Error:")
+#    _dialog = gtk.MessageDialog( _window,
+#                                 gtk.DIALOG_DESTROY_WITH_PARENT,
+#                                 gtk.MESSAGE_ERROR,
+#                                 gtk.BUTTONS_CLOSE,
+#                                 errmsg)
+#    _dialog.set_title("PythonCad Error:")
+#    _dialog.run()
+#    _dialog.destroy()
 
 def make_tuple(text, gdict):
     _tpl = eval(text, gdict)
@@ -752,20 +758,68 @@ def chamfer_mode_init(gtkimage, tool=None):
 # fillet
 #
 
-def fillet_radius_entry_event_cb(gtkimage, widget, tool):
+def fillet_entry_event_cb(gtkimage, widget, tool):
     """
         Manage the radius entered from the entry
     """
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
     _entry.delete_text(0,-1)
-    if len(_text):
-        rad=float(_text)
-        tool.rad=rad
-        _oldMsg=gtkimage.getPrompt()
-        _msg =_oldMsg.split('(')[0] + '(r: ' + _text + ' )' + _oldMsg.split(')')[1]
-        gtkimage.setPrompt(_msg)
-        
+    if len(_text)>3:
+        if _text.find(':') >0 :
+            cmdArgs=_text.split(':')
+            if len(cmdArgs)==2:
+                if cmdArgs[0].lower() == 'r' :
+                    setFilletRadius(gtkimage,tool,cmdArgs[1])
+                    return
+                elif cmdArgs[0].lower() == 'tm':
+                    setTrimMode(gtkimage,tool,cmdArgs[1])
+                    return
+    if _text.find('?') >= 0:
+        gtkDialog._help_dialog(gtkimage,"FilletTwoPoint")
+        return
+    gtkDialog._error_dialog(gtkimage,"Wrong command")
+
+def setTrimMode(gtkimage,tool,mode):
+    """
+        set the trim fillet mode 
+    """
+    _mode=mode.strip().lower()
+    if _mode=='f' : 
+        tool.TrimMode="f"
+    elif _mode=='s' :
+        tool.TrimMode="s"
+    elif _mode=='b' :
+        tool.TrimMode="b"        
+    elif _mode=='n' :
+        tool.TrimMode="n"
+    else:
+        gtkDialog._error_dialog(gtkimage,"Wrong command")
+        return
+    fillet_prompt_message(gtkimage,tool)
+    
+def setFilletRadius(gtkimage,tool,radius):
+    """
+        set the fillet radius in to the tool
+    """
+    rad=float(radius)
+    tool.rad=rad
+    fillet_prompt_message(gtkimage,tool)
+
+def fillet_prompt_message(gtkimage,tool,startMessage=None):
+    """
+        set the fillet message
+    """
+    if startMessage == None:
+        _oldMsg=gtkimage.getPrompt()    
+    else:
+        _oldMsg=startMessage
+    if isinstance(tool,tools.FilletTool):
+        _msg =_oldMsg.split('(')[0] + '( r: ' + str(tool.rad) + ' )' + _oldMsg.split(')')[1]
+    if isinstance(tool,tools.FilletTwoLineTool):
+        _msg=_oldMsg.split('(')[0] + '( r: ' + str(tool.rad) + ' tm: ' + str(tool.TrimMode) + ' )' + _oldMsg.split(')')[1]
+    gtkimage.setPrompt(_msg)
+    
 def fillet_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -847,14 +901,15 @@ def fillet_mode_init(gtkimage, tool=None):
     if tool!= None and tool.rad!=None:
         _rad = tool.rad
     else:        
-        _rad = _image.getOption('FILLET_RADIUS')  
+        _rad = _image.getOption('FILLET_RADIUS') 
         _tool = gtkimage.getImage().getTool()
-    _msg  =  'Click on the points where you want a fillet(r: '+ str(_rad) +' ) or enter the Radius.'
-    gtkimage.setPrompt(_msg)
+    _msg  =  'Click on the points where you want a fillet( ) or enter the Radius.'
     _tool.initialize()
+    _tool.rad=_rad 
+    fillet_prompt_message(gtkimage,_tool,_msg)
     _tool.setHandler("initialize", fillet_mode_init)
     _tool.setHandler("button_press", fillet_button_press_cb)
-    _tool.setHandler("entry_event", fillet_radius_entry_event_cb)
+    _tool.setHandler("entry_event", fillet_entry_event_cb)
 #
 # Fillet two line
 #
@@ -872,10 +927,10 @@ def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
             tool.Create(_image)
         except ValueError,err:
             _errmsg = "Fillet error: %s" % str(err)
-            _error_dialog(gtkimage,_errmsg )
+            gtkDialog._error_dialog(gtkimage,_errmsg )
         except:
             _errmsg = "Fillet error: %s" % str( sys.exc_info()[0])
-            _error_dialog(gtkimage,_errmsg )
+            gtkDialog._error_dialog(gtkimage,_errmsg )
         finally:
             _image.endAction()
             gtkimage.redraw()
@@ -894,10 +949,12 @@ def fillet_two_button_press_cb(gtkimage, widget, event, tool):
             tool.FirstPoint=pnt
             if(tool.rad!=None):
                 _rad = tool.rad
+                _mod=tool.TrimMode
             else:        
                 _rad = _image.getOption('FILLET_RADIUS')
-            _msg  =  'Click on the Second Entity (r: '+ str(_rad) +' ) or enter the Radius.'
-            gtkimage.setPrompt(_msg)
+                _mod = _image.getOption('FILLET_TWO_TRIM_MODE')
+            _msg  =  'Click on the Second Entity ( ) or enter command options.'
+            fillet_prompt_message(gtkimage,tool,_msg)
             tool.setHandler("button_press", fillet_two_button_second_press_cb)
             #
         finally:
@@ -920,7 +977,7 @@ def getSelections(gtkimage,objFilter):
             _mapObj ,point = objects[0]   
             if isinstance(_mapObj,Segment):
                 return _mapObj,point
-    return None
+    return None,None
 
 def fillet_two_line_mode_init(gtkimage, tool=None):
     """
@@ -934,13 +991,13 @@ def fillet_two_line_mode_init(gtkimage, tool=None):
     else:        
         _rad = _image.getOption('FILLET_RADIUS') 
         _tool = gtkimage.getImage().getTool()
-    _msg  =  'Click on the first Entity (r: '+ str(_rad) +' ) or enter the Radius.'
-    gtkimage.setPrompt(_msg)
+    _msg  =  'Click on the first Entity ( ) or enter command options.'
     _tool.initialize()
     _tool.rad=_rad
+    fillet_prompt_message(gtkimage,_tool,_msg)
     _tool.setHandler("initialize", fillet_two_line_mode_init)
     _tool.setHandler("button_press", fillet_two_button_press_cb)
-    _tool.setHandler("entry_event", fillet_radius_entry_event_cb)
+    _tool.setHandler("entry_event", fillet_entry_event_cb)
     # switch off the snap 
     _snapObj.ResetDinamicSnap()
     gtkimage._activateSnap=False

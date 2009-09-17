@@ -935,6 +935,7 @@ class FilletTwoLineTool(FilletTool):
         self.__SecondLine=None
         self.__SecondPoint=None
         self.__FirstPoint=None
+        self.__TrimMode='b'
     def GetFirstLine(self):
         return self.__FirstLine
     def SetFirstLine(self,obj):
@@ -981,9 +982,20 @@ class FilletTwoLineTool(FilletTool):
         if not isinstance(point,Point):
             raise "Invalid object Need Point"
         self.__SecondPoint=point
-    FirstPoint=property(GetFirstPoint,SetFirstPoint,None,"Set first line object in the tool")
-    SecondPoint=property(GetSecondPoint,SetSecondPoint,None,"Set second line object in the tool")
-
+    FirstPoint=property(GetFirstPoint,SetFirstPoint,None,"First line object in the tool")
+    SecondPoint=property(GetSecondPoint,SetSecondPoint,None,"Second line object in the tool")
+    def SetTrimMode(self,mode):
+        """
+            set the trim mode
+        """
+        self.__TrimMode=mode
+    def GetTrimMode(self):
+        """
+            get the trim mode
+        """
+        return self.__TrimMode
+    TrimMode=property(GetTrimMode,SetTrimMode,None,"Trim Mode")
+    
     def Create(self,image):
         """
             Create the Fillet
@@ -1002,8 +1014,12 @@ class FilletTwoLineTool(FilletTool):
             _l = image.getOption('LINE_TYPE')
             _c = image.getOption('LINE_COLOR')
             _t = image.getOption('LINE_THICKNESS')
-            p1,p2=self.FirstLine.getEndpoints()            
-            p11,p12=self.SecondLine.getEndpoints()            
+            p1,p2=self.FirstLine.getEndpoints() 
+            p1=Point(p1.getCoords())           
+            p2=Point(p2.getCoords())
+            p11,p12=self.SecondLine.getEndpoints()  
+            p11=Point(p11.getCoords())           
+            p12=Point(p12.getCoords())          
             #
             interPoint1=Point(interPnt[0]) 
             _active_layer.addObject(interPoint1)    
@@ -1022,6 +1038,23 @@ class FilletTwoLineTool(FilletTool):
             if abs(_t - _s.getThickness()) > 1e-10:
                 _fillet.setThickness(_t)             
             _active_layer.addObject(_fillet)    
+            #
+            # Adjust the lines
+            #
+            if self.TrimMode=='f' or self.TrimMode=='n': 
+                image.delObject(self.SecondLine.p1)
+                image.delObject(self.SecondLine.p2)               
+                self.SecondLine.p1=p11
+                self.SecondLine.p2=p12
+                _active_layer.addObject(p11)
+                _active_layer.addObject(p12)
+            if self.TrimMode=='s' or self.TrimMode=='n':
+                image.delObject(self.FirstLine.p1)
+                image.delObject(self.FirstLine.p2)               
+                self.FirstLine.p1=p1
+                self.FirstLine.p2=p2       
+                _active_layer.addObject(p1)
+                _active_layer.addObject(p2)         
             
     def setRightPoint(self,image,objSegment,objPoint,objInterPoint):
         """

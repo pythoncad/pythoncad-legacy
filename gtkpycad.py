@@ -63,6 +63,7 @@ def _initialize_booleans():
 def _initialize_sizes():
     globals.prefs['CHAMFER_LENGTH'] = 1.0
     globals.prefs['FILLET_RADIUS'] = 1.0
+    globals.prefs['FILLET_TWO_TRIM_MODE'] = 'b'
     globals.prefs['UNITS'] = units.MILLIMETERS
     globals.prefs['LEADER_ARROW_SIZE'] = 1.0
 

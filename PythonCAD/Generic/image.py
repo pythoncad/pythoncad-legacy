@@ -102,6 +102,7 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
         'LEADER_ARROW_SIZE',
         'CHAMFER_LENGTH',
         'FILLET_RADIUS',
+        'FILLET_TWO_TRIM_MODE',
         'INACTIVE_LAYER_COLOR',
         'BACKGROUND_COLOR',
         'SINGLE_POINT_COLOR',
