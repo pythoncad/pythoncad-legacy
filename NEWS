@@ -1,5 +1,14 @@
 NEWS
 ====
+Release DS1-R37, Sep  22, 2009:
+* New Mantainer Matteo Boscolo 
+* New Repository in www.Sourceforge.net/projects/pythoncad
+* New Pan & Dynamic Zoom
+* New  Snap System (With One shot snap :point/tangent/perpendicular/midpoint/endpoint)
+* New Dynamic Cursor shape changing with snap
+* New Fillet Two lines.
+* Fix wrong positions in copy&paste Command
+* Bug fixes and code improvements
 
 Release DS1-R36, May 12, 2007:
 * Windows preferences saved to "env['APPDATA']/PythonCAD" directory
