@@ -108,6 +108,7 @@ class GTKImage(object):
         tools.ArcTool : gtkentities.arc_center_mode_init,
         tools.ChamferTool : gtkentities.chamfer_mode_init,
         tools.FilletTool: gtkentities.fillet_mode_init,
+        tools.FilletTwoLineTool: gtkentities.fillet_two_line_mode_init,
         tools.LeaderTool : gtkentities.leader_mode_init,
         tools.PolylineTool : gtkentities.polyline_mode_init,
         tools.PolygonTool : gtkentities.polygon_mode_init,
@@ -153,6 +154,7 @@ class GTKImage(object):
         self.__image = image
         self.__window = gtk.Window()
         self.__window.set_title("Untitled")
+        self.__window.set_icon_from_file("gtkpycad.png")
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
@@ -233,26 +235,6 @@ class GTKImage(object):
         self.__da.modify_bg(gtk.STATE_NORMAL, black)
         pane.pack2(self.__da, True, False)
         self.__da.set_flags(gtk.CAN_FOCUS)
-        
-        #++Matteo Boscolo
-        #self.__da = gtk.DrawingArea()
-        #self.__da.set_size_request(400, 300)
-        #self.pangolayout = self.__da.create_pango_layout("")
-        #self.sw = gtk.ScrolledWindow()
-        #self.sw.add_with_viewport(self.__da)
-        #self.table = gtk.Table(2,2)
-        #self.hruler = gtk.HRuler()
-        #self.vruler = gtk.VRuler()
-        #self.hruler.set_range(0, 400, 0, 400)
-        #self.vruler.set_range(0, 300, 0, 300)
-        #self.table.attach(self.hruler, 1, 2, 0, 1, yoptions=0)
-        #self.table.attach(self.vruler, 0, 1, 1, 2, xoptions=0)
-        #self.table.attach(self.sw, 1, 2, 1, 2)
-        #self.__window.add(self.table)
-        #pane.pack2(self.table, True, False)
-        #self.__da.set_flags(gtk.CAN_FOCUS)
-        #--Matteo Boscolo
-        #
         self.__da.connect("event", self.__daEvent)
         self.__da.connect("expose_event", self.__exposeEvent)
         self.__da.connect("realize", self.__realizeEvent)
@@ -1361,8 +1343,7 @@ reset()
         """
             set the Global Variable for controlling the zoom and  moving
             of the drawing
-__Move()
-"""
+        """
         if(self.StopMove):
             return
         _type = event.type
@@ -1456,28 +1437,32 @@ StopPanImage()
 isPan()
 """
         return self.StopMove
-    def SetCursor(self,drwArea,snapActive):
+    
+    def SetCursor(self,drwArea,snapActive,cursor):
         """
             active Snap cursor shape
         """
         _win=drwArea.get_parent_window()
         if snapActive :
-            _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
+            if(cursor==None): _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
+            else: _snapCursor=cursor
             _win.set_cursor(_snapCursor)
         else:
-            _crosCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
-            _win.set_cursor(_crosCursor)
+            _arrowCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
+            _win.set_cursor(_arrowCursor)
+
     def __ActiveSnapEvent(self,drwArea,event):
         """
             Snap Event
         """
+        cursor=None
         if(self._activateSnap):
             _x, _y = self.__image.getCurrentPoint()
             _sn=self.__image.GetSnapObject()
-            _dummyX,_dummyY,_responce = _sn.GetSnap(_x, _y,self.__tolerance)
+            _dummyX,_dummyY,_responce,cursor = _sn.GetSnap(_x, _y,self.__tolerance,drwArea.get_parent_window())
         else:
             _responce=False
-        self.SetCursor(drwArea,_responce)
+        self.SetCursor(drwArea,_responce,cursor)
         
     #-- Matteo Boscolo
 #------------------------------------------------------------------

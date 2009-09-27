@@ -103,7 +103,8 @@ way to find the distance between two Point objects.
         return False
 
     def __ne__(self, obj):
-        """Compare a Point to either another Point or a tuple for inequality.
+        """
+            Compare a Point to either another Point or a tuple for inequality.
         """
         if not isinstance(obj, (Point,tuple)):
             return True
@@ -116,17 +117,30 @@ way to find the distance between two Point objects.
         if abs(self.__x - _x) < 1e-10 and abs(self.__y - _y) < 1e-10:
             return False
         return True
-
+    def __add__(self,obj):
+        """
+            Add two Point
+        """
+        if not isinstance(obj, Point):
+            if isinstance(obj, tuple):
+                x, y = util.tuple_to_two_floats(obj)
+            else:
+                 raise TypeError,"Invalid Argument obj: Point or tuple Required"
+        else:
+            x,y = obj.getCoords()
+        return self.__x+x,self.__y+y
+    
     def finish(self):
-        self.__x = self.__y = None
-        super(Point, self).finish()
-
+        try: #Fix the setx to None exeption
+            self.x = self.y = None
+            super(Point, self).finish()
+        except:
+            return
     def getValues(self):
-        """Return values comprising the Point.
-
-getValues()
-
-This method extends the Subpart::getValues() method.
+        """
+            Return values comprising the Point.
+            getValues()
+            This method extends the Subpart::getValues() method.
         """
         _data = super(Point, self).getValues()
         _data.setValue('type', 'point')
@@ -135,18 +149,17 @@ This method extends the Subpart::getValues() method.
         return _data
 
     def getx(self):
-        """Return the x-coordinate of a Point.
-
-getx()
+        """
+            Return the x-coordinate of a Point.
+            getx()
         """
         return self.__x
 
     def setx(self, val):
-        """Set the x-coordinate of a Point
-
-setx(val)
-
-The argument 'val' must be a float.
+        """
+            Set the x-coordinate of a Point
+            setx(val)
+            The argument 'val' must be a float.
         """
         if self.isLocked():
             raise RuntimeError, "Coordinate change not allowed - object locked."
@@ -274,6 +287,16 @@ Otherwise, the function returns False.
             return True
         return super(Point, self).sendsMessage(m)
 
+    def Dist(self,obj):
+        """
+           Get The Distance From 2 Points
+        """
+        if not isinstance(obj, Point):
+             raise TypeError,"Invalid Argument point: Point Required"   
+        x,y=obj.getCoords()
+        xDist=x-self.__x
+        yDist=y-self.__y
+        return math.sqrt(pow(xDist,2)+pow(yDist,2)) 
 #
 # Quadtree Point storage
 #

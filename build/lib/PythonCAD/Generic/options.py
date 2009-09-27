@@ -557,6 +557,7 @@ class OptionManager(object):
         'TEXT_ALIGNMENT' : ('isInt', 'checkTextAlignment'),
         'CHAMFER_LENGTH' : ('isFloat', 'checkPositiveFloat'),
         'FILLET_RADIUS' : ('isFloat', 'checkPositiveFloat'),
+        'FILLET_TWO_TRIM_MODE' : ('isStringType', None),
         'UNITS' : ('isInt', 'checkUnit'),
         'LINE_STYLE' : ('isStyle', None),
         'LINE_COLOR' : ('isColor', None),

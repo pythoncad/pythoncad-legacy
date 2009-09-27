@@ -134,10 +134,34 @@ class Snap:
                     exitValue['responce']=True
                     exitValue['cursor']=self.__Cursor.TangentPoint()
                     exitValue['name']="Tangent"
+        if('point' in  sn):
+            if(sn['point']):
+                _X,_Y,found=self.GetPoint(_x,_y,t)
+                if found :
+                    newSnap=point.Point(_X,_Y)
+                    exitValue['point']=newSnap
+                    exitValue['responce']=True
+                    exitValue['cursor']=self.__Cursor.Point()
+                    exitValue['name']="Point"        
         self.__exitValue=exitValue
         if(exitValue['point']!=None): retX,RetY=exitValue['point'].getCoords()
         else: retX,RetY=(None,None)
         return retX,RetY,exitValue['responce'],exitValue['cursor']
+    
+    def GetPoint(self,x,y,_t):
+        """
+            Get The point over the mouse
+        """
+        _types = {'point' : True}
+        _tl=[self._topLayer]
+        while len(_tl):
+            _layer = _tl.pop()
+            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj, _pt in _hits:
+                    _ix,_iy=_obj.getCoords()
+                    return _ix,_iy,True
+        return None,None,False
     
     def GetMid(self,x,y,_t):
         """"
@@ -151,9 +175,6 @@ class Snap:
             if len(_hits) > 0:
                 for _obj, _pt in _hits:
                     _ix,_iy=_obj.getMiddlePoint()
-                    #if ((abs(_ix - x) < _t) and
-                        #(abs(_iy - y) < _t)):
-                    #trovare il piu vicino al maus
                     return _ix,_iy,True
         return None,None,False
 
@@ -440,6 +461,33 @@ class snapCursor:
                 self.__Draw,self.__style.bg[gtk.STATE_NORMAL], pixmapName)
         except:
             print("Unable to create the pixmap")
+    def Point(self):
+        """
+            Define the Point Cursor
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "..@@@@@@@@@@@..",
+         ".@@@@@@@@@@@@@.",
+         "@@@@@@@.@@@@@@@",
+         "@@@@.......@@@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@...........@@",
+         "@@@@.......@@@@",
+         "@@@@@@@.@@@@@@@",
+         ".@@@@@@@@@@@@@.",
+         "..@@@@@@@@@@@.."
+        ]
+        self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.DOTBOX)
     def EndPoint(self):
         """
             Define the endPoint Cursor

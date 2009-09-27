@@ -708,23 +708,23 @@ This method is private to the Fillet object.
         if (_as1 > 0.0 and _as2 < 0.0) or (_as1 < 0.0 and _as2 > 0.0):
             _amin = min(_as1, _as2)
             _amax = max(_as1, _as2)
-            print "_amax: %g" % _amax
-            print "_amin: %g" % _amin
+            #print "_amax: %g" % _amax
+            #print "_amin: %g" % _amin
             if _amax - _amin > pi: # radians
                 if _acl < 0.0:
                     _acl = _acl + pi
                 else:
                     _acl = _acl - pi
                 _acc = ((pi - _amax) + (_amin + pi))/2.0
-        print "_acl: %g" % (_acl * _dtr)
-        print "_acc: %g" % (_acc * _dtr)
+        #print "_acl: %g" % (_acl * _dtr)
+        #print "_acc: %g" % (_acc * _dtr)
         _rc = hypot((_r/tan(_acc)), _r)
-        print "_rc: %g" % _rc
+        #print "_rc: %g" % _rc
         _xi, _yi = self.getIntersection()
         _xc = _xi + _rc * cos(_acl)
         _yc = _yi + _rc * sin(_acl)
         self.__center = (_xc, _yc)
-        print "center: %s" % str(self.__center)
+        #print "center: %s" % str(self.__center)
 
     def getCenter(self):
         """Return the center location of the Fillet.
@@ -757,36 +757,36 @@ This method is private to the Fillet.
                 _as2 = -pi
             if _as2 < 0.0 and _as1 > 0.0:
                 _as2 = pi
-        print "_as1: %g" % (_as1 * _dtr)
-        print "_as2: %g" % (_as2 * _dtr)
+        #print "_as1: %g" % (_as1 * _dtr)
+        #print "_as2: %g" % (_as2 * _dtr)
         _acl = (_as1 + _as2)/2.0
         _acc = abs(_as1 - _as2)/2.0
         if (_as1 > 0.0 and _as2 < 0.0) or (_as1 < 0.0 and _as2 > 0.0):
             _amin = min(_as1, _as2)
             _amax = max(_as1, _as2)
-            print "_amax: %g" % _amax
-            print "_amin: %g" % _amin
+            #print "_amax: %g" % _amax
+            #print "_amin: %g" % _amin
             if _amax - _amin > pi: # radians
                 if _acl < 0.0:
                     _acl = _acl + pi
                 else:
                     _acl = _acl - pi
                 _acc = ((pi - _amax) + (_amin + pi))/2.0
-        print "_acl: %g" % (_acl * _dtr)
-        print "_acc: %g" % (_acc * _dtr)
+        #print "_acl: %g" % (_acl * _dtr)
+        #print "_acc: %g" % (_acc * _dtr)
         _xi, _yi = self.getIntersection()
         _pf1, _pf2 = self.getFixedPoints()
         _d1 = hypot((_xi - _pf1.x), (_yi - _pf1.y))
         _d2 = hypot((_xi - _pf2.x), (_yi - _pf2.y))
         _c4 = min(_d1, _d2)
         self.__rmax = _c4 * tan(_acc) + 1e-10
-        print "rmax: %g" % self.__rmax
+        #print "rmax: %g" % self.__rmax
         _pm1, _pm2 = self.getMovingPoints()
         _d1 = hypot((_xi - _pm1.x), (_yi - _pm1.y))
         _d2 = hypot((_xi - _pm2.x), (_yi - _pm2.y))
         _c4 = max(_d1, _d2)
         self.__rmin = _c4 * tan(_acc) - 1e-10
-        print "rmin: %g" % self.__rmin
+        #print "rmin: %g" % self.__rmin
 
     def getRadialLimits(self):
         """Return the radial limits of the fillet.

@@ -58,6 +58,7 @@ from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject
 from PythonCAD.Generic import dimension
+from PythonCAD.Generic import extFormat
 
 from PythonCAD.Generic.image import Image
 from PythonCAD.Interface.Gtk import gtkdimprefs
@@ -151,7 +152,41 @@ def file_open_cb(menuitem, gtkimage):
         _window.set_title(os.path.basename(_fname))
         _window.show_all()
         _gtkimage.fitImage()
-
+#------------------------------------------------------------
+def file_inport_cb(menuitem, gtkimage):
+    """
+        Temporary Call back for testing the import of a dxfDwgFile
+    """
+    _open = False
+    _fname = None
+    _dialog = gtk.FileSelection(_('Import File ...'))
+    _dialog.set_transient_for(gtkimage.getWindow())
+    # _dialog.hide_fileop_buttons()
+    while not _open:
+        _response = _dialog.run()
+        if _response == gtk.RESPONSE_OK:
+            _fname = _dialog.get_filename()
+            if os.path.isdir(_fname):
+                _fname += "/"
+                _dialog.set_filename(_fname)
+                _response = _dialog.run()
+            else:
+                _open = True
+        else:
+            break
+    _dialog.destroy()
+    if _open:
+        try:
+            exf=extFormat.ExtFormat(gtkimage)
+            exf.Open(_fname)
+        except (IOError, OSError), e:
+            _errmsg = "Error opening '%s' : %s'" % (_fname, e)
+            _error_dialog(gtkimage, _errmsg)
+            return     
+        except StandardError, e:
+            _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
+            _error_dialog(gtkimage, _errmsg)
+            return
 #------------------------------------------------------------
 def file_close_cb(menuitem, gtkimage):
     for _i in xrange(len(globals.imagelist)):
@@ -571,8 +606,17 @@ def draw_chamfer_cb(menuitem, gtkimage):
     gtkimage.getImage().setTool(_tool)
 
 def draw_fillet_cb(menuitem, gtkimage):
+    """
+        Start Point fillet comand
+    """
     gtkimage.ActivateSnap()
     _tool = tools.FilletTool()
+    gtkimage.getImage().setTool(_tool)
+def draw_fillet_two_cb(menuitem, gtkimage):
+    """
+        Start two line fillet comand
+    """
+    _tool = tools.FilletTwoLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_leader_cb(menuitem, gtkimage):
@@ -1226,6 +1270,17 @@ def oneShotOriginSnap(menuitem, gtkimage):
         Activate one shot snap origin
     """
     gtkimage.ActivateOneShotSnap('origin')
+
+def oneShotPerpendicularSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap Perpendicular
+    """
+    gtkimage.ActivateOneShotSnap('perpendicular')
+def oneShotTangentSnap(menuitem, gtkimage):
+    """
+        Activate one shot snap Tangent
+    """
+    gtkimage.ActivateOneShotSnap('tangent')
 def dimension_linear_cb(menuitem, gtkimage):
     gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
@@ -1337,6 +1392,15 @@ def _make_file_menu(actiongroup, gtkimage):
     #
     _act = gtk.Action('Open', _('_Open'), None, gtk.STOCK_OPEN)
     _act.connect('activate', file_open_cb, gtkimage)
+    _act.set_accel_group(_accel)
+    actiongroup.add_action_with_accel(_act, None)
+    _item = _act.create_menu_item()
+    if isinstance(_act, gtkactions.stdAction):
+        _add_accelerators(_act, _item, _accel)
+    _menu.append(_item)
+    #
+    _act = gtk.Action('Inport', _('_Inport'), None, gtk.STOCK_OPEN)
+    _act.connect('activate', file_inport_cb, gtkimage)
     _act.set_accel_group(_accel)
     actiongroup.add_action_with_accel(_act, None)
     _item = _act.create_menu_item()
@@ -1743,6 +1807,23 @@ def _make_draw_set_menu(actiongroup, gtkimage):
     _menu.append(_item)
     #
     return _menu
+#############################################################################
+#  Draw-> Fillet sub menu .  .
+#############################################################################
+def _make_draw_fillets_menu(actiongroup, gtkimage):
+    _menu = gtk.Menu()
+    #
+    _act = gtk.Action('PointFillet', _('_Point..'), None, None)
+    _act.connect('activate', draw_fillet_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
+    #
+    _act = gtk.Action('TwoLineFillet', _('_Two Line'), None, None)
+    _act.connect('activate', draw_fillet_two_cb, gtkimage)
+    actiongroup.add_action(_act)
+    _menu.append(_act.create_menu_item())
+    return _menu
+
 
 #############################################################################
 #  Draw . . .  .
@@ -1795,12 +1876,13 @@ def _make_draw_menu(actiongroup, gtkimage):
     _act.connect('activate', draw_chamfer_cb, gtkimage)
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
-    #
-    _act = gtk.Action('Fillets', _('_Fillet'), None, None)
-    _act.connect('activate', draw_fillet_cb, gtkimage)
+    # 
+    _act = gtk.Action('Fillets', _('_Fillets'), None, None)
     actiongroup.add_action(_act)
-    _menu.append(_act.create_menu_item())
-    #
+    _item = _act.create_menu_item()
+    _item.set_submenu(_make_draw_fillets_menu(actiongroup, gtkimage))
+    _menu.append(_item)
+    # 
     _item = gtk.SeparatorMenuItem()
     _item.show()
     _menu.append(_item)
@@ -2068,7 +2150,7 @@ def _make_change_secondary_dimstring_menu(actiongroup, gtkimage):
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
     #
-    _act = gtk.Action('ChangeSDimStringPrecision', _('Units'), None, None)
+    _act = gtk.Action('ChangeSDimStringUnits', _('Units'), None, None)
     _act.connect('activate', change_dim_secondary_units_cb, gtkimage)
     actiongroup.add_action(_act)
     _menu.append(_act.create_menu_item())
@@ -2573,6 +2655,18 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)
+    #
+    _act = gtk.Action('PerpendicularPoint', _('_Perpendicular Point'), None, None)
+    _act.connect('activate', oneShotPerpendicularSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)
+    #
+    _act = gtk.Action('TangentPoint', _('_Tangent Point'), None, None)
+    _act.connect('activate', oneShotTangentSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)    
     return _menu
 #############################################################################
 #  Init top level Dimensions menu
