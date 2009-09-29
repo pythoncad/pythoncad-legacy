@@ -2047,7 +2047,7 @@ added.
                     if ((abs(_px - _lp.x) < _t) and (abs(_py - _lp.y) < _t)):
                         _hits.append((_obj, _lp))
                     else:
-                        _hits.append((_obj, (_px, _py)))
+                        _hits.append((_obj, (_px, _py)))              
                     if len(_hits) == _count:
                         return _hits
         if _test_entity(_types, _skip, 'acline'):
@@ -2059,7 +2059,7 @@ added.
                     if ((abs(_px - _lp.x) < _t) and (abs(_py - _lp.y) < _t)):
                         _hits.append((_obj, _lp))
                     else:
-                        _hits.append((_obj, (_px, _py)))
+                         _hits.append((_obj, (_px, _py)))
                     if len(_hits) == _count:
                         return _hits
         if _test_entity(_types, _skip, 'ccircle'):

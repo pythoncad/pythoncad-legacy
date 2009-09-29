@@ -29,9 +29,13 @@ import gtk
 
 from PythonCAD.Generic import util
 from PythonCAD.Generic import intersections
+from PythonCAD.Generic.point    import Point
 from PythonCAD.Generic.segment  import Segment
 from PythonCAD.Generic.circle   import Circle
-from PythonCAD.Generic import point
+from PythonCAD.Generic.cline    import CLine
+from PythonCAD.Generic.hcline   import HCLine
+from PythonCAD.Generic.vcline   import VCLine
+from PythonCAD.Generic.acline   import ACLine
 
 class Snap:
     """
@@ -54,7 +58,7 @@ class Snap:
         """
             Get the snap point 
         """
-        if(self.__Cursor==None):
+        if(self.__Cursor is None):
             self.__Cursor=snapCursor(windows)
         _x=util.get_float(x)
         _y=util.get_float(y)
@@ -67,12 +71,12 @@ class Snap:
         if t < 0.0:
             raise ValueError, "Invalid negative tolerance: %f" % t
         exitValue={'point':None,'responce':False,'cursor':None,'name':"noname"}        
-        mousePoint=point.Point(_x,_y)
+        mousePoint=Point(_x,_y)
         if('mid' in  sn):
             if(sn['mid']):
                 _X,_Y,found=self.GetMid(_x,_y,t)
                 if(found):
-                    newSnap=point.Point(_X,_Y)
+                    newSnap=Point(_X,_Y)
                     exitValue['point']=newSnap
                     exitValue['responce']=found
                     exitValue['cursor']=self.__Cursor.MidPoint()
@@ -81,9 +85,9 @@ class Snap:
             if(sn['end']):
                 _X,_Y,found=self.GetEnd(_x,_y,t)
                 if(found):
-                    newSnap=point.Point(_X,_Y)
+                    newSnap=Point(_X,_Y)
                     cursor=self.__Cursor.EndPoint()
-                    if(exitValue['point']==None):
+                    if(exitValue['point'] is None):
                         exitValue['point']=newSnap
                         exitValue['responce']=found
                         exitValue['cursor']=cursor
@@ -98,7 +102,7 @@ class Snap:
             if(sn['intersection']):
                 _X,_Y,found=self.GetIntersection(_x,_y,t)
                 if(found):
-                    newSnap=point.Point(_X,_Y)
+                    newSnap=Point(_X,_Y)
                     cursor=self.__Cursor.IntersectionPoint()
                     if(exitValue['point']==None):
                         exitValue['point']=newSnap
@@ -113,14 +117,14 @@ class Snap:
                             exitValue['name']="Intersection"
         if('origin' in  sn):
             if(sn['origin']):
-                newSnap=point.Point(0.0,0.0)
+                newSnap=Point(0.0,0.0)
                 exitValue['point']=newSnap
                 exitValue['responce']=True
                 exitValue['cursor']=self.__Cursor.ZeroZeroPoint()
                 exitValue['name']="Origin"
         if('perpendicular' in  sn):
             if(sn['perpendicular']):
-                if(self.GetEnt(_x,_y,t)!=None):
+                if(self.GetEnt(_x,_y,t) is not None):
                     self.__DinamicSnap=True
                     exitValue['point']=None
                     exitValue['responce']=True
@@ -128,23 +132,23 @@ class Snap:
                     exitValue['name']="Perpendicular"
         if('tangent' in sn):
             if(sn['tangent']):
-                if(self.GetEnt(_x,_y,t)!=None):
+                if(self.GetEnt(_x,_y,t) is not None):
                     self.__DinamicSnap=True
                     exitValue['point']=None
                     exitValue['responce']=True
                     exitValue['cursor']=self.__Cursor.TangentPoint()
                     exitValue['name']="Tangent"
-        if('point' in  sn):
+        if('point' in sn):
             if(sn['point']):
                 _X,_Y,found=self.GetPoint(_x,_y,t)
                 if found :
-                    newSnap=point.Point(_X,_Y)
+                    newSnap=Point(_X,_Y)
                     exitValue['point']=newSnap
                     exitValue['responce']=True
                     exitValue['cursor']=self.__Cursor.Point()
                     exitValue['name']="Point"        
         self.__exitValue=exitValue
-        if(exitValue['point']!=None): retX,RetY=exitValue['point'].getCoords()
+        if(exitValue['point'] is not None): retX,RetY=exitValue['point'].getCoords()
         else: retX,RetY=(None,None)
         return retX,RetY,exitValue['responce'],exitValue['cursor']
     
@@ -183,7 +187,7 @@ class Snap:
             Looking for a specifiePoint             
         """
         nearestPoint = (None,None)
-        mousePoint=point.Point(x,y)
+        mousePoint=Point(x,y)
         if len(entityHits) > 0:
             for _obj, _pt in entityHits:
                 _op1, _op2 = _obj.getEndpoints()
@@ -293,7 +297,7 @@ class Snap:
             _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
             if len(_hits) > 0:
                 for _obj, _pt in _hits:
-                    if(_obj != None):
+                    if(_obj is not None):
                         return _obj
         return None
     def SetOneShutSnap(self,activeSnap):
@@ -346,7 +350,7 @@ class Snap:
         """
         _x=util.get_float(px)
         _y=util.get_float(py)
-        if(self.__FirstEnt!=None):
+        if(self.__FirstEnt is not None):
             if(isinstance(self.__FirstEnt,Segment)):
                 firstObj=self.__FirstEnt
                 x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
@@ -354,35 +358,77 @@ class Snap:
                     pjPoint=firstObj.GetLineProjection(_x,_y)
                 else:
                     pjPoint=firstObj.GetLineProjection(x,y)
-                if(pjPoint!=None):
+                if(pjPoint is not None):
                     x,y=pjPoint
                 else: #Convention get the first endline point
                     x1=firstObj.getP1().x 
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
+            if(isinstance(self.__FirstEnt,(CLine,ACLine))):
+                firstObj=self.__FirstEnt
+                x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
+                if(x is None):
+                    pjPoint=Point(firstObj.getProjection(_x,_y))
+                else:
+                    pjPoint=Point(firstObj.getProjection(x,y))
+                if(pjPoint is not None):
+                    x,y=pjPoint.getCoords()
+                else: #Convention get the first endline point
+                    x1=firstObj.getP1().x 
+                    y1=firstObj.getP1().y
+                return x,y,_x,_y 
+            if(isinstance(self.__FirstEnt,HCLine)):
+                HCLinePoint=self.__FirstEnt.getLocation()
+                trueX,y,found,cursor=self.GetSnap(_x,_y,_t,None)
+                if trueX is None:
+                    trueX=_x
+                dummyX,trueY=HCLinePoint.getCoords()
+                return trueX,trueY,_x,_y 
+            if(isinstance(self.__FirstEnt,VCLine)):
+                VCLinePoint=self.__FirstEnt.getLocation()
+                x,trueY,found,cursor=self.GetSnap(_x,_y,_t,None)
+                if trueY is None:
+                    trueY=_y
+                trueX,dummyY=VCLinePoint.getCoords()
+                return trueX,trueY,_x,_y   
             if(isinstance(self.__FirstEnt,Circle)):
                 if(self.__FirstType=="Tangent"): #Firts snap is a tangent
                     obj=self.__FirstEnt
                     x,y=self.__FirstPoint
                     pjPoint=obj.GetTangentPoint(x,y,_x,_y)
-                    if(pjPoint!=None):
+                    if(pjPoint is not None):
                         x1,y1=pjPoint.getCoords()         
                         return _x,_y,x1,y1
             else:
-                print("is Not a snap Known Entitis")       
-        if(self.__FirstPoint!=(None,None)): #First pick is a point     
+                msg="is Not a snap Known Entitis" + str(type(self.__FirstEnt))
+                print msg
+        if(self.__FirstPoint is not (None,None)): #First pick is a point     
             obj=self.GetEnt(_x,_y,_t)       #Evaluate the sencond
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
-            if(obj!=None):
+            if(obj is not None):
                 if(isinstance(obj,Segment)):
                     if(self.__exitValue['name']=="Perpendicular"):
                         pjPoint=obj.GetLineProjection(x,y)
                         x1,y1=pjPoint
+                if(isinstance(obj,(CLine,ACLine))):
+                    if(self.__exitValue['name']=="Perpendicular"):
+                        pjPoint=Point(obj.getProjection(x,y))
+                        x1,y1=pjPoint.getCoords()
+                if isinstance(obj,HCLine):
+                    if(self.__exitValue['name']=="Perpendicular"):
+                        HCLinePoint=obj.getLocation()
+                        x1,y1= HCLinePoint.getCoords()
+                        x1=x
+                if isinstance(obj,VCLine):
+                    if(self.__exitValue['name']=="Perpendicular"):
+                        VCLinePoint=obj.getLocation()
+                        x1,y1= VCLinePoint.getCoords()
+                        y1=y
                 if(isinstance(obj,Circle)):
                     if(self.__exitValue['name']=="Tangent"):
                         pjPoint=obj.GetTangentPoint(x1,y1,x,y)
-                        if(pjPoint!=None):
+                        if(pjPoint is not None):
                             x1,y1=pjPoint.getCoords()            
             return x,y,x1,y1
         raise "No solution found in GetCoords"
@@ -393,16 +439,20 @@ class Snap:
             under mauseX,mauseY
         """
         obj=self.GetEnt(mauseX,mauseY,t)
-        if(obj!=None):
+        if(obj is not None):
             if(isinstance(obj,Segment)):
                 if(self.__exitValue['name']=="Tangent"):
                     pjPoint=obj.GetLineProjection(fromX,fromY)
                     x1,y1=pjPoint  
                     return x1,y1
+            if(isinstance(obj,CLine)):
+                if(self.__exitValue['name']=="Tangent"):
+                    pjPoint=Point(obj.getProjection(fromX,fromY))
+                    x1,y1=pjPoint  
+                    return x1,y1
             if(isinstance(obj,Circle)):
                 if(self.__exitValue['name']=="Tangent"):
                     return obj.GetRadiusPointFromExt(fromX,fromY)
-            
         return mauseX,mauseY
 
     def SetFirstClick(self,_x,_y,_t):
@@ -411,7 +461,7 @@ class Snap:
         """
         obj=self.GetEnt(_x,_y,_t)
         self.__FirstType=self.__exitValue['name']
-        if(obj!=None and self.DinamicSnap()):
+        if(obj is not None and self.DinamicSnap()):
             self.__FirstEnt=obj
             self.__FirstPoint=_x,_y
         else:

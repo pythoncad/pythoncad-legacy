@@ -311,7 +311,7 @@ def perp_cline_button_press_cb(gtkimage, widget, event, tool):
     _image = gtkimage.getImage()
     _pt,_pc  = _image.getCurrentPoint()
     _active_layer = _image.getActiveLayer()
-    _hits = _active_layer.mapPoint((_x, _y), _tol, 1)
+    _hits = _active_layer.mapPoint((_pt,_pc), _tol, 1)
     if len(_hits):
         _obj, _lp = _hits[0]
         _pcl = None
