@@ -427,10 +427,12 @@ def _select_all_cb(menuitem, gtkimage):
 #------------------------------------------------------------
 def edit_undo_cb(menuitem, gtkimage):
     gtkimage.image.doUndo()
+    gtkimage.redraw()
 
 #------------------------------------------------------------
 def edit_redo_cb(menuitem, gtkimage):
     gtkimage.image.doRedo()
+    gtkimage.redraw()
 
 #------------------------------------------------------------
 def edit_copy_cb(menuitem, gtkimage):
