@@ -32,6 +32,7 @@ from PythonCAD.Generic import intersections
 from PythonCAD.Generic.point    import Point
 from PythonCAD.Generic.segment  import Segment
 from PythonCAD.Generic.circle   import Circle
+from PythonCAD.Generic.ccircle  import CCircle
 from PythonCAD.Generic.cline    import CLine
 from PythonCAD.Generic.hcline   import HCLine
 from PythonCAD.Generic.vcline   import VCLine
@@ -364,7 +365,7 @@ class Snap:
                     x1=firstObj.getP1().x 
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
-            if(isinstance(self.__FirstEnt,(CLine,ACLine))):
+            if(isinstance(self.__FirstEnt,(CLine,ACLine,HCLine,VCLine))):
                 firstObj=self.__FirstEnt
                 x,y,found,cursor=self.GetSnap(_x,_y,_t,None)
                 if(x is None):
@@ -377,20 +378,6 @@ class Snap:
                     x1=firstObj.getP1().x 
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
-            if(isinstance(self.__FirstEnt,HCLine)):
-                HCLinePoint=self.__FirstEnt.getLocation()
-                trueX,y,found,cursor=self.GetSnap(_x,_y,_t,None)
-                if trueX is None:
-                    trueX=_x
-                dummyX,trueY=HCLinePoint.getCoords()
-                return trueX,trueY,_x,_y 
-            if(isinstance(self.__FirstEnt,VCLine)):
-                VCLinePoint=self.__FirstEnt.getLocation()
-                x,trueY,found,cursor=self.GetSnap(_x,_y,_t,None)
-                if trueY is None:
-                    trueY=_y
-                trueX,dummyY=VCLinePoint.getCoords()
-                return trueX,trueY,_x,_y   
             if(isinstance(self.__FirstEnt,Circle)):
                 if(self.__FirstType=="Tangent"): #Firts snap is a tangent
                     obj=self.__FirstEnt
@@ -411,20 +398,10 @@ class Snap:
                     if(self.__exitValue['name']=="Perpendicular"):
                         pjPoint=obj.GetLineProjection(x,y)
                         x1,y1=pjPoint
-                if(isinstance(obj,(CLine,ACLine))):
+                if(isinstance(obj,(CLine,ACLine,HCLine,VCLine))):
                     if(self.__exitValue['name']=="Perpendicular"):
                         pjPoint=Point(obj.getProjection(x,y))
                         x1,y1=pjPoint.getCoords()
-                if isinstance(obj,HCLine):
-                    if(self.__exitValue['name']=="Perpendicular"):
-                        HCLinePoint=obj.getLocation()
-                        x1,y1= HCLinePoint.getCoords()
-                        x1=x
-                if isinstance(obj,VCLine):
-                    if(self.__exitValue['name']=="Perpendicular"):
-                        VCLinePoint=obj.getLocation()
-                        x1,y1= VCLinePoint.getCoords()
-                        y1=y
                 if(isinstance(obj,Circle)):
                     if(self.__exitValue['name']=="Tangent"):
                         pjPoint=obj.GetTangentPoint(x1,y1,x,y)
@@ -445,10 +422,9 @@ class Snap:
                     pjPoint=obj.GetLineProjection(fromX,fromY)
                     x1,y1=pjPoint  
                     return x1,y1
-            if(isinstance(obj,CLine)):
+            if(isinstance(obj,(CLine,ACLine,HCLine,VCLine))):
                 if(self.__exitValue['name']=="Tangent"):
-                    pjPoint=Point(obj.getProjection(fromX,fromY))
-                    x1,y1=pjPoint  
+                    x1,y1=obj.getProjection(fromX,fromY)
                     return x1,y1
             if(isinstance(obj,Circle)):
                 if(self.__exitValue['name']=="Tangent"):

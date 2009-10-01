@@ -238,7 +238,15 @@ clone()
         if m in VCLine.__messages:
             return True
         return super(VCLine, self).sendsMessage(m)
-
+    def getProjection(self,x,y):
+        """
+            Get the projection of the point in to the line
+        """
+        VCLinePoint=self.getLocation()
+        x1,y1=VCLinePoint.getCoords()
+        y1=y
+        return x1,y1
+    
 def intersect_region(vcl, xmin, ymin, xmax, ymax):
     if not isinstance(vcl, VCLine):
         raise TypeError, "Invalid VCLine: " + `type(vcl)`

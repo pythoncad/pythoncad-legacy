@@ -248,11 +248,7 @@ def plot_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setSecondCorner(_x, _y)
     _show_print_dialog(gtkimage, tool)
     return True
@@ -270,11 +266,7 @@ def plot_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFirstCorner(_x, _y)
     gtkimage.setPrompt(_('Click in the drawing area or enter another point'))
     tool.setHandler("button_press", plot_second_button_press_cb)

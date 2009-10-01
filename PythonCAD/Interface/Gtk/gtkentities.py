@@ -82,10 +82,9 @@ def point_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pc is not None:
-        tool.setPoint(_pc[0], _pc[1])
-        create_entity(gtkimage)
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    tool.setPoint(_x, _y )
+    create_entity(gtkimage)
     return True
 
 def point_entry_event_cb(gtkimage, widget, tool):
@@ -165,11 +164,7 @@ def segment_second_button_press_cb(gtkimage, widget, event, tool):
         _x1,_y1,_x,_y=_snap.GetCoords(_x,_y,_tol)
         tool.setFirstPoint(_x1, _y1)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setSecondPoint(_x, _y)
     create_entity(gtkimage)
     _snap.ResetDinamicSnap()    
@@ -181,11 +176,7 @@ def segment_first_button_press_cb(gtkimage, widget, event, tool):
     _snap = _image.GetSnapObject()
     _x, _y = _image.getCurrentPoint()
     _snap.SetFirstClick(_x,_y,_tol)
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)    
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)    
     if(_x==None or _y==None):
         _x = int(event.x)
         _y = int(event.y)
@@ -259,11 +250,7 @@ def rectangle_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setSecondPoint(_x, _y)
     create_entity(gtkimage)
     return True
@@ -272,11 +259,7 @@ def rectangle_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFirstPoint(_x, _y)
     tool.setHandler("button_press", rectangle_second_button_press_cb)
     tool.setHandler("motion_notify", rectangle_motion_notify_cb)
@@ -356,11 +339,7 @@ def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     if(_snap.DinamicSnap()):
         _x,_y=_snap.getProjection(_cx, _cy,_x, _y,_tol)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _radius = hypot((_cx - _x), (_cy - _y))
     tool.setRadius(_radius)
     create_entity(gtkimage)
@@ -370,11 +349,7 @@ def circle_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setCenter(_x, _y)
     tool.setHandler("button_press", circle_radius_button_press_cb)
     tool.setHandler("motion_notify", circle_center_motion_notify_cb)
@@ -426,11 +401,7 @@ def circle_tp_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setSecondPoint(_x, _y)
     create_entity(gtkimage)
     return True
@@ -439,11 +410,7 @@ def circle_tp_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFirstPoint(_x, _y)
     tool.setHandler("button_press", circle_tp_second_button_press_cb)
     tool.setHandler("motion_notify", circle_tp_motion_notify_cb)
@@ -488,12 +455,8 @@ def arc_center_end_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _cx, _cy = tool.getCenter()
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
     _angle = (180.0/pi) * atan2((_y - _cy),(_x - _cx))
     if _angle < 0.0:
         _angle = _angle + 360.0
@@ -541,11 +504,7 @@ def arc_start_angle_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _angle = (180.0/pi) * atan2((_y - _cy), (_x - _cx))
     if _angle < 0.0:
         _angle = _angle + 360.0
@@ -580,11 +539,7 @@ def arc_center_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _radius = hypot((_x - _cx), (_y - _cy))
     tool.setRadius(_radius)
     _angle = (180.0/pi) * atan2((_y - _cy), (_x - _cx))
@@ -642,11 +597,7 @@ def arc_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setCenter(_x, _y)
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
     tool.setHandler("motion_notify", arc_radius_motion_notify_cb)
@@ -1040,11 +991,7 @@ def leader_final_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFinalPoint(_x, _y)
     create_entity(gtkimage)
     gtkimage.setPrompt(_('Click in the drawing area to place the initial point'))
@@ -1054,11 +1001,7 @@ def leader_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setMidPoint(_x, _y)
     tool.clearCurrentPoint()
     tool.setHandler("motion_notify", leader_second_motion_notify_cb)
@@ -1070,11 +1013,7 @@ def leader_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFirstPoint(_x, _y)
     tool.setHandler("motion_notify", leader_first_motion_notify_cb)
     tool.setHandler("button_press", leader_second_button_press_cb)
@@ -1112,11 +1051,7 @@ def polyline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.clearCurrentPoint()
     tool.storePoint(_x, _y)
     _state = event.state
@@ -1157,11 +1092,7 @@ def polygon_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     create_entity(gtkimage)
     return True
@@ -1206,11 +1137,7 @@ def polygon_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setCenter(_x, _y)
     tool.setHandler("motion_notify", polygon_radius_motion_notify_cb)
     tool.setHandler("button_press", polygon_radius_button_press_cb)

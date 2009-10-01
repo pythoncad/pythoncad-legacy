@@ -103,11 +103,7 @@ def first_button_press_cb(gtkimage, widget, event, tool):
                 _objs.append(_obj)
             mirror_objects(gtkimage, tool, _objs)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", second_button_press_cb)

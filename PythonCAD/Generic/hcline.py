@@ -237,7 +237,14 @@ clone()
         if m in HCLine.__messages:
             return True
         return super(HCLine, self).sendsMessage(m)
-
+    def getProjection(self,x,y):
+        """
+            Get the projection of the point in to the line
+        """
+        HCLinePoint=self.getLocation()
+        x1,y1=HCLinePoint.getCoords()
+        x1=x
+        return x1,y1
 #
 #
 #

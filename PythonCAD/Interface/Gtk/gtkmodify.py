@@ -133,11 +133,7 @@ def move_elem_button_press_cb(gtkimage, widget, event, tool):
             _dx, _dy = tool.getDistance()
             move_objects(gtkimage, _objs, tool)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", move_end_button_press_cb)
@@ -171,11 +167,7 @@ def move_horizontal_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), 0.0)
     if _image.hasSelection():
@@ -191,11 +183,7 @@ def move_horizontal_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_horizontal_second_button_press_cb)
@@ -232,11 +220,7 @@ def move_vertical_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _x1, _y1 = tool.getLocation()
     tool.setDistance(0.0, (_y - _y1))
     if _image.hasSelection():
@@ -252,11 +236,7 @@ def move_vertical_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y =_image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_vertical_second_button_press_cb)
@@ -293,11 +273,7 @@ def move_xy_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), (_y - _y1))
     if _image.hasSelection():
@@ -313,11 +289,7 @@ def move_xy_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_xy_second_button_press_cb)
@@ -563,11 +535,7 @@ def stretch_xy_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), (_y - _y1))
     tool.clearLocation()
@@ -580,11 +548,7 @@ def stretch_xy_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", stretch_xy_second_button_press_cb)
@@ -641,11 +605,7 @@ def rotate_elem_button_press_cb(gtkimage, widget, event, tool):
                 _objs.append(_obj)
             rotate_objects(gtkimage, _objs, tool)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", rotate_end_button_press_cb)
@@ -743,11 +703,7 @@ def rotate_point_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setRotationPoint(_x, _y)
     gtkimage.setPrompt(_('Click on a construction line or enter the rotation angle'))
     tool.setHandler("button_press", rotate_angle_first_button_press_cb)
@@ -1019,11 +975,7 @@ def change_attr_first_button_press_cb(gtkimage, widget, event, tool):
                         _objs.append(_obj)
             _change_attribute(gtkimage, _objs, tool)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", change_attr_second_button_press_cb)
@@ -2364,11 +2316,7 @@ def _rdim_dia_mode_first_button_press_cb(gtkimage, widget, event, tool):
                     _objs.append(_obj)
             _change_rdim_dia_mode(gtkimage, _objs, tool)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", _rdim_dia_mode_second_button_press_cb)
@@ -2437,11 +2385,7 @@ def _invert_adim_first_button_press_cb(gtkimage, widget, event, tool):
                     _objs.append(_obj)
             _invert_adim(gtkimage, _objs, tool)
     else:
-        _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-        if _pt is not None:
-            _x, _y = _pt.getCoords()
-        else:
-            _x, _y = _pc
+        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", _invert_adim_second_button_press_cb)

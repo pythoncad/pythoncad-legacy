@@ -778,8 +778,8 @@ The argument 'l' should be a float equal or greater than 0.0.
         _ix, _iy,validate,cursor=_sobj.GetSnap(x,y,_t,None)
         _sobj.StopOneShutSnap()
         if(validate):
-            return None,(_ix, _iy)     
-        return None,(x, y)
+            return (_ix, _iy)     
+        return (x, y)
     def GetSnapObject(self):
         """
             return the snap object 

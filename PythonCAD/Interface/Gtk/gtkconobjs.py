@@ -50,11 +50,7 @@ def hcline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setPoint(_x, _y)
     gtkentities.create_entity(gtkimage)
 
@@ -82,11 +78,7 @@ def vcline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setPoint(_x, _y)
     gtkentities.create_entity(gtkimage)
 
@@ -166,11 +158,7 @@ def acline_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkentities.create_entity(gtkimage)
     return True
@@ -179,11 +167,7 @@ def acline_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    __x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setPoint(_x, _y)
     tool.setHandler("button_press", acline_second_button_press_cb)
     tool.setHandler("entry_event", acline_entry_make_angle)
@@ -247,11 +231,7 @@ def cline_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setSecondPoint(_x, _y)
     gtkentities.create_entity(gtkimage)
     return True
@@ -260,11 +240,7 @@ def cline_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setFirstPoint(_x, _y)
     tool.setHandler("button_press", cline_second_button_press_cb)
     tool.setHandler("entry_event", cline_second_entry_make_pt)
@@ -305,7 +281,6 @@ def ccircle_tpmode_init(gtkimage, tool=None):
 #
 # perpendicular construction line creation
 #
-
 def perp_cline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -471,11 +446,7 @@ def parallel_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     _x1, _y1 = tool.getLocation()
     _offset = math.hypot((_x - _x1), (_y - _y1))
     tool.setOffset(_offset)
@@ -487,11 +458,7 @@ def parallel_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     tool.setHandler("button_press", parallel_second_button_press_cb)
     tool.delHandler("entry_event")
@@ -524,11 +491,7 @@ def ccircle_single_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkentities.create_entity(gtkimage)
     return True
@@ -586,11 +549,7 @@ def two_cline_set_circle_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
-    _pt, _pc = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    else:
-        _x, _y = _pc
+    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     tool.setLocation(_x, _y)
     gtkentities.create_entity(gtkimage)
 
