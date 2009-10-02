@@ -1285,9 +1285,16 @@ def oneShotTangentSnap(menuitem, gtkimage):
     gtkimage.ActivateOneShotSnap('tangent')
 def oneShotPointSnap(menuitem, gtkimage):
     """
-        Activate one shot snap Tangent
+        Activate one shot snap Point
     """
     gtkimage.ActivateOneShotSnap('point')
+
+def oneShutCenterSnap(menuitem, gtkimage):
+    """
+        Activate one shut snap Center
+    """
+    gtkimage.ActivateOneShotSnap('center')
+    
 def dimension_linear_cb(menuitem, gtkimage):
     gtkimage.ActivateSnap()
     _tool = tools.LinearDimensionTool()
@@ -2650,6 +2657,12 @@ def _make_snap_oneshot_menu(actiongroup, gtkimage):
     actiongroup.add_action(_act)
     _item = _act.create_menu_item()
     _menu.append(_item)
+    #
+    _act = gtk.Action('Center', _('_Center'), None, None)
+    _act.connect('activate', oneShutCenterSnap, gtkimage)
+    actiongroup.add_action(_act)
+    _item = _act.create_menu_item()
+    _menu.append(_item)    
     #
     _act = gtk.Action('EndPoint', _('_End Point'), None, None)
     _act.connect('activate', oneShotEndSnap, gtkimage)

@@ -163,7 +163,7 @@ def _inizialize_snap():
         Inizialize Global Snap Erray
     """
     globals.snapOption={'mid':True,'point':True,'end':True,'intersection':True,
-        'origin':False,'perpendicular':False,'tangent':False}
+        'origin':False,'perpendicular':False,'tangent':False,'center':True}
 
 def _initialize_globals():
     #

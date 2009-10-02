@@ -315,6 +315,7 @@ def circle_radius_entry_event_cb(gtkimage, widget, tool):
             raise ValueError, "Invalid radius: %g" % _r
         tool.setRadius(_r)
         create_entity(gtkimage)
+    stopOneShutSnap(gtkimage) 
 
 def circle_point_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
@@ -328,6 +329,9 @@ def circle_point_entry_event_cb(gtkimage, widget, tool):
         tool.setHandler("entry_event", circle_radius_entry_event_cb)
         gtkimage.setPrompt(_('Enter the radius or click in the drawing area'))
         gtkimage.getGC().set_function(gtk.gdk.INVERT)
+        #stop snap object
+        stopOneShutSnap(gtkimage)    
+    
 
 def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
@@ -343,13 +347,21 @@ def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     _radius = hypot((_cx - _x), (_cy - _y))
     tool.setRadius(_radius)
     create_entity(gtkimage)
+    _snap.StopOneShutSnap()    
     return True
 
 def circle_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
+    #set the global snap
+    _snObj=_image.GetSnapObject()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _snObj.SetOneShutSnapArray(_snapArray)
+    #get point 
     _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    #reset the user snap
+    _snObj.StopOneShutSnap()
     tool.setCenter(_x, _y)
     tool.setHandler("button_press", circle_radius_button_press_cb)
     tool.setHandler("motion_notify", circle_center_motion_notify_cb)
@@ -1741,3 +1753,11 @@ def set_units_dialog(gtkimage):
         if _val != _unit:
             _image.setUnits(_val)
     _dialog.destroy()
+
+def stopOneShutSnap(gtkimage):
+    """
+        reset the one shu snap
+    """
+    _image = gtkimage.getImage()
+    _snObj=_image.GetSnapObject()
+    _snObj.StopOneShutSnap()

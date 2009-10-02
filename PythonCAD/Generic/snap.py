@@ -55,6 +55,7 @@ class Snap:
         self.__FirstPoint=None,None
         self.__FirstType=None
         self.__Cursor=None
+        
     def GetSnap(self,x,y,tollerance,windows):
         """
             Get the snap point 
@@ -146,8 +147,17 @@ class Snap:
                     newSnap=Point(_X,_Y)
                     exitValue['point']=newSnap
                     exitValue['responce']=True
-                    exitValue['cursor']=self.__Cursor.Point()
+                    exitValue['cursor']=self.__Cursor.Center()
                     exitValue['name']="Point"        
+        if('center' in sn):
+            if(sn['center']):
+                _X,_Y,found=self.GetCenter(_x,_y,t)
+                if found :
+                    newSnap=Point(_X,_Y)
+                    exitValue['point']=newSnap
+                    exitValue['responce']=True
+                    exitValue['cursor']=self.__Cursor.Point()
+                    exitValue['name']="Center"              
         self.__exitValue=exitValue
         if(exitValue['point'] is not None): retX,RetY=exitValue['point'].getCoords()
         else: retX,RetY=(None,None)
@@ -275,13 +285,34 @@ class Snap:
         """
         return 0.0,0.0,True
 
-    def GetEnt(self,x,y,_t):
+    def GetCenter(self,x,y,_t):
+        """
+            Get The Center point over the mouse
+        """
+        _types = {'ccircle' : True
+        ,'ccircle' : True
+        ,'circle' : True
+        ,'arc' : True}
+        _tl=[self._topLayer]
+        while len(_tl):
+            _layer = _tl.pop()
+            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
+            if len(_hits) > 0:
+                for _obj,_pt in _hits:
+                    _ix,_iy=_obj.getCenter().getCoords()
+                    return _ix,_iy,True
+        return None,None,False
+    
+    def GetEnt(self,x,y,_t,types=None):
         """
             Get The Entity Under the Mouse Pointer
         """
         _objlist = []
         _intlist = []
-        _types = {'point' : False,
+        if type is None:
+            _types=type
+        else:
+            _types = {'point' : False,
                   'segment' : True,
                   'circle' : True,
                   'arc' : True,
@@ -311,7 +342,14 @@ class Snap:
             else:
                 self._oneShutSnap[key]=False
         self.ComputeOneShutSnap()
-
+    def SetOneShutSnapArray(self,activeSnaps):
+        """
+            set the self._oneShutSnap to the activeSnaps
+            used for forcing selection of only some snaps
+        """
+        for key in activeSnaps.keys():
+            self._oneShutSnap[key]=activeSnaps[key]
+        self.ComputeOneShutSnap()
     def ComputeOneShutSnap(self):
         """
             Activate Compute One ShotSnap
@@ -323,6 +361,8 @@ class Snap:
             Stop Computetion One ShutSnap
         """
         self._computeOneShutSnap=False
+        for key in self._oneShutSnap.keys():
+            self._oneShutSnap[key]=False
     def DinamicSnap(self):
         """
             Indicate if snap Compute the point
@@ -701,5 +741,32 @@ class snapCursor:
          "..............."
         ]
         self.UpdatePixmap(xpm)
+        #return self.Cursor()
+        return gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
+    def Center(self):
+        """
+            Define the Circle Center Cursor Point
+        """
+        xpm = [
+         "15 15 2 1",
+         ".      c none",
+         "@      c black",
+         "@............@@",
+         "@@..........@@.",
+         ".@@........@@..",
+         "..@@......@@...",
+         "...@@....@@....",
+         "....@@..@@.....",
+         ".....@@@@......",
+         "......@@.......",
+         ".....@@@@......",
+         "....@@..@@.....",
+         "...@@....@@....",
+         "..@@......@@...",
+         ".@@........@@..",
+         "@@..........@@.",
+         "@............@@"
+        ]
+        mask=self.UpdatePixmap(xpm)
         #return self.Cursor()
         return gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
