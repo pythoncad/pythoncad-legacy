@@ -394,8 +394,7 @@ def circle_tp_motion_notify_cb(gtkimage, widget, event, tool):
         _xmin = _pcx - _pr
         _ymin = _pcy - _pr
         _cw = _ch = _pr * 2
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                               0, 360*64)
+        widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,0, 360*64)
     _ix, _iy = gtkimage.image.getCurrentPoint()
     tool.setSecondPoint(_ix, _iy)
     _cx, _cy = tool.getCenter()
@@ -405,8 +404,7 @@ def circle_tp_motion_notify_cb(gtkimage, widget, event, tool):
     _xmin = _pcx - _pr
     _ymin = _pcy - _pr
     _cw = _ch = _pr * 2
-    widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                           0, 360*64)
+    widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,0, 360*64)
     return True
 
 def circle_tp_second_button_press_cb(gtkimage, widget, event, tool):

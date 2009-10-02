@@ -33,6 +33,7 @@ from PythonCAD.Generic.point    import Point
 from PythonCAD.Generic.segment  import Segment
 from PythonCAD.Generic.circle   import Circle
 from PythonCAD.Generic.ccircle  import CCircle
+from PythonCAD.Generic.arc      import Arc
 from PythonCAD.Generic.cline    import CLine
 from PythonCAD.Generic.hcline   import HCLine
 from PythonCAD.Generic.vcline   import VCLine
@@ -418,7 +419,7 @@ class Snap:
                     x1=firstObj.getP1().x 
                     y1=firstObj.getP1().y
                 return x,y,_x,_y 
-            if(isinstance(self.__FirstEnt,Circle)):
+            if(isinstance(self.__FirstEnt,(Circle,Arc,CCircle))):
                 if(self.__FirstType=="Tangent"): #Firts snap is a tangent
                     obj=self.__FirstEnt
                     x,y=self.__FirstPoint
@@ -433,20 +434,20 @@ class Snap:
             obj=self.GetEnt(_x,_y,_t)       #Evaluate the sencond
             x,y=self.__FirstPoint
             x1,y1=_x,_y 
-            if(obj is not None):
-                if(isinstance(obj,Segment)):
+            if obj is not None:
+                if isinstance(obj,Segment):
                     if(self.__exitValue['name']=="Perpendicular"):
                         pjPoint=obj.GetLineProjection(x,y)
                         x1,y1=pjPoint
-                if(isinstance(obj,(CLine,ACLine,HCLine,VCLine))):
-                    if(self.__exitValue['name']=="Perpendicular"):
+                if isinstance(obj,(CLine,ACLine,HCLine,VCLine)):
+                    if self.__exitValue['name']=="Perpendicular":
                         pjPoint=Point(obj.getProjection(x,y))
                         x1,y1=pjPoint.getCoords()
-                if(isinstance(obj,Circle)):
+                if isinstance(obj,(Circle,Arc,CCircle)):
                     if(self.__exitValue['name']=="Tangent"):
-                        pjPoint=obj.GetTangentPoint(x1,y1,x,y)
-                        if(pjPoint is not None):
-                            x1,y1=pjPoint.getCoords()            
+                        sx,sy=obj.GetTangentPoint(x1,y1,x,y)
+                        if sx is not None:
+                            x1,y1=sx,sy
             return x,y,x1,y1
         raise "No solution found in GetCoords"
 
@@ -456,17 +457,17 @@ class Snap:
             under mauseX,mauseY
         """
         obj=self.GetEnt(mauseX,mauseY,t)
-        if(obj is not None):
-            if(isinstance(obj,Segment)):
-                if(self.__exitValue['name']=="Tangent"):
+        if obj is not None:
+            if isinstance(obj,Segment):
+                if self.__exitValue['name']=="Tangent":
                     pjPoint=obj.GetLineProjection(fromX,fromY)
                     x1,y1=pjPoint  
                     return x1,y1
-            if(isinstance(obj,(CLine,ACLine,HCLine,VCLine))):
-                if(self.__exitValue['name']=="Tangent"):
+            if isinstance(obj,(CLine,ACLine,HCLine,VCLine)):
+                if self.__exitValue['name']=="Tangent":
                     x1,y1=obj.getProjection(fromX,fromY)
                     return x1,y1
-            if(isinstance(obj,Circle)):
+            if isinstance(obj,(Circle,Arc,CCircle)):
                 if(self.__exitValue['name']=="Tangent"):
                     return obj.GetRadiusPointFromExt(fromX,fromY)
         return mauseX,mauseY

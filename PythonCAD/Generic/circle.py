@@ -278,9 +278,7 @@ area()
             return None,None
         originPoint=point.Point(0.0,0.0)        
         tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
-        print("Radius R: %s Module %s"%(self.__radius,tanMod))
         tgAngle=math.asin(self.__radius/twoPointDistance)
-        print("ang: %s"%str(tgAngle))
         #Compute the x versor
         xPoint=point.Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
@@ -289,7 +287,6 @@ area()
         cx,cy=self.__center.getCoords()        
         if(outy>cy): #stupid situation 
             rightAngle=-rightAngle
-        print("Right Angle: %s"%str(rightAngle))
         posAngle=rightAngle+tgAngle
         negAngle=rightAngle-tgAngle
         #Compute the Positive Tangent
@@ -309,7 +306,7 @@ area()
         tangVectorPoint=ver.Point()
         negPoint=point.Point(tangVectorPoint+(outx,outy))
         if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
-            return posPoint
+            return posPoint.getCoords()     
         else:
             return negPoint.getCoords()        
     def GetRadiusPointFromExt(self,x,y):

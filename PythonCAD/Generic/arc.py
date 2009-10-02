@@ -33,6 +33,7 @@ from PythonCAD.Generic import color
 from PythonCAD.Generic import point
 from PythonCAD.Generic import tolerance
 from PythonCAD.Generic import quadtree
+from PythonCAD.Generic.pyGeoLib import Vector
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
@@ -435,7 +436,71 @@ the actual Point is returned. Otherwise, this function returns None.
                 _yoff = _r * math.sin(_ra)
                 return (_cx + _xoff), (_cy + _yoff)
         return None
-
+    
+    def GetTangentPoint(self,x,y,outx,outy):
+        """
+            Get the tangent from an axternal point
+            args:
+                x,y is a point near the circle
+                xout,yout is a point far from the circle
+            return:
+                a tuple(x,y,x1,xy) that define the tangent line
+        """
+        firstPoint=point.Point(x,y)
+        fromPoint=point.Point(outx,outy)
+        twoPointDistance=self.__center.Dist(fromPoint)
+        if(twoPointDistance<self.__radius):
+            return None,None
+        originPoint=point.Point(0.0,0.0)        
+        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
+        tgAngle=math.asin(self.__radius/twoPointDistance)
+        #Compute the x versor
+        xPoint=point.Point(1.0,0.0)
+        xVector=Vector(originPoint,xPoint)
+        twoPointVector=Vector(fromPoint,self.__center)
+        rightAngle=twoPointVector.Ang(xVector)                
+        cx,cy=self.__center.getCoords()        
+        if(outy>cy): #stupid situation 
+            rightAngle=-rightAngle
+        posAngle=rightAngle+tgAngle
+        negAngle=rightAngle-tgAngle
+        #Compute the Positive Tangent
+        xCord=math.cos(posAngle)
+        yCord=math.sin(posAngle)
+        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
+        ver=Vector(originPoint,dirPoint)
+        ver.Mult(tanMod)
+        tangVectorPoint=ver.Point()
+        posPoint=point.Point(tangVectorPoint+(outx,outy))
+        #Compute the Negative Tangent
+        xCord=math.cos(negAngle)
+        yCord=math.sin(negAngle)
+        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
+        ver=Vector(originPoint,dirPoint)
+        ver.Mult(tanMod)
+        tangVectorPoint=ver.Point()
+        negPoint=point.Point(tangVectorPoint+(outx,outy))
+        if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
+            return posPoint.getCoords()     
+        else:
+            return negPoint.getCoords()    
+    def GetRadiusPointFromExt(self,x,y):
+        """
+            get The intersecrion point from the line(x,y,cx,cy) and the circle
+        """
+        _cx, _cy = self.__center.getCoords()
+        _r = self.__radius
+        centerPoint=point.Point(_cx,_cy)
+        outPoint=point.Point(x,y)
+        vector=Vector(outPoint,centerPoint)
+        vNorm=vector.Norm()
+        newNorm=abs(vNorm-_r)
+        magVector=vector.Mag()
+        magVector.Mult(newNorm)
+        newPoint=magVector.Point()
+        intPoint=point.Point(outPoint+newPoint)
+        return intPoint.getCoords()     
+    
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
         """Return whether or not an Arc exists within a region.
 
