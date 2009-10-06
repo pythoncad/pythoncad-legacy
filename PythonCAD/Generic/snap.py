@@ -423,9 +423,8 @@ class Snap:
                 if(self.__FirstType=="Tangent"): #Firts snap is a tangent
                     obj=self.__FirstEnt
                     x,y=self.__FirstPoint
-                    pjPoint=obj.GetTangentPoint(x,y,_x,_y)
-                    if(pjPoint is not None):
-                        x1,y1=pjPoint.getCoords()         
+                    x1,y1=obj.GetTangentPoint(x,y,_x,_y)
+                    if(x1,y1 is not None,None):       
                         return _x,_y,x1,y1
             else:
                 msg="is Not a snap Known Entitis" + str(type(self.__FirstEnt))
