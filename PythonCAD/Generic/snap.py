@@ -56,6 +56,8 @@ class Snap:
         self.__FirstPoint=None,None
         self.__FirstType=None
         self.__Cursor=None
+        self.__tempSnap=None
+        self.__tempOneShutSnap=None
         
     def GetSnap(self,x,y,tollerance,windows):
         """
@@ -351,6 +353,26 @@ class Snap:
         for key in activeSnaps.keys():
             self._oneShutSnap[key]=activeSnaps[key]
         self.ComputeOneShutSnap()
+    def temporaryDisableSnap(self,snapArray):
+        """
+            temporaty disable Snap
+        """
+        # Memorize the default User Snap
+        self.__tempSnap=self._sn.copy()
+        self.__tempOneShutSnap=self._oneShutSnap.copy()
+        # Apply Temporary array
+        for key in snapArray.keys():
+            self._sn[key]=snapArray[key]
+            self._oneShutSnap[key]=snapArray[key]
+
+    def resetSystemSnap(self):
+        """
+            reset The default snap
+        """
+        if self.__tempSnap is not None:
+            self._sn=self.__tempSnap.copy()
+        if self.__tempOneShutSnap is not None:  
+            self._oneShutSnap=self.__tempOneShutSnap.copy()
     def ComputeOneShutSnap(self):
         """
             Activate Compute One ShotSnap

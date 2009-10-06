@@ -2873,7 +2873,7 @@ def fill_menubar(mb, gtkimage):
     _item = gtk.MenuItem()
     _act.connect_proxy(_item)
     _act.connect('activate', _snap_menu_init, gtkimage)
-    _menu = _make_snap_menu(_group, gtkimage)
+    _menu = _make_snap_oneshot_menu(_group, gtkimage)
     _item.set_submenu(_menu)
     mb.append(_item)
     # Dimensioning

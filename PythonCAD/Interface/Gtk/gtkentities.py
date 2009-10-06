@@ -296,6 +296,10 @@ def circle_center_motion_notify_cb(gtkimage, widget, event, tool):
                                0, 360*64)
     _ix, _iy = gtkimage.image.getCurrentPoint()
     _radius = hypot((_cx - _ix),(_cy - _iy))
+    
+    if _radius<0.0:
+        print "Debug: R: "+ str(_radius)
+        _radius=0.1 # Convention if radius is less the 0 i assume 0.1
     tool.setRadius(_radius)
     _pr = int(_radius/_upp)
     _xmin = _pcx - _pr
@@ -357,10 +361,11 @@ def circle_center_button_press_cb(gtkimage, widget, event, tool):
     #set the global snap
     _snObj=_image.GetSnapObject()
     _snapArray={'perpendicular':False,'tangent':False}
-    _snObj.SetOneShutSnapArray(_snapArray)
+    _snObj.temporaryDisableSnap(_snapArray)
     #get point 
     _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
     #reset the user snap
+    _snObj.resetSystemSnap()
     _snObj.StopOneShutSnap()
     tool.setCenter(_x, _y)
     tool.setHandler("button_press", circle_radius_button_press_cb)
