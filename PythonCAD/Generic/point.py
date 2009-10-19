@@ -292,8 +292,12 @@ Otherwise, the function returns False.
            Get The Distance From 2 Points
         """
         if not isinstance(obj, Point):
-             raise TypeError,"Invalid Argument point: Point Required"   
-        x,y=obj.getCoords()
+            if isinstance(x, tuple):            
+                _x, _y = util.tuple_to_two_floats(obj)
+            else:
+                raise TypeError,"Invalid Argument point: Point or Tuple Required"   
+        else:
+            x,y=obj.getCoords()
         xDist=x-self.__x
         yDist=y-self.__y
         return math.sqrt(pow(xDist,2)+pow(yDist,2)) 

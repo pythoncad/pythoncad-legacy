@@ -334,49 +334,47 @@ This method returns a tuple of three floats: (a, b, c)
             retY=_y2+_deltay
         return retX,retY
 #--
-    def getProjection(self, x, y):
-        """Find the projection point of some coordinates on the Segment.
+    #def getProjection(self, x, y):
+     #   """Find the projection point of some coordinates on the Segment.
 
-getProjection(x, y)
+#getProjection(x, y)
 
-Arguments 'x' and 'y' should be float values.
-        """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()
-        _sqlen = pow((_x2 - _x1), 2) +  pow((_y2 - _y1), 2)
-        if _sqlen < 1e-10: # coincident points
-            return None
-        _rn = ((_x - _x1) * (_x2 - _x1)) + ((_y - _y1) * (_y2 - _y1))
-        _r = _rn/_sqlen
-        if _r < 0.0 or _r > 1.0:
-            return None
-        _px = _x1 + _r * (_x2 - _x1)
-        _py = _y1 + _r * (_y2 - _y1)
-        return _px, _py
+#Arguments 'x' and 'y' should be float values.
+ #       """
+  #      _x = util.get_float(x)
+  #      _y = util.get_float(y)
+  #      _x1, _y1 = self.__p1.getCoords()
+  #      _x2, _y2 = self.__p2.getCoords()
+  #      _sqlen = pow((_x2 - _x1), 2) +  pow((_y2 - _y1), 2)
+  #      if _sqlen < 1e-10: # coincident points
+   #         return None
+   #     _rn = ((_x - _x1) * (_x2 - _x1)) + ((_y - _y1) * (_y2 - _y1))
+   #     _r = _rn/_sqlen
+   #     if _r < 0.0 or _r > 1.0:
+   #         return None
+   #     _px = _x1 + _r * (_x2 - _x1)
+   #     _py = _y1 + _r * (_y2 - _y1)
+   #     return _px, _py
     
-    def GetLineProjection(self,x,y):
+    def getProjection(self,x,y):
         """
             get Projection of the point x,y in the line 
         """
         _x = util.get_float(x)
-        _y = util.get_float(y)
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()        
-        p1=point.Point(_x1, _y1)
-        p2=point.Point(_x2, _y2)
+        _y = util.get_float(y)       
+        p1=self.__p1
+        p2=self.__p2
         p3=point.Point(_x, _y)
         v=pyGeoLib.Vector(p1,p2)
         v1=pyGeoLib.Vector(p1,p3)
         xp,yp=v1.Point().getCoords()
         pjPoint=v.Map(xp,yp).Point()
-        #print("point",str(_x),str(_y))
-        #print("segment" ,str(_x1),str( _y1),str(_x2),str( _y2))
-        x,y =pjPoint.getCoords()
+        print("Debug: point To Project :",str(_x),str(_y))
+        x,y = pjPoint.getCoords()
+        _x1,_y1=p1.getCoords()
         x=x+_x1
         y=y+_y1
-        #print("prjPoint",str(x),str(y))
+        print("Debug : prjPoint",str(x),str(y))
         return x,y
         
     def mapCoords(self, x, y, tol=tolerance.TOL):

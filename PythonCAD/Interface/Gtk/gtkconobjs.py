@@ -41,6 +41,7 @@ from PythonCAD.Generic.color import Color
 from PythonCAD.Generic import util
 
 from PythonCAD.Interface.Gtk import gtkentities
+from PythonCAD.Generic import snap
 
 #
 # horizontal construction lines
@@ -49,9 +50,8 @@ from PythonCAD.Interface.Gtk import gtkentities
 def hcline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setPoint,_tol,_snapArray)
     gtkentities.create_entity(gtkimage)
 
 def hcline_entry_event_cb(gtkimage, widget, tool):
@@ -77,9 +77,8 @@ def hcline_mode_init(gtkimage, tool=None):
 def vcline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setPoint,_tol,_snapArray)
     gtkentities.create_entity(gtkimage)
 
 def vcline_entry_event_cb(gtkimage, widget, tool):
@@ -116,7 +115,7 @@ def make_tuple(text, gdict):
 
 def acline_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _ax, _ay = tool.getPoint()
+    _ax, _ay = tool.getPoint().point.getCoords()
     _pax, _pay = gtkimage.coordToPixTransform(_ax, _ay)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -125,8 +124,8 @@ def acline_motion_notify_cb(gtkimage, widget, event, tool):
     if _cp is not None:
         _xc, _yc = _cp
         _segs.append((_pax, _pay, _xc, _yc))
-    _xl, _yl = gtkimage.image.getCurrentPoint()
-    tool.setLocation(_xl, _yl)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setDinamicSnap(gtkimage,tool.setLocation,_snapArray)
     tool.setCurrentPoint(_x, _y)
     _segs.append((_pax, _pay, _x, _y))
     widget.window.draw_segments(_gc, _segs)
@@ -157,18 +156,16 @@ def acline_entry_make_pt(gtkimage, widget, tool):
 def acline_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setLocation(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setLocation,_tol,_snapArray)
     gtkentities.create_entity(gtkimage)
     return True
 
 def acline_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    __x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setPoint,_tol,_snapArray)
     tool.setHandler("button_press", acline_second_button_press_cb)
     tool.setHandler("entry_event", acline_entry_make_angle)
     tool.setHandler("motion_notify", acline_motion_notify_cb)
@@ -189,7 +186,7 @@ def acline_mode_init(gtkimage, tool=None):
 
 def cline_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _x1, _y1 = tool.getFirstPoint()
+    _x1, _y1 = tool.getFirstPoint().point.getCoords()
     _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -198,8 +195,8 @@ def cline_motion_notify_cb(gtkimage, widget, event, tool):
     if _cp is not None:
         _xc, _yc = _cp
         _segs.append((_px1, _py1, _xc, _yc))
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    tool.setSecondPoint(_ix, _iy)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setDinamicSnap(gtkimage,tool.setSecondPoint,_snapArray)
     tool.setCurrentPoint(_x, _y)
     _segs.append((_px1, _py1, _x, _y))
     widget.window.draw_segments(_gc, _segs)
@@ -230,18 +227,16 @@ def cline_first_entry_make_pt(gtkimage, widget, tool):
 def cline_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setSecondPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setSecondPoint,_tol,_snapArray)
     gtkentities.create_entity(gtkimage)
     return True
 
 def cline_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setFirstPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setFirstPoint,_tol,_snapArray)
     tool.setHandler("button_press", cline_second_button_press_cb)
     tool.setHandler("entry_event", cline_second_entry_make_pt)
     tool.setHandler("motion_notify", cline_motion_notify_cb)

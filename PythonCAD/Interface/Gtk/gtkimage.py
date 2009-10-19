@@ -392,21 +392,7 @@ close()
             debug_print("KEY_RELEASE")
         else:
             pass
-        return False
-    #------------------------------------------------------------------
-    def ActivateSnap(self):
-        """
-            Activate the snap functionality
-        """
-        self._activateSnap=True
-    def ActivateOneShotSnap(self,snapName):
-        """
-            Activate one shut Snap
-        """
-        _sn=self.__image.GetSnapObject()
-        _sn.SetOneShutSnap(snapName)
-        self.ActivateSnap()
-        
+        return False       
     #------------------------------------------------------------------
     def __entryEvent(self, widget, data=None):
         #
@@ -1230,7 +1216,7 @@ reset()
     def __drawObject(self, obj, col=None):
         # print "__drawObject()"
         _col = col
-	if self.__xmin is None:
+        if self.__xmin is None:
             return
         _xmin, _ymin, _xmax, _ymax = self.getView()
         if obj.inRegion(_xmin, _ymin, _xmax, _ymax):
@@ -1244,7 +1230,7 @@ reset()
     def __eraseObject(self, obj):
         # print "__eraseObject()"
         _xmin, _ymin, _xmax, _ymax = self.getView()
-	if self.__xmin is None:
+        if self.__xmin is None:
             return
         if obj.inRegion(_xmin, _ymin, _xmax, _ymax):
             obj.erase(self)
@@ -1438,18 +1424,16 @@ isPan()
 """
         return self.StopMove
     
-    def SetCursor(self,drwArea,snapActive,cursor):
+    def setCursor(self,drwArea,snObject):
         """
             active Snap cursor shape
         """
         _win=drwArea.get_parent_window()
-        if snapActive :
-            if(cursor==None): _snapCursor=gtk.gdk.Cursor(gtk.gdk.TARGET)
-            else: _snapCursor=cursor
-            _win.set_cursor(_snapCursor)
+        if snObject is None or snObject.entity is None: 
+            _snapCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)            
         else:
-            _arrowCursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)
-            _win.set_cursor(_arrowCursor)
+            _snapCursor=snObject.cursor
+        _win.set_cursor(_snapCursor)
 
     def __ActiveSnapEvent(self,drwArea,event):
         """
@@ -1457,13 +1441,16 @@ isPan()
         """
         cursor=None
         if(self._activateSnap):
-            _x, _y = self.__image.getCurrentPoint()
-            _sn=self.__image.GetSnapObject()
-            _dummyX,_dummyY,_responce,cursor = _sn.GetSnap(_x, _y,self.__tolerance,drwArea.get_parent_window())
+            _sobj=self.__image.snapProvider.getSnap(self.__tolerance,globals.snapOption) 
+            self.setCursor(drwArea,_sobj)
         else:
-            _responce=False
-        self.SetCursor(drwArea,_responce,cursor)
+            self.setCursor(drwArea,None)
         
+    def activateSnap(self):
+        """
+            Activate the snap functionality
+        """
+        self._activateSnap=True
     #-- Matteo Boscolo
 #------------------------------------------------------------------
 def debug_print(string):

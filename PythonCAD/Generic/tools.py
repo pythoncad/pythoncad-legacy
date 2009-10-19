@@ -47,7 +47,7 @@ from PythonCAD.Generic import tangent
 from PythonCAD.Generic import intersections 
 from PythonCAD.Generic.segjoint import Chamfer, Fillet
 from PythonCAD.Generic import pyGeoLib 
-
+from PythonCAD.Generic.snap import SnapPointStr
 class Tool(object):
     """A generic tool object.
 
@@ -366,37 +366,29 @@ class DeselectTool(Tool):
     pass
 
 class PointTool(Tool):
-    """A specialized tool for drawing Point objects.
-
-The PointTool class is derived from the Tool class, so it
-shares the methods and attributes of that class. The PointTool
-class has the following additional methods:
-
-{get/set}Point(): Get/Set a x/y coordinate in the tool.
+    """
+        A specialized tool for drawing Point objects.
+        The PointTool class is derived from the Tool class, so it
+        shares the methods and attributes of that class. The PointTool
+        class has the following additional methods:
     """
     def __init__(self):
         super(PointTool, self).__init__()
         self.__point = None
 
-    def setPoint(self, x, y):
-        """Store an x/y coordinate in the tool
-
-setPoint(x, y)
-
-Arguments 'x' and 'y' should be floats.
+    def setPoint(self, p):
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__point = (_x, _y)
+            Store a Point in the tool
+            Argument: p should be Point
+        """
+        self.__point = p
 
     def getPoint(self):
-        """Get the stored x/y coordinates from the tool.
-
-getPoint()
-
-This method returns a tuple containing the values passed in
-with the setPoint() method, or None if that method has not
-been invoked.
+        """
+            Get the stored Point from the tool
+            This method returns a Poiny containing the values passed in
+            with the setPoint() method, or None if that method has not
+            been invoked.
         """
         return self.__point
 
@@ -419,9 +411,7 @@ This method overrides the Tool::create() method.
         """
         if self.__point is not None:
             _active_layer = image.getActiveLayer()
-            _x, _y = self.__point
-            _p = Point(_x, _y)
-            _active_layer.addObject(_p)
+            _active_layer.addObject(self.__point.point)
             self.reset()
 
 class SegmentTool(Tool):
@@ -439,16 +429,14 @@ SegmentTool class has the following additional methods:
         self.__first_point = None
         self.__second_point = None
 
-    def setFirstPoint(self, x, y):
+    def setFirstPoint(self, snapPoint):
         """Store the first point of the Segment.
 
 setFirstPoint(x, y)
 
 Arguments 'x' and 'y' should be floats.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__first_point = (_x, _y)
+        self.__first_point = snapPoint
 
     def getFirstPoint(self):
         """Get the first point of the Segment.
@@ -461,7 +449,7 @@ has not been invoked.
         """
         return self.__first_point
 
-    def setSecondPoint(self, x, y):
+    def setSecondPoint(self, snapPoint):
         """Store the second point of the Segment.
 
 setSecondPoint(x, y)
@@ -471,11 +459,8 @@ tool has not had the first point set with setFirstPoint(),
 a ValueError exception is raised.
         """
         if self.__first_point is None:
-            raise ValueError, "SegmentTool first point is not set."
-        print("x: %s y: %s"%(str(x),str(y)))
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__second_point = (_x, _y)
+            raise ValueError, "SegmentTool first snapPoint is not set."
+        self.__second_point = snapPoint
 
     def getSecondPoint(self):
         """Get the second point of the Segment.
@@ -500,17 +485,14 @@ This method extends Tool::reset().
         self.__second_point = None
 
     def create(self, image):
-        """Create a new Segment and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new Segment and add it to the image.
+            This method overrides the Tool::create() method.    
         """
         if (self.__first_point is not None and
             self.__second_point is not None):
             _active_layer = image.getActiveLayer()
-            _x1, _y1 = self.__first_point
-            _x2, _y2 = self.__second_point
+            _x1, _y1 ,_x2, _y2 = getSegmentSnap(self.__first_point ,self.__second_point)
             _pts = _active_layer.find('point', _x1, _y1)
             if len(_pts) == 0:
                 _p1 = Point(_x1, _y1)
@@ -524,6 +506,7 @@ This method overrides the Tool::create() method.
             else:
                 _p2 = _pts[0]
             _s = image.getOption('LINE_STYLE')
+            print "Debug: segment point1: %s point2 %s"%(str(_p1.getCoords()),str(_p2.getCoords()))
             _seg = Segment(_p1, _p2, _s)
             _l = image.getOption('LINE_TYPE')
             if _l != _s.getLinetype():
@@ -536,7 +519,8 @@ This method overrides the Tool::create() method.
                 _seg.setThickness(_t)
             _active_layer.addObject(_seg)
             self.reset()
-
+        
+        
 class RectangleTool(SegmentTool):
     """A Specialized tool for drawing rectangles.
 
@@ -555,11 +539,11 @@ create(image)
 
 This method overrides the SegmentTool::create() method.
         """
-        _p1 = self.getFirstPoint()
-        _p2 = self.getSecondPoint()
+        _p1 = self.getFirstPoint().point
+        _p2 = self.getSecondPoint().point
         if _p1 is not None and _p2 is not None:
-            _x1, _y1 = _p1
-            _x2, _y2 = _p2
+            _x1, _y1 = _p1.getCoords()
+            _x2, _y2 = _p2.getCoords()
             _active_layer = image.getActiveLayer()
             _pts = _active_layer.find('point', _x1, _y1)
             if len(_pts) == 0:
@@ -606,42 +590,48 @@ This method overrides the SegmentTool::create() method.
             self.reset()
 
 class CircleTool(Tool):
-    """A Specialized tool for drawing Circle objects.
-
-The CircleTool is derived from the Tool class, so it shares
-all the methods and attributes of that class. The CircleTool
-class has the following addtional methods:
-
-{set/get}Center(): Set/Get the center point location of the circle.
-{set/get}Radius(): Set/Get the radius of the circle.
+    """
+        A Specialized tool for drawing Circle objects.
+        The CircleTool is derived from the Tool class, so it shares
+        all the methods and attributes of that class. The CircleTool
+        class has the following addtional methods:
     """
     def __init__(self):
         super(CircleTool, self).__init__()
         self.__center = None
         self.__radius = None
-
-    def setCenter(self, x, y):
-        """Set the center point location of the circle.
-
-setCenter(x, y)
-
-The arguments 'x' and 'y' give the location for the center
-of the circle.
+        self.__radiusPoint=None
+    def setRadiusPoint(self,snapPoint):
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__center = (_x, _y)
+            set The radius point Cliched
+        """
+        if not isinstance(snapPoint,SnapPointStr):
+            raise TypeError, "Invalid SnapPointStr type : " + `type(snapPoint)`
+        self.__radiusPoint=snapPoint
+    def getRadiusPoint(self):
+        """
+            Return the radiuspoint clicked by the user
+        """
+        return self.__radiusPoint
+    radiusPoint=property(getRadiusPoint,setRadiusPoint,None,"Radius point cliched by the user")
+    def setCenter(self, snapPoint):
+        """
+            Set the center point location of the circle.
+            The arguments snapPoint give the location for the center
+                of the circle.
+        """
+        if not isinstance(snapPoint,SnapPointStr):
+            raise TypeError, "Invalid SnapPointStr type : " + `type(snapPoint)`
+        self.__center = snapPoint
 
     def getCenter(self):
-        """Get the center point location of the circle.
-
-getCenter()
-
-This method returns the coordinates stored with the setCenter()
-method, or None if that method has not been called.
+        """
+            Get the center point location of the circle.
+            This method returns the SnapPointStr stored with the setCenter()
+            method, or None if that method has not been called.
         """
         return self.__center
-
+    center =property(getCenter,setCenter,None,"center point")
     def setRadius(self, radius):
         """Set the radius of the circle.
 
@@ -665,27 +655,24 @@ call, or None if that method has not been invoked.
         return self.__radius
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(CircleTool, self).reset()
         self.__center = None
         self.__radius = None
+        self.__radiusPoint=None
 
     def create(self, image):
-        """Create a new Circle and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new Circle and add it to the image.
+            This method overrides the Tool::create() method.
         """
         if (self.__center is not None and
             self.__radius is not None):
             _active_layer = image.getActiveLayer()
-            _x, _y = self.__center
+            _x, _y = self.__center.point.getCoords()
             _r = self.__radius
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
@@ -723,16 +710,12 @@ methods:
         self.__first_point = None
         self.__second_point = None
 
-    def setFirstPoint(self, x, y):
-        """Set the first point used to define the location of the circle.
-
-setFirstPoint(x, y)
-
-Arguments 'x' and 'y' give the location of a point.
+    def setFirstPoint(self, p):
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__first_point = (_x, _y)
+            Set the first point used to define the location of the circle.
+            Arguments p give the location of a point.
+        """
+        self.__first_point = p
 
     def getFirstPoint(self):
         """Get the first point used to define the location of the circle.
@@ -745,7 +728,7 @@ not yet been used.
         """
         return self.__first_point
 
-    def setSecondPoint(self, x, y):
+    def setSecondPoint(self, p):
         """Set the second point used to define the location of the circle.
 
 setSecondPoint(x, y)
@@ -754,15 +737,15 @@ Arguments 'x' and 'y' give the location of a point. Invoking
 this method before the setFirstPoint() method will raise a
 ValueError.
         """
+        _x,_y=p.point.getCoords()
         if self.__first_point is None:
             raise ValueError, "First point is not set"
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        _x1, _y1 = self.__first_point
+        _x1, _y1 = self.__first_point.point.getCoords()
         _xc = (_x + _x1)/2.0
         _yc = (_y + _y1)/2.0
         _radius = math.hypot((_x - _x1), (_y - _y1))/2.0
-        self.setCenter(_xc, _yc)
+        _strPoint=SnapPointStr("Freepoint",Point(_xc,_yc),None)
+        self.setCenter(_strPoint)
         self.setRadius(_radius)
         self.__second_point = (_x, _y)
 
@@ -842,7 +825,7 @@ This method returns the value defined in the previous setEndAngle()
 call, or None if that method has not been called.
         """
         return self.__end_angle
-
+        
     def reset(self):
         """Restore the tool to its initial state.
 
@@ -870,7 +853,7 @@ This method overrides the CircleTool::create() method.
             _sa is not None and
             _ea is not None):
             _active_layer = image.getActiveLayer()
-            _x, _y = _center
+            _x, _y = _center.point.getCoords()
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
                 _cp = Point(_x, _y)
@@ -1062,7 +1045,7 @@ class FilletTwoLineTool(FilletTool):
         """
         _p1 , _p2 = objSegment.getEndpoints()            
         _x,_y = objPoint.getCoords()
-        opjPoint=Point(objSegment.GetLineProjection(_x,_y))
+        opjPoint=Point(objSegment.getProjection(_x,_y))
         pickIntVect=pyGeoLib.Vector(objInterPoint,opjPoint).Mag()            
         p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).Mag()            
         if(pickIntVect==p1IntVect):
@@ -1083,15 +1066,10 @@ class FilletTwoLineTool(FilletTool):
             image.delObject(_p2)
     
 class LeaderTool(Tool):
-    """A specialized tool for drawing Leader objects.
-
-The LeaderTool class is derived from the Tool class, so it
-shares the methods and attributes of that class. The LeaderTool
-class has the following addtional methods:
-
-{set/get}FirstPoint(): Set/Get the first point of the Leader.
-{set/get}MidPoint(): Set/Get the second point of the Leader.
-{set/get}FinalPoint(): Set/Get the final point of the Leader.
+    """
+        A specialized tool for drawing Leader objects.
+        The LeaderTool class is derived from the Tool class, so it
+        shares the methods and attributes of that class. 
     """
     def __init__(self):
         super(LeaderTool, self).__init__()
@@ -1099,16 +1077,15 @@ class has the following addtional methods:
         self.__mid_point = None
         self.__end_point = None
 
-    def setFirstPoint(self, x, y):
+    def setFirstPoint(self, p):
         """Set the first point used to define the Leader.
 
 setFirstPoint(x, y)
 
 Arguments 'x' and 'y' give the location of a point.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__start_point = (_x, _y)
+
+        self.__start_point = p
 
     def getFirstPoint(self):
         """Get the first point used to define the Leader.
@@ -1121,7 +1098,7 @@ not yet been used.
         """
         return self.__start_point
 
-    def setMidPoint(self, x, y):
+    def setMidPoint(self, p):
         """Set the second point used to define the Leader.
 
 setMidPoint(x, y)
@@ -1131,9 +1108,7 @@ first point has not been set this method raises a ValueError.
         """
         if self.__start_point is None:
             raise ValueError, "First point not set in LeaderTool."
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__mid_point = (_x, _y)
+        self.__mid_point =p
 
     def getMidPoint(self):
         """Get the second point used to define the Leader.
@@ -1146,22 +1121,17 @@ not yet been used.
         """
         return self.__mid_point
 
-    def setFinalPoint(self, x, y):
+    def setFinalPoint(self,p):
         """Set the first point used to final point of the Leader.
-
-setFinalPoint(x, y)
-
-Arguments 'x' and 'y' give the location of a point. This method
-raises an error if the first point or second point have not been
-set.
+            Arguments 'x' and 'y' give the location of a point. This method
+            raises an error if the first point or second point have not been
+            set.
         """
         if self.__start_point is None:
             raise ValueError, "First point not set in LeaderTool."
         if self.__mid_point is None:
             raise ValueError, "Second point not set in LeaderTool."
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__end_point = (_x, _y)
+        self.__end_point = p
 
     def getFinalPoint(self):
         """Get the third point used to define the Leader.
@@ -1197,9 +1167,9 @@ This method overrides the Tool::create() method.
             self.__mid_point is not None and
             self.__end_point is not None):
             _active_layer = image.getActiveLayer()
-            _x1, _y1 = self.__start_point
-            _x2, _y2 = self.__mid_point
-            _x3, _y3 = self.__end_point
+            _x1, _y1 = self.__start_point.point.getCoords()
+            _x2, _y2 = self.__mid_point.point.getCoords()
+            _x3, _y3 = self.__end_point.point.getCoords()
             _pts = _active_layer.find('point', _x1, _y1)
             if len(_pts) == 0:
                 _p1 = Point(_x1, _y1)
@@ -1234,16 +1204,10 @@ This method overrides the Tool::create() method.
             self.reset()
 
 class PolylineTool(Tool):
-    """A specialized tool for drawing Polyline objects.
-
-The PolylineTool class is derived from the Tool class, so it
-shares all the attributes and methods of that class. The PolylineTool
-class has the following addtional methods:
-
-storePoint(): Store a point used to define the Polyline.
-getPoint(): Retrieve a point used to define the Polyline.
-getLastPoint(): Retrieve the last point used to define the Polyline.
-getPoints(): Get the list of points that define the Polyline.
+    """
+        A specialized tool for drawing Polyline objects.
+        The PolylineTool class is derived from the Tool class, so it
+        shares all the attributes and methods of that class. 
     """
     def __init__(self):
         super(PolylineTool, self).__init__()
@@ -1252,71 +1216,72 @@ getPoints(): Get the list of points that define the Polyline.
     def __len__(self):
         return len(self.__points)
 
-    def storePoint(self, x, y):
-        """Store a point that will define a Polyline.
-
-storePoint(x, y)
-
-The arguments 'x' and 'y' should be float values. There is
-no limit as to how long a Polyline should be, so each invocation
-of this method appends the values to the list of stored points.
+    def storePoint(self,p):
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__points.append((_x, _y))
+            Store a point that will define a Polyline.
+            The arguments 'x' and 'y' should be float values. There is
+            no limit as to how long a Polyline should be, so each invocation
+            of this method appends the values to the list of stored points.
+        """
+        self.__points.append(p)
 
     def getPoint(self, i):
-        """Retrieve a point used to define a Polyline.
-
-getPoint(i)
-
-Argument 'i' represents the index in the list of points that
-defines the polyline. Negative indicies will get points from
-last-to-first. Using an invalid index will raise an error.
-
-This method returns a tuple holding the x/y coordinates.
+        """
+            Retrieve a point used to define a Polyline.
+            Argument 'i' represents the index in the list of points that
+            defines the polyline. Negative indicies will get points from
+            last-to-first. Using an invalid index will raise an error.
+            This method returns a tuple holding the x/y coordinates.
         """
         return self.__points[i]
 
     def getPoints(self):
-        """Get all the points that define the Polyline.
-
-getPoints()
-
-This method returns a list of tuples holding the x/y coordinates
-of all the points that define the Polyline.
+        """
+            Get all the points that define the Polyline.
+            This method returns a list of tuples holding the x/y coordinates
+            of all the points that define the Polyline.
         """
         return self.__points[:]
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(PolylineTool, self).reset()
         del self.__points[:]
 
     def create(self, image):
-        """Create a new Polyline and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new Polyline and add it to the image.
+            This method overrides the Tool::create() method.
         """
         if len(self.__points):
             _pts = []
             _active_layer = image.getActiveLayer()
+            _sp=None
             for _pt in self.__points:
-                _x, _y = _pt
-                _lpts = _active_layer.find('point', _x, _y)
-                if len(_lpts) == 0:
-                    _p = Point(_x, _y)
-                    _active_layer.addObject(_p)
-                    _pts.append(_p)
+                if _sp is None:
+                    _sp=_pt
+                    _x,_y=_pt.point.getCoords()
+                    _lpts = _active_layer.find('point', _x, _y)
+                    if len(_lpts) == 0:
+                        _p = Point(_x, _y)
+                        _active_layer.addObject(_p)
+                        _pts.append(_p)
+                    else:
+                        _pts.append(_lpts[0])
                 else:
-                    _pts.append(_lpts[0])
+                    _x1, _y1 ,_x2, _y2 = getSegmentSnap(_sp,_pt)
+                    _lpts = _active_layer.find('point', _x2, _y2)
+                    if len(_lpts) == 0:
+                        _p = Point(_x2, _y2)
+                        _active_layer.addObject(_p)
+                    else:
+                        _p=_lpts[0]
+                    _pts.append(_p)                    
+                    _pt.point=_p                    
+                    _sp=_pt
             _s = image.getOption('LINE_STYLE')
             _pline = Polyline(_pts, _s)
             _l = image.getOption('LINE_TYPE')
@@ -1332,20 +1297,14 @@ This method overrides the Tool::create() method.
             self.reset()
 
 class PolygonTool(Tool):
-    """A specialized to for creating Polygons from Segments.
-
-The PolygonTool will create an uniformly sized polygon from Segment
-entities. The minimum number of sides is three, creating an equilateral
-triangle. There is no maximum number of sides, though realistically any
-polygon with more than 20 or so sides is unlikely to be drawn. As
-the PolygonTool is derived from the Tool class, it shares all the attributes
-and method of that class. The PolygonTool has the following additional
-methods:
-
-{get/set}SideCount(): Get/Set the number of sides in the polygon.
-{get/set}External() Get/Set if the polygon is drawn inside or outside a circle.
-{get/set}Center(): Get/Set the center location of the polygon.
-getCoords(): Get the coordinates of the polygon corners.
+    """
+        A specialized to for creating Polygons from Segments.
+        The PolygonTool will create an uniformly sized polygon from Segment
+        entities. The minimum number of sides is three, creating an equilateral
+        triangle. There is no maximum number of sides, though realistically any
+        polygon with more than 20 or so sides is unlikely to be drawn. As
+        the PolygonTool is derived from the Tool class, it shares all the attributes
+        and method of that class. 
     """
     def __init__(self):
         super(PolygonTool, self).__init__()
@@ -1357,11 +1316,9 @@ getCoords(): Get the coordinates of the polygon corners.
         self.__ypts = array.array("d")
 
     def setSideCount(self, count):
-        """Set the number of sides of the polygon to create.
-
-setSideCount(count)
-
-Argument "count" should be an integer value greater than 2.
+        """
+            Set the number of sides of the polygon to create.
+            Argument "count" should be an integer value greater than 2.
         """
         _count = count
         if not isinstance(_count, int):
@@ -1375,48 +1332,40 @@ Argument "count" should be an integer value greater than 2.
             self.__ypts.insert(_i, 0.0)
 
     def getSideCount(self):
-        """Get the number of sides of the polygon to be created.
-
-getSideCount()
-
-A ValueError exception is raised if the side count has not been
-set with setSideCount()
+        """
+            Get the number of sides of the polygon to be created.
+            A ValueError exception is raised if the side count has not been
+            set with setSideCount()
         """
         if self.__nsides is None:
             raise ValueError, "No side count defined."
         return self.__nsides
 
     def setExternal(self):
-        """Create the polygon on the outside of a reference circle.
-
-setExternal()
-
-By default the polygon is drawing completely contained within a
-circle. Invoking this method will created the polygon so that all
-sides are outside the circle.
+        """
+            Create the polygon on the outside of a reference circle.
+            By default the polygon is drawing completely contained within a
+            circle. Invoking this method will created the polygon so that all
+            sides are outside the circle.
         """
         self.__external = True
 
     def getExternal(self):
-        """Test if the polygon will be created outside a circle.
-
-getExternal()
-
-If the setExternal() method has been called, this method will
-return True. By default this method will return False.
+        """
+            Test if the polygon will be created outside a circle.
+            If the setExternal() method has been called, this method will
+            return True. By default this method will return False.
         """
         return self.__external
 
-    def setCenter(self, x, y):
+    def setCenter(self, p):
         """Define the center of the polygon.
 
 setCenter(x, y)
 
 Arguments 'x' and 'y' should be float values.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__center = (_x, _y)
+        self.__center = p
 
     def getCenter(self):
         """Retrieve the center of the polygon to be created.
@@ -1444,7 +1393,7 @@ Argument "i" should be an integer value such that:
         _y = self.__ypts[i]
         return _x, _y
 
-    def setLocation(self, x, y):
+    def setLocation(self, p):
         """Set the tool location.
 
 setLocation(x, y)
@@ -1452,7 +1401,8 @@ setLocation(x, y)
 This method extends Tool::setLocation() and calculates the polygon
 points.
         """
-        super(PolygonTool, self).setLocation(x, y)
+        _x,_y=p.point.getCoords()
+        super(PolygonTool, self).setLocation(_x, _y)
         _x, _y = self.getLocation()
         _count = self.__nsides
         _inc = self.__increment
@@ -1460,7 +1410,7 @@ points.
             _offset = _inc/2.0
         else:
             _offset = 0.0
-        _cx, _cy = self.__center
+        _cx, _cy = self.__center.point.getCoords()
         _xsep = _x - _cx
         _ysep = _y - _cy
         _angle = math.atan2(_ysep, _xsep) + _offset
@@ -1556,16 +1506,14 @@ There are no additional methods for this class.
         super(HCLineTool, self).__init__()
 
     def create(self, image):
-        """Create a new HCLine and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
         """
-        _p = self.getPoint()
+            Create a new HCLine and add it to the image.
+            This method overrides the Tool::create() method.
+        """
+        _p = self.getPoint().point
         if _p is not None:
             _active_layer = image.getActiveLayer()
-            _x, _y = _p
+            _x, _y = _p.getCoords()
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
                 _pt = Point(_x, _y)
@@ -1594,10 +1542,10 @@ create(image)
 
 This method overrides the Tool::create() method.
         """
-        _p = self.getPoint()
+        _p = self.getPoint().point
         if _p is not None:
             _active_layer = image.getActiveLayer()
-            _x, _y = _p
+            _x, _y = _p.getCoords()
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
                 _pt = Point(_x, _y)
@@ -1621,19 +1569,20 @@ The ACLineTool class has the following addtional methods:
         super(ACLineTool, self).__init__()
         self.__angle = None
 
-    def setLocation(self, x, y):
+    def setLocation(self, p):
         """Set the location of the Tool.
 
 setLocation(x, y)
 
 This method extends the Tool::setLocation() method.
         """
-        super(ACLineTool, self).setLocation(x, y)
+        _x,_y=p.point.getCoords()
+        super(ACLineTool, self).setLocation(_x, _y)
         _loc = self.getLocation()
         if _loc is None:
             return
         _x, _y = _loc
-        _x1, _y1 = self.getPoint()
+        _x1, _y1 = self.getPoint().point.getCoords()
         if abs(_y - _y1) < 1e-10: # horizontal
             self.__angle = 0.0
         elif abs(_x - _x1) < 1e-10: # vertical
@@ -1678,11 +1627,11 @@ create(image)
 
 This method overrides the Tool::create() method.
         """
-        _p = self.getPoint()
+        _p = self.getPoint().point
         if (_p is not None and
             self.__angle is not None):
             _active_layer = image.getActiveLayer()
-            _x, _y = _p
+            _x, _y = _p.getCoords()
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
                 _pt = Point(_x, _y)
@@ -1711,12 +1660,12 @@ create(image)
 
 This method overrides the Tool::create() method.
         """
-        _p1 = self.getFirstPoint()
-        _p2 = self.getSecondPoint()
+        _p1 = self.getFirstPoint().point
+        _p2 = self.getSecondPoint().point
         if _p1 is not None and _p2 is not None:
             _active_layer = image.getActiveLayer()
-            _x1, _y1 = _p1
-            _x2, _y2 = _p2
+            _x1, _y1 = _p1.getCoords()
+            _x2, _y2 = _p2.getCoords()
             _pts = _active_layer.find('point', _x1, _y1)
             if len(_pts) == 0:
                 _p1 = Point(_x1, _y1)
@@ -1808,109 +1757,79 @@ class TangentCLineTool(Tool):
     pass
 
 class ParallelOffsetTool(Tool):
-    """A specialized tool for creating parallel construction lines.
-
-The ParallelOffsetTool will create a construction line parallel
-to another construction line a fixed distance from the original
-construction line. The type of the new construction line will match
-that of the original.
-
-The ParallelOffsetTool is derived from the Tool class, so it shares
-all the attributes and methods of that class. The ParallelOffsetTool
-has the following addtional methods:
-
-{set/get}Offset(): Set/Get the distance between the construction lines.
-{set/get}ConstructionLine(): Set/Get the original construction line
-{set/get}ReferencePoint(): Set/Get the point to define where the new
-                           construction line will go.
     """
-
+        A specialized tool for creating parallel construction lines.
+        The ParallelOffsetTool will create a construction line parallel
+        to another construction line a fixed distance from the original
+        construction line. The type of the new construction line will match
+        that of the original.
+        The ParallelOffsetTool is derived from the Tool class, so it shares
+        all the attributes and methods of that class. 
+    """
     def __init__(self):
         super(ParallelOffsetTool, self).__init__()
         self.__refpt = None
         self.__offset = None
         self.__conline = None
-
     def setOffset(self, offset):
-        """Store the displacement in the tool.
-
-setOffset(offset)
-
-Argument 'offset' must be a float.
+        """
+            Store the displacement in the tool.
+            Argument 'offset' must be a float.
         """
         _offset = util.get_float(offset)
         self.__offset = _offset
-
     def getOffset(self):
         """Return the stored offset from the tool.
-
-getOffset()
-
-This method will raise a ValueError exception if the offset has
-not been set with setOffset()
+        This method will raise a ValueError exception if the offset has
+        not been set with setOffset()
         """
         _offset = self.__offset
         if _offset is None:
             raise ValueError, "Offset is not defined."
         return _offset
-
     def setConstructionLine(self, conline):
-        """Store the reference construction line in the tool.
-
-setConstructionLine(conline)
-
-Argument 'conline' must be a VCLine, HCLine, ACLine, or CLine object.
+        """
+            Store the reference construction line in the tool.
+            Argument 'conline' must be a VCLine, HCLine, ACLine, or CLine object.
         """
         if not isinstance(conline, (HCLine, VCLine, ACLine, CLine)):
             raise TypeError, "Invalid Construction line: " + `type(conline)`
         self.__conline = conline
-
     def getConstructionLine(self):
-        """Retrieve the stored construction line from the tool.
-
-getConstructionLine()
-
-A ValueError exception is raised if the construction line has not been
-set with the setConstructionLine() method.
+        """
+            Retrieve the stored construction line from the tool.
+            A ValueError exception is raised if the construction line has not been
+            set with the setConstructionLine() method.
         """
         _conline = self.__conline
         if _conline is None:
             raise ValueError, "Construction line is not defined."
         return _conline
-
     def setReferencePoint(self, x, y):
-        """Store the reference point for positioning the new construction line.
-
-setReferencePoint(x, y)
-
-Arguments 'x' and 'y' give the coordinates of a reference point
-used to determine where the new construction line will be placed.
-Both arguments should be floats.
+        """
+            Store the reference point for positioning the new construction line.
+            Arguments 'x' and 'y' give the coordinates of a reference point
+            used to determine where the new construction line will be placed.
+            Both arguments should be floats.
         """
         _x = util.get_float(x)
         _y = util.get_float(y)
         self.__refpt = (_x, _y)
-
     def getReferencePoint(self):
-        """Retreive the reference point from the tool.
-
-getReferencePoint()
-
-This method returns a tuple containing the values stored from
-the setReferencePoint() call. This method will raise a ValueError
-exception if the reference point has not been set.
+        """
+            Retreive the reference point from the tool.
+            This method returns a tuple containing the values stored from
+            the setReferencePoint() call. This method will raise a ValueError
+            exception if the reference point has not been set.
         """
         _refpt = self.__refpt
         if _refpt is None:
             raise ValueError, "No reference point defined."
         return _refpt
-
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(ParallelOffsetTool, self).reset()
         self.__refpt = None
@@ -1918,11 +1837,9 @@ This method extends Tool::reset().
         self.__conline = None
 
     def create(self, image):
-        """Create a parallel construction line in an image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a parallel construction line in an image.
+            This method overrides the Tool::create() method.
         """
         _offset = self.__offset
         _conline = self.__conline
@@ -2048,16 +1965,12 @@ This method overrides the Tool::create() method.
             self.reset()
 
 class TangentCircleTool(Tool):
-    """A specialized class for creating tangent construction circles.
-
-This class is meant to be a base class for tools that create tangent
-construction circles. It is derived from the tool class so it shares
-all the attributes and methods of that class. This class has the
-following additional methods:
-
-{set/get}Center(): Set/Get the center of the tangent circle.
-{set/get}Radius(): Set/Get the radius of the tangent circle.
-{set/get}PixelRect(): Set/Get the screen rectangle for drawing the circle.
+    """
+        A specialized class for creating tangent construction circles.
+        This class is meant to be a base class for tools that create tangent
+        construction circles. It is derived from the tool class so it shares
+        all the attributes and methods of that class. This class has the
+        following additional methods:
     """
     def __init__(self):
         super(TangentCircleTool, self).__init__()
@@ -2261,18 +2174,13 @@ the TangentCircleTool::setLocation() methods.
         self.setRadius(_radius)
 
 class TwoPointTangentCCircleTool(TangentCircleTool):
-    """A specialized tool for creating tangent construction circles.
-
-The TwoPointTangentCCircleTool will create a construction circle tangent
-to two construction lines or a construction line and a construction
-circle if such a tangent circle can be created.
-
-The TwoPointTangentCCircleTool is derived from the TangentCircleTool
-class, so it shares all the attributes and methods of that class. This
-class also has the following addtional methods:
-
-{set/get}FirstConObject(): Set/Get the first construction object.
-{set/get}SecondConObject(): Set/Get the second constuction object.
+    """
+        A specialized tool for creating tangent construction circles.
+        The TwoPointTangentCCircleTool will create a construction circle tangent
+        to two construction lines or a construction line and a construction
+        circle if such a tangent circle can be created.
+        The TwoPointTangentCCircleTool is derived from the TangentCircleTool
+        class, so it shares all the attributes and methods of that class.
     """
     def __init__(self):
         super(TwoPointTangentCCircleTool, self).__init__()
@@ -4156,3 +4064,42 @@ Argument 'val' depends on the attribute set for the EditDimString instance.
 
     def getLayout(self):
         pass
+
+# Usefoul function
+def getSegmentSnap(firstPoint,secondPoint):
+    """
+        Get a quadruple of coords that define the line taking care of 
+        the user snaps
+    """
+    _singlePoint=['Freepoint','End','Intersection','Point','Origin','Mid','Center']
+    _computePoint=['Perpendicular','Tangent']
+    _x1,_y1=firstPoint.point.getCoords()
+    _x2,_y2=secondPoint.point.getCoords()
+    _firstKind=firstPoint.kind
+    _secondKind=secondPoint.kind
+    if _firstKind in _singlePoint and _secondKind in _computePoint :
+        if _secondKind =="Perpendicular":
+            if isinstance(secondPoint.entity,(Segment,CLine,ACLine,HCLine,VCLine)):
+                print "Debug: ->is istance of lines"
+                pjPoint=Point(secondPoint.entity.getProjection(_x1,_y1))
+                if pjPoint is not None:
+                    _x2,_y2=pjPoint.getCoords()
+        if _secondKind =="Tangent":
+            if isinstance(secondPoint.entity,(Circle,Arc,CCircle)):
+                x2,y2=secondPoint.entity.GetTangentPoint(_x2,_y2,_x1,_y1)
+                if(x2,y2 is not None,None):       
+                    _x2,_y2=x2,y2
+    if _firstKind in _computePoint and _secondKind in _singlePoint :
+        if _firstKind =="Perpendicular":
+            if isinstance(firstPoint.entity,(Segment,CLine,ACLine,HCLine,VCLine)):
+                pjPoint=Point(firstPoint.entity.getProjection(_x2,_y2))
+                if pjPoint is not None:
+                    _x1,_y1=pjPoint.getCoords()
+        if _firstKind =="Tangent":            
+            if isinstance(firstPoint.entity,(Circle,Arc,CCircle)):
+                x1,y1=firstPoint.entity.GetTangentPoint(_x1,_y1,_x2,_y2)
+                if(x1,y1 is not None,None):       
+                    _x1,_y1=x1,y1
+    if _firstKind in _computePoint and _secondKind in _computePoint:
+        print "Debug Sono Qui "
+    return _x1,_y1,_x2,_y2

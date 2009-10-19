@@ -229,11 +229,25 @@ There are no parameters used to create the object.
         #
         # Snap Obj
         #
-        self.__snap=snap.Snap(self.__top_layer,globals.snapOption)
+        #self.__snap=snap.Snap(self.__top_layer,globals.snapOption)# old snap System
+        self.__snapProvider=snap.SnapServices(self) #new Snap Functionality
+#
+# Snap method
+#
+    def getSnapProvider(self):
+        """
+            Return the snap Provider
+        """
+        return self.__snapProvider
+#
+# Snap Property
+#
+    snapProvider=property(getSnapProvider,None,None,"Provide the SnapServicesObject for snap operations")
+    
     def __contains__(self, obj):
-        """Define if an object is in the Drawing.
-
-Defining this method allows the use of 'in' type test.
+        """
+            Define if an object is in the Drawing.
+            Defining this method allows the use of 'in' type test.
         """
         _res = False
         if isinstance(obj, style.Style):
@@ -771,6 +785,7 @@ The argument 'l' should be a float equal or greater than 0.0.
             simply a distinct point in the Layer if no nearby entities
             were found.
         """
+        print "@@@@---->>>>>Debug Function banned getClosestPoint"
         _t=5.0
         if 'tolerance' in kw:
             _t=util.get_float(kw['tolerance'])
@@ -778,14 +793,8 @@ The argument 'l' should be a float equal or greater than 0.0.
         _ix, _iy,validate,cursor=_sobj.GetSnap(x,y,_t,None)
         _sobj.StopOneShutSnap()
         if(validate):
-            print "Debug: is Validates x: %s,y: %s"%(str(_ix),str( _iy))
             return (_ix, _iy)     
         return (x, y)
-    def GetSnapObject(self):
-        """
-            return the snap object 
-        """
-        return self.__snap
     def findPoint(self, x, y, tol=tolerance.TOL):
         """Return a Point object found at the x-y coordinates.
 

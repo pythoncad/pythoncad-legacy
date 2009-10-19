@@ -505,105 +505,105 @@ def style_cb(menuitem, gtkimage):
                                globals.prefs['LINETYPES'])
     
 def textstyle_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     gtktextprefs.textstyle_dialog(gtkimage, globals.prefs['TEXTSTYLES'])
 
 def dimstyle_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     gtkdimprefs.dimstyle_dialog(gtkimage, globals.prefs['DIMSTYLES'])
 
 def draw_point_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.PointTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_segment_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.SegmentTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_rectangle_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.RectangleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_circle_center_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.CircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_circle_tp_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TwoPointCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_arc_center_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.ArcTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_hcl_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.HCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_vcl_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.VCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_acl_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.ACLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_cl_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.CLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_perpendicular_cline_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.PerpendicularCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_cline_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TangentCLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_two_ccircles_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.CCircleTangentLineTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_poffset_cline_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.ParallelOffsetTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_ccirc_cp_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.CCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_ccirc_tp_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TwoPointCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_single_conobj_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TangentCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_tangent_two_conobjs_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TwoPointTangentCCircleTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_chamfer_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.ChamferTool()
     gtkimage.getImage().setTool(_tool)
 
@@ -611,7 +611,7 @@ def draw_fillet_cb(menuitem, gtkimage):
     """
         Start Point fillet comand
     """
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.FilletTool()
     gtkimage.getImage().setTool(_tool)
 def draw_fillet_two_cb(menuitem, gtkimage):
@@ -622,17 +622,17 @@ def draw_fillet_two_cb(menuitem, gtkimage):
     gtkimage.getImage().setTool(_tool)
 
 def draw_leader_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.LeaderTool()
     gtkimage.getImage().setTool(_tool)
 
 def draw_polyline_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.PolylineTool()
     gtkimage.getImage().setTool(_tool)
 
 def _get_polygon_side_count(gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _sides = 0
     _window = gtkimage.getWindow()
     _dialog = gtk.Dialog(_('Polygon Sides'), _window,
@@ -659,7 +659,7 @@ def _get_polygon_side_count(gtkimage):
     return _sides
 
 def draw_polygon_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _sides = _get_polygon_side_count(gtkimage)
     if _sides > 0:
         _tool = tools.PolygonTool()
@@ -667,7 +667,7 @@ def draw_polygon_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def draw_ext_polygon_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _sides = _get_polygon_side_count(gtkimage)
     if _sides > 0:
         _tool = tools.PolygonTool()
@@ -688,7 +688,7 @@ def draw_set_thickness_cb(menuitem, gtkimage):
     gtkentities.set_line_thickness(gtkimage)
 
 def draw_text_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _text = gtktext.text_add_dialog(gtkimage)
     if _text is not None:
         _tool = tools.TextTool()
@@ -696,52 +696,52 @@ def draw_text_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def move_horizontal_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.HorizontalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_vertical_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.VerticalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_twopoint_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.MoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_horiz_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.HorizontalStretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_vert_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.VerticalStretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_twopoint_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.StretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def transfer_object_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.TransferTool()
     gtkimage.getImage().setTool(_tool)
 
 def rotate_object_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.RotateTool()
     gtkimage.getImage().setTool(_tool)
     
 def split_object_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.SplitTool()
     gtkimage.getImage().setTool(_tool)
 
 def mirror_object_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.MirrorTool()
     gtkimage.getImage().setTool(_tool)
 
@@ -1256,67 +1256,67 @@ def oneShotMidSnap(menuitem, gtkimage):
     """
         Activate one shot snap mid
     """
-    gtkimage.ActivateOneShotSnap('mid')
+    gtkimage.image.snapProvider.setOneTemporarySnap('mid')
 def oneShotEndSnap(menuitem, gtkimage):
     """
         Activate one shot snap end
     """
-    gtkimage.ActivateOneShotSnap('end')
+    gtkimage.image.snapProvider.setOneTemporarySnap('end')
 def oneShotIntersectionSnap(menuitem, gtkimage):
     """
         Activate one shot snap intersection
     """
-    gtkimage.ActivateOneShotSnap('intersection')
+    gtkimage.image.snapProvider.setOneTemporarySnap('intersection')
 def oneShotOriginSnap(menuitem, gtkimage):
     """
         Activate one shot snap origin
     """
-    gtkimage.ActivateOneShotSnap('origin')
+    gtkimage.image.snapProvider.setOneTemporarySnap('origin')
 
 def oneShotPerpendicularSnap(menuitem, gtkimage):
     """
         Activate one shot snap Perpendicular
     """
-    gtkimage.ActivateOneShotSnap('perpendicular')
+    gtkimage.image.snapProvider.setOneTemporarySnap('perpendicular')
 def oneShotTangentSnap(menuitem, gtkimage):
     """
         Activate one shot snap Tangent
     """
-    gtkimage.ActivateOneShotSnap('tangent')
+    gtkimage.image.snapProvider.setOneTemporarySnap('tangent')
 def oneShotPointSnap(menuitem, gtkimage):
     """
         Activate one shot snap Point
     """
-    gtkimage.ActivateOneShotSnap('point')
+    gtkimage.image.snapProvider.setOneTemporarySnap('point')
 
 def oneShutCenterSnap(menuitem, gtkimage):
     """
         Activate one shut snap Center
     """
-    gtkimage.ActivateOneShotSnap('center')
+    gtkimage.image.snapProvider.setOneTemporarySnap('center')
     
 def dimension_linear_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.LinearDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_horizontal_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.HorizontalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_vertical_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.VerticalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_radial_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.RadialDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_angular_cb(menuitem, gtkimage):
-    gtkimage.ActivateSnap()
+    gtkimage.activateSnap()
     _tool = tools.AngularDimensionTool()
     gtkimage.getImage().setTool(_tool)
 

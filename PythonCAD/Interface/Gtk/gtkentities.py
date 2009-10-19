@@ -31,6 +31,7 @@ import gobject
 
 import sys
 
+from PythonCAD.Generic import globals
 from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.segment import Segment
 from PythonCAD.Generic.segjoint import Chamfer, Fillet
@@ -39,21 +40,7 @@ from PythonCAD.Generic import util
 from PythonCAD.Generic import units
 from PythonCAD.Interface.Gtk import gtkDialog
 from PythonCAD.Generic import tools   
-
-#def _error_dialog(gtkimage, errmsg):
-#    """
-#        Show an error dialog
-#    """
-#    _window = gtkimage.getWindow()
-#    #_window.set_title("PythonCad Error:")
-#    _dialog = gtk.MessageDialog( _window,
-#                                 gtk.DIALOG_DESTROY_WITH_PARENT,
-#                                 gtk.MESSAGE_ERROR,
-#                                 gtk.BUTTONS_CLOSE,
-#                                 errmsg)
-#    _dialog.set_title("PythonCad Error:")
-#    _dialog.run()
-#    _dialog.destroy()
+from PythonCAD.Generic import snap
 
 def make_tuple(text, gdict):
     _tpl = eval(text, gdict)
@@ -81,9 +68,7 @@ def create_entity(gtkimage, tool=None):
 def point_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setPoint(_x, _y )
+    snap.setSnap(_image,tool.setPoint,_tol)
     create_entity(gtkimage)
     return True
 
@@ -116,19 +101,15 @@ def segment_motion_notify_cb(gtkimage, widget, event, tool):
     _x = int(event.x)
     _y = int(event.y)
     firstPnt=tool.getFirstPoint()
-    if firstPnt!=None:
-        _x1, _y1 = firstPnt
-        _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
-        _cp = tool.getCurrentPoint()
-        if _cp is not None:
-            _xc, _yc = _cp
-            _segs.append((_px1, _py1, _xc, _yc))
-        tool.setCurrentPoint(_x, _y)
-        _segs.append((_px1, _py1, _x, _y))
-        widget.window.draw_segments(_gc, _segs)
-    else:
-        print("FirstPnt")
-        print("FirstPnt")
+    _x1, _y1 = firstPnt.point.getCoords()
+    _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
+    _cp = tool.getCurrentPoint()
+    if _cp is not None:
+        _xc, _yc = _cp
+        _segs.append((_px1, _py1, _xc, _yc))
+    tool.setCurrentPoint(_x, _y)
+    _segs.append((_px1, _py1, _x, _y))
+    widget.window.draw_segments(_gc, _segs)
     return True
 
 def segment_second_entry_event_cb(gtkimage, widget, tool):
@@ -156,44 +137,25 @@ def segment_first_entry_event_cb(gtkimage, widget, tool):
 def segment_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _snap = _image.GetSnapObject()
-    _x, _y = _image.getCurrentPoint()
-    _x1=0
-    _y1=0
-    if(_snap.DinamicSnap()):
-        _x1,_y1,_x,_y=_snap.GetCoords(_x,_y,_tol)
-        tool.setFirstPoint(_x1, _y1)
-    else:
-        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setSecondPoint(_x, _y)
-    create_entity(gtkimage)
-    _snap.ResetDinamicSnap()    
+    snap.setSnap(_image,tool.setSecondPoint,_tol)
+    create_entity(gtkimage)   
     return True
 
 def segment_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    _snap = _image.GetSnapObject()
-    _x, _y = _image.getCurrentPoint()
-    _snap.SetFirstClick(_x,_y,_tol)
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)    
-    if(_x==None or _y==None):
-        _x = int(event.x)
-        _y = int(event.y)
-        _x,_y=gtkimage.coordToPixTransform(_x, _y)
-    tool.setFirstPoint(_x, _y)  
+    _image = gtkimage.getImage() 
+    snap.setSnap(_image,tool.setFirstPoint,_tol)
     tool.setHandler("button_press", segment_second_button_press_cb)
     tool.setHandler("entry_event", segment_second_entry_event_cb)
     tool.setHandler("motion_notify", segment_motion_notify_cb)
     gtkimage.setPrompt(_('Enter the second point or click in the drawing area'))
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
-    _snap.StopOneShutSnap()
+    #_snap.StopOneShutSnap()
     return True
 
 def segment_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()
-    gtkimage.getImage().GetSnapObject().ResetDinamicSnap
     _tool.setHandler("initialize", segment_mode_init)
     _tool.setHandler("button_press", segment_first_button_press_cb)
     _tool.setHandler("entry_event", segment_first_entry_event_cb)
@@ -203,7 +165,7 @@ def segment_mode_init(gtkimage, tool=None):
 #
 
 def rectangle_motion_notify_cb(gtkimage, widget, event, tool):
-    _x1, _y1 = tool.getFirstPoint()
+    _x1, _y1 = tool.getFirstPoint().point.getCoords()
     _px, _py = gtkimage.coordToPixTransform(_x1, _y1)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -249,18 +211,14 @@ def rectangle_first_entry_event_cb(gtkimage, widget, tool):
 def rectangle_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setSecondPoint(_x, _y)
+    snap.setSnap(_image,tool.setSecondPoint,_tol)
     create_entity(gtkimage)
     return True
 
 def rectangle_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setFirstPoint(_x, _y)
+    snap.setSnap(_image,tool.setFirstPoint,_tol)
     tool.setHandler("button_press", rectangle_second_button_press_cb)
     tool.setHandler("motion_notify", rectangle_motion_notify_cb)
     tool.setHandler("entry_event", rectangle_second_entry_event_cb)
@@ -280,7 +238,7 @@ def rectangle_mode_init(gtkimage, tool=None):
 #
 
 def circle_center_motion_notify_cb(gtkimage, widget, event, tool):
-    _cx, _cy = tool.getCenter()
+    _cx, _cy = tool.center.point.getCoords()
     _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
     _upp = gtkimage.getUnitsPerPixel()
     _gc = gtkimage.getGC()
@@ -319,7 +277,6 @@ def circle_radius_entry_event_cb(gtkimage, widget, tool):
             raise ValueError, "Invalid radius: %g" % _r
         tool.setRadius(_r)
         create_entity(gtkimage)
-    stopOneShutSnap(gtkimage) 
 
 def circle_point_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
@@ -340,34 +297,19 @@ def circle_point_entry_event_cb(gtkimage, widget, tool):
 def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _image = gtkimage.getImage()
-    _snap = _image.GetSnapObject()
-    _cx, _cy = tool.getCenter()
-    if(_snap.DinamicSnap()):
-        _x,_y=_snap.getProjection(_cx, _cy,_x, _y,_tol)
-    else:
-        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    snap.setSnap(_image,tool.setRadiusPoint,_tol)
+    _x,_y=tool.radiusPoint.point.getCoords()
+    _cx,_cy=tool.getCenter().point.getCoords()
     _radius = hypot((_cx - _x), (_cy - _y))
-    tool.setRadius(_radius)
+    tool.setRadius(_radius)    
     create_entity(gtkimage)
-    _snap.StopOneShutSnap()    
     return True
 
 def circle_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    #set the global snap
-    _snObj=_image.GetSnapObject()
     _snapArray={'perpendicular':False,'tangent':False}
-    _snObj.temporaryDisableSnap(_snapArray)
-    #get point 
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    #reset the user snap
-    _snObj.resetSystemSnap()
-    _snObj.StopOneShutSnap()
-    tool.setCenter(_x, _y)
+    snap.setSnap(_image,tool.setCenter,_tol,_snapArray)
     tool.setHandler("button_press", circle_radius_button_press_cb)
     tool.setHandler("motion_notify", circle_center_motion_notify_cb)
     tool.setHandler("entry_event", circle_radius_entry_event_cb)
@@ -393,16 +335,15 @@ def circle_tp_motion_notify_cb(gtkimage, widget, event, tool):
     _radius = tool.getRadius()
     _upp = gtkimage.getUnitsPerPixel()
     if _radius is not None:
-        _cx, _cy = tool.getCenter()
+        _cx, _cy = tool.getCenter().point.getCoords()
         _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
         _pr = int(_radius/_upp)
         _xmin = _pcx - _pr
         _ymin = _pcy - _pr
         _cw = _ch = _pr * 2
         widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,0, 360*64)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    tool.setSecondPoint(_ix, _iy)
-    _cx, _cy = tool.getCenter()
+    snap.setDinamicSnap(gtkimage,tool.setSecondPoint,None)
+    _cx, _cy = tool.getCenter().point.getCoords()
     _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
     _radius = tool.getRadius()
     _pr = int(_radius/_upp)
@@ -415,18 +356,18 @@ def circle_tp_motion_notify_cb(gtkimage, widget, event, tool):
 def circle_tp_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setSecondPoint(_x, _y)
+    #todo imlement the tangent snap for the two point circle
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setSecondPoint,_tol,_snapArray)
     create_entity(gtkimage)
     return True
 
 def circle_tp_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setFirstPoint(_x, _y)
+    #todo imlement the tangent snap for the two point circle
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setFirstPoint,_tol,_snapArray)
     tool.setHandler("button_press", circle_tp_second_button_press_cb)
     tool.setHandler("motion_notify", circle_tp_motion_notify_cb)
     tool.setHandler("entry_event", circle_tp_second_entry_event_cb)
@@ -469,9 +410,10 @@ def circle_tp_mode_init(gtkimage, tool=None):
 def arc_center_end_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    _cx, _cy = tool.getCenter()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _snp=snap.getSnapPoint(_image,_tol,_snapArray)
+    _x,_y=_snp.point.getCoords()
+    _cx, _cy = tool.getCenter().point.getCoords()
     _angle = (180.0/pi) * atan2((_y - _cy),(_x - _cx))
     if _angle < 0.0:
         _angle = _angle + 360.0
@@ -481,7 +423,7 @@ def arc_center_end_button_press_cb(gtkimage, widget, event, tool):
 
 def arc_angle_motion_notify_cb(gtkimage, widget, event, tool):
     _ix, _iy = gtkimage.image.getCurrentPoint()
-    _cx, _cy = tool.getCenter() # arc center
+    _cx, _cy = tool.getCenter().point.getCoords() # arc center
     _radius = tool.getRadius()
     _sa = tool.getStartAngle()
     _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
@@ -518,8 +460,9 @@ def arc_start_angle_button_press_cb(gtkimage, widget, event, tool):
     _cx, _cy = tool.getCenter()
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _snp=snap.getSnapPoint(_image,_tol,_snapArray)
+    _x,_y=_snp.point.getCoords()
     _angle = (180.0/pi) * atan2((_y - _cy), (_x - _cx))
     if _angle < 0.0:
         _angle = _angle + 360.0
@@ -550,11 +493,12 @@ def arc_center_sa_entry_event_cb(gtkimage, widget, tool):
         gtkimage.setPrompt(_('Enter the end angle of the arc.'))
 
 def arc_center_radius_button_press_cb(gtkimage, widget, event, tool):
-    _cx, _cy = tool.getCenter()
+    _cx, _cy = tool.getCenter().point.getCoords()
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _snp=snap.getSnapPoint(_image,_tol,_snapArray)
+    _x,_y=_snp.point.getCoords()
     _radius = hypot((_x - _cx), (_y - _cy))
     tool.setRadius(_radius)
     _angle = (180.0/pi) * atan2((_y - _cy), (_x - _cx))
@@ -583,7 +527,7 @@ def arc_center_radius_entry_cb(gtkimage, widget, tool):
         gtkimage.setPrompt(_('Enter the start angle of the arc.'))
 
 def arc_radius_motion_notify_cb(gtkimage, widget, event, tool):
-    _cx, _cy = tool.getCenter()
+    _cx, _cy = tool.getCenter().point.getCoords()
     _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -611,9 +555,8 @@ def arc_radius_motion_notify_cb(gtkimage, widget, event, tool):
 def arc_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setCenter(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setCenter,_tol,_snapArray)
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
     tool.setHandler("motion_notify", arc_radius_motion_notify_cb)
     tool.setHandler("entry_event", arc_center_radius_entry_cb)
@@ -884,7 +827,7 @@ def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
         Second selection commad
     """
     _image = gtkimage.getImage()
-    _objs,pnt=getSelections(gtkimage,Segment)  
+    _objs,pnt=snap.getSelections(gtkimage,Segment)  
     if _objs!=None and pnt!=None:
         _image.startAction()
         try:
@@ -892,11 +835,13 @@ def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
             tool.SecondPoint=pnt
             tool.Create(_image)
         except ValueError,err:
-            _errmsg = "Fillet error: %s" % str(err)
+            _errmsg = "Fillet ValueError error: %s" % str(err)
             gtkDialog._error_dialog(gtkimage,_errmsg )
         except:
             _errmsg = "Fillet error: %s" % str( sys.exc_info()[0])
             gtkDialog._error_dialog(gtkimage,_errmsg )
+            for s in sys.exc_info():
+                print "Exception Error: %s"%str(s)
         finally:
             _image.endAction()
             gtkimage.redraw()
@@ -907,7 +852,7 @@ def fillet_two_button_press_cb(gtkimage, widget, event, tool):
        First Entity selected
     """
     _image = gtkimage.getImage()
-    _objs,pnt=getSelections(gtkimage,Segment)
+    _objs,pnt=snap.getSelections(gtkimage,Segment)
     if _objs!=None and pnt!=None:
         _image.startAction()
         try:
@@ -925,32 +870,11 @@ def fillet_two_button_press_cb(gtkimage, widget, event, tool):
             #
         finally:
             _image.endAction()
-
-def getSelections(gtkimage,objFilter):
-    """
-        get the object preselected or selected
-    """
-    _retVal=[]
-    _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    if _image.hasSelection():
-        _objs= _image.getSelectedObjects()
-    else:
-        _x, _y = _image.getCurrentPoint()
-        _active_layer = _image.getActiveLayer()
-        objects=_active_layer.mapPoint((_x, _y), _tol)
-        if len(objects):
-            _mapObj ,point = objects[0]   
-            if isinstance(_mapObj,Segment):
-                return _mapObj,point
-    return None,None
-
 def fillet_two_line_mode_init(gtkimage, tool=None):
     """
         init function for the fillet two line comand
     """
     _image = gtkimage.getImage()
-    _snapObj=_image.GetSnapObject()
     if tool !=None and tool.rad!=None:
         _rad = tool.rad
         _tool=tool
@@ -964,16 +888,13 @@ def fillet_two_line_mode_init(gtkimage, tool=None):
     _tool.setHandler("initialize", fillet_two_line_mode_init)
     _tool.setHandler("button_press", fillet_two_button_press_cb)
     _tool.setHandler("entry_event", fillet_entry_event_cb)
-    # switch off the snap 
-    _snapObj.ResetDinamicSnap()
     gtkimage._activateSnap=False
 #
 # leader lines
 #
-
 def leader_second_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _x2, _y2 = tool.getMidPoint()
+    _x2, _y2 = tool.getMidPoint().point.getCoords()
     _px2, _py2 = gtkimage.coordToPixTransform(_x2, _y2)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -989,7 +910,7 @@ def leader_second_motion_notify_cb(gtkimage, widget, event, tool):
 
 def leader_first_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _x1, _y1 = tool.getFirstPoint()
+    _x1, _y1 = tool.getFirstPoint().point.getCoords()
     _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -1005,9 +926,8 @@ def leader_first_motion_notify_cb(gtkimage, widget, event, tool):
 def leader_final_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setFinalPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setFinalPoint,_tol,_snapArray)
     create_entity(gtkimage)
     gtkimage.setPrompt(_('Click in the drawing area to place the initial point'))
     return True
@@ -1015,9 +935,8 @@ def leader_final_button_press_cb(gtkimage, widget, event, tool):
 def leader_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setMidPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setMidPoint,_tol,_snapArray)
     tool.clearCurrentPoint()
     tool.setHandler("motion_notify", leader_second_motion_notify_cb)
     tool.setHandler("button_press", leader_final_button_press_cb)
@@ -1027,9 +946,8 @@ def leader_second_button_press_cb(gtkimage, widget, event, tool):
 def leader_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setFirstPoint(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setFirstPoint,_tol,_snapArray)
     tool.setHandler("motion_notify", leader_first_motion_notify_cb)
     tool.setHandler("button_press", leader_second_button_press_cb)
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
@@ -1048,7 +966,7 @@ def leader_mode_init(gtkimage, tool=None):
 
 def polyline_motion_notify_cb(gtkimage, widget, event, tool):
     _segs = []
-    _x1, _y1 = tool.getPoint(-1)
+    _x1, _y1 = tool.getPoint(-1).point.getCoords()
     _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
     _gc = gtkimage.getGC()
     _x = int(event.x)
@@ -1065,10 +983,8 @@ def polyline_motion_notify_cb(gtkimage, widget, event, tool):
 def polyline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.clearCurrentPoint()
-    tool.storePoint(_x, _y)
+    tool.clearCurrentPoint()    
+    snap.setSnap(_image,tool.storePoint,_tol,None)
     _state = event.state
     if ((_state & gtk.gdk.SHIFT_MASK) == gtk.gdk.SHIFT_MASK):
         create_entity(gtkimage)
@@ -1106,9 +1022,8 @@ def polyline_mode_init(gtkimage, tool=None):
 def polygon_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setLocation(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setLocation,_tol,_snapArray)
     create_entity(gtkimage)
     return True
 
@@ -1132,8 +1047,8 @@ def polygon_radius_motion_notify_cb(gtkimage, widget, event, tool):
             _py1 = _pyi
         _segs.append((_px1, _py1, _px0, _py0))
     tool.setCurrentPoint(_x, _y)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    tool.setLocation(_ix, _iy)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setDinamicSnap(gtkimage,tool.setLocation,_snapArray)
     _tx0, _ty0 = tool.getCoord(0)
     _px0, _py0 = gtkimage.coordToPixTransform(_tx0, _ty0)
     _px1 = _px0
@@ -1151,9 +1066,8 @@ def polygon_radius_motion_notify_cb(gtkimage, widget, event, tool):
 def polygon_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setCenter(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    snap.setSnap(_image,tool.setCenter,_tol,_snapArray)
     tool.setHandler("motion_notify", polygon_radius_motion_notify_cb)
     tool.setHandler("button_press", polygon_radius_button_press_cb)
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
@@ -1756,11 +1670,4 @@ def set_units_dialog(gtkimage):
         if _val != _unit:
             _image.setUnits(_val)
     _dialog.destroy()
-
-def stopOneShutSnap(gtkimage):
-    """
-        reset the one shu snap
-    """
-    _image = gtkimage.getImage()
-    _snObj=_image.GetSnapObject()
-    _snObj.StopOneShutSnap()
+    
