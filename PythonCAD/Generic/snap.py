@@ -310,7 +310,7 @@ class SnapServices(object):
             snapArray Mast be a dic 
             es: {'mid':true,'end':false,....}
         """
-        if not isinstance(snapArray,'dict'):
+        if not isinstance(snapArray,dict):
             raise TypeError, "Unexpected type for snapArray: " + `type(snapArray)`
         self.__temporarySnap=snapArray
     def excludeSnapArray(self,excludeSnap):
@@ -357,7 +357,7 @@ def getSnapPoint(image,tol,excludeSnap=None):
         return the snap point clicked y the user
         image           : image or GTKImage
         tol             : tollerance culd be None if image is GTKImage
-        excludeSnap     : array of type {'end':False}
+        excludeSnap     : array of type {'end':False,.....}
         return: SnapPointStr
     """
     _sp=image.snapProvider
@@ -366,7 +366,18 @@ def getSnapPoint(image,tol,excludeSnap=None):
     _sPnt=_sp.getSnap(tol)
     _sp.resetTemporatySnap()
     return _sPnt 
-
+def getOnlySnap(image,tol,onlySnapArray):
+    """
+        set the dinamic snap to get only the onlySnapArray
+    """
+    _sp=image.snapProvider
+    if onlySnapArray is not None:
+        _sp.setTemporarySnapArray(onlySnapArray)
+        _sPnt=_sp.getSnap(tol)
+        _sp.resetTemporatySnap()
+        return _sPnt 
+    return None
+    
 def getSelections(gtkimage,objFilter):
     """
         get the object preselected or selected

@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2006, 2007 Art Haas
 #
+#               2009 Matteo Boscolo
+#
 # This file is part of PythonCAD.
 # 
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -42,8 +44,8 @@ from PythonCAD.Generic import util
 
 from PythonCAD.Interface.Gtk import gtkentities
 from PythonCAD.Generic import snap
+from PythonCAD.Generic.pyGeoLib import Vector
 
-#
 # horizontal construction lines
 #
 
@@ -279,7 +281,8 @@ def ccircle_tpmode_init(gtkimage, tool=None):
 def perp_cline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _pt,_pc  = _image.getCurrentPoint()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _pt,_pc=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _active_layer = _image.getActiveLayer()
     _hits = _active_layer.mapPoint((_pt,_pc), _tol, 1)
     if len(_hits):
@@ -350,40 +353,33 @@ def perpendicular_cline_mode_init(gtkimage, tool=None):
 def tangent_cline_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _pt, _new_pt = _image.findPoint(_x, _y, _tol)
+    _snapArray={'tangent':False}
+    _pt=snap.getOnlySnap(_image,_tol,_snapArray)
     if _pt is not None:
-        _x, _y = _pt.getCoords()
+        _x, _y = _pt.point.getCoords()
         _layer = _image.getActiveLayer()
         _rtd = 180.0/math.pi
         _cobj = None
         _angle = None
-        _circles = (_layer.getLayerEntities("circle") +
-                    _layer.getLayerEntities("ccircle"))
-        for _circle in _circles:
-            _cx, _cy = _circle.getCenter().getCoords()
-            _rad = _circle.getRadius()
+        _circleEnt=_pt.entity
+        if isinstance(_circleEnt,(CCircle,Circle,Arc)):
+            _cp=_circleEnt.getCenter()
+            _rad = _circleEnt.getRadius()
+            _v=Vector(_cp,_pt.point).Mag()
+            _v.Mult(_rad)
+            _vectPoint=_v.Point()
+            _x,_y=(_vectPoint+_cp)
+            _cx,_cy=_cp.getCoords()
             if abs(math.hypot((_x - _cx), (_y - _cy)) - _rad) < 1e-10:
-                _cobj = _circle
+                _cobj = _circleEnt
                 _angle = _rtd * math.atan2((_y - _cy), (_x - _cx))
                 if _angle < 0.0:
                     _angle = _angle + 360.0
-                break
-        if _cobj is None:
-            for _arc in _layer.getLayerEntities("arc"):
-                _cx, _cy = _arc.getCenter().getCoords()
-                _rad = _arc.getRadius()
-                if abs(math.hypot((_cx - _x), (_cy - _y)) - _rad) < 1e-10:
-                    _angle = _rtd * math.atan2((_y - _cy), (_x - _cx))
-                    if _angle < 0.0:
-                        _angle = _angle + 360.0
-                    if _arc.throughAngle(_angle):
-                        _cobj = _arc
-                        break
+                _pt=Point(_x,_y)
         if _cobj is not None:
             _image.startAction()
             try:
-                if _new_pt:
+                if _pt:
                     _layer.addObject(_pt)
                 if (abs(_angle) < 1e-6 or
                     abs(_angle - 180.0) < 1e-6 or
@@ -440,8 +436,10 @@ def parallel_conline_button_press_cb(gtkimage, widget, event, tool):
 def parallel_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _snp=snap.getSnapPoint(_image,_tol,_snapArray)
+    _x,_y=_snp.point.getCoords()
+    print "Debug: " + str(tool.getLocation())
     _x1, _y1 = tool.getLocation()
     _offset = math.hypot((_x - _x1), (_y - _y1))
     tool.setOffset(_offset)
@@ -452,9 +450,9 @@ def parallel_second_button_press_cb(gtkimage, widget, event, tool):
 def parallel_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
-    tool.setLocation(_x, _y)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x1,_y1=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
+    tool.setLocation(_x1,_y1)
     tool.setHandler("button_press", parallel_second_button_press_cb)
     tool.delHandler("entry_event")
     gtkimage.setPrompt(_('Click another point to define the offset distance.'))
@@ -485,8 +483,8 @@ def parallel_offset_mode_init(gtkimage, tool=None):
 def ccircle_single_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
     gtkentities.create_entity(gtkimage)
     return True
@@ -516,18 +514,16 @@ def ccircle_single_motion_notify_cb(gtkimage, widget, event, tool):
 def ccircle_single_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _objdict = _image.mapPoint(_x, _y, _tol, 1)
-    if len(_objdict):
+    _snapArray={'tangent':True}
+    ent=snap.getOnlySnap(_image,_tol,_snapArray).entity
+    if ent is not None:
         _active_layer = _image.getActiveLayer()
-        if _active_layer in _objdict:
-            for _obj, _pt in _objdict[_active_layer]:
-                if isinstance(_obj, (HCLine, VCLine, ACLine, CLine, CCircle)):
-                    tool.setConstructionLine(_obj)
-                    tool.setHandler("button_press", ccircle_single_second_button_press_cb)
-                    tool.setHandler("motion_notify", ccircle_single_motion_notify_cb)
-                    gtkimage.setPrompt(_('Click where the circle should be drawn.'))
-                    gtkimage.getGC().set_function(gtk.gdk.INVERT)
+        if isinstance(ent, (HCLine, VCLine, ACLine, CLine, CCircle)):
+            tool.setConstructionLine(ent)
+            tool.setHandler("button_press", ccircle_single_second_button_press_cb)
+            tool.setHandler("motion_notify", ccircle_single_motion_notify_cb)
+            gtkimage.setPrompt(_('Click where the circle should be drawn.'))
+            gtkimage.getGC().set_function(gtk.gdk.INVERT)
     return True
 
 def tangent_ccircle_mode_init(gtkimage, tool=None):
@@ -543,8 +539,8 @@ def tangent_ccircle_mode_init(gtkimage, tool=None):
 def two_cline_set_circle_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()    
     tool.setLocation(_x, _y)
     gtkentities.create_entity(gtkimage)
 

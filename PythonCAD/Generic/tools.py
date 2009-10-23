@@ -1701,7 +1701,7 @@ create(image)
 This method overrides the Tool::create() method.
         """
         _active_layer = image.getActiveLayer()
-        _x, _y = self.getCenter()
+        _x, _y = self.getCenter().point.getCoords()
         _radius = self.getRadius()
         _pts = _active_layer.find('point', _x, _y)
         if len(_pts) == 0:
@@ -1734,7 +1734,7 @@ This method overrides the Tool::create() method.
         _radius = self.getRadius()
         if _center is not None and _radius is not None:
             _active_layer = image.getActiveLayer()
-            _x, _y = _center
+            _x, _y = _center.point.getCoords()
             _pts = _active_layer.find('point', _x, _y)
             if len(_pts) == 0:
                 _cp = Point(_x, _y)
@@ -1805,16 +1805,14 @@ class ParallelOffsetTool(Tool):
         if _conline is None:
             raise ValueError, "Construction line is not defined."
         return _conline
-    def setReferencePoint(self, x, y):
+    def setReferencePoint(self, x,y):
         """
             Store the reference point for positioning the new construction line.
             Arguments 'x' and 'y' give the coordinates of a reference point
             used to determine where the new construction line will be placed.
             Both arguments should be floats.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
-        self.__refpt = (_x, _y)
+        self.__refpt = (x,y)
     def getReferencePoint(self):
         """
             Retreive the reference point from the tool.

@@ -138,7 +138,13 @@ def segment_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     snap.setSnap(_image,tool.setSecondPoint,_tol)
-    create_entity(gtkimage)   
+    try:
+        create_entity(gtkimage)   
+    except:
+        tool.setHandler("button_press", segment_second_button_press_cb)
+        tool.setHandler("entry_event", segment_second_entry_event_cb)
+        tool.setHandler("motion_notify", segment_motion_notify_cb)
+        gtkimage.setPrompt(_('Enter the second point or click in the drawing area'))   
     return True
 
 def segment_first_button_press_cb(gtkimage, widget, event, tool):
@@ -150,7 +156,6 @@ def segment_first_button_press_cb(gtkimage, widget, event, tool):
     tool.setHandler("motion_notify", segment_motion_notify_cb)
     gtkimage.setPrompt(_('Enter the second point or click in the drawing area'))
     gtkimage.getGC().set_function(gtk.gdk.INVERT)
-    #_snap.StopOneShutSnap()
     return True
 
 def segment_mode_init(gtkimage, tool=None):
