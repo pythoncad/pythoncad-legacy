@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2006, 2007 Art Haas
 #
+#               2009 Matteo Boscolo
+#
 # This file is part of PythonCAD.
 # 
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -28,6 +30,7 @@ import pango
 
 from PythonCAD.Generic.dimension import Dimension
 from PythonCAD.Interface.Gtk import gtktext
+from PythonCAD.Generic import snap
 
 #
 # linear dimension motion-notify handler
@@ -111,62 +114,43 @@ def linear_text_button_press_cb(gtkimage, widget, event, tool):
     return True
     
 def linear_second_button_press_cb(gtkimage, widget, event, tool):
-    _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _layers = [_image.getTopLayer()]
-    while len(_layers):
-        _layer = _layers.pop()
-        if _layer.isVisible():
-            _pt = None
-            _pts = _layer.find('point', _x, _y, _tol)
-            if len(_pts) > 0:
-                _pt = _pts[0]
-            if _pt is not None:
-                _x, _y = _pt.getCoords()
-                tool.setSecondPoint(_pt)
-                tool.setDimPosition(_x, _y)
-                tool.clearCurrentPoint()
-                tool.makeDimension(_image)
-                #
-                # set GraphicsContext to Dimension color
-                #
-                _gc = gtkimage.getGC()
-                _gc.set_function(gtk.gdk.INVERT)
-                _col = tool.getDimension().getColor()
-                _gc.set_foreground(gtkimage.getColor(_col))
-                tool.setHandler("button_press", linear_text_button_press_cb)
-                tool.setHandler("motion_notify", dim_txt_motion_notify_cb)
-                gtkimage.setPrompt(_('Click where the dimension text should go.'))
-                gtkimage.refresh()
-                break
-        _layers.extend(_layer.getSublayers())
+    _snapArray={'perpendicular':False,'tangent':False}
+    _strPnt=snap.getSnapOnTruePoint(gtkimage,_snapArray)
+    if _strPnt.point is not None:
+        _x, _y = _strPnt.point.getCoords()
+        tool.setSecondPoint(_strPnt.point)
+        tool.setDimPosition(_x, _y)
+        tool.clearCurrentPoint()
+        tool.makeDimension(gtkimage.getImage())
+        #
+        # set GraphicsContext to Dimension color
+        #
+        _gc = gtkimage.getGC()
+        _gc.set_function(gtk.gdk.INVERT)
+        _col = tool.getDimension().getColor()
+        _gc.set_foreground(gtkimage.getColor(_col))
+        tool.setHandler("button_press", linear_text_button_press_cb)
+        tool.setHandler("motion_notify", dim_txt_motion_notify_cb)
+        gtkimage.setPrompt(_('Click where the dimension text should go.'))
+        gtkimage.refresh()
     return True
 
 def linear_first_button_press_cb(gtkimage, widget, event, tool):
-    _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _layers = [_image.getTopLayer()]
-    while len(_layers):
-        _layer = _layers.pop()
-        if _layer.isVisible():
-            _pt = None
-            _pts = _layer.find('point', _x, _y, _tol)
-            if len(_pts) > 0:
-                _pt = _pts[0]
-            if _pt is not None:
-                _x, _y = _pt.getCoords()
-                tool.setLocation(_x, _y)
-                tool.setFirstPoint(_pt)
-                tool.setHandler("button_press", linear_second_button_press_cb)
-                tool.setHandler("motion_notify", dim_pts_motion_notify_cb)
-                gtkimage.setPrompt(_('Click on the second point for the dimension.'))
-                gtkimage.getGC().set_function(gtk.gdk.INVERT)
-                break
-        _layers.extend(_layer.getSublayers())
+    _snapArray={'perpendicular':False,'tangent':False}
+    _strPnt=snap.getSnapOnTruePoint(gtkimage,_snapArray)
+    if _strPnt is not None:
+        _x, _y =_strPnt.point.getCoords()
+        tool.setLocation(_x, _y)
+        tool.setFirstPoint(_strPnt.point)
+        tool.setHandler("button_press", linear_second_button_press_cb)
+        tool.setHandler("motion_notify", dim_pts_motion_notify_cb)
+        gtkimage.setPrompt(_('Click on the second point for the dimension.'))
+        gtkimage.getGC().set_function(gtk.gdk.INVERT)
+    else:
+        gtkimage.setPrompt(_('Click on the first point for the dimension.'))
+        tool.setHandler("button_press", linear_first_button_press_cb)
+        tool.setHandler("initialize", linear_mode_init)
     return True
-
 #
 # linear dimensions
 #

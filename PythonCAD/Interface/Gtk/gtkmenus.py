@@ -1296,27 +1296,22 @@ def oneShutCenterSnap(menuitem, gtkimage):
     gtkimage.image.snapProvider.setOneTemporarySnap('center')
     
 def dimension_linear_cb(menuitem, gtkimage):
-    gtkimage.activateSnap()
     _tool = tools.LinearDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_horizontal_cb(menuitem, gtkimage):
-    gtkimage.activateSnap()
     _tool = tools.HorizontalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_vertical_cb(menuitem, gtkimage):
-    gtkimage.activateSnap()
     _tool = tools.VerticalDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_radial_cb(menuitem, gtkimage):
-    gtkimage.activateSnap()
     _tool = tools.RadialDimensionTool()
     gtkimage.getImage().setTool(_tool)
 
 def dimension_angular_cb(menuitem, gtkimage):
-    gtkimage.activateSnap()
     _tool = tools.AngularDimensionTool()
     gtkimage.getImage().setTool(_tool)
 

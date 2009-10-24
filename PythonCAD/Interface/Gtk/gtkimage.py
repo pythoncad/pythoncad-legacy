@@ -158,7 +158,6 @@ class GTKImage(object):
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
-        #++ Matteo Boscolo Default Value 
         #
         # Zooming Moving global Variable Definition
         #
@@ -166,7 +165,6 @@ class GTKImage(object):
         self.__StartMoving = False
         self.StopMove=False
         self._activateSnap=False
-        #-- Matteo Boscolo
         _width = min(1024, int(0.8 * float(gtk.gdk.screen_width())))
         _height = min(768, int(0.8 * float(gtk.gdk.screen_height())))
         self.__window.set_default_size(_width, _height)
@@ -502,10 +500,8 @@ close()
                 if _tool is not None and _tool.hasHandler("button_press"):
                     _rv = _tool.getHandler("button_press")(self, widget,
                                                            event, _tool)
-            #++Matteo Boscolo
             debug_print("__Move BUTTON_PRESS")
             self.__Move(widget, event)
-            #--Matteo Boscolo
         elif _type == gtk.gdk.BUTTON_RELEASE:
             self.setToolpoint(event)
             _button = event.button
@@ -513,20 +509,16 @@ close()
                 if _tool is not None and _tool.hasHandler("button_release"):
                     _rv =_tool.getHandler("button_release")(self, widget,
                                                             event, _tool)
-            #++Matteo Boscolo
             debug_print("__Move BUTTON_RELEASE")
             self.__Move(widget, event)
-            #--Matteo Boscolo
         elif _type == gtk.gdk.MOTION_NOTIFY:
             self.setToolpoint(event)
             if _tool is not None and _tool.hasHandler("motion_notify"):
                 _rv = _tool.getHandler('motion_notify')(self, widget,
                                                         event, _tool)
-            #++Matteo Boscolo
             debug_print("__Move MOTION_NOTIFY")
             self.__MakeMove(widget,event)
             self.__ActiveSnapEvent(widget,event)
-            #--Matteo Boscolo
         elif _type == gtk.gdk.KEY_PRESS:
             debug_print("In __daEvent(), got key press!")
             _key = event.keyval
@@ -1103,9 +1095,8 @@ modified, use the redraw() method.
 
     #------------------------------------------------------------------
     def redraw(self):
-        """This method draws all the objects visible in the window.
-
-redraw()
+        """
+            This method draws all the objects visible in the window.
         """
         _da = self.__da
         if (_da.flags() & gtk.MAPPED):
@@ -1190,9 +1181,8 @@ redraw()
 
     #------------------------------------------------------------------
     def reset(self):
-        """Set the image to an initial drawing state.
-
-reset()
+        """
+            Set the image to an initial drawing state.
         """
         _tool = self.__image.getTool()
         if _tool is None:
@@ -1208,7 +1198,6 @@ reset()
         self.__image.setTool()
         self.redraw()
         self.setPrompt(_('Enter command'))
-
     #
     # Entity drawing operations
     #

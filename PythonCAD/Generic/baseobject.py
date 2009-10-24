@@ -177,18 +177,17 @@ This method returns the previous object.
 #
 
 class Subpart(entity.Entity):
-    """A base class for objects that store references to other objects.
-
-The Subpart class is meant to be a base class for other classes defining
-simple objects that will be used in other objects but are not subclasses
-of those other objects. The Subpart objects that are in those classes
-can be used to store references to the larger object. The Subpart
-class has the following methods:
-
-storeUser(): Save a reference to some object.
-freeUser(): Release a reference to some object
-getUsers(): Return the list of objects that have been stored.
-hasUsers(): Test if the subpart has any 
+    """
+        A base class for objects that store references to other objects.
+        The Subpart class is meant to be a base class for other classes defining
+        simple objects that will be used in other objects but are not subclasses
+        of those other objects. The Subpart objects that are in those classes
+        can be used to store references to the larger object. The Subpart
+        class has the following methods:
+        storeUser(): Save a reference to some object.
+        freeUser(): Release a reference to some object
+        getUsers(): Return the list of objects that have been stored.
+        hasUsers(): Test if the subpart has any 
     """
     __messages = {
         'added_user' : True,
@@ -207,11 +206,9 @@ hasUsers(): Test if the subpart has any
         super(Subpart, self).finish()
         
     def storeUser(self, obj):
-        """Save a reference to another object.
-
-storeObject(obj)
-
-Argument 'obj' can be any type of object.
+        """
+            Save a reference to another object.
+            Argument 'obj' can be any type of object.
         """
         if self.__users is None:
             self.__users = []
@@ -249,21 +246,19 @@ had not been stored with storeObject().
                 self.__users = None
 
     def getUsers(self):
-        """Return the list of stored objects.
-
-getObjects()
-
-This method returns a list of references stored by
-calling the storeObject() method.
+        """
+            Return the list of stored objects.
+            This method returns a list of references stored by
+            calling the storeObject() method.
         """
         if self.__users is not None:
             return self.__users[:]
         return []
 
     def countUsers(self):
-        """Return the number of stored objects.
-
-countUsers()        
+        """
+            Return the number of stored objects.
+            countUsers()        
         """
         _count = 0
         if self.__users is not None:
@@ -281,11 +276,9 @@ otherwise this method returns False.
         return self.__users is not None
 
     def canParent(self, obj):
-        """Test if an Entity can be the parent of another Entity.
-
-canParent(obj)
-
-This method overrides the Entity::canParent() method
+        """
+            Test if an Entity can be the parent of another Entity.
+            This method overrides the Entity::canParent() method
         """
         return False
 

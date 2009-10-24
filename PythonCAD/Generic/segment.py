@@ -270,13 +270,11 @@ setP2(p)
     p2 = property(getP2, setP2, None, "Second endpoint of the Segment.")
 
     def move(self, dx, dy):
-        """Move a Segment.
-
-move(dx, dy)
-
-The first argument gives the x-coordinate displacement,
-and the second gives the y-coordinate displacement. Both
-values should be floats.
+        """
+            Move a Segment.
+            The first argument gives the x-coordinate displacement,
+            and the second gives the y-coordinate displacement. Both
+            values should be floats.
         """
         if self.isLocked() or self.__p1.isLocked() or self.__p2.isLocked():
             raise RuntimeError, "Moving Segment not allowed - object locked."
@@ -294,18 +292,14 @@ values should be floats.
             self.sendMessage('moved', _x1, _y1, _x2, _y2)
 
     def length(self):
-        """Return the length of the Segment.
-
-length()
+        """
+            Return the length of the Segment.
         """
         return self.__p1 - self.__p2
-
     def getCoefficients(self):
-        """Express the line segment as a function ax + by + c = 0
-
-getCoefficients()
-
-This method returns a tuple of three floats: (a, b, c)
+        """
+            Express the line segment as a function ax + by + c = 0
+            This method returns a tuple of three floats: (a, b, c)
         """
         _x1, _y1 = self.__p1.getCoords()
         _x2, _y2 = self.__p2.getCoords()
@@ -313,10 +307,11 @@ This method returns a tuple of three floats: (a, b, c)
         _b = _x1 - _x2
         _c = (_x2 * _y1) - (_x1 * _y2)
         return _a, _b, _c
-#++ Matteo Boscolo
+    
     def getMiddlePoint(self):
-        """Return the middle point of the segment
-"""
+        """
+            Return the middle point of the segment
+        """
         _p1,_p2=self.getEndpoints()
         _x1=util.get_float(_p1.x)
         _x2=util.get_float(_p2.x)
@@ -333,28 +328,6 @@ This method returns a tuple of three floats: (a, b, c)
         else:
             retY=_y2+_deltay
         return retX,retY
-#--
-    #def getProjection(self, x, y):
-     #   """Find the projection point of some coordinates on the Segment.
-
-#getProjection(x, y)
-
-#Arguments 'x' and 'y' should be float values.
- #       """
-  #      _x = util.get_float(x)
-  #      _y = util.get_float(y)
-  #      _x1, _y1 = self.__p1.getCoords()
-  #      _x2, _y2 = self.__p2.getCoords()
-  #      _sqlen = pow((_x2 - _x1), 2) +  pow((_y2 - _y1), 2)
-  #      if _sqlen < 1e-10: # coincident points
-   #         return None
-   #     _rn = ((_x - _x1) * (_x2 - _x1)) + ((_y - _y1) * (_y2 - _y1))
-   #     _r = _rn/_sqlen
-   #     if _r < 0.0 or _r > 1.0:
-   #         return None
-   #     _px = _x1 + _r * (_x2 - _x1)
-   #     _py = _y1 + _r * (_y2 - _y1)
-   #     return _px, _py
     
     def getProjection(self,x,y):
         """
@@ -369,32 +342,24 @@ This method returns a tuple of three floats: (a, b, c)
         v1=pyGeoLib.Vector(p1,p3)
         xp,yp=v1.Point().getCoords()
         pjPoint=v.Map(xp,yp).Point()
-        print("Debug: point To Project :",str(_x),str(_y))
         x,y = pjPoint.getCoords()
         _x1,_y1=p1.getCoords()
         x=x+_x1
         y=y+_y1
-        print("Debug : prjPoint",str(x),str(y))
         return x,y
         
     def mapCoords(self, x, y, tol=tolerance.TOL):
-        """Return the nearest Point on the Segment to a coordinate pair.
-
-mapCoords(x, y[, tol])
-
-The function has two required arguments:
-
-x: A Float value giving the 'x' coordinate
-y: A Float value giving the 'y' coordinate
-
-There is a single optional argument:
-
-tol: A float value equal or greater than 0.
-
-This function is used to map a possibly near-by coordinate pair to an
-actual Point on the Segment. If the distance between the actual
-Point and the coordinates used as an argument is less than the tolerance,
-the actual Point is returned. Otherwise, this function returns None.
+        """
+            Return the nearest Point on the Segment to a coordinate pair.
+            The function has two required arguments:
+            x: A Float value giving the 'x' coordinate
+            y: A Float value giving the 'y' coordinate
+            There is a single optional argument:
+            tol: A float value equal or greater than 0.
+            This function is used to map a possibly near-by coordinate pair to an
+            actual Point on the Segment. If the distance between the actual
+            Point and the coordinates used as an argument is less than the tolerance,
+            the actual Point is returned. Otherwise, this function returns None.
         """
         _x = util.get_float(x)
         _y = util.get_float(y)

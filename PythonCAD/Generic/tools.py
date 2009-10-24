@@ -393,21 +393,17 @@ class PointTool(Tool):
         return self.__point
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(PointTool, self).reset()
         self.__point = None
 
     def create(self, image):
-        """Create a new Point and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new Point and add it to the image.
+            This method overrides the Tool::create() method.
         """
         if self.__point is not None:
             _active_layer = image.getActiveLayer()
@@ -2499,27 +2495,25 @@ preferences are retrieved.
         _dim.setEndpointType(image.getOption('DIM_ENDPOINT'))
         _dim.setEndpointSize(image.getOption('DIM_ENDPOINT_SIZE'))
         _dim.setDualDimMode(image.getOption('DIM_DUAL_MODE'))
-
+    
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method sets the DimensionTool dimension to None.
+        """
+            Restore the tool to its initial state.
+            This method sets the DimensionTool dimension to None.
         """
         super(DimensionTool, self).reset()
         self.__dim = None
+        self.__tempPoint=[]
 
 class LinearDimensionTool(DimensionTool):
-    """A specialized tool for drawing LinearDimension objects.
-
-The LinearDimensionTool is derived from the DimensionTool and
-Tool, class, so it shares all the attributes and methods of those classes.
-The LinearDimensionTool class has the following addtional methods:
-
-{set/get}FirstPoint(): Set/Get the first point in the LinearDimension
-{set/get}SecondPoint(): Set/Get the second point in the LinearDimension.
-{set/get}DimPosition(): Set/Get the location of the dimension text.
+    """
+        A specialized tool for drawing LinearDimension objects.
+        The LinearDimensionTool is derived from the DimensionTool and
+        Tool, class, so it shares all the attributes and methods of those classes.
+        The LinearDimensionTool class has the following addtional methods:
+        {set/get}FirstPoint(): Set/Get the first point in the LinearDimension
+        {set/get}SecondPoint(): Set/Get the second point in the LinearDimension.
+        {set/get}DimPosition(): Set/Get the location of the dimension text.
     """
     def __init__(self):
         super(LinearDimensionTool, self).__init__()
@@ -2528,11 +2522,9 @@ The LinearDimensionTool class has the following addtional methods:
         self.__position = None
 
     def setFirstPoint(self, p):
-        """Store the first point for the LinearDimension.
-
-setFirstPoint(p):
-
-The argument 'p' must be a Point instance.
+        """
+            Store the first point for the LinearDimension.
+            The argument 'p' must be a Point instance.
         """
         if not isinstance (p, Point):
             raise TypeError, "Invalid Point: " + `type(p)`
@@ -2587,21 +2579,17 @@ Arguments 'x' and 'y' should be float values.
         self.__position = (_x, _y)
 
     def getDimPosition(self):
-        """Retrieve where the dimension text should be placed.
-
-getDimPosition()
-
-This method returns a tuple containing the x/y coodindates defined
-by the setDimPosition() call, or None if that method has not been invoked.
+        """
+            Retrieve where the dimension text should be placed.
+            This method returns a tuple containing the x/y coodindates defined
+            by the setDimPosition() call, or None if that method has not been invoked.
         """
         return self.__position
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends the reset() methods of its base classes.
+        """
+            Restore the tool to its initial state.
+            This method extends the reset() methods of its base classes.
         """
         super(LinearDimensionTool, self).reset()
         self.__p1 = None
@@ -2609,11 +2597,9 @@ This method extends the reset() methods of its base classes.
         self.__position = None
 
     def makeDimension(self, image):
-        """Create a LinearDimension based on the stored tool values.
-
-makeDimension(image)
-
-The argument 'image' is an image object where the dimension will be used.
+        """
+            Create a LinearDimension based on the stored tool values
+            The argument 'image' is an image object where the dimension will be used.
         """
         _p1 = self.__p1
         _p2 = self.__p2
@@ -2628,11 +2614,9 @@ The argument 'image' is an image object where the dimension will be used.
             self.setDimPrefs(image)
 
     def create(self, image):
-        """Create a new LinearDimension and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new LinearDimension and add it to the image.
+            This method overrides the Tool::create() method.
         """
         _ldim = self.getDimension()
         if _ldim is not None:

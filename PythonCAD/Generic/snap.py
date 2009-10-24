@@ -354,7 +354,7 @@ def setDinamicSnap(gtkimage,toolFunction,excludeSnap=None):
     
 def getSnapPoint(image,tol,excludeSnap=None):
     """
-        return the snap point clicked y the user
+        return the snap point clicked by the user
         image           : image or GTKImage
         tol             : tollerance culd be None if image is GTKImage
         excludeSnap     : array of type {'end':False,.....}
@@ -377,7 +377,44 @@ def getOnlySnap(image,tol,onlySnapArray):
         _sp.resetTemporatySnap()
         return _sPnt 
     return None
-    
+
+def getSnapOnTruePoint(gtkimage,excludeArray):
+    """
+        looking for real Entity Point Snap ..
+        if it dose not find Return None On the str.Point
+    """
+    _tol = gtkimage.getTolerance()
+    _image = gtkimage.getImage()
+    _sp=_image.snapProvider
+    _strPnt=getSnapPoint(_image,_tol,excludeArray)
+    _pt=getDrawedPoint(_image,_tol,_strPnt)
+    if _pt is not None :
+        _strPnt.point=_pt
+    else:
+        _active_layer = _image.getActiveLayer()
+        _active_layer.addObject(_strPnt.point)
+    return _strPnt
+
+def getDrawedPoint(image ,tol,strPoint):
+    """
+        Looking in the drawing if the point exsists
+        and get it none if no point is found
+    """
+    if strPoint.kind=="Freepoint": return None
+    _x, _y = strPoint.point.getCoords()
+    _layers = [image.getTopLayer()]
+    while len(_layers):
+        _layer = _layers.pop()
+        if _layer.isVisible():
+            _pt = None
+            _pts = _layer.find('point', _x, _y, tol)
+            if len(_pts) > 0:
+                _pt = _pts[0]
+            if _pt is not None:
+                return _pt
+                break
+        _layers.extend(_layer.getSublayers())
+    return None 
 def getSelections(gtkimage,objFilter):
     """
         get the object preselected or selected

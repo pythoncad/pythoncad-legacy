@@ -53,12 +53,11 @@ inRegion(): Returns True if the point is in some area.
     # member functions
 
     def __init__(self, x, y=None, **kw):
-        """Initialize a Point.
-
-There are two ways to initialize a Point:
-
-Point(xc,yc) - Two arguments, with both arguments being floats
-Point((xc,yc)) - A single tuple containing two float objects
+        """
+            Initialize a Point.
+            There are two ways to initialize a Point:
+            Point(xc,yc) - Two arguments, with both arguments being floats
+            Point((xc,yc)) - A single tuple containing two float objects
         """
         super(Point, self).__init__(**kw)
         if isinstance(x, tuple):
@@ -228,13 +227,11 @@ Arguments 'x' and 'y' should be float values.
             self.modified()
 
     def move(self, dx, dy):
-        """Move a Point.
-
-move(dx, dy)
-
-The first argument gives the x-coordinate displacement,
-and the second gives the y-coordinate displacement. Both
-values should be floats.
+        """
+            Move a Point.
+            The first argument gives the x-coordinate displacement,
+            and the second gives the y-coordinate displacement. Both
+            values should be floats.
         """
         if self.isLocked():
             raise RuntimeError, "Moving not allowed - object locked."
@@ -251,20 +248,18 @@ values should be floats.
             self.modified()
 
     def clone(self):
-        """Create an identical copy of a Point.
-
-clone()
+        """
+            Create an identical copy of a Point.
         """
         return Point(self.__x, self.__y)
 
     def inRegion(self, xmin, ymin, xmax, ymax, fully=True):
-        """Returns True if the Point is within the bounding values.
-
-inRegion(xmin, ymin, xmax, ymax)
-
-The four arguments define the boundary of an area, and the
-function returns True if the Point lies within that area.
-Otherwise, the function returns False.
+        """
+            Returns True if the Point is within the bounding values.
+            inRegion(xmin, ymin, xmax, ymax)
+            The four arguments define the boundary of an area, and the
+            function returns True if the Point lies within that area.
+            Otherwise, the function returns False.
         """
         _xmin = util.get_float(xmin)
         _ymin = util.get_float(ymin)
