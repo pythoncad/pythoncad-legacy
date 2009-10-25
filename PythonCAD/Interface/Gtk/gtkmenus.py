@@ -688,6 +688,7 @@ def draw_set_thickness_cb(menuitem, gtkimage):
     gtkentities.set_line_thickness(gtkimage)
 
 def draw_text_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _text = gtktext.text_add_dialog(gtkimage)
     if _text is not None:
         _tool = tools.TextTool()
@@ -695,18 +696,22 @@ def draw_text_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def move_horizontal_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.HorizontalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_vertical_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.VerticalMoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def move_twopoint_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.MoveTool()
     gtkimage.getImage().setTool(_tool)
 
 def stretch_horiz_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.HorizontalStretchTool()
     gtkimage.getImage().setTool(_tool)
 
@@ -715,22 +720,27 @@ def stretch_vert_cb(menuitem, gtkimage):
     gtkimage.getImage().setTool(_tool)
 
 def stretch_twopoint_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.StretchTool()
     gtkimage.getImage().setTool(_tool)
 
 def transfer_object_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.TransferTool()
     gtkimage.getImage().setTool(_tool)
 
 def rotate_object_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.RotateTool()
     gtkimage.getImage().setTool(_tool)
     
 def split_object_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.SplitTool()
     gtkimage.getImage().setTool(_tool)
 
 def mirror_object_cb(menuitem, gtkimage):
+    gtkimage.activateSnap()
     _tool = tools.MirrorTool()
     gtkimage.getImage().setTool(_tool)
 

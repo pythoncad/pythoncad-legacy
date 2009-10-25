@@ -317,8 +317,9 @@ class SnapServices(object):
         """
             set the value of the exludeSnap to the global snap 
         """
-        if self.__temporarySnap is None:
-            self.__temporarySnap = globals.snapOption.copy()
+        if not isinstance(excludeSnap,dict):
+            raise TypeError, "Unexpected type for snapArray: " + `type(excludeSnap)`
+        self.__temporarySnap = globals.snapOption.copy()
         for key in excludeSnap.keys():
             self.__temporarySnap[key]=excludeSnap[key]
 
@@ -370,13 +371,13 @@ def getOnlySnap(image,tol,onlySnapArray):
     """
         set the dinamic snap to get only the onlySnapArray
     """
+    _sPnt=None
     _sp=image.snapProvider
     if onlySnapArray is not None:
         _sp.setTemporarySnapArray(onlySnapArray)
         _sPnt=_sp.getSnap(tol)
-        _sp.resetTemporatySnap()
-        return _sPnt 
-    return None
+    _sp.resetTemporatySnap()
+    return _sPnt 
 
 def getSnapOnTruePoint(gtkimage,excludeArray):
     """

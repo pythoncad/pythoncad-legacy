@@ -785,7 +785,7 @@ The argument 'l' should be a float equal or greater than 0.0.
             simply a distinct point in the Layer if no nearby entities
             were found.
         """
-        print "@@@@---->>>>>Debug Function banned getClosestPoint"
+        raise "Function getClosestPoint banned " 
         _t=5.0
         if 'tolerance' in kw:
             _t=util.get_float(kw['tolerance'])

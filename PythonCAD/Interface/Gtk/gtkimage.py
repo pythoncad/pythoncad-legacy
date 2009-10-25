@@ -1363,9 +1363,8 @@ modified, use the redraw() method.
         self.ZoomScale(ActiveScale)        
     def MoveFromTo(self,xFrom,yFrom,xTo,yTo):
         """
-            Do the Zoom or Move action
-MoveFromTo()
-"""
+            Do the Zoom or Move action  
+        """
         deltaX=abs(xFrom-xTo)*self.__units_per_pixel
         deltaY=abs(yFrom-yTo)*self.__units_per_pixel
         if(xFrom>xTo):
@@ -1384,8 +1383,7 @@ MoveFromTo()
     def ZoomScale(self,scale):
         """
             Make a drawing zoom of the scale quantity
-ZoomScale()
-"""
+        """
         _fw = float(self.__disp_width)
         _fh = float(self.__disp_height)       
         _xdiff = abs(self.__xmax-self.__xmin)
@@ -1396,21 +1394,21 @@ ZoomScale()
         _ym = _ymid - (_fh/2.0) * scale
         self.setView(_xm, _ym, scale)
     def StartPanImage(self):
-        """Start Pan Image
-StartPanImage()
+        """
+            Start Pan Image
         """
         self.StopMove=True
         self.__StartMoving=True
     def StopPanImage(self):
-        """ Stop Pan Operation
-StopPanImage()
-"""
+        """
+            Stop Pan Operation
+        """
         self.StopMove=False
         self.__StartMoving=False
     def isPan(self):
-        """ Return the active pan status
-isPan()
-"""
+        """ 
+            Return the active pan status
+        """
         return self.StopMove
     
     def setCursor(self,drwArea,snObject):

@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007 Art Haas
 #
+#               2009 Matteo Bosocolo
+#
 # This file is part of PythonCAD.
 # 
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -47,12 +49,14 @@ from PythonCAD.Generic.vcline import VCLine
 from PythonCAD.Generic.cline import CLine
 from PythonCAD.Generic import util
 from PythonCAD.Generic import split
+from PythonCAD.Generic import snap
 
 import PythonCAD.Generic.units
 import PythonCAD.Generic.move
 import PythonCAD.Generic.transfer
 import PythonCAD.Generic.delete
 import PythonCAD.Generic.rotate
+
 
 #
 # common code
@@ -83,7 +87,6 @@ def select_motion_notify(gtkimage, widget, event, tool):
 #
 # move objects
 #
-
 def move_objects(gtkimage, objlist, tool):
     _init_func = tool.getHandler("initialize")
     _dx, _dy = tool.getDistance()
@@ -95,10 +98,15 @@ def move_objects(gtkimage, objlist, tool):
         _image.endAction()
     gtkimage.setPrompt(_('Click in the drawing area or enter a distance.'))
     tool.reset()
+    gtkimage.redraw()
     _init_func(gtkimage, tool)
     
 def move_button_press(gtkimage, tool):
-    _x, _y = gtkimage.image.getCurrentPoint()
+    _image = gtkimage.getImage()
+    _tol = gtkimage.getTolerance()
+    _onlySnap={"Freepoint":True}
+    _sp=snap.getOnlySnap(_image,_tol,_onlySnap)
+    _x, _y = _sp.point.getCoords()
     #
     # need to find if the point is an intersection of drawing objects ...
     #
@@ -108,7 +116,10 @@ def move_button_press(gtkimage, tool):
 
 def move_end_button_press_cb(gtkimage, widget, event, tool):
     _image = gtkimage.getImage()
-    _x2, _y2 = _image.getCurrentPoint()
+    _tol = gtkimage.getTolerance()
+    _onlySnap={"Freepoint":True}
+    _sp=snap.getOnlySnap(_image,_tol,_onlySnap)
+    _x2, _y2 = _sp.point.getCoords()
     _x1, _y1 = tool.getLocation()
     _xmin = min(_x1, _x2)
     _xmax = max(_x1, _x2)
@@ -122,7 +133,10 @@ def move_end_button_press_cb(gtkimage, widget, event, tool):
 def move_elem_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _onlySnap={"Freepoint":True}
+    _sp=snap.getOnlySnap(_image,_tol,_onlySnap)
+    _x,_y=_sp.point.getCoords()
+    #_x, _y = _image.getCurrentPoint()
     _objdict = _image.mapPoint(_x, _y, _tol, None)
     if len(_objdict):
         _active_layer = _image.getActiveLayer()
@@ -133,7 +147,9 @@ def move_elem_button_press_cb(gtkimage, widget, event, tool):
             _dx, _dy = tool.getDistance()
             move_objects(gtkimage, _objs, tool)
     else:
-        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+        _onlySnap={"Freepoint":True}
+        _sp=snap.getOnlySnap(_image,_tol,_onlySnap)
+        _x,_y=_sp.point.getCoords()
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", move_end_button_press_cb)
@@ -166,8 +182,8 @@ def move_horizontal_entry_event(gtkimage, widget, tool):
 def move_horizontal_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), 0.0)
     if _image.hasSelection():
@@ -182,8 +198,8 @@ def move_horizontal_second_button_press_cb(gtkimage, widget, event, tool):
 def move_horizontal_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_horizontal_second_button_press_cb)
@@ -219,8 +235,8 @@ def move_vertical_entry_event(gtkimage, widget, tool):
 def move_vertical_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _x1, _y1 = tool.getLocation()
     tool.setDistance(0.0, (_y - _y1))
     if _image.hasSelection():
@@ -235,8 +251,8 @@ def move_vertical_second_button_press_cb(gtkimage, widget, event, tool):
 def move_vertical_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y =_image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_vertical_second_button_press_cb)
@@ -272,8 +288,8 @@ def move_xy_entry_event(gtkimage, widget, tool):
 def move_xy_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), (_y - _y1))
     if _image.hasSelection():
@@ -288,8 +304,8 @@ def move_xy_second_button_press_cb(gtkimage, widget, event, tool):
 def move_xy_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", move_xy_second_button_press_cb)
@@ -401,6 +417,7 @@ def stretch_end_button_press_cb(gtkimage, widget, event, tool):
                 _pt.move(_dx, _dy)
     finally:
         _image.endAction()
+        gtkimage.redraw()
     tool.clearLocation()
     tool.clearCurrentPoint()
     tool.setHandler("button_press", stretch_elem_button_press_cb)
@@ -409,7 +426,8 @@ def stretch_end_button_press_cb(gtkimage, widget, event, tool):
 def stretch_elem_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _active_layer = _image.getActiveLayer()
     _pt = None
     _pts = _active_layer.find('point', _x, _y, _tol)
@@ -421,6 +439,7 @@ def stretch_elem_button_press_cb(gtkimage, widget, event, tool):
                 _pt.move(_dx, _dy)
         finally:
             _image.endAction()
+            gtkimage.redraw()
     else:
         tool.pushObject(_x)
         tool.pushObject(_y)
@@ -443,7 +462,8 @@ def stretch_horiz_button_press_cb(gtkimage, widget, event, tool):
         move_button_press(gtkimage, tool)
         gtkimage.setPrompt(_('Click a second point to indicate the horizontal distance'))
     else:
-        _x, _y = gtkimage.image.getCurrentPoint()
+        _snapArray={'perpendicular':False,'tangent':False}
+        _x,_y=snap.getSnapPoint(gtkimage.getImage(),gtkimage.getTolerance(),_snapArray).point.getCoords()
         #
         # see if the point is at an intersection of drawing objects ...
         #
@@ -484,7 +504,8 @@ def stretch_vert_button_press_cb(gtkimage, widget, event, tool):
         move_button_press(gtkimage, tool)
         gtkimage.setPrompt(_('Click a second point to indicate the vertical distance'))
     else:
-        _x, _y = gtkimage.image.getCurrentPoint()
+        _snapArray={'perpendicular':False,'tangent':False}
+        _x,_y=snap.getSnapPoint(gtkimage.getImage(),gtkimage.getTolerance(),_snapArray).point.getCoords()
         #
         # see if the point is at an intersection of drawing objects ...
         #
@@ -534,8 +555,8 @@ def stretch_xy_entry_event(gtkimage, widget, tool):
 def stretch_xy_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _x1, _y1 = tool.getLocation()
     tool.setDistance((_x - _x1), (_y - _y1))
     tool.clearLocation()
@@ -547,8 +568,8 @@ def stretch_xy_second_button_press_cb(gtkimage, widget, event, tool):
 def stretch_xy_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
     gtkimage.setPrompt(_('Click another point to define the distance'))
     tool.setHandler("button_press", stretch_xy_second_button_press_cb)
@@ -560,8 +581,6 @@ def stretch_xy_init(gtkimage, tool=None):
     _tool.setHandler("button_press", stretch_xy_first_button_press_cb)
     _tool.setHandler("entry_event", stretch_xy_entry_event)    
     _tool.setHandler("initialize", stretch_xy_init)
-
-
 #
 # rotate objects
 #
@@ -605,7 +624,8 @@ def rotate_elem_button_press_cb(gtkimage, widget, event, tool):
                 _objs.append(_obj)
             rotate_objects(gtkimage, _objs, tool)
     else:
-        _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+        _snapArray={'perpendicular':False,'tangent':False}
+        _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
         tool.setLocation(_x, _y)
         tool.setHandler("motion_notify", select_motion_notify)
         tool.setHandler("button_press", rotate_end_button_press_cb)
@@ -630,7 +650,8 @@ def rotate_angle_entry_event(gtkimage, widget, tool):
 def rotate_angle_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _objdict = _image.mapPoint(_x, _y, _tol)
     _a2 = None
     if len(_objdict):
@@ -674,7 +695,8 @@ def rotate_angle_second_button_press_cb(gtkimage, widget, event, tool):
 def rotate_angle_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     _objdict = _image.mapPoint(_x, _y, _tol)
     if len(_objdict):
         _active_layer = _image.getActiveLayer()
@@ -702,8 +724,8 @@ def rotate_point_entry_event(gtkimage, widget, tool):
 def rotate_point_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _x, _y = _image.getClosestPoint(_x, _y, tolerance=_tol)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setRotationPoint(_x, _y)
     gtkimage.setPrompt(_('Click on a construction line or enter the rotation angle'))
     tool.setHandler("button_press", rotate_angle_first_button_press_cb)
