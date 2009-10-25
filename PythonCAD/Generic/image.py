@@ -1348,12 +1348,10 @@ of operations on an Image as a single operation for undo/redo purposes.
         self.sendMessage('group_action_started')
 
     def endAction(self):
-        """Set the Image to the point completing a sequence of operations.
-
-endAction()
-
-This method is called in conjunction with startAction() to store a sequence
-of operations on an Image as a single operation for undo/redo purposes.
+        """
+            Set the Image to the point completing a sequence of operations.
+            This method is called in conjunction with startAction() to store a sequence
+            of operations on an Image as a single operation for undo/redo purposes.
         """
         if not self.__busy:
             raise ValueError, "Image not in busy state"

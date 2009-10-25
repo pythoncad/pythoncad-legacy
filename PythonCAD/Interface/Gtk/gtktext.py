@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2003, 2004, 2006, 2007 Art Haas
 #
+#               2009 Matteo Boscolo
+#
 # This file is part of PythonCAD.
 # 
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -25,8 +27,10 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import pango
+import copy
 
 from PythonCAD.Generic.text import TextStyle, TextBlock
+from PythonCAD.Generic import snap
 
 def set_textblock_bounds(gtkimage, tblock):
     # print "set_textblock_bounds() ..."
@@ -170,27 +174,24 @@ def _make_pango_layout(gtkimage, text, family, style, weight, size):
     return _layout
 
 def text_button_press(gtkimage, widget, event, tool):
-    _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    _pt, _flag = _image.findPoint(_x, _y, _tol)
-    if _pt is not None:
-        _x, _y = _pt.getCoords()
-    tool.getTextBlock().setLocation(_x, _y)
-    _image.startAction()
+    _image=gtkimage.getImage()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _sn=snap.getSnapPoint(_image,gtkimage.getTolerance(),_snapArray)
+    _x,_y=_sn.point.getCoords()    
+    tool.getTextBlock().setLocation(_x,_y)
+    _tool=copy.copy(tool)
+    _image.startAction()    
     try:
         tool.create(_image)
     finally:
         _image.endAction()
-    # tool.clearCurrentPoint()
+    text_add_init(gtkimage,_tool)
     return True
     
 def text_motion_notify(gtkimage, widget, event, tool):
     _tblock = tool.getTextBlock()
     _tw, _th = tool.getPixelSize()
     _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
     _align = _tblock.getAlignment()
     if _align == TextStyle.ALIGN_LEFT:    
         _xoff = 0
@@ -205,14 +206,20 @@ def text_motion_notify(gtkimage, widget, event, tool):
         _xc, _yc = _cp
         _xc = _xc - _xoff
         widget.window.draw_rectangle(_gc, False, _xc, _yc, _tw, _th)
-    tool.setCurrentPoint(_x, _y)
-    _x = _x - _xoff
+    _snapArray={'perpendicular':False,'tangent':False}
+    _sn=snap.getSnapPoint(gtkimage.getImage(),gtkimage.getTolerance(),_snapArray)
+    _x, _y=_sn.point.getCoords()
+    _x = _x - _xoff    
+    _x,_y = gtkimage.coordToPixTransform(_x,_y)
+    tool.setCurrentPoint(_x,_y)
     widget.window.draw_rectangle(_gc, False, _x, _y, _tw, _th)
     return True
 
 def text_add_init(gtkimage, tool=None):
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
+    if tool is not None:
+        _image.setTool(tool)
     _tool = _image.getTool()
     _text = _tool.getText()
     _ts = _image.getOption('TEXT_STYLE')

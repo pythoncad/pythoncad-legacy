@@ -3467,21 +3467,21 @@ class ChangeThicknessTool(GraphicObjectTool):
     pass
 
 class TextTool(RegionTool):
-    """A specialized class for entering text.
+    """
+        A specialized class for entering text.
+        The TextTool class is derived from the Tool class, so it shares
+        the attributes and methods of that class. The TextTool class also
+        has the following additional methods:
 
-The TextTool class is derived from the Tool class, so it shares
-the attributes and methods of that class. The TextTool class also
-has the following additional methods:
-
-{set/get}Text(): Set/Get the text string in the tool.
-hasText(): Test if the tool has stored a text string
-{set/get}TextLocation(): Set/Get where the text is to be placed.
-{set/get}TextBlock(): Set/Get a TextBlock instance in the Tool
-{set/get}Bounds(): Set/Get the width and height of the text
-{set/get}PixelSize(): Set/Get the a rectangular region bounding the text.
-{set/get}Layout(): Set/Get the formatted text string display.
-{set/get/test}Attribute(): Set/Get/Test a TextBlock attribute
-{set/get}Value(): Set/Get the attribute value.
+        {set/get}Text(): Set/Get the text string in the tool.
+        hasText(): Test if the tool has stored a text string
+        {set/get}TextLocation(): Set/Get where the text is to be placed.
+        {set/get}TextBlock(): Set/Get a TextBlock instance in the Tool
+        {set/get}Bounds(): Set/Get the width and height of the text
+        {set/get}PixelSize(): Set/Get the a rectangular region bounding the text.
+        {set/get}Layout(): Set/Get the formatted text string display.
+        {set/get/test}Attribute(): Set/Get/Test a TextBlock attribute
+        {set/get}Value(): Set/Get the attribute value.
     """
     def __init__(self):
         super(TextTool, self).__init__()
@@ -3495,11 +3495,9 @@ hasText(): Test if the tool has stored a text string
         self.__layout = None
 
     def setText(self, text):
-        """Store some text in the tool.
-
-setText(text)
-
-The argument 'text' should be a unicode object.
+        """
+            Store some text in the tool.
+            The argument 'text' should be a unicode object.
         """
         _text = text
         if not isinstance(_text, unicode):
@@ -3507,58 +3505,45 @@ The argument 'text' should be a unicode object.
         self.__text = _text
 
     def getText(self):
-        """Retrieve the stored text from the TextTool.
-
-getText()
-
-If no text has been stored, this method raises a ValueError exception.
+        """
+            Retrieve the stored text from the TextTool.
+            If no text has been stored, this method raises a ValueError exception.
         """
         if self.__text is None:
             raise ValueError, "No text stored in TextTool."
         return self.__text
 
     def hasText(self):
-        """Test if the tool has stored a text string.
-
-hasText()
+        """
+            Test if the tool has stored a text string.
         """
         return self.__text is not None
 
     def setTextLocation(self, x, y):
-        """Store the location where the text will be placed.
-
-setTextLocation(x, y)
-
-The arguments 'x' and 'y' should be float values.
+        """
+            Store the location where the text will be placed.
+            The arguments 'x' and 'y' should be float values.
         """
         _x, _y = util.make_coords(x, y)
         self.__location = (_x, _y)
 
     def getTextLocation(self):
-        """Retrieve the location where the text will be placed.
-
-getTextLocation()
-
-This method returns a tuple holding two floats:
-
-(x, y)
-
-
-A ValueError exception is raised if this method is called prior to
-setting the text location with setTextLocation().
+        """
+            Retrieve the location where the text will be placed.
+            This method returns a tuple holding two floats:(x, y)
+            A ValueError exception is raised if this method is called prior to
+            setting the text location with setTextLocation().
         """
         if self.__location is None:
             raise ValueError, "No text location defined."
         return self.__location
 
     def testAttribute(self, attr):
-        """Test that the given attribute is valid.
-
-testAttribute(attr)
-
-Argument 'attr' should be one of the following: 'setAngle',
-'setAlignment', 'setFamily', 'setStyle', 'setWeight', 'setColor',
-or 'setSize'
+        """
+            Test that the given attribute is valid.
+            Argument 'attr' should be one of the following: 'setAngle',
+            'setAlignment', 'setFamily', 'setStyle', 'setWeight', 'setColor',
+            or 'setSize'
         """
         if not isinstance(attr, str):
             raise TypeError, "Invalid attribute type: " + `type(attr)`
@@ -3566,35 +3551,29 @@ or 'setSize'
                         'setStyle', 'setWeight', 'setColor', 'setSize')
 
     def setAttribute(self, attr):
-        """Define which attribute the tool is modifying.
-
-setAttribute(attr)
-
-Argument 'attr' should be one of the following: 'setAngle',
-'setAlignment', 'setFamily', 'setStyle', 'setWeight', 'setColor',
-or 'setSize'
+        """
+            Define which attribute the tool is modifying.
+            Argument 'attr' should be one of the following: 'setAngle',
+            'setAlignment', 'setFamily', 'setStyle', 'setWeight', 'setColor',
+            or 'setSize'
         """
         if not self.testAttribute(attr):
              raise ValueError, "Invalid attribute: " + attr
         self.__attr = attr
 
     def getAttribute(self):
-        """Return the specified attribute.
-
-getAttribute()
-
-If called before invoking setAttribute(), this method raises a ValueError.
+        """
+            Return the specified attribute.
+            If called before invoking setAttribute(), this method raises a ValueError.
         """
         if self.__attr is None:
             raise ValueError, "Tool attribute not defined."
         return self.__attr
 
     def testValue(self, val):
-        """Test that the given value is valid for the preset attribute.
-
-testValue(val)
-
-Argument 'val' depends on what attribute has been set with via setAttribute().
+        """
+            Test that the given value is valid for the preset attribute.
+            Argument 'val' depends on what attribute has been set with via setAttribute().
         """
         _a = self.__attr
         if _a == 'setAngle':
@@ -3641,14 +3620,12 @@ Argument 'val' depends on what attribute has been set with via setAttribute().
         return _val
         
     def setValue(self, val):
-        """Store the new value of the entity attribute.
-
-setValue(val)
-
-Argument 'val' depends on the type of attribute defined for the
-tool. If no attribute is defined this method raises a ValueError.
-Invoking this method with 'None' as an argument sets the tool
-to restore the default attribute value.
+        """
+            Store the new value of the entity attribute.
+            Argument 'val' depends on the type of attribute defined for the
+            tool. If no attribute is defined this method raises a ValueError.
+            Invoking this method with 'None' as an argument sets the tool
+            to restore the default attribute value.
         """
         if self.__attr is None:
             raise ValueError, "Tool attribute not defined."
@@ -3658,29 +3635,24 @@ to restore the default attribute value.
         self.__value = _val
 
     def getValue(self):
-        """Get the stored attribute value.
-
-getValue()
-
-This method returns the value stored in setValue() or None.
+        """
+            Get the stored attribute value.
+            This method returns the value stored in setValue() or None.
         """
         return self.__value
 
     def getBounds(self):
-        """Return the width and height of the TextBlock.
-
-getBounds()        
+        """
+            Return the width and height of the TextBlock.       
         """
         if self.__bounds is None:
             raise ValueError, "TextBlock bounds not defined."
         return self.__bounds
 
     def setBounds(self, width, height):
-        """Set the width and height of the TextBlock.
-
-setBounds(width, height):
-
-Arguments 'width' and 'height' should be positive float values.
+        """
+            Set the width and height of the TextBlock.
+            Arguments 'width' and 'height' should be positive float values.
         """
         _w = util.get_float(width)
         if _w < 0.0:
@@ -3691,13 +3663,10 @@ Arguments 'width' and 'height' should be positive float values.
         self.__bounds = (_w, _h)
         
     def setPixelSize(self, width, height):
-        """Store a screen-size rectangular boundary for the text.
-
-setPixelSize(width, height)
-
-Arguments 'width' and 'height' should be positive integer values.
-
-This method is somewhat GTK specific ...
+        """
+            Store a screen-size rectangular boundary for the text.
+            Arguments 'width' and 'height' should be positive integer values.
+            This method is somewhat GTK specific ...
         """
         _width = width
         if not isinstance(_width, int):
@@ -3763,11 +3732,9 @@ via setTextBlock().
         return self.__tblock
         
     def create(self, image):
-        """Create a new TextBlock and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new TextBlock and add it to the image.
+            This method overrides the Tool::create() method.
         """
         _tb = self.__tblock
         if _tb is None:
@@ -3800,11 +3767,9 @@ This method overrides the Tool::create() method.
         self.reset()
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(TextTool, self).reset()
         self.__text = None
@@ -3813,7 +3778,7 @@ This method extends Tool::reset().
         self.__bounds = None
         self.__pixel_size = None
         self.__layout = None
-
+        
 class EditDimensionTool(RegionTool):
     """A specialized class for changing attributes of Dimension instances.
 

@@ -355,7 +355,7 @@ def setDinamicSnap(gtkimage,toolFunction,excludeSnap=None):
 def getSnapPoint(image,tol,excludeSnap=None):
     """
         return the snap point clicked by the user
-        image           : image or GTKImage
+        image           : image 
         tol             : tollerance culd be None if image is GTKImage
         excludeSnap     : array of type {'end':False,.....}
         return: SnapPointStr
