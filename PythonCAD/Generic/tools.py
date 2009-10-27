@@ -411,14 +411,11 @@ class PointTool(Tool):
             self.reset()
 
 class SegmentTool(Tool):
-    """A Specialized tool for drawing Segment objects.
-
-The SegmentTool class is derived from the Tool class, so
-it shares the attributes and methods of that class. The
-SegmentTool class has the following additional methods:
-
-{get/set}FirstPoint(): Get/Set the first point of the Segment.
-{get/set}SecondPoint(): Get/Set the second point of the Segment.
+    """
+        A Specialized tool for drawing Segment objects.
+        The SegmentTool class is derived from the Tool class, so
+        it shares the attributes and methods of that class. The
+        SegmentTool class has the following additional methods:
     """
     def __init__(self):
         super(SegmentTool, self).__init__()
@@ -426,55 +423,45 @@ SegmentTool class has the following additional methods:
         self.__second_point = None
 
     def setFirstPoint(self, snapPoint):
-        """Store the first point of the Segment.
-
-setFirstPoint(x, y)
-
-Arguments 'x' and 'y' should be floats.
+        """
+            Store the first point of the Segment.
+            Arguments 'x' and 'y' should be floats.
         """
         self.__first_point = snapPoint
 
     def getFirstPoint(self):
-        """Get the first point of the Segment.
-
-getFirstPoint()
-
-This method returns a tuple holding the coordinates stored
-by invoking the setFirstPoint() method, or None if that method
-has not been invoked.
+        """
+            Get the first point of the Segment.
+            This method returns a tuple holding the coordinates stored
+            by invoking the setFirstPoint() method, or None if that method
+            has not been invoked.
         """
         return self.__first_point
 
     def setSecondPoint(self, snapPoint):
-        """Store the second point of the Segment.
-
-setSecondPoint(x, y)
-
-Arguments 'x' and 'y' should be floats. If the
-tool has not had the first point set with setFirstPoint(),
-a ValueError exception is raised.
+        """
+            Store the second point of the Segment.
+            Arguments 'x' and 'y' should be floats. If the
+            tool has not had the first point set with setFirstPoint(),
+            a ValueError exception is raised.
         """
         if self.__first_point is None:
             raise ValueError, "SegmentTool first snapPoint is not set."
         self.__second_point = snapPoint
 
     def getSecondPoint(self):
-        """Get the second point of the Segment.
-
-getSecondPoint()
-
-This method returns a tuple holding the coordinates stored
-by invoking the setSecondPoint() method, or None if that method
-has not been invoked.
+        """
+            Get the second point of the Segment.
+            This method returns a tuple holding the coordinates stored
+            by invoking the setSecondPoint() method, or None if that method
+            has not been invoked.
         """
         return self.__second_point
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends Tool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends Tool::reset().
         """
         super(SegmentTool, self).reset()
         self.__first_point = None

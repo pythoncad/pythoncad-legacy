@@ -173,8 +173,8 @@ class SnapServices(object):
         """
         _objlist = []
         _intlist = []
-        if type is None:
-            _types=type
+        if types is not None:
+            _types=types
         else:
             _types = {'point' : True,
                   'segment' : True,
@@ -187,7 +187,7 @@ class SnapServices(object):
                   'cline' : True,
                   'ccircle' : True,
                   }
-        _layers = [self.__topLayer]
+        _layers = [self.__image.getActiveLayer()]
         while len(_layers):
             _layer = _layers.pop()
             _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
@@ -196,20 +196,16 @@ class SnapServices(object):
                     if(_obj is not None):
                         return _obj
         return None
-    def getMid(self,x,y,_t):
+    def getMid(self,x,y,t):
         """"
             Calculate the mid point 
         """
         _types = {'segment' : True}
-        _tl=[self.__topLayer]
-        while len(_tl):
-            _layer = _tl.pop()
-            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
-            if len(_hits) > 0:
-                for _obj, _pt in _hits:
-                    _ix,_iy=_obj.getMiddlePoint()
-                    return Point(_ix,_iy)
-        return None
+        _obj=self.getEnt(x,y,t,_types)
+        if _obj is None: return None
+        _ix,_iy=_obj.getMiddlePoint()
+        return Point(_ix,_iy)
+
     def getEndPoint(self,x,y,entityHits):
         """
             Get The Segment End Point nearest to the coord x,y            
@@ -224,13 +220,13 @@ class SnapServices(object):
                 else:
                     return _op2
         return None  
-    def getIntersection(self,x,y,_t):
+    def getIntersection(self,x,y,t):
         """
             Calculate the intersection point
         """
         _objlist = []
         _intlist = []
-        _types = {'point' : False,
+        _types = {'point':False,
                   'segment' : True,
                   'circle' : True,
                   'arc' : True,
@@ -244,13 +240,13 @@ class SnapServices(object):
         _layers = [self.__topLayer]
         while len(_layers):
             _layer = _layers.pop()
-            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
+            _hits = _layer.mapCoords(x, y, tolerance=t, types=_types)
             if len(_hits) > 0:
                 for _obj, _pt in _hits:
                     for _tobj, _mp in _objlist:
                         for _ix, _iy in intersections.find_intersections(_tobj, _obj):
-                            if ((abs(_ix - x) < _t) and
-                                (abs(_iy - y) < _t)):
+                            if ((abs(_ix - x) < t) and
+                                (abs(_iy - y) < t)):
                                 _sqlen = pow((x - _ix), 2) + pow((y - _iy), 2)
                                 _intlist.append((_sqlen, (_ix, _iy)))
                     _objlist.append((_obj, _pt))
@@ -264,7 +260,7 @@ class SnapServices(object):
             if _cp is not None:
                 return Point(_cp[0],_cp[1])
         return None
-    def getCenter(self,x,y,_t):
+    def getCenter(self,x,y,t):
         """
             Get The Center point over the mouse
         """
@@ -272,29 +268,20 @@ class SnapServices(object):
         ,'ccircle' : True
         ,'circle' : True
         ,'arc' : True}
-        _tl=[self.__topLayer]
-        while len(_tl):
-            _layer = _tl.pop()
-            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
-            if len(_hits) > 0:
-                for _obj,_pt in _hits:
-                    _ix,_iy=_obj.getCenter().getCoords()
-                    return (_ix,_iy)
-        return (None,None)
-    def getPoint(self,x,y,_t):
+        _obj=self.getEnt(x,y,t,_types)
+        if _obj is None: return (None,None)
+        _ix,_iy=_obj.getCenter().getCoords()
+        return (_ix,_iy)
+    def getPoint(self,x,y,t):
         """
             Get The point over the mouse
         """
         _types = {'point' : True}
-        _tl=[self.__topLayer]
-        while len(_tl):
-            _layer = _tl.pop()
-            _hits = _layer.mapCoords(x, y, tolerance=_t, types=_types)
-            if len(_hits) > 0:
-                for _obj, _pt in _hits:
-                    _ix,_iy=_obj.getCoords()
-                    return Point(_ix,_iy)
-        return None
+        _obj=self.getEnt(x,y,t,_types)
+        if _obj is None : return None
+        _ix,_iy=_obj.getCoords()
+        return Point(_ix,_iy)
+        
     def setOneTemporarySnap(self,snap):
         """
             Set only One snap 

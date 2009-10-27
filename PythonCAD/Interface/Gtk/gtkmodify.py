@@ -739,7 +739,6 @@ def rotate_init(gtkimage, tool=None):
     _tool.setHandler("entry_event", rotate_point_entry_event)    
     _tool.setHandler("initialize", rotate_init)
 
-
 #
 # split objects into two pieces or at intersection points
 #

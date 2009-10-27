@@ -470,12 +470,10 @@ hasLayer(l)
         return _flag
 
     def getActiveLayer(self):
-        """Return the active Layer in the drawing.
-
-getActiveLayer()
-
-The active Layer is the Layer to which any new objects will
-be stored.
+        """
+            Return the active Layer in the drawing.
+            The active Layer is the Layer to which any new objects will
+            be stored.
         """
         return self.__active_layer
 

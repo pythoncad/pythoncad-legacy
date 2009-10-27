@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas
 #
+#               2009 Matteo Boscolo
+#
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -51,38 +53,34 @@ from PythonCAD.Generic import units
 from PythonCAD.Generic import util
 
 class Layer(entity.Entity):
-    """The Layer class.
-
-A Layer object holds all the various entities that can be
-in a drawing. Each layer can have sublayers, and there is
-no limit to the depth of the sublayering.
-
-A Layer object has several attributes:
-
-name: The Layer's name
-parent: The parent Layer of the Layer
-scale: The scale factor for object contained in the Layer
-
-A Layer object has the following methods:
-
-{get/set}Name(): Get/Set the Layer's name.
-{get/set}ParentLayer(): Get/Set the Layer's parent.
-{add/del}Sublayer(): Add/Remove a sublayer to this Layer.
-hasSublayers(): Test if this Layer has sublayers.
-getSublayers(): Return any sublayers of this Layer.
-{add/del}Object(): Store/Remove a Point, Segment, etc. in the Layer.
-{get/set}Autosplit(): Get/Set the autosplitting state of the Layer.
-findObject(): Return an object in the layer equivalent to a test object.
-find(): Search for an object within the Layer.
-getObject(): Return an object with a specified ID
-mapPoint(): See if a non-Point object in the layer crosses some location.
-hasEntities(): Test if the Layer contains any entities
-hasEntityType(): Test if the Layer contains a particular entity type.
-getLayerEntities(): Return all the instances of an entity within the Layer.
-getBoundary(): Find the maximum and minimum coordinates of the Layer.
-objsInRegion(): Return all the objects in the Layer that can be seen
-                within some view.
-{get/set}DeletedEntityData(): Get/Set the deleted entity values in the Layer
+    """
+        The Layer class.
+        A Layer object holds all the various entities that can be
+        in a drawing. Each layer can have sublayers, and there is
+        no limit to the depth of the sublayering.
+        A Layer object has several attributes:
+        name: The Layer's name
+        parent: The parent Layer of the Layer
+        scale: The scale factor for object contained in the Layer
+        A Layer object has the following methods:
+        {get/set}Name(): Get/Set the Layer's name.
+        {get/set}ParentLayer(): Get/Set the Layer's parent.
+        {add/del}Sublayer(): Add/Remove a sublayer to this Layer.
+        hasSublayers(): Test if this Layer has sublayers.
+        getSublayers(): Return any sublayers of this Layer.
+        {add/del}Object(): Store/Remove a Point, Segment, etc. in the Layer.
+        {get/set}Autosplit(): Get/Set the autosplitting state of the Layer.
+        findObject(): Return an object in the layer equivalent to a test object.
+        find(): Search for an object within the Layer.
+        getObject(): Return an object with a specified ID
+        mapPoint(): See if a non-Point object in the layer crosses some location.
+        hasEntities(): Test if the Layer contains any entities
+        hasEntityType(): Test if the Layer contains a particular entity type.
+        getLayerEntities(): Return all the instances of an entity within the Layer.
+        getBoundary(): Find the maximum and minimum coordinates of the Layer.
+        objsInRegion(): Return all the objects in the Layer that can be seen
+        within some view.
+        {get/set}DeletedEntityData(): Get/Set the deleted entity values in the Layer
     """
 
     __messages = {
@@ -93,12 +91,11 @@ objsInRegion(): Return all the objects in the Layer that can be seen
         }
     
     def __init__(self, name=None, **kw):
-        """Initializee a Layer.
-
-Layer([name)
-
-Argument name is optional. The name should be a unicode string
-if specified, otherwise a default name of 'Layer' is given.
+        """
+            Initializee a Layer.
+            Layer([name)
+            Argument name is optional. The name should be a unicode string
+            if specified, otherwise a default name of 'Layer' is given.
         """
         _n = name
         if _n is None:
@@ -148,16 +145,14 @@ if specified, otherwise a default name of 'Layer' is given.
         return _s
 
     def __contains__(self, obj):
-        """Find an object in the Layer.
-
-This method permits the use of 'in' for test conditions.
-
-if obj in layer:
-    ....
-
-This function tests for Point, Segment, Circle, etc. It returns
-True if there is an equivalent object held in the Layer. Otherwise
-the function returns False.
+        """
+            Find an object in the Layer.
+            This method permits the use of 'in' for test conditions.
+            if obj in layer:
+            ....
+            This function tests for Point, Segment, Circle, etc. It returns
+            True if there is an equivalent object held in the Layer. Otherwise
+            the function returns False.
         """
         _seen = False
         if id(obj) in self.__objects:
@@ -262,9 +257,8 @@ the function returns False.
         super(Layer, self).finish()
         
     def clear(self):
-        """Remove all the entities stored in this layer
-
-clear()
+        """
+            Remove all the entities stored in this layer
         """
         if self.isLocked():
             raise RuntimeError, "Clearing layer not allowed - layer locked."
@@ -309,18 +303,15 @@ clear()
         self.setScale(1.0)
 
     def getName(self):
-        """Return the name of the Layer.
-
-getName()
+        """
+            Return the name of the Layer.
         """
         return self.__name
 
     def setName(self, name):
-        """Set the name of the Layer.
-
-setName(name)
-
-The new must be a string, and cannot be None.
+        """
+            Set the name of the Layer.
+            The name must be a string, and cannot be None.
         """
         _n = name
         if _n is None:
@@ -340,11 +331,9 @@ The new must be a string, and cannot be None.
     name = property(getName, setName, None, "Layer name.")
 
     def getValues(self):
-        """Return values comprising the Layer.
-
-getValues()
-
-This method extends the Entity::getValues() method.
+        """
+            Return values comprising the Layer.
+            This method extends the Entity::getValues() method.
         """
         _data = super(Layer, self).getValues()
         _data.setValue('type', 'layer')        
@@ -357,13 +346,11 @@ This method extends the Entity::getValues() method.
         return _data
 
     def setDeletedEntityData(self, data):
-        """Fill in the deleted entity data.
-
-setDeletedEntityData(data)
-
-Argument 'data' must be a dictionary with the keys being
-entity id values (integers) and the dictionary values as Logger
-instances.
+        """
+            Fill in the deleted entity data.
+            Argument 'data' must be a dictionary with the keys being
+            entity id values (integers) and the dictionary values as Logger
+            instances.
         """
         if not isinstance(data, dict):
             raise TypeError, "Invalid dictionary type: " + `type(data)`
@@ -378,24 +365,19 @@ instances.
             self.__logs[_key] = _val
         
     def getDeletedEntityData(self):
-        """Return the stored log data for deleted entities.
-
-getDeletedEntityData()
-
-This method returns a dictionary.
+        """
+            Return the stored log data for deleted entities.
+            This method returns a dictionary.
         """
         return self.__logs.copy()
 
     def __splitObject(self, obj, pt):
-        """Split a Segment/Circle/Arc/Polyline on a Point in the Layer.
-
-splitObject(obj, pt)
-
-Argument 'obj' must be a Segment, Circle, Arc, or Polyline, and argument
-'pt' must be Point. Both arguments must be in stored in the Layer, and
-the point must lie on the entity to be split.
-
-This method is private to the Layer.
+        """
+            Split a Segment/Circle/Arc/Polyline on a Point in the Layer.
+            Argument 'obj' must be a Segment, Circle, Arc, or Polyline, and argument
+            'pt' must be Point. Both arguments must be in stored in the Layer, and
+            the point must lie on the entity to be split.
+            This method is private to the Layer.
         """
         if self.isLocked():
             raise RuntimeError, "Splitting entity not allowed - layer locked."
@@ -475,33 +457,27 @@ This method is private to the Layer.
         return (_split, _objs)
 
     def setAutosplit(self, autoSplit):
-        """Set the autosplit state of the Layer.
-        
-setAutosplit(autoSplit)
-
-Argument 'autoSplit' must be a Boolean.
+        """
+            Set the autosplit state of the Layer.
+            Argument 'autoSplit' must be a Boolean.
         """
         util.test_boolean(autoSplit)
         self.__asplit = autoSplit
 
     def getAutosplit(self):
-        """Retrieve the autosplit state of the Layer.
-
-getAutosplit()
-
-This method returns a Boolean.
+        """
+            Retrieve the autosplit state of the Layer.
+            This method returns a Boolean.
         """
         return self.__asplit
 
     def addObject(self, obj):
-        """Add an object to this Layer.
-
-addObject(obj)
-
-The object should be a Point, Segment, Arc, Circle,
-HCLine, VCLine, ACLine, CLine, CCircle, TextBlock, Chamfer,
-Fillet, Leader, Polyline, or Dimension. Anything else raises
-a TypeError exception.
+        """
+            Add an object to this Layer.
+            The object should be a Point, Segment, Arc, Circle,
+            HCLine, VCLine, ACLine, CLine, CCircle, TextBlock, Chamfer,
+            Fillet, Leader, Polyline, or Dimension. Anything else raises
+            a TypeError exception.
         """
         if self.isLocked():
             raise RuntimeError, "Adding entity not allowed - layer locked."
@@ -604,11 +580,9 @@ a TypeError exception.
         self.__asplit = True
 
     def __addPoint(self, p):
-        """Add a Point object to the Layer.
-
-_addPoint(p)
-
-This method is private to the Layer object.
+        """
+            Add a Point object to the Layer.
+            This method is private to the Layer object.
         """
         self.__points.addObject(p)
         if p.getLog() is None:
@@ -617,11 +591,9 @@ This method is private to the Layer object.
         return True
 
     def __addSegment(self, s):
-        """Add a Segment object to the Layer.
-
-_addSegment(s)
-
-This method is private to the Layer object.
+        """
+            Add a Segment object to the Layer.
+            This method is private to the Layer object.
         """
         _p1, _p2 = s.getEndpoints()
         if id(_p1) not in self.__objects:
@@ -635,11 +607,9 @@ This method is private to the Layer object.
         return True
 
     def __addCircle(self, c):
-        """Add a Circle object to the Layer.
-
-_addCircle(c)
-
-This method is private to the layer object.
+        """
+            Add a Circle object to the Layer.
+            This method is private to the layer object.
         """
         _cp = c.getCenter()
         if id(_cp) not in self.__objects:
@@ -651,11 +621,9 @@ This method is private to the layer object.
         return True
 
     def __addArc(self, a):
-        """Add an Arc object to the Layer.
-
-_addArc(a)
-
-This method is private to the Layer object.
+        """
+            Add an Arc object to the Layer.
+            This method is private to the Layer object.
         """
         _cp = a.getCenter()
         if id(_cp) not in self.__objects:
@@ -683,11 +651,9 @@ This method is private to the Layer object.
         return True
 
     def __addHCLine(self, hcl):
-        """Add an HCLine object to the Layer.
-
-_addHCLine(hcl)
-
-This method is private to the Layer object.
+        """
+            Add an HCLine object to the Layer.
+            This method is private to the Layer object.
         """
         _lp = hcl.getLocation()
         if id(_lp) not in self.__objects:
@@ -699,11 +665,9 @@ This method is private to the Layer object.
         return True
 
     def __addVCLine(self, vcl):
-        """Add an VCLine object to the Layer.
-
-_addVCLine(vcl)
-
-This method is private to the Layer object.
+        """
+            Add an VCLine object to the Layer.
+            This method is private to the Layer object.
         """
         _lp = vcl.getLocation()
         if id(_lp) not in self.__objects:
@@ -715,11 +679,9 @@ This method is private to the Layer object.
         return True
 
     def __addACLine(self, acl):
-        """Add an ACLine object to the Layer.
-
-_addACLine(acl)
-
-This method is private to the Layer object.
+        """
+            Add an ACLine object to the Layer.
+            This method is private to the Layer object.
         """
         _lp = acl.getLocation()
         if id(_lp) not in self.__objects:
@@ -731,11 +693,9 @@ This method is private to the Layer object.
         return True
 
     def __addCCircle(self, cc):
-        """Add an CCircle object to the Layer.
-
-_addCCircle(cc)
-
-This method is private to the Layer object.
+        """
+            Add an CCircle object to the Layer.
+            This method is private to the Layer object.
         """
         _cp = cc.getCenter()
         if id(_cp) not in self.__objects:
@@ -1490,29 +1450,22 @@ This method is private to the Layer object.
         ldim.finish()
 
     def getObject(self, eid):
-        """Return an object of with a specified entity ID.
-
-getObject(eid)
-
-Argument eid is an entity ID.
+        """
+            Return an object of with a specified entity ID.
+            Argument eid is an entity ID.
         """
         return self.__objids.get(eid)
 
     def hasObject(self, eid):
         """
-
-hasObject(eid)
-
-Argument eid is an entity ID.
+            Argument eid is an entity ID.
         """
         return eid in self.__objids
 
     def findObject(self, obj):
-        """Return an object in the layer that is equivalent to a test object.
-
-findObject(obj)
-
-This method returns None if a suitable object is not found.
+        """
+            Return an object in the layer that is equivalent to a test object.
+            This method returns None if a suitable object is not found.
         """
         _retobj = None
         if id(obj) in self.__objects:
@@ -1607,12 +1560,10 @@ This method returns None if a suitable object is not found.
         return _retobj
 
     def find(self, typestr, *args):
-        """Find an existing entity in the drawing.
-
-find(typestr, *args)
-
-typestr: A string giving the type of entity to find
-*args: A variable number of arguments used for searching
+        """
+            Find an existing entity in the drawing.
+            typestr: A string giving the type of entity to find
+            *args: A variable number of arguments used for searching
         """
         if not isinstance(typestr, str):
             raise TypeError, "Invalid type string: " + `type(typestr)`
@@ -1654,31 +1605,22 @@ typestr: A string giving the type of entity to find
         return _objs
 
     def mapPoint(self, p, tol=tolerance.TOL, count=2):
-        """Find a Point in the layer
-
-mapPoint(p [,tol, count])
-
-There is a single required argument:
-
-p: Either a Point object or a tuple of two-floats
-
-There are two optional arguments:
-
-tol: A float equal or greater than 0 for distance tolerance comparisons.
-count: An integer value indicating the largest number of objects to
-       return. By default this value is 2.
-
-Setting 'count' to None or a negative value will result in the maximum
-number of objects being unlimited.
-
-This method tests the objects in the Layer to see if the
-Point can can be mapped on to any of them. The returned list
-consists of tuples in the form:
-
-(obj, pt)
-
-Where 'obj' is the object the point was mapped to and 'pt'
-is the projected point on the object.
+        """
+            Find a Point in the layer
+            There is a single required argument:
+            p: Either a Point object or a tuple of two-floats
+            There are two optional arguments:
+            tol: A float equal or greater than 0 for distance tolerance comparisons.
+            count: An integer value indicating the largest number of objects to
+            return. By default this value is 2.
+            Setting 'count' to None or a negative value will result in the maximum
+            number of objects being unlimited.
+            This method tests the objects in the Layer to see if the
+            Point can be mapped on to any of them. The returned list
+            consists of tuples in the form:
+            (obj, pt)
+            Where 'obj' is the object the point was mapped to and 'pt'
+            is the projected point on the object.
         """
         _hits = []
         _p = p
@@ -1891,34 +1833,26 @@ is the projected point on the object.
         return _hits
 
     def mapCoords(self, x, y, **kw):
-        """Find objects at coordinates in the Layer.
-
-mapCoords(x, y, **kw)
-
-Arguments 'x' and 'y' are mandatory and should be float values.
-Non-float values will be converted to that type if possible.
-
-There are several optional keyword arguments:
-
-tolerance: A float equal or greater than 0 for distance tolerance comparisons.
-count: An integer value indicating the largest number of objects to
-       return. By default this value is the sys.maxint value, essentially
-       making the count unlimited.
-types: A dictionary containing key/value pairs. If any key is given a
-       value of 'True', only types for keys with 'True' values are examined.
-       If any  key is given a 'False' value, the type corresponding to that
-       key is skipped.
-
-This method tests the objects in the Layer to see if the specified
-x/y coordiantes can can be mapped on to any of them. The returned list
-consists of tuples in the form:
-
-(obj, {var})
-
-Where 'obj' is the object the point was mapped to and '{var}'
-is either an existing Point in the Layer or a tuple of the
-form (x, y) giving the coordinates where a new Point can be
-added.
+        """
+            Find objects at coordinates in the Layer.
+            Arguments 'x' and 'y' are mandatory and should be float values.
+            Non-float values will be converted to that type if possible.
+            There are several optional keyword arguments:
+            tolerance: A float equal or greater than 0 for distance tolerance comparisons.
+            count: An integer value indicating the largest number of objects to
+                   return. By default this value is the sys.maxint value, essentially
+                   making the count unlimited.
+            types: A dictionary containing key/value pairs. If any key is given a
+                   value of 'True', only types for keys with 'True' values are examined.
+                   If any  key is given a 'False' value, the type corresponding to that
+                   key is skipped.
+                    This method tests the objects in the Layer to see if the specified
+                    x/y coordiantes can can be mapped on to any of them. The returned list
+                    consists of tuples in the form:(obj, {var})
+            Where 'obj' is the object the point was mapped to and '{var}'
+            is either an existing Point in the Layer or a tuple of the
+            form (x, y) giving the coordinates where a new Point can be
+            added.
         """
         #
         # utility function for testing whether or not an entity type
@@ -2154,11 +2088,9 @@ added.
         return _hits
 
     def hasEntities(self):
-        """Test if the Layer has entities.
-
-hasEntities():
-
-This method returns a boolean
+        """
+            Test if the Layer has entities.
+            This method returns a boolean
         """
         if (self.__points or
             self.__segments or
@@ -2183,15 +2115,13 @@ This method returns a boolean
         return False
 
     def getEntityCount(self, etype):
-        """Return the number of an entity type stored in the  Layer
-
-getEntityCount(etype)
-
-The argument 'etype' should be one of the following:
-point, segment, circle, arc, hcline, vcline, acline,
-cline, ccircle, chamfer, fillet, leader, polyline,
-textblock, linear_dimension, horizontal_dimenions,
-vertical_dimension, radial_dimension, or angular_dimension.
+        """
+            Return the number of an entity type stored in the  Layer
+            The argument 'etype' should be one of the following:
+            point, segment, circle, arc, hcline, vcline, acline,
+            cline, ccircle, chamfer, fillet, leader, polyline,
+            textblock, linear_dimension, horizontal_dimenions,
+            vertical_dimension, radial_dimension, or angular_dimension.
         """
         if etype == "point":
             _res = len(self.__points)
@@ -2236,15 +2166,13 @@ vertical_dimension, radial_dimension, or angular_dimension.
         return _res
     
     def getLayerEntities(self, entity):
-        """Get all of a particular type of entity in the Layer.
-
-getLayerEntities(entity)
-
-The argument 'entity' should be one of the following:
-point, segment, circle, arc, hcline, vcline, acline,
-cline, ccircle, chamfer, fillet, leader, polyline,
-textblock, linear_dimension, horizontal_dimenions,
-vertical_dimension, radial_dimension, or angular_dimension.
+        """
+            Get all of a particular type of entity in the Layer.
+            The argument 'entity' should be one of the following:
+            point, segment, circle, arc, hcline, vcline, acline,
+            cline, ccircle, chamfer, fillet, leader, polyline,
+            textblock, linear_dimension, horizontal_dimenions,
+            vertical_dimension, radial_dimension, or angular_dimension.
         """
         if not isinstance(entity, str):
             raise TypeError, "Invalid entity type: " + `type(entity)`
@@ -2291,12 +2219,10 @@ vertical_dimension, radial_dimension, or angular_dimension.
         return _objs
 
     def canParent(self, obj):
-        """Test if an Entity can be the parent of another Entity.
-
-canParent(obj)
-
-This method overrides the Entity::canParent() method. A layer can
-be the parent of any object contained within itself.
+        """
+            Test if an Entity can be the parent of another Entity.
+            This method overrides the Entity::canParent() method. A layer can
+            be the parent of any object contained within itself.
         """
         return isinstance(obj, (point.Point, segment.Segment,
                                 circle.Circle, arc.Arc,
@@ -2309,11 +2235,9 @@ be the parent of any object contained within itself.
 
 
     def setParentLayer(self, parent):
-        """Store the parent layer of a layer within itself.
-
-setParentLayer(parent)
-
-Argument 'parent' must be either another Layer or None.
+        """
+            Store the parent layer of a layer within itself.
+            Argument 'parent' must be either another Layer or None.
         """
         if parent is not None and not isinstance(parent, Layer):
             raise TypeError, "Invalid layer type: " + `type(parent)`
@@ -2363,18 +2287,15 @@ Argument 'parent' must be either another Layer or None.
         return []
 
     def getScale(self):
-        """Return the scale factor of the Layer.
-
-getScale()
+        """
+            Return the scale factor of the Layer.
         """
         return self.__scale
 
     def setScale(self, scale):
-        """Set the scale factor for the Layer.
-
-setScale(scale)
-
-The scale factor must be a positive float value greater than 0.0
+        """
+            Set the scale factor for the Layer.
+            The scale factor must be a positive float value greater than 0.0
         """
         _s = util.get_float(scale)
         if _s < 1e-10:
@@ -2390,16 +2311,12 @@ The scale factor must be a positive float value greater than 0.0
     scale = property(getScale, setScale, None, "Layer scale factor.")
 
     def getBoundary(self):
-        """Return the maximum and minimum values of the object in the Layer.
-
-getBoundary()
-
-The function returns a tuple holding four float values:
-
-(xmin, ymin, xmax, _ymax)
-
-A default value of (-1.0, -1.0, 1.0, 1.0) is returned for a Layer
-containing no objects.
+        """
+            Return the maximum and minimum values of the object in the Layer.
+            The function returns a tuple holding four float values:
+            (xmin, ymin, xmax, _ymax)
+            A default value of (-1.0, -1.0, 1.0, 1.0) is returned for a Layer
+            containing no objects.
         """
         _xmin = None
         _ymin = None
@@ -2508,25 +2425,19 @@ containing no objects.
         return _xmin, _ymin, _xmax, _ymax
 
     def objsInRegion(self, xmin, ymin, xmax, ymax, fully=False):
-        """Return a all the objects in the Layer visible within the bounds.
-
-objsInRegion(xmin, ymin, xmax, ymax[, fully])
-
-The function has four required arguments:
-
-xmin: The minimum x-value of the region
-ymin: The minimum y-value of the region
-xmax: The maximum x-value of the region
-ymax: The maximum y-value of the region
-
-There is a single optional argument:
-
-fully: A True/False value indicating if the object must be
-       entirely within the region [fully=True], or can
-       merely pass through [fully=False]. The default value
-       is False.
-
-The function returns a list of objects.
+        """
+            Return a all the objects in the Layer visible within the bounds.
+            The function has four required arguments:
+            xmin: The minimum x-value of the region
+            ymin: The minimum y-value of the region
+            xmax: The maximum x-value of the region
+            ymax: The maximum y-value of the region
+            There is a single optional argument:
+            fully: A True/False value indicating if the object must be
+                   entirely within the region [fully=True], or can
+                   merely pass through [fully=False]. The default value
+                   is False.
+            The function returns a list of objects.
         """
         _xmin = util.get_float(xmin)
         _ymin = util.get_float(ymin)
@@ -2609,13 +2520,11 @@ The function returns a list of objects.
         return super(Layer, self).sendsMessage(m)
 
     def update(self):
-        """Check that the objects in this layer are stored correctly.
-
-update()
-
-This function checks that the objects held in this layer are kept
-in the proper order. Also, any duplicated objects that may have
-be created due to modifying entities in the layer are removed.
+        """
+            Check that the objects in this layer are stored correctly.
+            This function checks that the objects held in this layer are kept
+            in the proper order. Also, any duplicated objects that may have
+            be created due to modifying entities in the layer are removed.
         """
         raise RuntimeError, "Layer::update() called."
 
