@@ -685,10 +685,11 @@ def fillet_entry_event_cb(gtkimage, widget, tool):
         if _text.find(':') >0 :
             cmdArgs=_text.split(':')
             if len(cmdArgs)==2:
-                if cmdArgs[0].lower() == 'r' :
+                _firstArgs=cmdArgs[0].strip().lower()
+                if _firstArgs == 'r' :
                     setFilletRadius(gtkimage,tool,cmdArgs[1])
                     return
-                elif cmdArgs[0].lower() == 'tm':
+                elif _firstArgs == 'tm':
                     setTrimMode(gtkimage,tool,cmdArgs[1])
                     return
     if _text.find('?') >= 0:
@@ -718,7 +719,8 @@ def setFilletRadius(gtkimage,tool,radius):
     """
         set the fillet radius in to the tool
     """
-    rad=float(radius)
+    _r=radius.strip()
+    rad=float(_r)
     tool.rad=rad
     fillet_prompt_message(gtkimage,tool)
 

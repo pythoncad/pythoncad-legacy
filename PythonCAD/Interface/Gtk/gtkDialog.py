@@ -24,6 +24,9 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
+import sys
+
+ioDebug=True
 
 def _error_dialog(gtkimage, errmsg):
     """
@@ -40,7 +43,9 @@ def _error_dialog(gtkimage, errmsg):
     _dialog.show_all()
     _response = _dialog.run()
     _dialog.destroy()
-    
+    if ioDebug :
+        for s in sys.exc_info():
+            print "Exception Error: %s"%str(s)
  
 def delete_event(widget, event, data=None):
         gtk.main_quit()

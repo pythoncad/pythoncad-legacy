@@ -980,9 +980,9 @@ class FilletTwoLineTool(FilletTool):
             _c = image.getOption('LINE_COLOR')
             _t = image.getOption('LINE_THICKNESS')
             p1,p2=self.FirstLine.getEndpoints() 
+            p11,p12=self.SecondLine.getEndpoints()  
             p1=Point(p1.getCoords())           
             p2=Point(p2.getCoords())
-            p11,p12=self.SecondLine.getEndpoints()  
             p11=Point(p11.getCoords())           
             p12=Point(p12.getCoords())          
             #
@@ -1025,27 +1025,28 @@ class FilletTwoLineTool(FilletTool):
         """
             Get the point used for the trim
         """
-        _p1 , _p2 = objSegment.getEndpoints()            
+        _p1 , _p2 = objSegment.getEndpoints()       
         _x,_y = objPoint.getCoords()
-        opjPoint=Point(objSegment.getProjection(_x,_y))
-        pickIntVect=pyGeoLib.Vector(objInterPoint,opjPoint).Mag()            
-        p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).Mag()            
-        if(pickIntVect==p1IntVect):
+        _objPoint=Point(objSegment.getProjection(_x,_y))
+        if not (_p1==objInterPoint or _p2==objInterPoint):
+            pickIntVect=pyGeoLib.Vector(objInterPoint,_objPoint).Mag()                    
+            p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).Mag()            
+            if(pickIntVect==p1IntVect):
+                objSegment.p2=objInterPoint
+                image.delObject(_p2)
+                return
+            p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).Mag()
+            if(pickIntVect==p2IntVect):
+                objSegment.p1=objInterPoint
+                image.delObject(_p1)
+                return
+        ldist=_objPoint.Dist(_p1)
+        if ldist>_objPoint.Dist(_p2):
             objSegment.p2=objInterPoint
             image.delObject(_p2)
-            return
-        p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).Mag()
-        if(pickIntVect==p2IntVect):
+        else:
             objSegment.p1=objInterPoint
             image.delObject(_p1)
-            return
-        ldist=interPoint1.Dist(_p1)
-        if(ldist<interPoint1.Dist_(p2)):
-            self.FirstLine.p1=objInterPoint
-            image.delObject(_p1)
-        else:
-            self.FirstLine.p2=objInterPoint
-            image.delObject(_p2)
     
 class LeaderTool(Tool):
     """

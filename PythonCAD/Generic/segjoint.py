@@ -118,16 +118,14 @@ This method extends GraphicObject::setStyle().
         super(SegJoint, self).setStyle(_s)
 
     def validate(self):
-        """Check that the two segments can intersect.
-
-validate()
+        """
+            Check that the two segments can intersect.
         """
         _p1, _p2 = self.__s1.getEndpoints()
         _p3, _p4 = self.__s2.getEndpoints()
         if _p1 is _p3 or _p2 is _p3 or _p1 is _p4 or _p2 is _p4:
             raise ValueError, "Shared segment endpoints in s1 and s2"
         _denom = intersections.denom(_p1, _p2, _p3, _p4)
-        # print "d: %g" % _denom
         if abs(_denom) < 1e-10: # parallel
             raise ValueError, "Segments are parallel"
         _rn = intersections.rnum(_p1, _p2, _p3, _p4)
@@ -543,28 +541,17 @@ class ChamferLog(graphicobject.GraphicObjectLog):
             super(ChamferLog, self).execute(undo, *args)
 
 class Fillet(SegJoint):
-    """A Fillet class
-
-A fillet is a curved joining of two segments. For a filleted
-joint to be valid, the radius must fall within some distance
-determined by the segment endpoints and segment intersection
-point, and the two segments must be extendable so they can
-share a common endpoint.
-
-A Fillet is derived from a SegJoint, so it shares the methods
-and attributes of that class. A Fillet has the following additional
-methods:
-
-{set/get}Radius(): Set/Get the fillet radius.
-getCenter(): Get the center point of the fillet.
-getAngles(): Get the angles the fillet sweeps between.
+    """
+        A fillet is a curved joining of two segments. For a filleted
+        joint to be valid, the radius must fall within some distance
+        determined by the segment endpoints and segment intersection
+        point, and the two segments must be extendable so they can
+        share a common endpoint.
+        A Fillet is derived from a SegJoint, so it shares the methods
+        and attributes of that class. 
     """
     __defstyle = None
-    
-    __messages = {
-    'radius_changed' : True,
-    'moved' : True
-    }
+    __messages = {'radius_changed' : True,'moved' : True}
     
     def __init__(self, s1, s2, r, st=None, lt=None, col=None, t=None, **kw):
         super(Fillet, self).__init__(s1, s2, st, lt, col, t, **kw)
