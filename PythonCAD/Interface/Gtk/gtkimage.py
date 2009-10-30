@@ -359,13 +359,13 @@ close()
 
     #------------------------------------------------------------------
     def __keyPressEvent(self, widget, event, data=None):
-        # print "__keyPressEvent()"
+        #print "__keyPressEvent()"
         _entry = self.__entry
         if _entry.is_focus():
             return False
         _tool = self.__image.getTool()
         if _tool is not None and _tool.hasHandler('entry_event'):
-            _entry.grab_focus()
+            _entry.grab_focus()            
             return _entry.event(event)
         return False
 
@@ -487,13 +487,17 @@ close()
         debug_print("__daEvent(): Event type: %d" % _type)
         _tool = self.__image.getTool()
         if _type==31:
+            debug_print("if 31")
             if event.direction == gtk.gdk.SCROLL_UP: 
                 debug_print("BUTTON_PRESSS CROLL_UP")
                 self.ZoomIn()
             if event.direction == gtk.gdk.SCROLL_DOWN: 
                 debug_print("BUTTON_PRESSS SCROLL_DOWN")
                 self.ZoomOut()
+        if _type == 12:
+            debug_print("if 12")
         if _type == gtk.gdk.BUTTON_PRESS:
+            debug_print("gtk.gdk.BUTTON_PRESS")
             self.setToolpoint(event)
             _button = event.button
             if _button == 1:
@@ -503,6 +507,7 @@ close()
             debug_print("__Move BUTTON_PRESS")
             self.__Move(widget, event)
         elif _type == gtk.gdk.BUTTON_RELEASE:
+            debug_print("gtk.gdk.BUTTON_RELEASE")
             self.setToolpoint(event)
             _button = event.button
             if _button == 1:
@@ -512,6 +517,7 @@ close()
             debug_print("__Move BUTTON_RELEASE")
             self.__Move(widget, event)
         elif _type == gtk.gdk.MOTION_NOTIFY:
+            debug_print("gtk.gdk.MOTION_NOTIFY")
             self.setToolpoint(event)
             if _tool is not None and _tool.hasHandler("motion_notify"):
                 _rv = _tool.getHandler('motion_notify')(self, widget,
@@ -536,9 +542,11 @@ close()
                 self.reset()
                 _rv = True
             elif _tool is not None and _tool.hasHandler("key_press"):
+                debug_print("gtk.gdk.MOTION_NOTIFY")
                 _rv = _tool.getHandler("key_press")(self, widget,
                                                     event, _tool)
             else:
+                debug_print("ELSE")
                 _entry = self.__entry
                 _entry.grab_focus()
                 if _key == gtk.keysyms.Tab:
@@ -546,9 +554,11 @@ close()
                 else:
                     _rv = _entry.event(event)
         elif _type == gtk.gdk.ENTER_NOTIFY:
+            debug_print("gtk.gdk.ENTER_NOTIFY")
             self.setToolpoint(event)
             _rv = True
         elif _type == gtk.gdk.LEAVE_NOTIFY:
+            debug_print("gtk.gdk.LEAVE_NOTIFY")
             self.setToolpoint(event)
             _rv = True
         else:

@@ -267,7 +267,8 @@ class SnapServices(object):
         _types = {'ccircle' : True
         ,'ccircle' : True
         ,'circle' : True
-        ,'arc' : True}
+        ,'arc' : True
+        ,'fillet':True}
         _obj=self.getEnt(x,y,t,_types)
         if _obj is None: return (None,None)
         _ix,_iy=_obj.getCenter().getCoords()

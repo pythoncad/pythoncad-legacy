@@ -46,7 +46,24 @@ def _error_dialog(gtkimage, errmsg):
     if ioDebug :
         for s in sys.exc_info():
             print "Exception Error: %s"%str(s)
- 
+def _message_dialog(gtkimage,label1,label2):
+    """
+        Create a dialogo with two label to give more information at the user
+    """
+    _window = gtkimage.getWindow()
+    _dialog =  gtk.Dialog(_('PythonCad Message'), _window,
+                         gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+    _label1 = gtk.Label(label1)
+    _label2 = gtk.Label(label2)
+    _dialog.vbox.pack_start(_label1, True, True, 0)
+    _dialog.vbox.pack_start(_label2, True, True, 0)
+    _label1.show()
+    _label2.show()
+    _dialog.show_all()
+    _response = _dialog.run()
+    _dialog.destroy()
+    
 def delete_event(widget, event, data=None):
         gtk.main_quit()
         return False

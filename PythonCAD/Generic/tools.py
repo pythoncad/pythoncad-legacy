@@ -421,6 +421,7 @@ class SegmentTool(Tool):
         super(SegmentTool, self).__init__()
         self.__first_point = None
         self.__second_point = None
+        self.__direction = None
 
     def setFirstPoint(self, snapPoint):
         """
@@ -501,7 +502,21 @@ class SegmentTool(Tool):
                 _seg.setThickness(_t)
             _active_layer.addObject(_seg)
             self.reset()
-        
+    def setDirection(self,angle):
+        """
+            set orizontal
+        """
+        if angle is None:
+            self.__direction=None 
+            return
+        _ang=float(angle)
+        self.__direction=_ang
+    def getDirection(self):
+        """
+            get the direction
+        """
+        return self.__direction
+    direction=property(getDirection,setDirection,None,"Direction of the line")
         
 class RectangleTool(SegmentTool):
     """A Specialized tool for drawing rectangles.
