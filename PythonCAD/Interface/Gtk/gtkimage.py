@@ -153,7 +153,7 @@ class GTKImage(object):
             raise TypeError, "Invalid Image type: " + `type(image)`
         self.__image = image
         self.__window = gtk.Window()
-        self.__window.set_title("Untitled")
+        self.__window.set_title(image.filename)
         self.__window.set_icon_from_file("gtkpycad.png")
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
@@ -347,6 +347,12 @@ close()
 
     #------------------------------------------------------------------
     def __destroyEvent(self, widget, data=None):
+        """
+            Destroy event
+        """
+        if self.__image.isSaved()== False:
+            from PythonCAD.Interface.Gtk.gtkmenus import file_quit_cb
+            file_quit_cb(None,self) 
         self.close()
         for _i in xrange(len(globals.imagelist)):
             _gimage = globals.imagelist[_i]
@@ -356,7 +362,7 @@ close()
                     gtk.main_quit()
                 break
         return False
-
+    
     #------------------------------------------------------------------
     def __keyPressEvent(self, widget, event, data=None):
         #print "__keyPressEvent()"
@@ -842,7 +848,7 @@ This value must be a positive float.
             self.calcTextWidths()
         self.redraw()
 
-    #------------------------------------------------------------------
+
     def calcTextWidths(self):
         """Calculate the width of the text strings in the Image.
 
@@ -879,8 +885,7 @@ calcTextWidths()
                 if _dim.getDualDimMode():
                     gtktext.set_textblock_bounds(self, _ds2)
             _layers.extend(_layer.getSublayers())
-
-    #------------------------------------------------------------------        
+        
     def getView(self):
         """Return the current visible area in a drawing.
 
@@ -897,7 +902,6 @@ will be None.
 
     view = property(getView, setView, None, "The visible area in a drawing.")
 
-    #------------------------------------------------------------------
     def getTolerance(self):
         """Return the current drawing tolerance.
 
@@ -914,7 +918,6 @@ getGC()
         """
         return self.__gc
 
-    #------------------------------------------------------------------
     def setGC(self, gc):
         """Set the GraphicContext for the GTKImage.
 
@@ -927,7 +930,6 @@ setGC(gc)
 
     gc = property(getGC, None, None, "GraphicContext for the GTKImage.")
 
-    #------------------------------------------------------------------
     def getCairoContext(self):
         """Return the CairoContext allocated for the GTKImage.
 
@@ -937,7 +939,6 @@ getCairoContext()
 
     ctx = property(getCairoContext, None, None, "CairoContext for the GTKImage.")
 
-    #------------------------------------------------------------------
     def getSize(self):
         """Return the size of the DrawingArea window.
 
@@ -945,7 +946,6 @@ getSize()
         """
         return (self.__disp_width, self.__disp_height)
 
-    #------------------------------------------------------------------
     def setSize(self, width, height):
         """Set the size of the DrawingArea window.
 
@@ -963,15 +963,12 @@ setSize(width, height)
             raise ValueError, "Invalid drawing area height: %d" % _height
         self.__disp_width = _width
         self.__disp_height = _height
-
-    #------------------------------------------------------------------        
+       
     def setToolpoint(self, event):
         _x = event.x
         _y = event.y
         _tx, _ty = self.pixToCoordTransform(_x, _y)
         self.__image.setCurrentPoint(_tx, _ty)
-
-    #------------------------------------------------------------------
     def addGroup(self, group):
         """Add an ActionGroup to the GTKImage.
 
@@ -984,8 +981,6 @@ gtk.Action gtk.stdAction.
             if not isinstance(gtkactions.stdActionGroup):
                 raise TypeError, "Invalid group type: " + `type(group)`
         self.__groups[group.get_name()] = group
-
-    #------------------------------------------------------------------
     def getGroup(self, name):
         """Return an ActionGroup stored in the GTKImage.
 
@@ -996,7 +991,6 @@ will return None if no group by that name is stored.
         """
         return self.__groups.get(name)
 
-    #------------------------------------------------------------------
     def deleteGroup(self, name):
         """Remove an ActionGroup stored in the GTKImage.
 
@@ -1007,7 +1001,6 @@ Argument 'name' should be the name of the ActionGroup to be removed.
         if name in self.__groups:
             del self.__groups[name]
 
-    #------------------------------------------------------------------
     def pixToCoordTransform(self, xp, yp):
         """Convert from pixel coordinates to x-y coordinates.
 

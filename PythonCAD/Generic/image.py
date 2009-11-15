@@ -24,6 +24,11 @@
 import sys
 import math
 import types
+import tempfile
+import stat
+import os
+from PythonCAD.Generic import fileio
+from PythonCAD.Generic import imageio
 
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import layer
@@ -183,11 +188,9 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
         'option_changed' : True
         }
     def __init__(self, **kw):
-        """Instatiate a Image object.
-
-Image()
-
-There are no parameters used to create the object.
+        """
+            Instatiate a Image object.
+            There are no parameters used to create the object.
         """
         super(Image, self).__init__(**kw)
         self.__scale = 1.0
@@ -202,7 +205,7 @@ There are no parameters used to create the object.
         self.__fonts = baseobject.TypedDict(keytype=types.StringTypes) # font names
         self.__tool = None
         self.__selected = []
-        self.__filename = None
+        self.__filename = tempfile.mkdtemp(suffix='_temp', prefix='PyCad_')
         self.__vars = {}
         self.__busy = False
         self.__undo = []
@@ -229,8 +232,58 @@ There are no parameters used to create the object.
         #
         # Snap Obj
         #
-        #self.__snap=snap.Snap(self.__top_layer,globals.snapOption)# old snap System
-        self.__snapProvider=snap.SnapServices(self) #new Snap Functionality
+        self.__snapProvider=snap.SnapServices(self) 
+        #
+        #file status
+        #
+        self.__saved=False
+
+    def isSaved(self):
+        """
+            Sai if the file is saved
+        """
+        return self.__saved
+    def setSaved(self):
+        """
+            force the file to be saved
+        """
+        self.__saved=True
+    def setUnsaved(self):
+        """
+            force the file to be unsaved
+        """
+        self.__saved=False
+    def save(self,filename=None):
+        if filename==None:
+            filename=self.__filename
+        _abs = os.path.abspath(filename)
+        _bname = os.path.basename(_abs)
+        if _bname.endswith('.gz'):
+            _bname = _bname[:-3]
+        _newfile = _abs + '.new'
+        _handle = fileio.CompFile(_newfile, "w", truename=_bname)
+        try:
+            imageio.save_image(self, _handle)
+        finally:
+            _handle.close()
+            self.setSaved()
+        _backup = _abs + '~'
+        if os.path.exists(_backup):
+            os.unlink(_backup)
+        _mode = None
+        if os.path.exists(_abs):
+            _st = os.stat(_abs)
+            _mode = stat.S_IMODE(_st.st_mode)
+            os.rename(_abs, _backup)
+        try:
+            os.rename(_newfile, _abs)
+        except:
+            os.rename(_backup, _abs)
+            raise
+        if _mode is not None and hasattr(os, 'chmod'):
+            os.chmod(_abs, _mode)
+        if self.getFilename() is None:
+            self.setFilename(_abs)
 #
 # Snap method
 #
@@ -1597,34 +1650,31 @@ setDefaults()
             self.setOption(_opt, _gp[_opt])
             
     def setFilename(self, fname):
-        """Set the filename for this image.
-
-setFilename(fname)
-
-The filename will be where the system will save
-the data in this file.
+        """
+            Set the filename for this image.
+            The filename will be where the system will save
+            the data in this file.
         """
         self.__filename = fname
 
     def getFilename(self):
-        """Return the filename for this image.
-
-getFilename()
+        """
+            Return the filename for this image.
         """
         return self.__filename
 
     filename = property(getFilename, setFilename, None, "Image filename.")
 
     def setTool(self, tool=None):
-        """Replace the Tool in the Image with a new Tool.
-
-setTool(tool)
-
-The argument 'tool' should be an instance of a Tool object or 'None'.
+        """
+            Replace the Tool in the Image with a new Tool.
+            The argument 'tool' should be an instance of a Tool object or 'None'.
         """
         if tool is not None and not isinstance(tool, tools.Tool):
             raise TypeError, "Invalid tool: " + `type(tool)`
         _ot = self.__tool
+        self.setUnsaved() #each time i set a tool i make some modification 
+        print "Set Unsaveda"
         if (_ot is not tool):
             self.__tool = tool
             self.sendMessage('tool_changed')

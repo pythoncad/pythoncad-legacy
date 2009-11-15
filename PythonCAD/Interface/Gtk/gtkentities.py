@@ -103,18 +103,17 @@ def segment_motion_notify_cb(gtkimage, widget, event, tool):
     _gc = gtkimage.getGC()
     _x = int(event.x)
     _y = int(event.y)
-    firstPnt=tool.getFirstPoint()
-    _x1, _y1 = firstPnt.point.getCoords()
+    _x1, _y1 = tool.getFirstPoint().point.getCoords()
     _px1, _py1 = gtkimage.coordToPixTransform(_x1, _y1)
     #
     # manage horizontal vertical angle forced
     #
-    _x,_y=gtkimage.pixToCoordTransform(_x,_y)
+    _x,_y = gtkimage.pixToCoordTransform(_x,_y)
     _x,_y = trasformCoords(_x1, _y1,_x,_y,tool.direction)
-    _x, _y = gtkimage.coordToPixTransform(_x, _y)
+    _x,_y = gtkimage.coordToPixTransform(_x, _y)
     _cp = tool.getCurrentPoint()
     if _cp is not None: # draw the old line
-        _xc, _yc = _cp
+        _xc, _yc = _cp  
         _segs.append((_px1, _py1, _xc, _yc))
     tool.setCurrentPoint(_x, _y)
     _segs.append((_px1, _py1, _x, _y))
@@ -181,13 +180,15 @@ def segment_second_entry_event_cb(gtkimage, widget, tool):
         _dir=str(tool.direction)
         gtkimage.setPrompt(_('Segmend d ' + _dir + 'Enter the second Point or click in the drawing area'))   
         _entry.delete_text(0, -1)
+        gtkimage.redraw()
         return 
     _entry.delete_text(0, -1)    
     if len(_text):
         try:
             _x, _y = make_tuple(_text, gtkimage.image.getImageVariables())
         except:
-            gtkDialog._message_dialog(gtkimage,"Wrong comand","inser a touple of values x,y")
+            if _text.strip()!="d:n" :
+                gtkDialog._message_dialog(gtkimage,"Wrong comand","inser a touple of values x,y")
             return
         _str=snap.SnapPointStr("Freepoint",Point(_x, _y),None)
         tool.setSecondPoint(_str)

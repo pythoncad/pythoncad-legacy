@@ -63,6 +63,9 @@ import PythonCAD.Generic.rotate
 #
 
 def select_motion_notify(gtkimage, widget, event, tool):
+    """
+        Draw the rectangle selections 
+    """
     _tx, _ty = tool.getLocation()
     _px, _py = gtkimage.coordToPixTransform(_tx, _ty)
     _gc = gtkimage.getGC()
@@ -745,7 +748,7 @@ def rotate_init(gtkimage, tool=None):
 
 def split_end_button_press_cb(gtkimage, widget, event, tool):
     _image = gtkimage.getImage()
-    _x2, _y2 = _image.getCurrentPoint()
+    _x2, _y2 = getSnapPoint(_image,_image.get.getTolerance()).point.getCoords()
     _y1 = tool.popObject()
     _x1 = tool.popObject()
     _xmin = min(_x1, _x2)
@@ -773,9 +776,12 @@ def split_end_button_press_cb(gtkimage, widget, event, tool):
     return True
     
 def split_object_button_press_cb(gtkimage, widget, event, tool):
+    """
+        First callbeck for the split comand
+    """
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _x, _y = snap.getSnapPoint(_image,_tol).point.getCoords()
     _active_layer = _image.getActiveLayer()
     _objlist = _active_layer.mapPoint((_x, _y), _tol, None)
     if len(_objlist):

@@ -64,6 +64,7 @@ from PythonCAD.Generic.image import Image
 from PythonCAD.Interface.Gtk import gtkdimprefs
 from PythonCAD.Interface.Gtk import gtktextprefs
 from PythonCAD.Interface.Gtk import gtkstyleprefs
+from PythonCAD.Interface.Gtk import gtkDialog
 
 if not hasattr(gtk, 'Action'):
     gtk.Action = gtkactions.stdAction
@@ -113,9 +114,10 @@ def file_new_cb(menuitem, data=None):
 def file_open_cb(menuitem, gtkimage):
     _open = False
     _fname = None
-    _dialog = gtk.FileSelection(_('Open File ...'))
-    _dialog.set_transient_for(gtkimage.getWindow())
-    # _dialog.hide_fileop_buttons()
+    _dialog = gtk.FileChooserDialog(title=_('Open File ...'),
+                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                            gtk.STOCK_OK, gtk.RESPONSE_OK),
+                action=gtk.FILE_CHOOSER_ACTION_OPEN)
     while not _open:
         _response = _dialog.run()
         if _response == gtk.RESPONSE_OK:
@@ -159,8 +161,10 @@ def file_inport_cb(menuitem, gtkimage):
     """
     _open = False
     _fname = None
-    _dialog = gtk.FileSelection(_('Import File ...'))
-    _dialog.set_transient_for(gtkimage.getWindow())
+    _dialog = gtk.FileChooserDialog(title=_('Import File ...'),
+                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                            gtk.STOCK_OK, gtk.RESPONSE_OK),
+                action=gtk.FILE_CHOOSER_ACTION_OPEN)
     # _dialog.hide_fileop_buttons()
     while not _open:
         _response = _dialog.run()
@@ -189,9 +193,14 @@ def file_inport_cb(menuitem, gtkimage):
             return
 #------------------------------------------------------------
 def file_close_cb(menuitem, gtkimage):
+    """
+        Close the application
+    """
     for _i in xrange(len(globals.imagelist)):
-        _image = globals.imagelist[_i]
+        _image = globals.imagelist[_i]        
         if _image is gtkimage.image:
+            if _image.isSaved()==False:
+                print "ask for saving" #implement it matteo boscolo
             _log = _image.getLog()
             if _log is not None:
                 _log.detatch()
@@ -215,33 +224,7 @@ def _error_dialog(gtkimage, errmsg):
 #------------------------------------------------------------
 def _save_file(gtkimage, filename):
     _image = gtkimage.getImage()
-    _abs = os.path.abspath(filename)
-    _bname = os.path.basename(_abs)
-    if _bname.endswith('.gz'):
-        _bname = _bname[:-3]
-    _newfile = _abs + '.new'
-    _handle = fileio.CompFile(_newfile, "w", truename=_bname)
-    try:
-        imageio.save_image(_image, _handle)
-    finally:
-        _handle.close()
-    _backup = _abs + '~'
-    if os.path.exists(_backup):
-        os.unlink(_backup)
-    _mode = None
-    if os.path.exists(_abs):
-        _st = os.stat(_abs)
-        _mode = stat.S_IMODE(_st.st_mode)
-        os.rename(_abs, _backup)
-    try:
-        os.rename(_newfile, _abs)
-    except:
-        os.rename(_backup, _abs)
-        raise
-    if _mode is not None and hasattr(os, 'chmod'):
-        os.chmod(_abs, _mode)
-    if _image.getFilename() is None:
-        _image.setFilename(_abs)
+    _image.save()
 
 #------------------------------------------------------------
 def _writecopy(src, dst):
@@ -278,19 +261,15 @@ def _save_file_by_copy(gtkimage, filename):
         imageio.save_image(_image, _handle)
     finally:
         _handle.close()
-    # print "saved new file %s" % _newfile
     _backup = _abs + '~'
     if os.path.exists(_abs):
         _writecopy(_abs, _backup)
-        # print "writing existing to backup %s" % _backup
     try:
         _writecopy(_newfile, _abs)
     except:
         _writecopy(_backup, _abs)
         raise
-    # print "writing new file to filename %s" % _abs
     os.unlink(_newfile)
-    # print "removing temporary new file %s" % _abs
     if _image.getFilename() is None:
         _image.setFilename(_abs)
     
@@ -300,9 +279,10 @@ def _get_filename_and_save(gtkimage, fname=None):
     _fname = fname
     if _fname is None:
         _fname = _window.get_title()
-    _fname = _window.get_title()
-    _dialog = gtk.FileSelection(_('Save As ...'))
-    _dialog.set_transient_for(gtkimage.getWindow())
+    _dialog = gtk.FileChooserDialog(title=_('Save As ...'),
+                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                            gtk.STOCK_OK, gtk.RESPONSE_OK),
+                action=gtk.FILE_CHOOSER_ACTION_SAVE)
     _dialog.set_filename(_fname)
     _response = _dialog.run()
     _save = False
@@ -410,6 +390,11 @@ def file_print_cb(menuitem, gtkimage):
 
 #------------------------------------------------------------
 def file_quit_cb(menuitem, gtkimage):
+    _image=gtkimage.getImage()
+    if _image.isSaved()==False:
+        _res=gtkDialog._yesno_dialog(gtkimage,"File Unsaved, Wold You Like To Save ?")
+        if gtk.RESPONSE_ACCEPT == _res:
+            file_save_cb(None, gtkimage)
     gtk.main_quit()
 
 #------------------------------------------------------------

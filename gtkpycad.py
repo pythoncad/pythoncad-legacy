@@ -195,7 +195,7 @@ def main():
             sys.stdout.write("No help yet! Sorry ...\n")
             sys.exit()
         if o in ("-v", "--version"):
-            sys.stdout.write("PythonCAD - DS1 - Release 36\n")
+            sys.stdout.write("PythonCAD - DS1 - Release 37 Alfa \n")
             sys.exit()
 
     #

@@ -404,6 +404,7 @@ def getDrawedPoint(image ,tol,strPoint):
                 break
         _layers.extend(_layer.getSublayers())
     return None 
+
 def getSelections(gtkimage,objFilter):
     """
         get the object preselected or selected

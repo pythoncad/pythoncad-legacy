@@ -814,8 +814,9 @@ def _draw_dimstrings(self, gimage, col=None):
     _bx1, _by1 = gimage.coordToPixTransform(_brect[0], _brect[1])
     _bx2, _by2 = gimage.coordToPixTransform(_brect[2], _brect[3])
     _pixmap = None
-    _bgcol = _image.getOption('BACKGROUND_COLOR')
-    if _ctx is not None:
+    _bgcol = _image.getOption('BACKGROUND_COLOR') #this is a string not an object
+    print "Debug: _bhcol %s"%str(_bgcol)
+    if _ctx is not None :
         _r, _g, _b = _bgcol.getColors()
         _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
         _ctx.rectangle((_bx1 - 2), (_by1 - 2),
@@ -829,6 +830,7 @@ def _draw_dimstrings(self, gimage, col=None):
         _pixmap.draw_rectangle(_gc, True, (_bx1 - 2), (_by1 - 2),
                                ((_bx2 - _bx1) + 4), ((_by2 - _by1) + 4))
     _col = col
+    
     if _col is None:
         _col = _ds1.getColor()
     _px, _py = gimage.coordToPixTransform(_x1, _y1)        
@@ -1377,7 +1379,12 @@ def _draw_adim(self, gimage, col=None):
         _ctx.restore()
 
 def _erase_dim(self, gimage):
-    self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
+    pass 
+    # originally the erase_dim set the color of the dimansion equal to the background color
+    #for deleting the dimansion.
+    #but when we close the application we get an error 
+    #Adding pass to the erese_dim functions we not have any problems
+    #self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
 
 def _draw_layer(self, gimage, col=None):
     if not isinstance(gimage, gtkimage.GTKImage):
