@@ -65,33 +65,6 @@ def create_entity(gtkimage, tool=None):
     _init_func(gtkimage)
 
 #
-# points
-#
-
-def point_button_press_cb(gtkimage, widget, event, tool):
-    _tol = gtkimage.getTolerance()
-    _image = gtkimage.getImage()
-    snap.setSnap(_image,tool.setPoint,_tol)
-    create_entity(gtkimage)
-    return True
-
-def point_entry_event_cb(gtkimage, widget, tool):
-    _entry = gtkimage.getEntry()
-    _text = _entry.get_text()
-    _entry.delete_text(0,-1)
-    if len(_text):
-        _x, _y = make_tuple(_text, gtkimage.image.getImageVariables())
-        tool.setPoint(_x, _y)
-        create_entity(gtkimage)
-
-def point_mode_init(gtkimage, tool=None):
-    gtkimage.setPrompt(_('Click in the drawing area or enter the point.'))
-    _tool = gtkimage.getImage().getTool()
-    _tool.setHandler("initialize", point_mode_init)
-    _tool.setHandler("button_press", point_button_press_cb)
-    _tool.setHandler("entry_event", point_entry_event_cb)
-
-#
 # segments
 #
 

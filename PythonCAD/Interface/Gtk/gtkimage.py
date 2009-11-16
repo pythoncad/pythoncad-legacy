@@ -96,11 +96,12 @@ class GTKImage(object):
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
     from PythonCAD.Interface.Gtk import gtkedit
+    from PythonCAD.Interface.Command import cmdPoint
     __inittool = {
         tools.PasteTool : gtkedit.paste_mode_init,
         tools.SelectTool : gtkedit.select_mode_init,
         tools.DeselectTool : gtkedit.deselect_mode_init,
-        tools.PointTool : gtkentities.point_mode_init,
+        tools.PointTool : cmdPoint.point_mode_init,
         tools.SegmentTool : gtkentities.segment_mode_init,
         tools.RectangleTool: gtkentities.rectangle_mode_init,
         tools.CircleTool : gtkentities.circle_center_mode_init,
@@ -196,7 +197,7 @@ class GTKImage(object):
         #
         # fixme - try to rework code to avoid this import ...
         #
-        from PythonCAD.Interface.Gtk.gtkmenus import fill_menubar
+        from PythonCAD.Interface.Menu.gtkmenus import fill_menubar
         fill_menubar(self.__mb, self)
 
         #
@@ -351,7 +352,7 @@ close()
             Destroy event
         """
         if self.__image.isSaved()== False:
-            from PythonCAD.Interface.Gtk.gtkmenus import file_quit_cb
+            from PythonCAD.Interface.Menu.gtkmenus import file_quit_cb
             file_quit_cb(None,self) 
         self.close()
         for _i in xrange(len(globals.imagelist)):

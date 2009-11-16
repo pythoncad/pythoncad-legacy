@@ -48,6 +48,8 @@ from PythonCAD.Generic import intersections
 from PythonCAD.Generic.segjoint import Chamfer, Fillet
 from PythonCAD.Generic import pyGeoLib 
 from PythonCAD.Generic.snap import SnapPointStr
+
+
 class Tool(object):
     """A generic tool object.
 
@@ -1491,14 +1493,12 @@ This method extends Tool::reset()
         for _i in range(self.__nsides):
             self.__xpts[_i] = 0.0
             self.__ypts[_i] = 0.0
-
 class HCLineTool(PointTool):
-    """A specialized tool for drawing HCLine objects.
-
-The HCLineTool class is derived from the PointTool class
-so it shares all the attributes and methods of that class.
-
-There are no additional methods for this class.
+    """
+        A specialized tool for drawing HCLine objects.
+        The HCLineTool class is derived from the PointTool class
+        so it shares all the attributes and methods of that class.
+        There are no additional methods for this class.
     """
     def __init__(self):
         super(HCLineTool, self).__init__()
@@ -1521,24 +1521,20 @@ There are no additional methods for this class.
             _hcl = HCLine(_pt)
             _active_layer.addObject(_hcl)
             self.reset()
-
 class VCLineTool(PointTool):
-    """A specialized tool for drawing VCLine objects.
-
-The VCLineTool class is derived from the PointTool class
-so it shares all the attributes and methods of that class.
-
-There are no additional methods for this class.
+    """
+        A specialized tool for drawing VCLine objects.
+        The VCLineTool class is derived from the PointTool class
+        so it shares all the attributes and methods of that class.
+        There are no additional methods for this class.
     """
     def __init__(self):
         super(VCLineTool, self).__init__()
 
     def create(self, image):
-        """Create a new VCLine and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new VCLine and add it to the image.
+            This method overrides the Tool::create() method.
         """
         _p = self.getPoint().point
         if _p is not None:
@@ -1553,26 +1549,21 @@ This method overrides the Tool::create() method.
             _vcl = VCLine(_pt)
             _active_layer.addObject(_vcl)
             self.reset()
-
 class ACLineTool(PointTool):
-    """A specialized tool for drawing ACLine objects.
-
-The ACLineTool class is derived from the PointTool class
-so it shares all the attributes and methods of that class.
-The ACLineTool class has the following addtional methods:
-
-{set/get}Angle(): Set/Get the angle of the ACLine.
+    """
+        A specialized tool for drawing ACLine objects.
+        The ACLineTool class is derived from the PointTool class
+        so it shares all the attributes and methods of that class.
+        The ACLineTool class has the following addtional methods:
     """
     def __init__(self):
         super(ACLineTool, self).__init__()
         self.__angle = None
 
     def setLocation(self, p):
-        """Set the location of the Tool.
-
-setLocation(x, y)
-
-This method extends the Tool::setLocation() method.
+        """
+            Set the location of the Tool.
+            This method extends the Tool::setLocation() method.
         """
         _x,_y=p.point.getCoords()
         super(ACLineTool, self).setLocation(_x, _y)
@@ -1590,40 +1581,32 @@ This method extends the Tool::setLocation() method.
             self.__angle = util.make_angle(_slope)
 
     def setAngle(self, angle):
-        """Set the angle for the ACLine.
-
-setAngle(angle)
-
-The argument 'angle' should be a float where -90.0 < angle < 90.0
+        """
+            Set the angle for the ACLine.
+            The argument 'angle' should be a float where -90.0 < angle < 90.0
         """
         _angle = util.make_angle(angle)
         self.__angle = _angle
 
     def getAngle(self):
-        """Get the angle for the ACLine.
-
-getAngle()
-
-This method returns a float.
+        """
+            Get the angle for the ACLine.
+            This method returns a float.
         """
         return self.__angle
 
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends PointTool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends PointTool::reset().
         """
         super(ACLineTool, self).reset()
         self.__angle = None
 
     def create(self, image):
-        """Create a new ACLine and add it to the image.
-
-create(image)
-
-This method overrides the Tool::create() method.
+        """
+            Create a new ACLine and add it to the image.
+            This method overrides the Tool::create() method.
         """
         _p = self.getPoint().point
         if (_p is not None and
