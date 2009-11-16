@@ -97,12 +97,13 @@ class GTKImage(object):
     from PythonCAD.Interface.Gtk import gtkprinting
     from PythonCAD.Interface.Gtk import gtkedit
     from PythonCAD.Interface.Command import cmdPoint
+    from PythonCAD.Interface.Command import cmdSegment
     __inittool = {
         tools.PasteTool : gtkedit.paste_mode_init,
         tools.SelectTool : gtkedit.select_mode_init,
         tools.DeselectTool : gtkedit.deselect_mode_init,
         tools.PointTool : cmdPoint.point_mode_init,
-        tools.SegmentTool : gtkentities.segment_mode_init,
+        tools.SegmentTool : cmdSegment.segment_mode_init,
         tools.RectangleTool: gtkentities.rectangle_mode_init,
         tools.CircleTool : gtkentities.circle_center_mode_init,
         tools.TwoPointCircleTool : gtkentities.circle_tp_mode_init,
