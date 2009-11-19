@@ -19,27 +19,39 @@
 #
 #
 
-import os.path
+#
+# This code is written py Yagnesh Desai
+#
 
-class ExtFormat:
+#import dxf.fun # ynd
+#import dxf.dxf # ynd
+#import dxf.group_code # ynd
+import os.path
+#import fastcreat.py
+
+from PythonCAD.Generic.point import Point
+from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic.circle import Circle
+from PythonCAD.Generic.layer import Layer
+class ExtFormat(object):
     """
         This class provide base class for hendly different drawing format in pythoncad
     """
-    def __init__(self,gtkImage):
+    def __init__(self,gtkimage):
         """
             Default Constructor
         """
-        self.__Tool=gtkImage.getTool()
-        self.__GtkImage=gtkImage
+        self.__gtkimage=gtkimage
     def openFile(self,fileName):
         """
            Open a generic file 
         """
         path,exte=os.path.splitext( fileName )
         if( exte.upper()==".dxf".upper()):
-            dxf=Dxf(gtkImage,fileName)
+            dxf=Dxf(self.__gtkimage,fileName)
+            dxf.importEntitis()
 
-class DrawingFile:
+class DrawingFile(object):
     """
         This Class provide base capability to read write a  file
     """
@@ -47,35 +59,205 @@ class DrawingFile:
         """
             Base Constructor
         """
+        print "Debug: DrawingFile constructor"
         self.__fn=fileName
         self.__fb=None
     def ReadAsci(self):
         """
             Read a generic file 
         """
+        print "Debug: Read asci File"
         self.__fb=open(self.__fn,'r')
     def FileObject(self):
         """
             Return the file opened 
         """
-        if(self.__fb!=None): return self.__fb
-        else: return None
+        print "Debug: GetFileObject"
+        if self.__fb is not None: 
+          print "Debug: Return file object"
+          return self.__fb
+        else: 
+          print "Debug: None"
+          return None
 
 class Dxf(DrawingFile):
     """
         this class provide dxf reading/writing capability 
     """
-    def __init__(self,gtkImage):
+    def __init__(self,gtkimage,fileName):
         """
             Default Constructor
         """
-        self.__gtkI=gtkImage
-    def OpenFile(fileName):
+        print "Debug: Dxf constructor"
+        DrawingFile.__init__(self,fileName)
+        self.__gtkimage=gtkimage
+        self.__image=gtkimage.getImage()
+        # Would be nice to create a new dxfLayer here with a progress number
+        _layerName,_ext=os.path.splitext(os.path.basename(fileName))
+        _layerName="Imported_"+_layerName
+        _dxfLayer=Layer(_layerName)
+        self.__image.addLayer(_dxfLayer)
+        self.__dxfLayer=_dxfLayer #self.__image.getActiveLayer() 
+    def importEntitis(self):
         """
             Open The file and create The entity in pythonCad
         """
+        print "Debug: import entitys"
         self.ReadAsci();
         fo=self.FileObject()
-        if(fo!=None):
-            "Implement here your methon"
+        lineNumber=0
+        """
+          print "Debug: Read line lineNumber %s"%str(lineNumber)
+          lineNumber+=1
+          line = fo.readline()
+        """
+        while True:
+            line = fo.readline()
+            if not line: break
+            else:
+                lineNumber +=1
+                #print "Debug: Read Line line = [%s] "%str(line), lineNumber
+                """Implement here your method"""
+                k = line
+                if k[0:4] == 'LINE':
+                    self.createLineFromDxf(fo)
+                if k[0:6] == 'CIRCLE':
+                    self.createCircleFromDxf(fo)
+            #break
+            # indicates the data of lines are there in next block of 19 lines
+# Similar subroutine can be return for collecting data of circle/polyline/arc
+# Matteo Boscolo ++
+    def createLineFromDxf(self,fo):
+        """
+            read the line dxf section and create the line
+        """
+        print "Debug createLineFromDxf" 
+        #x1 = 0.0
+        #y1 = 0.0
+        #x2 = 10.0
+        #y2 = 10.0
+        g = 0 # start counter to read lines
+        while g < 1:
+            line = fo.readline()
+            #print "Debug g =", g
+            #print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
+            #if not g>19:
+            #  g+=1
+            #  continue
+            k = line
+            #print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
+            """if g == 5:# this line contains color property
+            we can get the color presently not implemented
+            color=(float(k[0:-1]))"""
+            print "line value k=", k
+            if k[0:3] == ' 10':
+                print "debug 10", k
+                # this line of file contains start point"X" co ordinate
+                #print "Debug: Convert To flot x1: %s" % str(k[0:-1])
+                k = fo.readline()
+                x1 = (float(k[0:-1]))
+            if k[0:3] == ' 20':# this line of file contains start point "Y" co ordinate
+                #print "Debug: Convert To flot y1: %s" % str(k[0:-1])
+                k = fo.readline()
+                y1 = (float(k[0:-1]))
+            if k[0:3] == ' 30':# this line of file contains start point "Z" co ordinate
+                #print "Debug: Convert To flot z1: %s" % str(k[0:-1])
+                k = fo.readline()
+                z1 = (float(k[0:-1])) 
+                # Z co ordinates are not used in PythonCAD we can live without this line
+            if k[0:3] == ' 11':# this line of file contains End point "X" co ordinate
+                #print "Debug: Convert To flot x2: %s" % str(k[0:-1])
+                k = fo.readline()
+                x2 = (float(k[0:-1]))
+            if k[0:3] == ' 21':# this line of file contains End point "Y" co ordinate
+                #print "Debug: Convert To flot y2: %s" % str(k[0:-1])
+                k = fo.readline()
+                y2 = (float(k[0:-1]))
+            if k[0:3] == ' 31':# this line of file contains End point "Z" co ordinate
+                #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
+                k = fo.readline()
+                z2 = (float(k[0:-1]))
+                g = 10
+                #Z co ordinates are not used in PythonCAD we can live without this line
+                'I need a "create segment code" here to append the segment to image'
+        self.createLine(x1,y1,x2,y2)
+                #g = 0 # Search for next line in the dxf file
+            
+        #x2+=2
+        #y2+=2 
+
+    def createLine(self,x1,y1,x2,y2):
+      """
+          Create the line into the current drawing
+          In this implementation all the lines gose to the active layer and use the global settings of pythoncad
+          Feauture implementation could be :
+          1) Create a new layer(ex: Dxf Import)
+          2) Read dxf import style propertis and set it to the line
+      """    
+      print "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) 
+      _active_layer = self.__dxfLayer
+      _p1 = Point(x1, y1)
+      _active_layer.addObject(_p1)
+      _p2 = Point(x2, y2)
+      _active_layer.addObject(_p2)
+      _s = self.__image.getOption('LINE_STYLE')
+      _seg = Segment(_p1, _p2, _s)
+      _l = self.__image.getOption('LINE_TYPE')
+      if _l != _s.getLinetype():
+          _seg.setLinetype(_l)
+      _c = self.__image.getOption('LINE_COLOR')
+      if _c != _s.getColor():
+          _seg.setColor(_c)
+      _t = self.__image.getOption('LINE_THICKNESS')
+      if abs(_t - _s.getThickness()) > 1e-10:
+          _seg.setThickness(_t)
+      _active_layer.addObject(_seg)
     
+    def createCircleFromDxf(self,fo):
+        """
+            Read and create the Circle into drawing
+        """
+        print "Debug createCircleFromDxf" 
+        g = 0 # reset g
+        while g < 1:
+            k = fo.readline()
+            print "line value k=", k
+            if k[0:3] == ' 10':
+                k = fo.readline()
+                x = (float(k[0:-1]))
+                print "circle center x =", x
+            if k[0:3] == ' 20':
+                k = fo.readline()
+                y = (float(k[0:-1]))
+                print "circle center y =", y
+            if k[0:3] == ' 30':
+                k = fo.readline()
+                z = (float(k[0:-1]))
+                print "circle center z =", z
+            if k[0:3] == ' 40':
+                k = fo.readline()
+                r = (float(k[0:-1]))
+                print "circle radius=", r
+                g = 10 # g > 1 for break
+                'I need a "create Circle code" here to append the segment to image'
+        self.createCircle(x,y,r)
+        
+    def createCircle(self,x,y,r):
+        """
+            create a circle entitys into the current drawing
+        """
+        _active_layer = self.__dxfLayer
+        _center = Point(x, y)
+        _active_layer.addObject(_center)
+        _s = self.__image.getOption('LINE_STYLE')
+        _circle = Circle(_center, r, _s)        
+        _l = self.__image.getOption('LINE_TYPE')
+        if _l != _s.getLinetype():
+            _circle.setLinetype(_l)
+        _c = self.__image.getOption('LINE_COLOR')
+        if _c != _s.getColor():
+            _circle.setColor(_c)
+        _t = self.__image.getOption('LINE_THICKNESS')
+        if abs(_t - _s.getThickness()) > 1e-10:
+            _circle.setThickness(_t)
+        _active_layer.addObject(_circle)

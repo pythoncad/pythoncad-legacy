@@ -361,22 +361,15 @@ close()
         self.disconnect(self)
 
     def addChildLayer(self, l, p=None):
-        """Add a child Layer of the active Layer.
-
-addChildLayer(l [, p])
-
-There is a one required argument:
-
-l: The child Layer
-
-There is one optional argument:
-
-p: The new parent Layer of the child
-
-The default parent is the currently active layer.
-
-The child layer cannot be a layer found when moving
-up from the new parent layer to the topmost layer.
+        """
+            Add a child Layer of the active Layer.
+            There is a one required argument
+            l: The child Layer
+            There is one optional argument:
+            p: The new parent Layer of the child
+            The default parent is the currently active layer.
+            The child layer cannot be a layer found when moving
+            up from the new parent layer to the topmost layer.
         """
         _child = l
         if not isinstance(_child, layer.Layer):
@@ -429,17 +422,15 @@ up from the new parent layer to the topmost layer.
         self.__active_layer = _child
 
     def addLayer(self, l):
-        """Add a new Layer as a child of the active Layer's parent.
-
-addLayer(l)
-
-If the active layer is the topmost Layer in the drawing, the Layer
-is added as a child Layer to that Layer. Otherwise, the new layer
-is added and is a sibling to the active Layer.
         """
-        _layer = l
-        if not isinstance(_layer, layer.Layer):
-            raise TypeError, "Invalid Layer type: " + `type(_layer)`
+            Add a new Layer as a child of the active Layer's parent.
+            If the active layer is the topmost Layer in the drawing, the Layer
+            is added as a child Layer to that Layer. Otherwise, the new layer
+            is added and is a sibling to the active Layer.
+        """
+
+        if not isinstance(l, layer.Layer):
+            raise TypeError, "Invalid Layer type: " + `type(l)`
         _pl = self.__active_layer.getParentLayer()
         if _pl is None:
             _pl = self.__top_layer
