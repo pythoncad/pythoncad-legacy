@@ -48,6 +48,8 @@ from PythonCAD.Generic import prompt
 
 from PythonCAD.Interface.Gtk import gtkshell
 
+from PythonCAD.Interface.Menu.menubar import IMenuBar
+
 #
 # Global variables
 #
@@ -183,23 +185,22 @@ class GTKImage(object):
         self.__window.add_accel_group(self.__accel)
 
         #
-        # menu bar
-        #
-
-        self.__mb = gtk.MenuBar()
-        main_vbox.pack_start(self.__mb, False, False)
-
-        #
         # action group dictionary
         #
 
         self.__groups = {}
 
         #
+        # menu bar
+        #
+        self.__menuBar = IMenuBar(self)
+        main_vbox.pack_start(self.__menuBar.GtkMenuBar, False, False)
+
+        #
         # fixme - try to rework code to avoid this import ...
         #
-        from PythonCAD.Interface.Menu.gtkmenus import fill_menubar
-        fill_menubar(self.__mb, self)
+        #from PythonCAD.Interface.Menu.gtkmenus import fill_menubar
+        #fill_menubar(self.__mb, self)
 
         #
         # drawing window has Horizontal Pane:
@@ -353,7 +354,8 @@ close()
             Destroy event
         """
         if self.__image.isSaved()== False:
-            from PythonCAD.Interface.Menu.gtkmenus import file_quit_cb
+            # TODO ggr: fix this construction
+            from PythonCAD.Interface.Menu.filemenu import file_quit_cb
             file_quit_cb(None,self) 
         self.close()
         for _i in xrange(len(globals.imagelist)):
