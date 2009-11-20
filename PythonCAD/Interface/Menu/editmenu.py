@@ -263,19 +263,30 @@ class IEditMenu(IBaseMenu):
         actiongroup.add_action(_act)
         _menu.append(_act.create_menu_item())
         #
-        _item = gtk.SeparatorMenuItem()
-        _item.show()
-        _menu.append(_item)
+        self.__sep_item2 = gtk.SeparatorMenuItem()
+        self.__sep_item2.show()
+        _menu.append(self.__sep_item2)
         #
         _act = gtk.Action('Prefs', _('_Preferences'), None, gtk.STOCK_PREFERENCES)
         _act.connect('activate', prefs_cb, self.gtkimage)
         _act.set_accel_group(_accel)
         actiongroup.add_action_with_accel(_act, None)
-        _item = _act.create_menu_item()
+        self.__prefs_menuitem = _act.create_menu_item()
         if isinstance(_act, gtkactions.stdAction):
             _add_accelerators(_act, _item, _accel)
-        _menu.append(_item)
+        _menu.append(self.__prefs_menuitem)
         return _menu
+
+    # properties
+    def __get_prefs_sepitem(self):
+        return self.__sep_item2
+
+    GtkPrefsSepItem = property(__get_prefs_sepitem, None, None, "Preferences Seperator object.")
+
+    def __get_prefs_menuitem(self):
+        return self.__prefs_menuitem
+
+    GtkPrefsMenuItem = property(__get_prefs_menuitem, None, None, "Preferences MenuItem object.")
 
 
     #############################################################################

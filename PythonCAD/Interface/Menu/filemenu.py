@@ -450,12 +450,18 @@ class IFileMenu(IBaseMenu):
         _act.connect('activate', file_quit_cb, self.gtkimage)
         _act.set_accel_group(_accel)
         actiongroup.add_action_with_accel(_act, None)
-        _item = _act.create_menu_item()
+        self.__quit_menuitem = _act.create_menu_item()
         if isinstance(_act, gtkactions.stdAction):
             _add_accelerators(_act, _item, _accel)
-        _menu.append(_item)
+        _menu.append(self.__quit_menuitem)
         #
         return _menu
+
+    # properties
+    def __get_quit_menuitem(self):
+        return self.__quit_menuitem
+
+    GtkQuitMenuItem = property(__get_quit_menuitem, None, None, "Quit MenuItem object.")
 
 
 #############################################################################

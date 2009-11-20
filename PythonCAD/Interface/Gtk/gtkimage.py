@@ -162,6 +162,7 @@ class GTKImage(object):
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
+        self.__window.connect("expose_event", self.__exposeWindowEvent)
         #
         # Zooming Moving global Variable Definition
         #
@@ -195,12 +196,6 @@ class GTKImage(object):
         #
         self.__menuBar = IMenuBar(self)
         main_vbox.pack_start(self.__menuBar.GtkMenuBar, False, False)
-
-        #
-        # fixme - try to rework code to avoid this import ...
-        #
-        #from PythonCAD.Interface.Menu.gtkmenus import fill_menubar
-        #fill_menubar(self.__mb, self)
 
         #
         # drawing window has Horizontal Pane:
@@ -323,6 +318,8 @@ class GTKImage(object):
                 _child.connect('change_pending', self.__objChangePending)
                 _child.connect('change_complete', self.__objChangeComplete)
             _layers.extend(_layer.getSublayers())
+
+
     #------------------------------------------------------------------
     def close(self):
         """Release the entites stored in the drawing.
@@ -344,7 +341,7 @@ close()
         self.__da = None
         self.__entry = None
         self.__accel = None
-        self.__mb = None
+        self.__menuBar = None
         self.__pixmap = None
         self.__gc = None
 
@@ -400,7 +397,9 @@ close()
             debug_print("KEY_RELEASE")
         else:
             pass
-        return False       
+        return False
+
+
     #------------------------------------------------------------------
     def __entryEvent(self, widget, data=None):
         #
@@ -456,6 +455,12 @@ close()
         _x, _y, _w, _h = event.area
         _gc = widget.get_style().fg_gc[widget.state]
         widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
+        return True
+
+    #------------------------------------------------------------------
+    def __exposeWindowEvent(self, widget, event, data=None):
+        # do platform intergation
+        self.__menuBar.DoPlatformIntegration()
         return True
 
     #------------------------------------------------------------------

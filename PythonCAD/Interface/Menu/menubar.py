@@ -20,10 +20,21 @@
 #
 #
 
+import sys
+
 import pygtk
 pygtk.require('2.0')
 import gtk
 import gtk.keysyms
+
+if sys.platform == 'darwin':
+    try:
+        import igemacintegration
+        mac_integration = True
+        print "mac osx integration possible"
+    except ImportError, e:
+        print "Module igemacintegration not found, mac osx integration not possible"
+
 
 #from PythonCAD.Interface.Gtk.gtkimage import GTKImage
 from PythonCAD.Interface.Gtk import gtkentities
@@ -78,6 +89,7 @@ class IMenuBar(object):
 #----------------------------------------------------------------------------------------------
     def __init__(self, parent):
         self.__gtkimage = parent
+        self.__has_osx_menubar = False;
         self.__create_menubar()
         
         
@@ -114,6 +126,64 @@ class IMenuBar(object):
         return self.__mb
 
     GtkMenuBar = property(__get_menubar, None, None, "MenuBar object.")
+
+    # Platform specific intergation
+    def DoPlatformIntegration(self):
+        # are we running Mac OS-X?
+        if mac_integration:
+#            try:
+#                gtk.rc_parse(pan_app.get_abs_data_filename(["OSX_Leopard_theme", "gtkrc"]))
+#            except:
+#                logging.exception("Couldn't find OSX_Leopard_theme")
+
+            # Sometimes we have two resize grips: one from GTK, one from Aqua. We
+            # might want to disable the GTK one:
+            # self.gui.get_widget('status_bar').set_property("has-resize-grip", False)
+
+            try:
+                # if there is not an osx menubar create one
+                if not self.__has_osx_menubar:
+                    self.__has_osx_menubar = True;
+                    # Move the menu bar to the mac menu
+                    igemacintegration.ige_mac_menu_set_menu_bar(self.__mb)
+                    #
+                    igemacintegration.ige_mac_menu_connect_window_key_handler(self.__gtkimage.window)
+                    # Move the quit menu item
+                    igemacintegration.ige_mac_menu_set_quit_menu_item(self.__file_menu.GtkQuitMenuItem)
+
+
+        #             self.gui.get_widget("separatormenuitem2").hide()
+        #             # Move the about menu item
+        #             mnu_about = self.gui.get_widget("mnu_about")
+        #             group = igemacintegration.ige_mac_menu_add_app_menu_group()
+        #             igemacintegration.ige_mac_menu_add_app_menu_item(group, mnu_about, None)
+        #             self.gui.get_widget("separator1").hide()
+
+        #           # Move the preferences menu item
+                    group = igemacintegration.ige_mac_menu_add_app_menu_group()
+                    igemacintegration.ige_mac_menu_add_app_menu_item(group, self.__edit_menu.GtkPrefsMenuItem, None)
+                    self.__edit_menu.GtkPrefsSepItem.hide()
+                    # Hide the GTK application menu
+                    self.__mb.hide()
+                else:
+                    # sync the menu with hide/shown toplevel window
+                    igemacintegration.ige_mac_menu_sync(self.__mb)
+
+            except ImportError, e:
+                print "Error with igemacintegration"
+
+    #------------------------------------------------------------------
         
         
-        
+#    # Platform specific intergation
+#    def DoSyncPlatformIntegration(self):
+#        # are we running Mac OS-X?
+#        if sys.platform == 'darwin':
+#            try:
+#                import igemacintegration
+#                # sync the menu with hide/shown toplevel window
+#                igemacintegration.ige_mac_menu_sync(self.__mb)
+#
+#            except ImportError, e:
+#                print "Module igemacintegration not found, mac osx integration not possible"
+
