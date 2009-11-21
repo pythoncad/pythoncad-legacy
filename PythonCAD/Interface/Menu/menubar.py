@@ -27,6 +27,8 @@ pygtk.require('2.0')
 import gtk
 import gtk.keysyms
 
+mac_integration = False
+
 if sys.platform == 'darwin':
     try:
         import igemacintegration

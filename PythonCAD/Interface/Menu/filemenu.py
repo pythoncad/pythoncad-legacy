@@ -20,6 +20,8 @@
 #
 #
 
+import os
+import stat
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -49,6 +51,7 @@ from PythonCAD.Interface.Gtk import gtkstyleprefs
 from PythonCAD.Interface.Gtk import gtkDialog
 
 from PythonCAD.Interface.Menu.basemenu import IBaseMenu
+from PythonCAD.Interface.Menu.basemenu import error_dialog
 
 #############################################################################
 #
@@ -116,11 +119,42 @@ def _get_filename_and_save(gtkimage, fname=None):
             _save_file(gtkimage, _gzfile)
         except (IOError, OSError), _e:
             _errmsg = "Error saving '%s' : %s'" % (_gzfile, _e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
         except StandardError, _e:
             _errmsg = "Non-system error saving '%s' : %s'" % (_gzfile, _e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
 
+#------------------------------------------------------------
+def _save_file(gtkimage, filename):
+    _image = gtkimage.getImage()
+    _abs = os.path.abspath(filename)
+    _bname = os.path.basename(_abs)
+    if _bname.endswith('.gz'):
+        _bname = _bname[:-3]
+    _newfile = _abs + '.new'
+    _handle = fileio.CompFile(_newfile, "w", truename=_bname)
+    try:
+        imageio.save_image(_image, _handle)
+    finally:
+        _handle.close()
+    _backup = _abs + '~'
+    if os.path.exists(_backup):
+        os.unlink(_backup)
+    _mode = None
+    if os.path.exists(_abs):
+        _st = os.stat(_abs)
+        _mode = stat.S_IMODE(_st.st_mode)
+        os.rename(_abs, _backup)
+    try:
+        os.rename(_newfile, _abs)
+    except:
+        os.rename(_backup, _abs)
+        raise
+    if _mode is not None and hasattr(os, 'chmod'):
+        os.chmod(_abs, _mode)
+    if _image.getFilename() is None:
+        _image.setFilename(_abs)
+        
             
 #############################################################################
 #
@@ -169,12 +203,15 @@ def file_open_cb(menuitem, gtkimage):
                 _handle.close()
         except (IOError, OSError), e:
             _errmsg = "Error opening '%s' : %s'" % (_fname, e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
             return
         except StandardError, e:
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
             return
+        
+        # TODO: fix this
+        from PythonCAD.Interface.Gtk.gtkimage import GTKImage
         globals.imagelist.append(_image)
         _image.setFilename(_fname)
         _gtkimage = GTKImage(_image)
@@ -215,11 +252,11 @@ def file_inport_cb(menuitem, gtkimage):
             exf.Open(_fname)
         except (IOError, OSError), e:
             _errmsg = "Error opening '%s' : %s'" % (_fname, e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
             return
         except StandardError, e:
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
             return
 
 
@@ -253,10 +290,10 @@ def file_save_cb(menuitem, gtkimage):
             _save_file(gtkimage, _fname)
         except (IOError, OSError), _e:
             _errmsg = "Error saving '%s' : %s'" % (_fname, _e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
         except StandardError, _e:
             _errmsg = "Non-system error saving '%s' : %s'" % (_fname, _e)
-            _error_dialog(gtkimage, _errmsg)
+            error_dialog(gtkimage, _errmsg)
 
 
 #------------------------------------------------------------

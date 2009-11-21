@@ -50,6 +50,17 @@ from PythonCAD.Interface.Gtk import gtkDialog
 
 
 
+def error_dialog(gtkimage, errmsg):
+    _window = gtkimage.getWindow()
+    _dialog = gtk.MessageDialog( _window,
+                                 gtk.DIALOG_DESTROY_WITH_PARENT,
+                                 gtk.MESSAGE_ERROR,
+                                 gtk.BUTTONS_CLOSE,
+                                 errmsg)
+    _dialog.run()
+    _dialog.destroy()
+
+
 #############################################################################
 #
 # class IBaseMenu
