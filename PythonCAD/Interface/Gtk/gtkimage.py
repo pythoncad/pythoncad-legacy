@@ -23,6 +23,7 @@
 
 from __future__ import division
 
+import sys
 import math
 import types
 import warnings
@@ -49,6 +50,7 @@ from PythonCAD.Generic import prompt
 from PythonCAD.Interface.Gtk import gtkshell
 
 from PythonCAD.Interface.Menu.menubar import IMenuBar
+from PythonCAD.Interface.Viewport.viewport import IViewport
 
 #
 # Global variables
@@ -57,6 +59,11 @@ from PythonCAD.Interface.Menu.menubar import IMenuBar
 _debug = False ##  SDB debug stuff
 globals.gtkcolors = {}
 globals.gtklinetypes = {}
+
+# new viewport draw functions (not implemented yet)
+viewport_draw = False
+#viewport_draw = True
+
 
 class GTKImage(object):
     """
@@ -224,30 +231,39 @@ class GTKImage(object):
         self.__disp_width = None
         self.__disp_height = None
         self.__units_per_pixel = 1.0
-        self.__da = gtk.DrawingArea()
 
-        black = gtk.gdk.color_parse('black')
-        self.__da.modify_fg(gtk.STATE_NORMAL, black)
-        self.__da.modify_bg(gtk.STATE_NORMAL, black)
-        pane.pack2(self.__da, True, False)
-        self.__da.set_flags(gtk.CAN_FOCUS)
-        self.__da.connect("event", self.__daEvent)
-        self.__da.connect("expose_event", self.__exposeEvent)
-        self.__da.connect("realize", self.__realizeEvent)
-        self.__da.connect("configure_event", self.__configureEvent)
-        # self.__da.connect("focus_in_event", self.__focusInEvent)
-        # self.__da.connect("focus_out_event", self.__focusOutEvent)
+        # TODO GGR
+        if viewport_draw:
+            print "using viewport_draw"
+            self.__da = IViewport(self)
+            pane.pack2(self.__da, True, False)
+            self.__da.connect("expose_event", self.__exposeEvent)
 
-        self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
-                             gtk.gdk.LEAVE_NOTIFY_MASK |
-                             gtk.gdk.BUTTON_PRESS_MASK |
-                             gtk.gdk.BUTTON_RELEASE_MASK |
-                             gtk.gdk.ENTER_NOTIFY_MASK|
-                             gtk.gdk.LEAVE_NOTIFY_MASK|
-                             gtk.gdk.KEY_PRESS_MASK |
-                             gtk.gdk.KEY_RELEASE_MASK |
-                             gtk.gdk.FOCUS_CHANGE_MASK |
-                             gtk.gdk.POINTER_MOTION_MASK)
+        else:
+            self.__da = gtk.DrawingArea()
+
+            black = gtk.gdk.color_parse('black')
+            self.__da.modify_fg(gtk.STATE_NORMAL, black)
+            self.__da.modify_bg(gtk.STATE_NORMAL, black)
+            pane.pack2(self.__da, True, False)
+            self.__da.set_flags(gtk.CAN_FOCUS)
+            self.__da.connect("event", self.__daEvent)
+            self.__da.connect("expose_event", self.__exposeEvent)
+            self.__da.connect("realize", self.__realizeEvent)
+            self.__da.connect("configure_event", self.__configureEvent)
+            # self.__da.connect("focus_in_event", self.__focusInEvent)
+            # self.__da.connect("focus_out_event", self.__focusOutEvent)
+
+            self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
+                                 gtk.gdk.LEAVE_NOTIFY_MASK |
+                                 gtk.gdk.BUTTON_PRESS_MASK |
+                                 gtk.gdk.BUTTON_RELEASE_MASK |
+                                 gtk.gdk.ENTER_NOTIFY_MASK|
+                                 gtk.gdk.LEAVE_NOTIFY_MASK|
+                                 gtk.gdk.KEY_PRESS_MASK |
+                                 gtk.gdk.KEY_RELEASE_MASK |
+                                 gtk.gdk.FOCUS_CHANGE_MASK |
+                                 gtk.gdk.POINTER_MOTION_MASK)
 
         lower_hbox = gtk.HBox(False, 2)
         main_vbox.pack_start(lower_hbox, False, False)
@@ -337,8 +353,8 @@ close()
             _image.setLog(None)
         _image.finish()
         self.__window.destroy()
-        self.__window = None
         self.__da = None
+        self.__window = None
         self.__entry = None
         self.__accel = None
         self.__menuBar = None
@@ -446,15 +462,20 @@ close()
         # set the focus back to the DisplayArea widget
         #
         self.__da.grab_focus()
+
         return False
 
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
-        # print "__exposeEvent()"
-        _pixmap = self.__pixmap
-        _x, _y, _w, _h = event.area
-        _gc = widget.get_style().fg_gc[widget.state]
-        widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
+        print "GtkImage.__exposeEvent()"
+        # TODO GGR
+        if viewport_draw:
+            self.__da.refresh(event.area)
+        else:
+            _pixmap = self.__pixmap
+            _x, _y, _w, _h = event.area
+            _gc = widget.get_style().fg_gc[widget.state]
+            widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
         return True
 
     #------------------------------------------------------------------
@@ -657,6 +678,7 @@ close()
             self.__da.modify_fg(gtk.STATE_NORMAL, _col)
             self.__da.modify_bg(gtk.STATE_NORMAL, _col)
             self.redraw()
+
         elif (_opt == 'HIGHLIGHT_POINTS' or
               _opt == 'INACTIVE_LAYER_COLOR' or
               _opt == 'SINGLE_POINT_COLOR' or
@@ -1063,6 +1085,7 @@ allocated color.
             # _b = int(round(65535.0 * (c.b/255.0)))
             # _color = self.__da.get_colormap().alloc_color(_r, _g, _b)
             _color = self.__da.get_colormap().alloc_color(str(c))
+                
             globals.gtkcolors[c] = _color
         return _color
 
@@ -1107,6 +1130,8 @@ modified, use the redraw() method.
 
     #------------------------------------------------------------------
     def redraw(self):
+        print "GtkImage.redraw"
+        
         """
             This method draws all the objects visible in the window.
         """
