@@ -34,6 +34,8 @@ class IViewport(gtk.DrawingArea):
         #
         self.__gtkimage = parent
         self.__image = self.__gtkimage.getImage()
+        self.__need_redraw = True
+        self.__gc = None
 
 #        black = gtk.gdk.color_parse('black')
 #        self.__da.modify_fg(gtk.STATE_NORMAL, black)
@@ -65,20 +67,42 @@ class IViewport(gtk.DrawingArea):
 #-------------------------------------------------------------------------------
     def refresh(self, area):
         print "IViewport.refresh()"
-        # refresh area
+
+        if self.__gc == None:
+            self.__gc = self.window.new_gc()
+
+        if self.__need_redraw:
+            self.redraw(area)
+            self.__need_redraw = False
+
+
         x, y, width, height = area
-        print x, y, width, height
-        # 
-        self.__ctx = self.window.cairo_create()
+        self.window.draw_drawable(self.__gc, self.__pixmap, x, y, x, y, width, height)
+
+
+#-------------------------------------------------------------------------------
+    def redraw(self, area):
+        print "IViewport.redraw()"
+        # size
+        x, y, width, height = area
+        print area
+        # redraw pixmap area
+        self.__pixmap = gtk.gdk.Pixmap(self.window, 2000, 2000)
+
+
+        # cairo context from the pixmap
+        ctx = self.__pixmap.cairo_create()
         # set a clip region for the expose event
-        self.__ctx.rectangle(x, y, width, height)
-        self.__ctx.clip()
-        # draw background
-        self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
         #self.__ctx.rectangle(x, y, width, height)
-        self.__ctx.fill()
+        #self.__ctx.clip()
+        # draw background
+        ctx.set_source_rgb(0.5, 0.5, 0.5)
+        ctx.rectangle(x, y, 2000, 2000)
+        ctx.fill()
         # draw the entities
-        self.draw(self.__ctx)
+        self.draw(ctx)
+
+        
 
 #-------------------------------------------------------------------------------
     def draw(self, ctx):
