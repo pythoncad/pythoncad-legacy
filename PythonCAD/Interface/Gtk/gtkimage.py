@@ -105,16 +105,19 @@ class GTKImage(object):
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
     from PythonCAD.Interface.Gtk import gtkedit
-    from PythonCAD.Interface.Command import cmdPoint
-    from PythonCAD.Interface.Command import cmdSegment
+    #from PythonCAD.Interface.Command import cmdPoint
+    #from PythonCAD.Interface.Command import cmdSegment
+    #from PythonCAD.Interface.Command import cmdRectangle
+    #from PythonCAD.Interface.Command import cmdCircle
+    import  PythonCAD.Interface.Command as cmd
     __inittool = {
         tools.PasteTool : gtkedit.paste_mode_init,
         tools.SelectTool : gtkedit.select_mode_init,
         tools.DeselectTool : gtkedit.deselect_mode_init,
-        tools.PointTool : cmdPoint.point_mode_init,
-        tools.SegmentTool : cmdSegment.segment_mode_init,
-        tools.RectangleTool: gtkentities.rectangle_mode_init,
-        tools.CircleTool : gtkentities.circle_center_mode_init,
+        tools.PointTool : cmd.point_mode_init,
+        tools.SegmentTool : cmd.segment_mode_init,
+        tools.RectangleTool: cmd.rectangle_mode_init,
+        tools.CircleTool : cmd.circle_center_mode_init,
         tools.TwoPointCircleTool : gtkentities.circle_tp_mode_init,
         tools.ArcTool : gtkentities.arc_center_mode_init,
         tools.ChamferTool : gtkentities.chamfer_mode_init,
