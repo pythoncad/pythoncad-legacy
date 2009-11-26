@@ -131,8 +131,3 @@ def circle_point_entry_event_cb(gtkimage, widget, tool):
 
 
 
-   
-    
-
-
-

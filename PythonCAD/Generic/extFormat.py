@@ -18,21 +18,19 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-
 #
-# This code is written py Yagnesh Desai
+# This code is written by Yagnesh Desai
 #
 
-#import dxf.fun # ynd
-#import dxf.dxf # ynd
-#import dxf.group_code # ynd
+
 import os.path
-#import fastcreat.py
-
+import re # added to handle Mtext
 from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.segment import Segment
 from PythonCAD.Generic.circle import Circle
 from PythonCAD.Generic.layer import Layer
+
+
 class ExtFormat(object):
     """
         This class provide base class for hendly different drawing format in pythoncad
@@ -105,17 +103,10 @@ class Dxf(DrawingFile):
         print "Debug: import entitys"
         self.ReadAsci();
         fo=self.FileObject()
-        lineNumber=0
-        """
-          print "Debug: Read line lineNumber %s"%str(lineNumber)
-          lineNumber+=1
-          line = fo.readline()
-        """
         while True:
             line = fo.readline()
             if not line: break
             else:
-                lineNumber +=1
                 #print "Debug: Read Line line = [%s] "%str(line), lineNumber
                 """Implement here your method"""
                 k = line
@@ -123,10 +114,17 @@ class Dxf(DrawingFile):
                     self.createLineFromDxf(fo)
                 if k[0:6] == 'CIRCLE':
                     self.createCircleFromDxf(fo)
-            #break
-            # indicates the data of lines are there in next block of 19 lines
-# Similar subroutine can be return for collecting data of circle/polyline/arc
-# Matteo Boscolo ++
+                if k[0:5] == 'MTEXT':
+                    self.createTextFromDxf(fo)
+		if k[0:4] == 'TEXT':
+                    self.createTextFromDxf(fo)
+		if k[0:3] == 'ARC':
+                    self.createArcFromDxf(fo)
+		if not k : break
+                #break
+                # indicates the data of lines are there in next block of 19 lines
+                # Similar subroutine can be return for collecting data of circle/polyline/arc
+                # Matteo Boscolo ++
     def createLineFromDxf(self,fo):
         """
             read the line dxf section and create the line
@@ -239,7 +237,6 @@ class Dxf(DrawingFile):
                 r = (float(k[0:-1]))
                 print "circle radius=", r
                 g = 10 # g > 1 for break
-                'I need a "create Circle code" here to append the segment to image'
         self.createCircle(x,y,r)
         
     def createCircle(self,x,y,r):
@@ -261,3 +258,70 @@ class Dxf(DrawingFile):
         if abs(_t - _s.getThickness()) > 1e-10:
             _circle.setThickness(_t)
         _active_layer.addObject(_circle)
+        
+    def createTextFromDxf(self,fo):
+        """
+            Read and create the Circle into drawing
+        """
+        print "Debug createTextFromDxf" 
+        g = 0 # reset g
+        while g < 1:
+            k = fo.readline()
+            print "line value k=", k
+            if k[0:3] == ' 10':
+                k = fo.readline()
+                x = (float(k[0:-1]))
+                print "Text Loc x =", x
+            if k[0:3] == ' 20':
+                k = fo.readline()
+                y = (float(k[0:-1]))
+                print "Text Loc y =", y
+            if k[0:3] == ' 30':
+                k = fo.readline()
+                z = (float(k[0:-1]))
+                print "Text Loc z =", z
+            if k[0:3] == ' 40':
+                k = fo.readline()
+                h = (float(k[0:-1]))
+                print "Text Height =", h
+	    if k[0:3] == '  1':
+                k = fo.readline()
+		t = k.replace('\~', ' ')
+                print "Text itself is ", x, y, z, 'height', h, t
+                g = 10 # g > 1 for break
+                # createText (x,y,h,t) needed
+                
+    def createArcFromDxf(self,fo):
+        """
+            Read and create the ARC into drawing
+        """
+        print "Debug createArcFromDxf" 
+        g = 0 # reset g
+        while g < 1:
+            k = fo.readline()
+            if k[0:3] == ' 10':
+                k = fo.readline()
+                x = (float(k[0:-1]))
+                print "Arc center x =", x
+            if k[0:3] == ' 20':
+                k = fo.readline()
+                y = (float(k[0:-1]))
+                print "Arc center y =", y
+            if k[0:3] == ' 30':
+                k = fo.readline()
+                z = (float(k[0:-1]))
+                print "Arc center z =", z
+            if k[0:3] == ' 40':
+                k = fo.readline()
+                r = (float(k[0:-1]))
+                print "Arc radius=", r
+            if k[0:3] == ' 50':
+                k = fo.readline()
+                sa = (float(k[0:-1]))
+                print "Start Angle=", sa
+            if k[0:3] == ' 51':
+                k = fo.readline()
+                ea = (float(k[0:-1]))
+                print "End Angle=", ea	
+                g = 10 # g > 1 for break
+                'I need a "create Arc code" here to append the segment to image'
