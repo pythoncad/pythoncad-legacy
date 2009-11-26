@@ -12,4 +12,12 @@ from cmdPoint import *
 from cmdSegment import *
 from cmdRectangle import *
 from cmdCircle import *
+from cmdArc import *
+from cmdChamfers import *
+from cmdCircleTwoPoint import *
+from cmdLeaderLines import *
+from cmdPolygons import *
+from cmdPolylines import *
+from cmdRectangle import *
+
 

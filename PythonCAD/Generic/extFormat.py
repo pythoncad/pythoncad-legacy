@@ -116,11 +116,11 @@ class Dxf(DrawingFile):
                     self.createCircleFromDxf(fo)
                 if k[0:5] == 'MTEXT':
                     self.createTextFromDxf(fo)
-		if k[0:4] == 'TEXT':
+                if k[0:4] == 'TEXT':
                     self.createTextFromDxf(fo)
-		if k[0:3] == 'ARC':
+                if k[0:3] == 'ARC':
                     self.createArcFromDxf(fo)
-		if not k : break
+                if not k : break
                 #break
                 # indicates the data of lines are there in next block of 19 lines
                 # Similar subroutine can be return for collecting data of circle/polyline/arc
@@ -284,12 +284,12 @@ class Dxf(DrawingFile):
                 k = fo.readline()
                 h = (float(k[0:-1]))
                 print "Text Height =", h
-	    if k[0:3] == '  1':
+            if k[0:3] == '  1':
                 k = fo.readline()
-		t = k.replace('\~', ' ')
+                t = k.replace('\~', ' ')
                 print "Text itself is ", x, y, z, 'height', h, t
                 g = 10 # g > 1 for break
-                # createText (x,y,h,t) needed
+    # createText (x,y,h,t) needed
                 
     def createArcFromDxf(self,fo):
         """
