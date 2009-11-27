@@ -62,3 +62,4 @@ def create_entity(gtkimage, tool=None):
     finally:
         _image.endAction()
     _init_func(gtkimage)
+
