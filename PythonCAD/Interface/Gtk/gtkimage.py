@@ -1098,6 +1098,10 @@ allocated color.
 
 fitImage()
         """
+        if viewport_draw:
+            self.__da.zoom_fit()
+            return
+        
         _fw = float(self.__disp_width)
         _fh = float(self.__disp_height)
         _xmin, _ymin, _xmax, _ymax = self.__image.getExtents()
