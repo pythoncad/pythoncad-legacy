@@ -1117,12 +1117,10 @@ fitImage()
 
     #------------------------------------------------------------------
     def refresh(self):
-        """This method does a screen refresh.
-
-refresh()
-
-If entities in the drawing have been added, removed, or
-modified, use the redraw() method.
+        """
+            This method does a screen refresh.
+            If entities in the drawing have been added, removed, or
+            modified, use the redraw() method.
         """
         _da = self.__da
         if (_da.flags() & gtk.MAPPED):
@@ -1187,10 +1185,13 @@ modified, use the redraw() method.
                     else:
                         _objs.append(_obj)
             for _obj in _cobjs:
+                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
             for _obj in _pts:
+                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
             for _obj in _objs:
+                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
 
     #------------------------------------------------------------------

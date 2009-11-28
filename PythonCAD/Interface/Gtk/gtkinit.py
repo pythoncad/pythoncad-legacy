@@ -175,7 +175,7 @@ def _draw_segment(self, gimage, col=None):
         if _col is None:
             _col = self.getColor()
         _dlist = self.getLinetype().getList()
-        _lw = self.getThickness()/gimage.getUnitsPerPixel()
+        _lw = self.getThickness() #/gimage.getUnitsPerPixel()
         _ctx = gimage.getCairoContext()
         if _ctx is not None:
             _ctx.save()
@@ -211,7 +211,7 @@ def _draw_circle(self, gimage, col=None):
     if _col is None:
         _col = self.getColor()
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -257,7 +257,7 @@ def _draw_arc(self, gimage, col=None):
     if _col is None:
         _col = self.getColor()
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -330,7 +330,7 @@ def _draw_leader(self, gimage, col=None):
     if _col is None:
         _col = self.getColor()
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -375,7 +375,7 @@ def _draw_polyline(self, gimage, col=None):
     if _col is None:
         _col = self.getColor()
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -410,7 +410,7 @@ def _draw_chamfer(self, gimage, col=None):
     if _col is None:
         _col = self.getColor()
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -459,7 +459,7 @@ def _draw_fillet(self, gimage, col=None):
     # print "a1: %g" % _a1
     # print "a2: %g" % _a2
     _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _ctx.save()
@@ -969,7 +969,7 @@ def _cairo_draw_circle_endpt(ctx, gimage, cpts, size):
     # circle
     #
     _r = size/2.0
-    _pw = int(round(_r/gimage.getUnitsPerPixel()))
+    _pw = int(round(_r))#/gimage.getUnitsPerPixel()))
     if _cp is not None:
         ctx.arc(_cp1x, _cp1y, _pw, 0, (2.0 * pi))
         ctx.fill()
@@ -1064,7 +1064,7 @@ def _gdk_draw_circle_endpt(gc, gimage, pixmap, cpts, size):
     _cp2x, _cp2y = gimage.coordToPixTransform(_cx, _cy)
     #
     _r = size/2.0
-    _pw = int(round(_r/gimage.getUnitsPerPixel()))
+    _pw = int(round(_r))#/gimage.getUnitsPerPixel()))
     _cw = _ch = _pw * 2
     if _cp is not None:
         _xm = _cp1x - _pw
@@ -1085,7 +1085,7 @@ def _draw_ldim(self, gimage, col=None):
     _cbar = self.getDimCrossbar()
     if _col is None:
         _col = self.getColor()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     #
     # bars and crossbar coordinates
     #
@@ -1180,7 +1180,7 @@ def _draw_rdim(self, gimage, col=None):
         raise TypeError, "Invalid Color: " + `type(_col)`
     if _col is None:
         _col = self.getColor()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     #
     # Dimension bar
     #
@@ -1274,14 +1274,14 @@ def _draw_adim(self, gimage, col=None):
     _carc = self.getDimCrossarc()
     if _col is None:
         _col = self.getColor()
-    _lw = self.getThickness()/gimage.getUnitsPerPixel()
+    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
     _sa = _carc.getStartAngle()
     _ea = _carc.getEndAngle()
     _vx, _vy = self.getVertexPoint().getCoords()
     _pvx, _pvy = gimage.coordToPixTransform(_vx, _vy)
     _dx, _dy = self.getLocation()
     _pdx, _pdy = gimage.coordToPixTransform(_dx, _dy)
-    _pr = int(_carc.getRadius()/gimage.getUnitsPerPixel())
+    _pr = int(_carc.getRadius())#/gimage.getUnitsPerPixel())
     #
     # bars and crossarc coords
     #
