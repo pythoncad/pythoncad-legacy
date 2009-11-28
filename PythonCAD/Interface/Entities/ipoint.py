@@ -23,10 +23,27 @@
 from PythonCAD.Generic import point
 
 
-class IPoint(Point):
+class IPoint(object):
 
-    def __init__(self):
-        super(IPoint, self). __init__()
+    def __init__(self, ctx, gpoint):
+        self.__ctx = ctx
+        self.__gpoint = gpoint
 
+    def draw(self, color):
+        print "IPoint.draw()"
+        # position
+        x = self.__gpoint.getx()
+        y = self.__gpoint.gety()
+        print x, y
+        # set linewidth 2 pixels
+        self.__ctx.set_line_width(2)
+        # set color
+        print color
+        self.__ctx.set_source_rgb(1, 0, 0)
+        # draw rectangle
+        self.__ctx.rectangle(-8, -8, 8, 8)
+        self.__ctx.translate(x, y)
+        self.__ctx.stroke()
 
-    def draw(self):
+        
+        
