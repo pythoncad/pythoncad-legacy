@@ -21,4 +21,8 @@ from cmdPolylines           import *
 from cmdRectangle           import *
 from cmdFillet              import *
 from cmdFilletTwoLine       import *
-
+from cmdSetAttributes       import *
+from cmdACLine              import *
+from cmdHCLine              import *
+from cmdVCLine              import *
+from cmdTwPCLine            import *

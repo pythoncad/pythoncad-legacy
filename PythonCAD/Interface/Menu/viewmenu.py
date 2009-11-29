@@ -26,7 +26,7 @@ import gtk
 import gtk.keysyms
 
 #from PythonCAD.Interface.Gtk.gtkimage import GTKImage
-from PythonCAD.Interface.Gtk import gtkentities
+
 from PythonCAD.Interface.Gtk import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtktext

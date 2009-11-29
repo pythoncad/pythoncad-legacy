@@ -99,16 +99,11 @@ class GTKImage(object):
     # class variables
     #
     
-    from PythonCAD.Interface.Gtk import gtkentities
     from PythonCAD.Interface.Gtk import gtkconobjs
     from PythonCAD.Interface.Gtk import gtkmodify
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
     from PythonCAD.Interface.Gtk import gtkedit
-    #from PythonCAD.Interface.Command import cmdPoint
-    #from PythonCAD.Interface.Command import cmdSegment
-    #from PythonCAD.Interface.Command import cmdRectangle
-    #from PythonCAD.Interface.Command import cmdCircle
     import  PythonCAD.Interface.Command as cmd
     __inittool = {
         tools.PasteTool : gtkedit.paste_mode_init,
@@ -126,10 +121,10 @@ class GTKImage(object):
         tools.LeaderTool : cmd.leader_mode_init,
         tools.PolylineTool : cmd.polyline_mode_init,
         tools.PolygonTool : cmd.polygon_mode_init,
-        tools.HCLineTool : gtkconobjs.hcline_mode_init,
-        tools.VCLineTool : gtkconobjs.vcline_mode_init,
-        tools.ACLineTool : gtkconobjs.acline_mode_init,
-        tools.CLineTool : gtkconobjs.cline_mode_init,
+        tools.HCLineTool : cmd.hcline_mode_init,
+        tools.VCLineTool : cmd.vcline_mode_init,
+        tools.ACLineTool : cmd.acline_mode_init,
+        tools.CLineTool : cmd.cline_mode_init,
         tools.PerpendicularCLineTool: gtkconobjs.perpendicular_cline_mode_init,
         tools.TangentCLineTool : gtkconobjs.tangent_cline_mode_init,
         tools.CCircleTangentLineTool : gtkconobjs.two_circle_tangent_line_mode_init,

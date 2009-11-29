@@ -44,6 +44,7 @@ from PythonCAD.Interface.Gtk import gtkDialog
 from PythonCAD.Generic import tools   
 from PythonCAD.Generic import snap
 
+
 def make_tuple(text, gdict):
     _tpl = eval(text, gdict)
     if not isinstance(_tpl, tuple):
