@@ -166,8 +166,7 @@ class GTKImage(object):
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
-        # GGR: expose_event caused the trouble
-        #self.__window.connect("expose_event", self.__exposeWindowEvent)
+        self.__window.connect("expose_event", self.__exposeWindowEvent)
         #
         # Zooming Moving global Variable Definition
         #
@@ -480,7 +479,7 @@ close()
     def __exposeWindowEvent(self, widget, event, data=None):
         # do platform intergation
         self.__menuBar.DoPlatformIntegration()
-        return True
+        return False
 
     #------------------------------------------------------------------
     def __realizeEvent(self, widget, data=None):
