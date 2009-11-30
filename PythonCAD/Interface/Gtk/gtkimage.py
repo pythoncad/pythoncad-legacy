@@ -166,7 +166,8 @@ class GTKImage(object):
         self.__window.connect("destroy", self.__destroyEvent)
         self.__window.connect("event", self.__windowEvent)
         self.__window.connect("key_press_event", self.__keyPressEvent)
-        self.__window.connect("expose_event", self.__exposeWindowEvent)
+        # GGR: expose_event caused the trouble
+        #self.__window.connect("expose_event", self.__exposeWindowEvent)
         #
         # Zooming Moving global Variable Definition
         #
