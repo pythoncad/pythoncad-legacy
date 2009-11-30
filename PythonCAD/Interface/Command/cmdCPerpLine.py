@@ -27,6 +27,15 @@ import gtk
 
 from math import hypot, pi, atan2
 
+from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic.circle  import Circle 
+from PythonCAD.Generic.arc     import Arc
+from PythonCAD.Generic.ccircle import CCircle
+from PythonCAD.Generic.hcline import HCLine
+from PythonCAD.Generic.vcline import VCLine
+from PythonCAD.Generic.acline import ACLine
+from PythonCAD.Generic.cline import CLine
+
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
@@ -92,7 +101,7 @@ def perp_cline_button_press_cb(gtkimage, widget, event, tool):
             elif abs(_p1y - _p2y) < 1e-10: # horizontal
                 _pcl = VCLine(_lp)
             else:
-                _slope = (180.0/math.pi) * math.atan2((_p2y - _p1y),
+                _slope = (180.0/pi) * atan2((_p2y - _p1y),
                                                       (_p2x - _p1x)) + 90.0
                 _pcl = ACLine(_lp, _slope)
         else:

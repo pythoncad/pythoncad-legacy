@@ -99,7 +99,6 @@ class GTKImage(object):
     # class variables
     #
     
-    from PythonCAD.Interface.Gtk import gtkconobjs
     from PythonCAD.Interface.Gtk import gtkmodify
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
@@ -465,7 +464,7 @@ close()
 
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
-        print "GtkImage.__exposeEvent()"
+        #print "GtkImage.__exposeEvent()"
         # TODO GGR
         if viewport_draw:
             self.__da.refresh(event.area)
@@ -1130,8 +1129,7 @@ fitImage()
 
     #------------------------------------------------------------------
     def redraw(self):
-        print "GtkImage.redraw"
-        
+        #print "GtkImage.redraw"
         """
             This method draws all the objects visible in the window.
         """
@@ -1184,13 +1182,10 @@ fitImage()
                     else:
                         _objs.append(_obj)
             for _obj in _cobjs:
-                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
             for _obj in _pts:
-                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
             for _obj in _objs:
-                print "Debug: %s"%str(_obj)
                 _obj.draw(self, _col)
 
     #------------------------------------------------------------------

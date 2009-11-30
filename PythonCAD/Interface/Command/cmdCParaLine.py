@@ -27,6 +27,15 @@ import gtk
 
 from math import hypot, pi, atan2
 
+from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic.circle  import Circle 
+from PythonCAD.Generic.arc     import Arc
+from PythonCAD.Generic.ccircle import CCircle
+from PythonCAD.Generic.hcline import HCLine
+from PythonCAD.Generic.vcline import VCLine
+from PythonCAD.Generic.acline import ACLine
+from PythonCAD.Generic.cline import CLine
+
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
@@ -92,7 +101,7 @@ def parallel_second_button_press_cb(gtkimage, widget, event, tool):
     _x,_y=_snp.point.getCoords()
     print "Debug: " + str(tool.getLocation())
     _x1, _y1 = tool.getLocation()
-    _offset = math.hypot((_x - _x1), (_y - _y1))
+    _offset = hypot((_x - _x1), (_y - _y1))
     tool.setOffset(_offset)
     tool.setHandler("button_press", parallel_conline_button_press_cb)
     gtkimage.setPrompt(_('Click on the reference construction line.'))
