@@ -26,3 +26,15 @@ from cmdACLine              import *
 from cmdHCLine              import *
 from cmdVCLine              import *
 from cmdTwPCLine            import *
+from cmdCCircle             import *
+from cmdCCircleTP           import *
+from cmdCTangTwoCircle      import *
+from cmdCLineBetTwoLines    import *
+from cmdCCirclTangToCLine   import *
+from cmdCParaLine           import *
+from cmdCTangLine           import *
+from cmdCPerpLine           import *
+
+
+
+
