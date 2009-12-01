@@ -459,7 +459,7 @@ class GTKImage(object):
     def __exposeWindowEvent(self, widget, event, data=None):
         # do platform intergation
         self.__menuBar.DoPlatformIntegration()
-        return True
+        return False
 
     #------------------------------------------------------------------
     def __realizeEvent(self, widget, data=None):
