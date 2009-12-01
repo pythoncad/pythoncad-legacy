@@ -462,13 +462,6 @@ close()
 
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
-<<<<<<< HEAD
-        print "GtkImage.__exposeEvent()"
-        _pixmap = self.__pixmap
-        _x, _y, _w, _h = event.area
-        _gc = widget.get_style().fg_gc[widget.state]
-        widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
-=======
         #print "GtkImage.__exposeEvent()"
         # TODO GGR
         if viewport_draw:
@@ -478,7 +471,6 @@ close()
             _x, _y, _w, _h = event.area
             _gc = widget.get_style().fg_gc[widget.state]
             widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
->>>>>>> ee1bf5e10f88608da6191a17e1f65ffeec3d3ca1
         return True
 
     #------------------------------------------------------------------

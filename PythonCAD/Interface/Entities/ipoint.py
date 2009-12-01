@@ -41,13 +41,8 @@ class IPoint(object):
         print color
         self.__ctx.set_source_rgb(1, 0, 0)
         # draw rectangle
-<<<<<<< HEAD
         self.__ctx.rectangle(-8, -8, 8, 8)
         self.__ctx.translate(x, y)
-=======
-        self.__ctx.rectangle(x-8, y-8, x+8, y+8)
-        #self.__ctx.translate(x, y)
->>>>>>> ee1bf5e10f88608da6191a17e1f65ffeec3d3ca1
         self.__ctx.stroke()
 
         
