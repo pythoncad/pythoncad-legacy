@@ -27,9 +27,9 @@ import gtk
 from gtk import gdk
 
 #from PythonCAD.Generic.image import Image
-from PythonCAD.Generic.layer import Layer
-from PythonCAD.Interface.Entities.ipoint import IPoint
-
+#from PythonCAD.Generic.layer import Layer
+#from PythonCAD.Interface.Entities.ipoint import IPoint
+from PythonCAD.Interface.Viewport.viewportdraw import ViewportDraw
 
 class IViewport(gtk.DrawingArea):
 
@@ -39,6 +39,9 @@ class IViewport(gtk.DrawingArea):
         #
         self.__gtkimage = parent
         self.__image = self.__gtkimage.getImage()
+        # viewport draw
+        self.__viewport_draw = ViewportDraw(self.__image)
+        # draw properties
         self.__need_redraw = True
         # graphics context
         self.__gc = None
@@ -279,9 +282,8 @@ class IViewport(gtk.DrawingArea):
         ctx.rectangle(0, 0, width, height)
         ctx.fill()
         # draw the scene
-        self.__test(ctx)
-        #self.__draw(ctx)
-        
+        #self.__test(ctx)
+        self.__viewport_draw.draw(ctx)
         
 #---------------------------------------------------------------------------------------------------
     def __test(self, ctx):
@@ -290,55 +292,55 @@ class IViewport(gtk.DrawingArea):
         ctx.rectangle(1.0, 1.0, 100.0, 100.0)
         ctx.stroke()
         
-#---------------------------------------------------------------------------------------------------
-    def __draw(self, ctx):
-        print "IViewport.__draw()"
-        # set transformations
-        ctx.translate(self.__cr_translate_x, self.__cr_translate_y)
-        print self.__cr_translate_x, self.__cr_translate_y
-        ctx.scale(self.__cr_scale_x, self.__cr_scale_y)
-        print self.__cr_scale_x, self.__cr_scale_y
-        #
-        active_layer = self.__image.getActiveLayer()
-        # stack of layers
-        layers = [self.__image.getTopLayer()]
-        # iterate over stack of layers
-        while (len(layers)):
-            layer = layers.pop()
-            if layer is not active_layer:
-                # draw inactive layer
-                self.__draw_layer(layer, ctx)
-            # add sublayers to the layer stack
-            layers.extend(layer.getSublayers())
-        # at last draw the active layer
-        self.__draw_layer(active_layer, ctx)
-        #
-        # redraw selected entities
-        #
-#        color = Color('#ff7733')
-#        for obj in self.__image.getSelectedObjects(False):
-#            obj.draw(self, color)
-#        self.refresh()
-
-#---------------------------------------------------------------------------------------------------
-    def __draw_layer(self, layer, ctx):
-        print "IViewport.__draw_layer()"
-        # is it a layer object
-        if not isinstance(layer, Layer):
-            raise TypeError, "Invalid layer type: " + `type(layer)`
-        # layer must belong to the image
-        if layer.getParent() is not self.__image:
-            raise ValueError, "Layer not found in Image"
-        # only draw visible layers
-        if layer.isVisible():
-            color = self.__image.getOption('INACTIVE_LAYER_COLOR')
-            if layer is self.__image.getActiveLayer():
-                color = None
-            # draw the points
-            for obj in layer.getLayerEntities("point"):
-                if obj.isVisible():
-                    iobj = IPoint(ctx, obj)
-                    iobj.draw(color)
-
-    
-#---------------------------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------------------------
+#    def __draw(self, ctx):
+#        print "IViewport.__draw()"
+#        # set transformations
+#        ctx.translate(self.__cr_translate_x, self.__cr_translate_y)
+#        print self.__cr_translate_x, self.__cr_translate_y
+#        ctx.scale(self.__cr_scale_x, self.__cr_scale_y)
+#        print self.__cr_scale_x, self.__cr_scale_y
+#        #
+#        active_layer = self.__image.getActiveLayer()
+#        # stack of layers
+#        layers = [self.__image.getTopLayer()]
+#        # iterate over stack of layers
+#        while (len(layers)):
+#            layer = layers.pop()
+#            if layer is not active_layer:
+#                # draw inactive layer
+#                self.__draw_layer(layer, ctx)
+#            # add sublayers to the layer stack
+#            layers.extend(layer.getSublayers())
+#        # at last draw the active layer
+#        self.__draw_layer(active_layer, ctx)
+#        #
+#        # redraw selected entities
+#        #
+##        color = Color('#ff7733')
+##        for obj in self.__image.getSelectedObjects(False):
+##            obj.draw(self, color)
+##        self.refresh()
+#
+##---------------------------------------------------------------------------------------------------
+#    def __draw_layer(self, layer, ctx):
+#        print "IViewport.__draw_layer()"
+#        # is it a layer object
+#        if not isinstance(layer, Layer):
+#            raise TypeError, "Invalid layer type: " + `type(layer)`
+#        # layer must belong to the image
+#        if layer.getParent() is not self.__image:
+#            raise ValueError, "Layer not found in Image"
+#        # only draw visible layers
+#        if layer.isVisible():
+#            color = self.__image.getOption('INACTIVE_LAYER_COLOR')
+#            if layer is self.__image.getActiveLayer():
+#                color = None
+#            # draw the points
+#            for obj in layer.getLayerEntities("point"):
+#                if obj.isVisible():
+#                    iobj = IPoint(ctx, obj)
+#                    iobj.draw(color)
+#
+#
+##---------------------------------------------------------------------------------------------------

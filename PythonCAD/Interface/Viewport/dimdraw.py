@@ -30,24 +30,24 @@ import gtk
 import pango
 
 from PythonCAD.Generic import color
-from PythonCAD.Generic import point
-from PythonCAD.Generic import segment
-from PythonCAD.Generic import circle
-from PythonCAD.Generic import arc
-from PythonCAD.Generic import leader
-from PythonCAD.Generic import polyline
-from PythonCAD.Generic import segjoint
-from PythonCAD.Generic import conobject
-from PythonCAD.Generic import hcline
-from PythonCAD.Generic import vcline
-from PythonCAD.Generic import acline
-from PythonCAD.Generic import cline
-from PythonCAD.Generic import ccircle
-from PythonCAD.Generic import text
-from PythonCAD.Generic import dimension
-from PythonCAD.Generic import layer
-
-from PythonCAD.Interface.Gtk import gtkimage
+#from PythonCAD.Generic import point
+#from PythonCAD.Generic import segment
+#from PythonCAD.Generic import circle
+#from PythonCAD.Generic import arc
+#from PythonCAD.Generic import leader
+#from PythonCAD.Generic import polyline
+#from PythonCAD.Generic import segjoint
+#from PythonCAD.Generic import conobject
+#from PythonCAD.Generic import hcline
+#from PythonCAD.Generic import vcline
+#from PythonCAD.Generic import acline
+#from PythonCAD.Generic import cline
+#from PythonCAD.Generic import ccircle
+#from PythonCAD.Generic import text
+#from PythonCAD.Generic import dimension
+#from PythonCAD.Generic import layer
+#
+#from PythonCAD.Interface.Gtk import gtkimage
 
 
 #----------------------------------------------------------------------------------------------------

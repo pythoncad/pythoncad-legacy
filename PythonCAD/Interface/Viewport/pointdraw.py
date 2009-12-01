@@ -30,82 +30,72 @@ import gtk
 import pango
 
 from PythonCAD.Generic import color
-from PythonCAD.Generic import point
-from PythonCAD.Generic import segment
-from PythonCAD.Generic import circle
-from PythonCAD.Generic import arc
-from PythonCAD.Generic import leader
-from PythonCAD.Generic import polyline
-from PythonCAD.Generic import segjoint
-from PythonCAD.Generic import conobject
-from PythonCAD.Generic import hcline
-from PythonCAD.Generic import vcline
-from PythonCAD.Generic import acline
-from PythonCAD.Generic import cline
-from PythonCAD.Generic import ccircle
-from PythonCAD.Generic import text
-from PythonCAD.Generic import dimension
-from PythonCAD.Generic import layer
-
-from PythonCAD.Interface.Gtk import gtkimage
+#from PythonCAD.Generic import point
+#from PythonCAD.Generic import segment
+#from PythonCAD.Generic import circle
+#from PythonCAD.Generic import arc
+#from PythonCAD.Generic import leader
+#from PythonCAD.Generic import polyline
+#from PythonCAD.Generic import segjoint
+#from PythonCAD.Generic import conobject
+#from PythonCAD.Generic import hcline
+#from PythonCAD.Generic import vcline
+#from PythonCAD.Generic import acline
+#from PythonCAD.Generic import cline
+#from PythonCAD.Generic import ccircle
+#from PythonCAD.Generic import text
+#from PythonCAD.Generic import dimension
+#from PythonCAD.Generic import layer
+#
+#from PythonCAD.Interface.Gtk import gtkimage
 
 
 
 #----------------------------------------------------------------------------------------------------
-def _draw_point(self, gimage, col=None):
-    _col = col
-    if _col is not None and not isinstance(_col, color.Color):
-        raise TypeError, "Invalid Color: " + `type(_col)`
-    _x, _y = self.getCoords()
-    _px, _py = gimage.coordToPixTransform(_x, _y)
-    _w, _h = gimage.getSize()
-    if (((_px + 5) < 0) or
-        ((_py + 5) < 0) or
-        ((_px - 5) > _w) or
-        ((_py - 5) > _h)):
-        return
-    if _col is None:
-        _col = _point_color
-    _pixmap = _gc = None    
-    _ctx = gimage.getCairoContext()
-    if _ctx is not None:
-        _ctx.save()
-        _r, _g, _b = _col.getColors()
-        _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        _ctx.move_to(_px, _py)
-        _ctx.line_to(_px, _py)
-        _ctx.stroke()
-        _ctx.restore()
-    else:
-        _gc = gimage.getGC()
-        _gc.set_foreground(gimage.getColor(_col))
-        _pixmap = gimage.getPixmap()
-        _pixmap.draw_point(_gc, _px, _py)
-    _image = gimage.getImage()
-    if _image.getOption('HIGHLIGHT_POINTS'):
-        _count = 0
-        for _user in self.getUsers():
-            if not isinstance(_user, dimension.Dimension):
-                _count = _count + 1
-            if _count > 1:
+def _draw_point(self, vp_draw, col=None):
+    color = col
+    # is color defined
+    if color is not None and not isinstance(color, color.Color):
+        raise TypeError, "Invalid Color: " + `type(color)`
+    # point coordinates
+    #x, y = self.getCoords()
+    # transformation to viewport coordinates
+    px, py = vp_draw.WorldToViewport(self.getCoords())
+    #w, h = gimage.getSize()
+    # cairo context
+    ctx = vp_draw.CairoContext
+    if ctx is not None:
+        ctx.save()
+        r, g, b = color.getColors()
+        ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+        ctx.move_to(px, py)
+        ctx.line_to(px, py)
+        ctx.stroke()
+        ctx.restore()
+    # draw the point in highlight color
+    if vp_draw.Image.getOption('HIGHLIGHT_POINTS'):
+        count = 0
+        for user in self.getUsers():
+            if not isinstance(user, dimension.Dimension):
+                count = count + 1
+            if count > 1:
                 break
-        if _count > 1:
-            _col = _image.getOption('MULTI_POINT_COLOR')
+        # 
+        if count > 1:
+            color = vp_draw.Image.getOption('MULTI_POINT_COLOR')
         else:
-            _col = _image.getOption('SINGLE_POINT_COLOR')
-        if _ctx is not None:
-            _ctx.save()
-            _r, _g, _b = _col.getColors()
-            _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-            _ctx.rectangle((_px - 5), (_py - 5), 10, 10)
-            _ctx.stroke()
-            _ctx.restore()
-        else:
-            _set_gc_values(_gc, None, gimage.getColor(_col), 1)
-            _pixmap.draw_rectangle(_gc, False, (_px - 5), (_py - 5), 10, 10)
+            color = vp_draw.Image.getOption('SINGLE_POINT_COLOR')
+        # use cairo to draw
+        if ctx is not None:
+            ctx.save()
+            r, g, b = color.getColors()
+            ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+            ctx.rectangle((px - 5), (py - 5), 10, 10)
+            ctx.stroke()
+            ctx.restore()
 
 #----------------------------------------------------------------------------------------------------
-def _erase_point(self, gimage):
+def _erase_point(self, vp_draw):
     _x, _y = self.getCoords()
     _px, _py = gimage.coordToPixTransform(_x, _y)
     _w, _h = gimage.getSize()
