@@ -26,10 +26,15 @@ import gtk
 
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
+from PythonCAD.Generic.point import Point
+from PythonCAD.Generic.segment import Segment
+
 from PythonCAD.Interface.Command import cmdCommon
+
 #
 # Init
 #
+
 def segment_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()

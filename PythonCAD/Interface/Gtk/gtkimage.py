@@ -206,22 +206,17 @@ class GTKImage(object):
         # left side: stuff for layer display
         # right side: drawing area
         #
-
         pane = gtk.HPaned()
         main_vbox.pack_start(pane)
-
         frame1 = gtk.Frame()
         pane.pack1(frame1, True, False)
         pane.set_position(100)
-
         #
         # layer display stuff
         #
-
         _ld = gtkshell.LayerDisplay(self.__image, self.__window)
         frame1.add(_ld.getWindow())
         self.__layerdisplay = _ld
-
         #
         # drawing area
         #
@@ -235,10 +230,8 @@ class GTKImage(object):
             self.__da = IViewport(self)
             pane.pack2(self.__da, True, False)
             self.__da.connect("expose_event", self.__exposeEvent)
-
         else:
             self.__da = gtk.DrawingArea()
-
             black = gtk.gdk.color_parse('black')
             self.__da.modify_fg(gtk.STATE_NORMAL, black)
             self.__da.modify_bg(gtk.STATE_NORMAL, black)
@@ -250,7 +243,6 @@ class GTKImage(object):
             self.__da.connect("configure_event", self.__configureEvent)
             # self.__da.connect("focus_in_event", self.__focusInEvent)
             # self.__da.connect("focus_out_event", self.__focusOutEvent)
-
             self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
                                  gtk.gdk.LEAVE_NOTIFY_MASK |
                                  gtk.gdk.BUTTON_PRESS_MASK |
@@ -261,22 +253,17 @@ class GTKImage(object):
                                  gtk.gdk.KEY_RELEASE_MASK |
                                  gtk.gdk.FOCUS_CHANGE_MASK |
                                  gtk.gdk.POINTER_MOTION_MASK)
-
         lower_hbox = gtk.HBox(False, 2)
         main_vbox.pack_start(lower_hbox, False, False)
-
         self.__prompt = gtk.Label(_('Enter Command:'))
         lower_hbox.pack_start(self.__prompt, False, False)
-
         #
         # where the action is taking place
         #
 
         self.__coords = gtk.Label('(0,0)')
         lower_hbox.pack_end(self.__coords, False, False)
-
         self.__image.setCurrentPoint(0.0, 0.0)
-
         #
         # command entry area
         #
@@ -284,30 +271,24 @@ class GTKImage(object):
         self.__entry = gtk.Entry()
         main_vbox.pack_start(self.__entry, False, False)
         self.__entry.connect("activate", self.__entryEvent)
-
         #
         # the Pixmap, GraphicContext, and CairoContext for the drawing
         #
-
         self.__pixmap = None
         self.__gc = None
         self.__ctx = None
         self.__refresh = True
-
         #
         # the viewable region and tolerance in the drawing
         #
-
         self.__xmin = None
         self.__ymin = None
         self.__xmax = None
         self.__ymax = None
         self.__tolerance = 1e-10
-
         #
         # establish message connections
         #
-
         _image = self.__image
         _image.connect('selected_object', self.__selectedObject)
         _image.connect('deselected_object', self.__deselectedObject)
@@ -335,9 +316,8 @@ class GTKImage(object):
 
     #------------------------------------------------------------------
     def close(self):
-        """Release the entites stored in the drawing.
-
-close()
+        """
+            Release the entites stored in the drawing.
         """
         self.__layerdisplay.close()
         self.__layerdisplay = None
@@ -753,17 +733,15 @@ getDA()
 
     #------------------------------------------------------------------
     def getPixmap(self):
-        """Return the Pixmap for the GTKImage.
-
-getPixmap()
+        """
+            Return the Pixmap for the GTKImage.
         """
         return self.__pixmap
 
     #------------------------------------------------------------------
     def setPixmap(self, pixmap):
-        """Set the Pixmap for the GTKImage.
-
-setPixmap(pixmap)
+        """
+            Set the Pixmap for the GTKImage.
         """
         self.__pixmap = pixmap
 
@@ -771,17 +749,15 @@ setPixmap(pixmap)
 
     #------------------------------------------------------------------
     def getPrompt(self):
-        """Return the current prompt string.
-
-getPrompt()
+        """
+            Return the current prompt string.
         """
         return self.__prompt.get_label()
 
     #------------------------------------------------------------------
     def setPrompt(self, p):
-        """Set the current prompt string.
-
-setPrompt(p)
+        """
+            Set the current prompt string.
         """
         if not isinstance(p, types.StringTypes):
             raise TypeError, "Invalid prompt type: " + `type(p)`
@@ -791,11 +767,9 @@ setPrompt(p)
 
     #------------------------------------------------------------------
     def setTool(self, tool):
-        """Replace the tool in the image with a new Tool.
-
-setTool(tool)
-
-The argument 'tool' should be an instance of a Tool object.
+        """
+            Replace the tool in the image with a new Tool.
+            The argument 'tool' should be an instance of a Tool object.
         """
         warnings.warn("Method setTool() is deprecated - use getImage().setTool()", stacklevel=2)
         self.__image.setTool(tool)
