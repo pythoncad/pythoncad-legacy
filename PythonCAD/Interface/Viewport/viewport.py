@@ -279,7 +279,16 @@ class IViewport(gtk.DrawingArea):
         ctx.rectangle(0, 0, width, height)
         ctx.fill()
         # draw the scene
-        self.__draw(ctx)
+        self.__test(ctx)
+        #self.__draw(ctx)
+        
+        
+#---------------------------------------------------------------------------------------------------
+    def __test(self, ctx):
+        ctx.set_line_width(1.0)
+        ctx.set_source_rgb(1, 0, 0)
+        ctx.rectangle(1.0, 1.0, 100.0, 100.0)
+        ctx.stroke()
         
 #---------------------------------------------------------------------------------------------------
     def __draw(self, ctx):
