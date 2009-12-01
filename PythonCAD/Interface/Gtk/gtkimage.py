@@ -99,42 +99,39 @@ class GTKImage(object):
     # class variables
     #
     
-    from PythonCAD.Interface.Gtk import gtkentities
-    from PythonCAD.Interface.Gtk import gtkconobjs
     from PythonCAD.Interface.Gtk import gtkmodify
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
     from PythonCAD.Interface.Gtk import gtkedit
-    from PythonCAD.Interface.Command import cmdPoint
-    from PythonCAD.Interface.Command import cmdSegment
+    import  PythonCAD.Interface.Command as cmd
     __inittool = {
         tools.PasteTool : gtkedit.paste_mode_init,
         tools.SelectTool : gtkedit.select_mode_init,
         tools.DeselectTool : gtkedit.deselect_mode_init,
-        tools.PointTool : cmdPoint.point_mode_init,
-        tools.SegmentTool : cmdSegment.segment_mode_init,
-        tools.RectangleTool: gtkentities.rectangle_mode_init,
-        tools.CircleTool : gtkentities.circle_center_mode_init,
-        tools.TwoPointCircleTool : gtkentities.circle_tp_mode_init,
-        tools.ArcTool : gtkentities.arc_center_mode_init,
-        tools.ChamferTool : gtkentities.chamfer_mode_init,
-        tools.FilletTool: gtkentities.fillet_mode_init,
-        tools.FilletTwoLineTool: gtkentities.fillet_two_line_mode_init,
-        tools.LeaderTool : gtkentities.leader_mode_init,
-        tools.PolylineTool : gtkentities.polyline_mode_init,
-        tools.PolygonTool : gtkentities.polygon_mode_init,
-        tools.HCLineTool : gtkconobjs.hcline_mode_init,
-        tools.VCLineTool : gtkconobjs.vcline_mode_init,
-        tools.ACLineTool : gtkconobjs.acline_mode_init,
-        tools.CLineTool : gtkconobjs.cline_mode_init,
-        tools.PerpendicularCLineTool: gtkconobjs.perpendicular_cline_mode_init,
-        tools.TangentCLineTool : gtkconobjs.tangent_cline_mode_init,
-        tools.CCircleTangentLineTool : gtkconobjs.two_circle_tangent_line_mode_init,
-        tools.ParallelOffsetTool : gtkconobjs.parallel_offset_mode_init,
-        tools.CCircleTool : gtkconobjs.ccircle_cpmode_init,
-        tools.TwoPointCCircleTool : gtkconobjs.ccircle_tpmode_init,
-        tools.TangentCCircleTool : gtkconobjs.tangent_ccircle_mode_init,
-        tools.TwoPointTangentCCircleTool : gtkconobjs.two_cline_tancc_mode_init,
+        tools.PointTool : cmd.point_mode_init,
+        tools.SegmentTool : cmd.segment_mode_init,
+        tools.RectangleTool: cmd.rectangle_mode_init,
+        tools.CircleTool : cmd.circle_center_mode_init,
+        tools.TwoPointCircleTool : cmd.circle_tp_mode_init,
+        tools.ArcTool : cmd.arc_center_mode_init,
+        tools.ChamferTool : cmd.chamfer_mode_init,
+        tools.FilletTool: cmd.fillet_mode_init,
+        tools.FilletTwoLineTool: cmd.fillet_two_line_mode_init,
+        tools.LeaderTool : cmd.leader_mode_init,
+        tools.PolylineTool : cmd.polyline_mode_init,
+        tools.PolygonTool : cmd.polygon_mode_init,
+        tools.HCLineTool : cmd.hcline_mode_init,
+        tools.VCLineTool : cmd.vcline_mode_init,
+        tools.ACLineTool : cmd.acline_mode_init,
+        tools.CLineTool : cmd.cline_mode_init,
+        tools.PerpendicularCLineTool: cmd.perpendicular_cline_mode_init,
+        tools.TangentCLineTool : cmd.tangent_cline_mode_init,
+        tools.CCircleTangentLineTool : cmd.two_circle_tangent_line_mode_init,
+        tools.ParallelOffsetTool : cmd.parallel_offset_mode_init,
+        tools.CCircleTool : cmd.ccircle_cpmode_init,
+        tools.TwoPointCCircleTool : cmd.ccircle_tpmode_init,
+        tools.TangentCCircleTool : cmd.tangent_ccircle_mode_init,
+        tools.TwoPointTangentCCircleTool : cmd.two_cline_tancc_mode_init,
         tools.TextTool : gtktext.text_add_init,
         tools.HorizontalMoveTool : gtkmodify.move_horizontal_init,
         tools.VerticalMoveTool : gtkmodify.move_vertical_init,
@@ -465,18 +462,30 @@ close()
 
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
+<<<<<<< HEAD
         print "GtkImage.__exposeEvent()"
         _pixmap = self.__pixmap
         _x, _y, _w, _h = event.area
         _gc = widget.get_style().fg_gc[widget.state]
         widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
+=======
+        #print "GtkImage.__exposeEvent()"
+        # TODO GGR
+        if viewport_draw:
+            self.__da.refresh(event.area)
+        else:
+            _pixmap = self.__pixmap
+            _x, _y, _w, _h = event.area
+            _gc = widget.get_style().fg_gc[widget.state]
+            widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
+>>>>>>> ee1bf5e10f88608da6191a17e1f65ffeec3d3ca1
         return True
 
     #------------------------------------------------------------------
     def __exposeWindowEvent(self, widget, event, data=None):
         # do platform intergation
         self.__menuBar.DoPlatformIntegration()
-        return True
+        return False
 
     #------------------------------------------------------------------
     def __realizeEvent(self, widget, data=None):
@@ -1126,12 +1135,10 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def refresh(self):
-        """This method does a screen refresh.
-
-refresh()
-
-If entities in the drawing have been added, removed, or
-modified, use the redraw() method.
+        """
+            This method does a screen refresh.
+            If entities in the drawing have been added, removed, or
+            modified, use the redraw() method.
         """
         _da = self.__da
         if (_da.flags() & gtk.MAPPED):
@@ -1142,8 +1149,7 @@ modified, use the redraw() method.
 
  #---------------------------------------------------------------------------------------------------
     def redraw(self):
-        print "GtkImage.redraw"
-        
+        #print "GtkImage.redraw"
         """
             This method draws all the objects visible in the window.
         """

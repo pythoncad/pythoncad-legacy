@@ -26,7 +26,7 @@ import gtk
 import gtk.keysyms
 
 #from PythonCAD.Interface.Gtk.self.gtkimage import GTKImage
-from PythonCAD.Interface.Gtk import gtkentities
+
 from PythonCAD.Interface.Gtk import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtktext
@@ -49,7 +49,7 @@ from PythonCAD.Interface.Gtk import gtkstyleprefs
 from PythonCAD.Interface.Gtk import gtkDialog
 
 from PythonCAD.Interface.Menu.basemenu import IBaseMenu
-
+import  PythonCAD.Interface.Command as cmd
 
 #############################################################################
 #
@@ -221,16 +221,16 @@ def draw_ext_polygon_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def draw_set_style_cb(menuitem, gtkimage):
-    gtkentities.set_active_style(gtkimage)
+    cmd.set_active_style(gtkimage)
 
 def draw_set_linetype_cb(menuitem, gtkimage):
-    gtkentities.set_active_linetype(gtkimage)
+    cmd.set_active_linetype(gtkimage)
 
 def draw_set_color_cb(menuitem, gtkimage):
-    gtkentities.set_active_color(gtkimage)
+    cmd.set_active_color(gtkimage)
 
 def draw_set_thickness_cb(menuitem, gtkimage):
-    gtkentities.set_line_thickness(gtkimage)
+    cmd.set_line_thickness(gtkimage)
 
 def draw_text_cb(menuitem, gtkimage):
     gtkimage.activateSnap()
@@ -241,11 +241,11 @@ def draw_text_cb(menuitem, gtkimage):
         gtkimage.getImage().setTool(_tool)
 
 def colors_cb(menuitem, gtkimage):
-    gtkentities.set_colors_dialog(gtkimage)
+    cmd.set_colors_dialog(gtkimage)
         
         
 def sizes_cb(menuitem, gtkimage):
-    gtkentities.set_sizes_dialog(gtkimage)
+    cmd.set_sizes_dialog(gtkimage)
     
 def style_cb(menuitem, gtkimage):
     gtkstyleprefs.style_dialog(gtkimage, globals.prefs['STYLES'],
@@ -260,10 +260,10 @@ def dimstyle_cb(menuitem, gtkimage):
     gtkdimprefs.dimstyle_dialog(gtkimage, globals.prefs['DIMSTYLES'])
 
 def toggle_cb(menuitem, gtkimage):
-    gtkentities.set_toggle_dialog(gtkimage)
+    cmd.set_toggle_dialog(gtkimage)
     
 def units_cb(menuitem, gtkimage):
-    gtkentities.set_units_dialog(gtkimage)
+    cmd.set_units_dialog(gtkimage)
     
     
 #############################################################################

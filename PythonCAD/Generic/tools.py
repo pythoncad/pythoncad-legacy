@@ -771,14 +771,11 @@ This method extends CircleTool::reset().
         self.__second_point = None
 
 class ArcTool(CircleTool):
-    """A specialized tool for drawing Arc objects.
-
-The ArcTool is Derived from the CircleTool class, so it shares
-all the attributes and methods of that class. The ArcTool class
-has the following addtional methods:
-
-{set/get}StartAngle(): Set/Get the start angle of the arc
-{set/get}EndAngle(): Set/Get the end angle of the arc.
+    """
+        A specialized tool for drawing Arc objects.
+        The ArcTool is Derived from the CircleTool class, so it shares
+        all the attributes and methods of that class. The ArcTool class
+        has the following addtional methods:
     """
     def __init__(self):
         super(ArcTool, self).__init__()
@@ -786,62 +783,50 @@ has the following addtional methods:
         self.__end_angle = None
 
     def setStartAngle(self, angle):
-        """Set the start angle of the arc.
-
-setStartAngle(angle)
-
-The argument 'angle' should be a float value between 0.0 and 360.0
+        """
+            Set the start angle of the arc.
+            The argument 'angle' should be a float value between 0.0 and 360.0
         """
         _angle = util.make_c_angle(angle)
         self.__start_angle = _angle
 
     def getStartAngle(self):
-        """Return the start angle of the arc.
-
-getStartAngle()
-
-This method returns the value defined in the previous setStartAngle()
-call, or None if that method has not been called.
+        """
+            Return the start angle of the arc.
+            This method returns the value defined in the previous setStartAngle()
+            call, or None if that method has not been called.
         """
         return self.__start_angle
 
     def setEndAngle(self, angle):
-        """Set the start angle of the arc.
-
-setStartAngle(angle)
-
-The argument 'angle' should be a float value between 0.0 and 360.0
+        """
+            Set the start angle of the arc.
+            The argument 'angle' should be a float value between 0.0 and 360.0
         """
         _angle = util.make_c_angle(angle)
         self.__end_angle = _angle
 
     def getEndAngle(self):
-        """Return the end angle of the arc.
-
-getEndAngle()
-
-This method returns the value defined in the previous setEndAngle()
-call, or None if that method has not been called.
+        """
+            Return the end angle of the arc.
+            This method returns the value defined in the previous setEndAngle()
+            call, or None if that method has not been called.
         """
         return self.__end_angle
         
     def reset(self):
-        """Restore the tool to its initial state.
-
-reset()
-
-This method extends CircleTool::reset().
+        """
+            Restore the tool to its initial state.
+            This method extends CircleTool::reset().
         """
         super(ArcTool, self).reset()
         self.__start_angle = None
         self.__end_angle = None
 
     def create(self, image):
-        """Create a new Arc and add it to the image.
-
-create(image)
-
-This method overrides the CircleTool::create() method.
+        """
+            Create a new Arc and add it to the image.
+            This method overrides the CircleTool::create() method.
         """
         _center = self.getCenter()
         _radius = self.getRadius()
@@ -3667,53 +3652,43 @@ class TextTool(RegionTool):
         self.__pixel_size = (_width, _height)
 
     def getPixelSize(self):
-        """Retrieve the stored rectangular region of text.
-
-getPixelSize()
-
-A ValueError exception is raised if this method is called before
-the size has been set by setPixelSize()
+        """
+            Retrieve the stored rectangular region of text.
+            A ValueError exception is raised if this method is called before
+            the size has been set by setPixelSize()
         """
         if self.__pixel_size is None:
             raise ValueError, "Pixel size is not defined."
         return self.__pixel_size
 
     def setLayout(self, layout):
-        """Store a formatted layout string for the text.
-
-setLayout()
-
-This method is very GTK/Pango specific ...
+        """
+            Store a formatted layout string for the text.
+            This method is very GTK/Pango specific ...
         """
         self.__layout = layout
 
     def getLayout(self):
-        """Retrieve the formatted layout for the text string.
-
-getLayout()
-
-This method is very GTK/Pango specific ...
+        """
+            Retrieve the formatted layout for the text string.
+            This method is very GTK/Pango specific ...
         """
         return self.__layout
 
     def setTextBlock(self, tblock):
-        """Store a TextBlock instance within the Tool.
-
-setTextBlock(tblock)
-
-Argument 'tblock' must be a TextBlock.
+        """
+            Store a TextBlock instance within the Tool.
+            Argument 'tblock' must be a TextBlock.
         """
         if not isinstance(tblock, TextBlock):
             raise TypeError, "Invalid TextBlock: " + `type(tblock)`
         self.__tblock = tblock
 
     def getTextBlock(self):
-        """Retrieve a stored TextBlock within the Tool.
-
-getTextBlock()
-
-This method may return None if no TextBlock has been stored
-via setTextBlock().
+        """
+            Retrieve a stored TextBlock within the Tool.
+            This method may return None if no TextBlock has been stored
+            via setTextBlock().
         """
         return self.__tblock
         

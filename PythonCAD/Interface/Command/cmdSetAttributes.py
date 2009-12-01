@@ -1,7 +1,6 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007 Art Haas
-#
-#               2009 Matteo Boscolo
+# Copyright (c) 2009 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -19,33 +18,20 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+# <> command functions/Class 
 #
-# menu functions for creating entities in drawing
-# like segments, circles, etc ...
-#
-
-from math import hypot, pi, atan2
 
 import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
-import math
-
 import sys
 
-from PythonCAD.Generic import globals
-from PythonCAD.Generic.point import Point
-from PythonCAD.Generic.segment import Segment
-from PythonCAD.Generic.segjoint import Chamfer, Fillet
-from PythonCAD.Generic import color
-from PythonCAD.Generic import util
-from PythonCAD.Generic import units
-from PythonCAD.Interface.Gtk import gtkDialog
-from PythonCAD.Generic import tools   
-from PythonCAD.Generic import snap
-from PythonCAD.Interface.Command import cmdCommon
+from math import hypot, pi, atan2
 
+from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic import snap 
+from PythonCAD.Interface.Command import cmdCommon
 #
 # set the active style
 #
@@ -622,4 +608,3 @@ def set_units_dialog(gtkimage):
         if _val != _unit:
             _image.setUnits(_val)
     _dialog.destroy()
-    

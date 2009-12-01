@@ -18,8 +18,43 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# Point VCLineTool functions/Class 
+# <two-point construction circle> command functions/Class 
 #
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+from math import hypot, pi, atan2
+
 from PythonCAD.Generic.tools import Tool
-from PythonCAD.Interface.Menu import cmdCommon
+from PythonCAD.Generic import snap 
+from PythonCAD.Interface.Command import cmdCommon
+
+from PythonCAD.Interface.Command import cmdCircleTwoPoint
+#
+# Init
+#
+def ccircle_tpmode_init(gtkimage, tool=None):
+    gtkimage.setPrompt(_('Click in the drawing area or enter a Point'))
+    _tool = gtkimage.getImage().getTool()
+    _tool.setHandler("button_press", cmdCircleTwoPoint.circle_tp_first_button_press_cb)
+    _tool.setHandler("entry_event", cmdCircleTwoPoint.circle_tp_first_entry_event_cb)
+    _tool.setHandler("initialize", ccircle_tpmode_init)
+#
+# Motion Notifie
+#
+
+#
+# Button press callBacks
+#
+
+#
+# Entry callBacks
+#
+
+#
+# Suport functions
+#
+
 

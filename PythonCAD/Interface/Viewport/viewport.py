@@ -190,6 +190,7 @@ class IViewport(gtk.DrawingArea):
         # refresh
         self.refresh()
         return True
+<<<<<<< HEAD
 
 #---------------------------------------------------------------------------------------------------
     def zoom_fit(self):
@@ -220,6 +221,38 @@ class IViewport(gtk.DrawingArea):
         self.invalidate()
 
 #---------------------------------------------------------------------------------------------------
+=======
+
+#---------------------------------------------------------------------------------------------------
+    def zoom_fit(self):
+        print "IViewport.zoom_fit()"
+        #mtrx = cairo.Matrix(1,0,0,1,dx,dy)
+        #mtrx = cairo.Matrix(fx,0,0,fy,0,0)
+        # view extents
+        alloc = self.get_allocation()
+        vp_width = alloc.width
+        vp_height = alloc.height
+        print "Viewport: ", vp_width, vp_height
+        # image extents
+        xmin, ymin, xmax, ymax = self.__image.getExtents()
+        # image size
+        img_width = xmax - xmin
+        img_height = ymax - ymin
+        print "Image: ", img_width, img_height
+        # set cairo transformation matrix
+        self.__cr_translate_x = min(img_width, img_height) / 2.0
+        self.__cr_translate_y = self.__cr_translate_x
+        print "Translate: ", self.__cr_translate_x, self.__cr_translate_y
+        # cairo scale factors
+        self.__cr_scale_x = min(vp_width / img_width, vp_height / img_height)
+        self.__cr_scale_y = self.__cr_scale_x
+        print "Scale: ", self.__cr_scale_x, self.__cr_scale_y
+        # redraw
+        self.__need_redraw = True
+        self.invalidate()
+
+#---------------------------------------------------------------------------------------------------
+>>>>>>> ee1bf5e10f88608da6191a17e1f65ffeec3d3ca1
     def zoom_in(self):
         print "IViewport.zoom_in()"
         # cairo scale factors
@@ -279,8 +312,22 @@ class IViewport(gtk.DrawingArea):
         ctx.rectangle(0, 0, width, height)
         ctx.fill()
         # draw the scene
+<<<<<<< HEAD
         self.__draw(ctx)
         
+=======
+        self.__test(ctx)
+        #self.__draw(ctx)
+        
+        
+#---------------------------------------------------------------------------------------------------
+    def __test(self, ctx):
+        ctx.set_line_width(1.0)
+        ctx.set_source_rgb(1, 0, 0)
+        ctx.rectangle(1.0, 1.0, 100.0, 100.0)
+        ctx.stroke()
+        
+>>>>>>> ee1bf5e10f88608da6191a17e1f65ffeec3d3ca1
 #---------------------------------------------------------------------------------------------------
     def __draw(self, ctx):
         print "IViewport.__draw()"

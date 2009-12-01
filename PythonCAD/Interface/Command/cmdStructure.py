@@ -18,8 +18,34 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# ACLineTool command functions/Class 
+# <> command functions/Class 
 #
-from PythonCAD.Generic.tools import Tool
-from PythonCAD.Interface.Menu import cmdCommon
 
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+from math import hypot, pi, atan2
+
+from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic import snap 
+from PythonCAD.Interface.Command import cmdCommon
+#
+# Init
+#
+
+#
+# Motion Notifie
+#
+
+#
+# Button press callBacks
+#
+
+#
+# Entry callBacks
+#
+
+#
+# Suport functions
+#

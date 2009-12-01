@@ -1665,7 +1665,6 @@ setDefaults()
             raise TypeError, "Invalid tool: " + `type(tool)`
         _ot = self.__tool
         self.setUnsaved() #each time i set a tool i make some modification 
-        print "Set Unsaveda"
         if (_ot is not tool):
             self.__tool = tool
             self.sendMessage('tool_changed')
