@@ -29,7 +29,10 @@ from math import hypot, pi, atan2
 
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
+from PythonCAD.Generic.color import Color
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Generic import CCircle,Circle,Arc,Point,ACLine
+
 #
 # Init
 #

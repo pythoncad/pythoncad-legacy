@@ -30,6 +30,9 @@ from math import hypot, pi, atan2
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+
+from PythonCAD.Generic import HCLine, VCLine, ACLine, CLine, CCircle
+
 #
 # Init
 #
@@ -87,7 +90,7 @@ def ccircle_single_second_button_press_cb(gtkimage, widget, event, tool):
     _snapArray={'perpendicular':False,'tangent':False}
     _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
     tool.setLocation(_x, _y)
-    gtkentities.create_entity(gtkimage)
+    cmdCommon.create_entity(gtkimage)
     return True
 #
 # Entry callBacks

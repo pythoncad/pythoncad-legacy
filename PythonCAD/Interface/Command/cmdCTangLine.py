@@ -30,6 +30,8 @@ from math import hypot, pi, atan2
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Generic import CCircle,Circle,Arc,Point,ACLine
+from PythonCAD.Generic.pyGeoLib import Vector
 #
 # Init
 #
@@ -53,7 +55,7 @@ def tangent_cline_button_press_cb(gtkimage, widget, event, tool):
     if _pt is not None:
         _x, _y = _pt.point.getCoords()
         _layer = _image.getActiveLayer()
-        _rtd = 180.0/math.pi
+        _rtd = 180.0/pi
         _cobj = None
         _angle = None
         _circleEnt=_pt.entity
@@ -65,9 +67,9 @@ def tangent_cline_button_press_cb(gtkimage, widget, event, tool):
             _vectPoint=_v.Point()
             _x,_y=(_vectPoint+_cp)
             _cx,_cy=_cp.getCoords()
-            if abs(math.hypot((_x - _cx), (_y - _cy)) - _rad) < 1e-10:
+            if abs(hypot((_x - _cx), (_y - _cy)) - _rad) < 1e-10:
                 _cobj = _circleEnt
-                _angle = _rtd * math.atan2((_y - _cy), (_x - _cx))
+                _angle = _rtd * atan2((_y - _cy), (_x - _cx))
                 if _angle < 0.0:
                     _angle = _angle + 360.0
                 _pt=Point(_x,_y)

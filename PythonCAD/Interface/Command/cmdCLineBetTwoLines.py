@@ -30,6 +30,7 @@ from math import hypot, pi, atan2
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Generic import HCLine, VCLine, ACLine, CLine, CCircle
 #
 # Init
 #

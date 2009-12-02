@@ -35,7 +35,7 @@ from PythonCAD.Generic.hcline import HCLine
 from PythonCAD.Generic.vcline import VCLine
 from PythonCAD.Generic.acline import ACLine
 from PythonCAD.Generic.cline import CLine
-
+from PythonCAD.Generic.util import *
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
@@ -114,7 +114,7 @@ def parallel_entry_event(gtkimage, widget, tool):
     _text = _entry.get_text()
     _entry.delete_text(0,-1)
     if len(_text):
-        _dist = util.get_float(eval(_text, gtkimage.image.getImageVariables()))
+        _dist = get_float(eval(_text, gtkimage.image.getImageVariables()))
         tool.setOffset(_dist)
         tool.delHandler("entry_event")
         tool.setHandler("button_press", parallel_conline_button_press_cb)

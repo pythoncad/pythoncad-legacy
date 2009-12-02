@@ -21,11 +21,11 @@
 # define __all__ so 'from Generic import *' works
 #
 
-__all__ = [
+entitys=[
     'acline',
     'arc',
     'baseobject',
-    'ccircle'
+    'ccircle',
     'circle',
     'cline',
     'color',
@@ -82,3 +82,14 @@ __all__ = [
     'util',
     'vcline'
     ]
+
+
+__all__=[]
+for subpackage in entitys:
+    try: 
+        exec 'from ' + subpackage + ' import *'
+        __all__.append( subpackage )
+    except ImportError:
+        pass
+
+
