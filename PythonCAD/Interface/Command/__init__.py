@@ -34,7 +34,9 @@ from cmdCCirclTangToCLine   import *
 from cmdCParaLine           import *
 from cmdCTangLine           import *
 from cmdCPerpLine           import *
-
+from cmdLinearDimension     import *
+from cmdRadialDimension     import *
+from cmdAngularDimension    import *
 
 
 

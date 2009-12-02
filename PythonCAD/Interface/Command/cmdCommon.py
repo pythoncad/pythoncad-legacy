@@ -63,4 +63,14 @@ def create_entity(gtkimage, tool=None):
     finally:
         _image.endAction()
     _init_func(gtkimage)
-
+    
+def add_dimension(gtkimage, tool=None):
+    _tool = gtkimage.getImage().getTool()
+    _init_func = _tool.getHandler("initialize")
+    _image = gtkimage.getImage()
+    _image.startAction()
+    try:
+        _tool.create(_image)
+    finally:
+        _image.endAction()
+    _init_func(gtkimage)

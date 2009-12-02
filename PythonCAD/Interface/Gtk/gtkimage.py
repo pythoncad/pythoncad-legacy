@@ -33,7 +33,7 @@ pygtk.require('2.0')
 import gtk
 import gobject
 
-from PythonCAD.Interface.Gtk import gtkdimension
+
 from PythonCAD.Interface.Gtk import gtktext
 from PythonCAD.Interface.Gtk import gtkactions
 
@@ -145,11 +145,11 @@ class GTKImage(object):
         tools.DeleteTool : gtkmodify.delete_mode_init,
         tools.MirrorTool : gtkmirror.mirror_mode_init,
         tools.ZoomTool : gtkmodify.zoom_init,
-        tools.LinearDimensionTool : gtkdimension.linear_mode_init,
-        tools.HorizontalDimensionTool : gtkdimension.horizontal_mode_init,
-        tools.VerticalDimensionTool : gtkdimension.vertical_mode_init,
-        tools.RadialDimensionTool : gtkdimension.radial_mode_init,
-        tools.AngularDimensionTool : gtkdimension.angular_mode_init,
+        tools.LinearDimensionTool : cmd.linear_mode_init,
+        tools.HorizontalDimensionTool : cmd.horizontal_mode_init,
+        tools.VerticalDimensionTool : cmd.vertical_mode_init,
+        tools.RadialDimensionTool : cmd.radial_mode_init,
+        tools.AngularDimensionTool : cmd.angular_mode_init,
         tools.PlotTool : gtkprinting.plot_mode_init,
         tools.ZoomPan : gtkmodify.zoomPan_init,
         }
