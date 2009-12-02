@@ -206,17 +206,22 @@ class GTKImage(object):
         # left side: stuff for layer display
         # right side: drawing area
         #
+
         pane = gtk.HPaned()
         main_vbox.pack_start(pane)
+
         frame1 = gtk.Frame()
         pane.pack1(frame1, True, False)
         pane.set_position(100)
+
         #
         # layer display stuff
         #
+
         _ld = gtkshell.LayerDisplay(self.__image, self.__window)
         frame1.add(_ld.getWindow())
         self.__layerdisplay = _ld
+
         #
         # drawing area
         #
@@ -229,9 +234,9 @@ class GTKImage(object):
             print "using viewport_draw"
             self.__da = IViewport(self)
             pane.pack2(self.__da, True, False)
-            self.__da.connect("expose_event", self.__exposeEvent)
         else:
             self.__da = gtk.DrawingArea()
+
             black = gtk.gdk.color_parse('black')
             self.__da.modify_fg(gtk.STATE_NORMAL, black)
             self.__da.modify_bg(gtk.STATE_NORMAL, black)
@@ -243,6 +248,7 @@ class GTKImage(object):
             self.__da.connect("configure_event", self.__configureEvent)
             # self.__da.connect("focus_in_event", self.__focusInEvent)
             # self.__da.connect("focus_out_event", self.__focusOutEvent)
+
             self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
                                  gtk.gdk.LEAVE_NOTIFY_MASK |
                                  gtk.gdk.BUTTON_PRESS_MASK |
@@ -253,17 +259,22 @@ class GTKImage(object):
                                  gtk.gdk.KEY_RELEASE_MASK |
                                  gtk.gdk.FOCUS_CHANGE_MASK |
                                  gtk.gdk.POINTER_MOTION_MASK)
+
         lower_hbox = gtk.HBox(False, 2)
         main_vbox.pack_start(lower_hbox, False, False)
+
         self.__prompt = gtk.Label(_('Enter Command:'))
         lower_hbox.pack_start(self.__prompt, False, False)
+
         #
         # where the action is taking place
         #
 
         self.__coords = gtk.Label('(0,0)')
         lower_hbox.pack_end(self.__coords, False, False)
+
         self.__image.setCurrentPoint(0.0, 0.0)
+
         #
         # command entry area
         #
@@ -271,24 +282,30 @@ class GTKImage(object):
         self.__entry = gtk.Entry()
         main_vbox.pack_start(self.__entry, False, False)
         self.__entry.connect("activate", self.__entryEvent)
+
         #
         # the Pixmap, GraphicContext, and CairoContext for the drawing
         #
+
         self.__pixmap = None
         self.__gc = None
         self.__ctx = None
         self.__refresh = True
+
         #
         # the viewable region and tolerance in the drawing
         #
+
         self.__xmin = None
         self.__ymin = None
         self.__xmax = None
         self.__ymax = None
         self.__tolerance = 1e-10
+
         #
         # establish message connections
         #
+
         _image = self.__image
         _image.connect('selected_object', self.__selectedObject)
         _image.connect('deselected_object', self.__deselectedObject)
@@ -316,8 +333,9 @@ class GTKImage(object):
 
     #------------------------------------------------------------------
     def close(self):
-        """
-            Release the entites stored in the drawing.
+        """Release the entites stored in the drawing.
+
+close()
         """
         self.__layerdisplay.close()
         self.__layerdisplay = None
@@ -733,15 +751,17 @@ getDA()
 
     #------------------------------------------------------------------
     def getPixmap(self):
-        """
-            Return the Pixmap for the GTKImage.
+        """Return the Pixmap for the GTKImage.
+
+getPixmap()
         """
         return self.__pixmap
 
     #------------------------------------------------------------------
     def setPixmap(self, pixmap):
-        """
-            Set the Pixmap for the GTKImage.
+        """Set the Pixmap for the GTKImage.
+
+setPixmap(pixmap)
         """
         self.__pixmap = pixmap
 
@@ -749,15 +769,17 @@ getDA()
 
     #------------------------------------------------------------------
     def getPrompt(self):
-        """
-            Return the current prompt string.
+        """Return the current prompt string.
+
+getPrompt()
         """
         return self.__prompt.get_label()
 
     #------------------------------------------------------------------
     def setPrompt(self, p):
-        """
-            Set the current prompt string.
+        """Set the current prompt string.
+
+setPrompt(p)
         """
         if not isinstance(p, types.StringTypes):
             raise TypeError, "Invalid prompt type: " + `type(p)`
@@ -765,16 +787,18 @@ getDA()
 
     prompt = property(getPrompt, setPrompt, None, "Prompt string.")
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def setTool(self, tool):
-        """
-            Replace the tool in the image with a new Tool.
-            The argument 'tool' should be an instance of a Tool object.
+        """Replace the tool in the image with a new Tool.
+
+setTool(tool)
+
+The argument 'tool' should be an instance of a Tool object.
         """
         warnings.warn("Method setTool() is deprecated - use getImage().setTool()", stacklevel=2)
         self.__image.setTool(tool)
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def getTool(self):
         """Return the current Tool used in the drawing.
 
@@ -785,7 +809,7 @@ getTool()
 
     tool = property(getTool, None, None, "Tool for adding/modifying entities.")
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def getUnitsPerPixel(self):
         """Return the current value of units/pixel.
 
@@ -793,7 +817,7 @@ getUnitsPerPixel()
         """
         return self.__units_per_pixel
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def setUnitsPerPixel(self, upp):
         """Set the current value of units/pixel.
 
@@ -809,7 +833,7 @@ The argument 'upp' should be a positive float value.
         self.__units_per_pixel = _upp
         self.__tolerance = _upp * 5.0
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def setView(self, xmin, ymin, scale=None):
         """Set the current visible area in a drawing.
 
@@ -850,7 +874,7 @@ This value must be a positive float.
             self.calcTextWidths()
         self.redraw()
 
-
+#---------------------------------------------------------------------------------------------------
     def calcTextWidths(self):
         """Calculate the width of the text strings in the Image.
 
@@ -888,6 +912,7 @@ calcTextWidths()
                     gtktext.set_textblock_bounds(self, _ds2)
             _layers.extend(_layer.getSublayers())
         
+#---------------------------------------------------------------------------------------------------
     def getView(self):
         """Return the current visible area in a drawing.
 
@@ -904,6 +929,7 @@ will be None.
 
     view = property(getView, setView, None, "The visible area in a drawing.")
 
+#---------------------------------------------------------------------------------------------------
     def getTolerance(self):
         """Return the current drawing tolerance.
 
@@ -913,6 +939,7 @@ getTolerance()
 
     tolerance = property(getTolerance, None, None, "Drawing tolerance.")
 
+#---------------------------------------------------------------------------------------------------
     def getGC(self):
         """Return the GraphicContext allocated for the GTKImage.
 
@@ -920,6 +947,7 @@ getGC()
         """
         return self.__gc
 
+#---------------------------------------------------------------------------------------------------
     def setGC(self, gc):
         """Set the GraphicContext for the GTKImage.
 
@@ -932,6 +960,7 @@ setGC(gc)
 
     gc = property(getGC, None, None, "GraphicContext for the GTKImage.")
 
+#---------------------------------------------------------------------------------------------------
     def getCairoContext(self):
         """Return the CairoContext allocated for the GTKImage.
 
@@ -941,6 +970,7 @@ getCairoContext()
 
     ctx = property(getCairoContext, None, None, "CairoContext for the GTKImage.")
 
+#---------------------------------------------------------------------------------------------------
     def getSize(self):
         """Return the size of the DrawingArea window.
 
@@ -948,6 +978,7 @@ getSize()
         """
         return (self.__disp_width, self.__disp_height)
 
+#---------------------------------------------------------------------------------------------------
     def setSize(self, width, height):
         """Set the size of the DrawingArea window.
 
@@ -966,11 +997,14 @@ setSize(width, height)
         self.__disp_width = _width
         self.__disp_height = _height
        
+#---------------------------------------------------------------------------------------------------
     def setToolpoint(self, event):
         _x = event.x
         _y = event.y
         _tx, _ty = self.pixToCoordTransform(_x, _y)
         self.__image.setCurrentPoint(_tx, _ty)
+
+#---------------------------------------------------------------------------------------------------
     def addGroup(self, group):
         """Add an ActionGroup to the GTKImage.
 
@@ -983,6 +1017,8 @@ gtk.Action gtk.stdAction.
             if not isinstance(gtkactions.stdActionGroup):
                 raise TypeError, "Invalid group type: " + `type(group)`
         self.__groups[group.get_name()] = group
+
+#---------------------------------------------------------------------------------------------------
     def getGroup(self, name):
         """Return an ActionGroup stored in the GTKImage.
 
@@ -993,6 +1029,7 @@ will return None if no group by that name is stored.
         """
         return self.__groups.get(name)
 
+#---------------------------------------------------------------------------------------------------
     def deleteGroup(self, name):
         """Remove an ActionGroup stored in the GTKImage.
 
@@ -1003,6 +1040,7 @@ Argument 'name' should be the name of the ActionGroup to be removed.
         if name in self.__groups:
             del self.__groups[name]
 
+#---------------------------------------------------------------------------------------------------
     def pixToCoordTransform(self, xp, yp):
         """Convert from pixel coordinates to x-y coordinates.
 
@@ -1020,7 +1058,7 @@ The function returns a tuple holding two float values
         _yc = self.__ymax - (yp * _upp)
         return (_xc, _yc)
             
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def coordToPixTransform(self, xc, yc):
         """Convert from x-y coordinates to pixel coordinates
 
@@ -1038,7 +1076,7 @@ The function returns a tuple holding two integer values
         _yp = int((self.__ymax - yc)/_upp)
         return _xp, _yp
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def getColor(self, c):
         """Return an allocated color for a given Color object.
 
@@ -1060,7 +1098,7 @@ allocated color.
             globals.gtkcolors[c] = _color
         return _color
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def fitImage(self):
         """Redraw the image so all entities are visible in the window.
 
@@ -1087,7 +1125,7 @@ fitImage()
         _ym = _ymid - (_fh/2.0) * _scale
         self.setView(_xm, _ym, _scale)
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def refresh(self):
         """
             This method does a screen refresh.
@@ -1101,7 +1139,7 @@ fitImage()
             _gc.set_function(gtk.gdk.COPY)
             _da.queue_draw()
 
-    #------------------------------------------------------------------
+ #---------------------------------------------------------------------------------------------------
     def redraw(self):
         #print "GtkImage.redraw"
         """
@@ -1134,7 +1172,7 @@ fitImage()
                 _obj.draw(self, _color)
             self.refresh()
 
-    #------------------------------------------------------------------
+ #---------------------------------------------------------------------------------------------------
     def drawLayer(self, l):
         if not isinstance(l, Layer):
             raise TypeError, "Invalid layer type: " + `type(l)`
@@ -1162,7 +1200,7 @@ fitImage()
             for _obj in _objs:
                 _obj.draw(self, _col)
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def ZoomIn(self,scaleFactor=None):
         _xmin, _ymin, _xmax, _ymax = self.getView()
         if(scaleFactor==None):
@@ -1175,7 +1213,7 @@ fitImage()
         _ymin = (_ymin + _ymax)/2.0 - _ydiff/4.0
         self.setView(_xmin, _ymin, (_scale/2))
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def ZoomOut(self,scaleFactor=None):
         _xmin, _ymin, _xmax, _ymax = self.getView()
         if(scaleFactor==None):
@@ -1188,7 +1226,7 @@ fitImage()
         _ymin = (_ymin + _ymax)/2.0 - _ydiff
         self.setView(_xmin, _ymin, (_scale * 2))
 
-    #------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
     def reset(self):
         """
             Set the image to an initial drawing state.
@@ -1210,7 +1248,7 @@ fitImage()
     #
     # Entity drawing operations
     #
-    
+#---------------------------------------------------------------------------------------------------
     def __drawObject(self, obj, col=None):
         # print "__drawObject()"
         _col = col
@@ -1225,6 +1263,7 @@ fitImage()
             obj.draw(self, _col)
             self.__refresh = True
 
+#---------------------------------------------------------------------------------------------------
     def __eraseObject(self, obj):
         # print "__eraseObject()"
         _xmin, _ymin, _xmax, _ymax = self.getView()
@@ -1234,6 +1273,7 @@ fitImage()
             obj.erase(self)
             self.__refresh = True
         
+#---------------------------------------------------------------------------------------------------
     def __imageAddedChild(self, obj, *args):
         # print "__imageAddedChild()"
         _alen = len(args)
@@ -1245,6 +1285,7 @@ fitImage()
         _layer.connect('added_child', self.__layerAddedChild)
         _layer.connect('removed_child', self.__layerRemovedChild)
 
+#---------------------------------------------------------------------------------------------------
     def __layerAddedChild(self, obj, *args):
         # print "__layerAddedChild()"
         _alen = len(args)
@@ -1257,6 +1298,7 @@ fitImage()
         if _child.isVisible() and obj.isVisible():
             self.__drawObject(_child)
 
+#---------------------------------------------------------------------------------------------------
     def __imageRemovedChild(self, obj, *args):
         # print "__imageRemovedChild()"
         _alen = len(args)
@@ -1267,6 +1309,7 @@ fitImage()
             raise TypeError, "Unexpected child type: " + `type(_layer)`
         _layer.disconnect(self)
 
+#---------------------------------------------------------------------------------------------------
     def __layerRemovedChild(self, obj, *args):
         # print "__layerRemovedChild()"
         _alen = len(args)
@@ -1277,10 +1320,12 @@ fitImage()
             self.__eraseObject(_child)
         _child.disconnect(self)
 
+#---------------------------------------------------------------------------------------------------
     def __groupActionStarted(self, obj, *args):
         # print "__groupActionStarted()"
         self.__refresh = False
 
+#---------------------------------------------------------------------------------------------------
     def __groupActionEnded(self, obj, *args):
         # print "__groupActionEnded()"
         if self.__refresh:
@@ -1288,10 +1333,12 @@ fitImage()
         else:
             self.__refresh = True
 
+#---------------------------------------------------------------------------------------------------
     def __imageUnitsChanged(self, obj, *args):
         # print "__imageUnitsChanged()"
         self.redraw()
 
+#---------------------------------------------------------------------------------------------------
     def __imageToolChanged(self, obj, *args):
         _tool = self.__image.getTool()
         if _tool is not None:
@@ -1299,6 +1346,7 @@ fitImage()
             if _init is not None:
                 _init(self)
         
+#---------------------------------------------------------------------------------------------------
     def __objChangePending(self, obj, *args):
         # print "__objChangePending()" + `obj`
         _alen = len(args)
@@ -1311,18 +1359,23 @@ fitImage()
             _change != 'removed_user'):
             self.__eraseObject(obj)
 
+#---------------------------------------------------------------------------------------------------
     def __objChangeComplete(self, obj, *args):
         # print "__objChangeComplete()" + `obj`
         if obj.isVisible() and obj.getParent().isVisible():
             self.__drawObject(obj)
             
+#---------------------------------------------------------------------------------------------------
     def __refreshObject(self, obj, *args):
         # print "__refreshObject()"
         _col = None
         if not obj.isVisible() or not obj.getParent().isVisible():
             _col = self.__image.getOption('BACKGROUND_COLOR')
         self.__drawObject(obj, _col)
+
+
     #++ Matteo Boscolo
+#---------------------------------------------------------------------------------------------------
     def __Move(self, widget, event):
         """
             set the Global Variable for controlling the zoom and  moving
@@ -1345,6 +1398,7 @@ fitImage()
             if(_type==7):
                 self.__StartZooming= False
                 
+#---------------------------------------------------------------------------------------------------
     def __MakeMove(self, widget, event):
         if(self.__StartZooming):
             ActiveScale = self.getUnitsPerPixel()
@@ -1361,15 +1415,21 @@ fitImage()
         if(self.__StartMoving):
             self.MoveFromTo(self.__activeX,self.__activeY,event.x,event.y)
         self.__activeX=event.x
-        self.__activeY=event.y      
+        self.__activeY=event.y
+
+#---------------------------------------------------------------------------------------------------
     def ZoomIn(self):
         ActiveScale = self.getUnitsPerPixel()
         ActiveScale=ActiveScale*1.05
         self.ZoomScale(ActiveScale)
+
+#---------------------------------------------------------------------------------------------------
     def ZoomOut(self):
         ActiveScale = self.getUnitsPerPixel()
         ActiveScale=ActiveScale*0.95 
-        self.ZoomScale(ActiveScale)        
+        self.ZoomScale(ActiveScale)
+
+#---------------------------------------------------------------------------------------------------
     def MoveFromTo(self,xFrom,yFrom,xTo,yTo):
         """
             Do the Zoom or Move action  
@@ -1389,37 +1449,49 @@ fitImage()
             self.__ymin=self.__ymin+deltaY
             self.__ymax=self.__ymax+deltaY                   
         self.redraw()
+
+#---------------------------------------------------------------------------------------------------
     def ZoomScale(self,scale):
         """
             Make a drawing zoom of the scale quantity
         """
-        _fw = float(self.__disp_width)
-        _fh = float(self.__disp_height)       
-        _xdiff = abs(self.__xmax-self.__xmin)
-        _ydiff = abs(self.__ymax-self.__ymin)
-        _xmid = (self.__xmin + self.__xmax)/2.0
-        _ymid = (self.__ymin + self.__ymax)/2.0
-        _xm = _xmid - (_fw/2.0) * scale
-        _ym = _ymid - (_fh/2.0) * scale
-        self.setView(_xm, _ym, scale)
+        if viewport_draw:
+            self.__da.zoom_out()
+        else:
+            _fw = float(self.__disp_width)
+            _fh = float(self.__disp_height)
+            _xdiff = abs(self.__xmax-self.__xmin)
+            _ydiff = abs(self.__ymax-self.__ymin)
+            _xmid = (self.__xmin + self.__xmax)/2.0
+            _ymid = (self.__ymin + self.__ymax)/2.0
+            _xm = _xmid - (_fw/2.0) * scale
+            _ym = _ymid - (_fh/2.0) * scale
+            self.setView(_xm, _ym, scale)
+
+#---------------------------------------------------------------------------------------------------
     def StartPanImage(self):
         """
             Start Pan Image
         """
         self.StopMove=True
         self.__StartMoving=True
+
+#---------------------------------------------------------------------------------------------------
     def StopPanImage(self):
         """
             Stop Pan Operation
         """
         self.StopMove=False
         self.__StartMoving=False
+
+#---------------------------------------------------------------------------------------------------
     def isPan(self):
         """ 
             Return the active pan status
         """
         return self.StopMove
     
+#---------------------------------------------------------------------------------------------------
     def setCursor(self,drwArea,snObject):
         """
             active Snap cursor shape
@@ -1431,6 +1503,7 @@ fitImage()
             _snapCursor=snObject.cursor
         _win.set_cursor(_snapCursor)
 
+#---------------------------------------------------------------------------------------------------
     def __ActiveSnapEvent(self,drwArea,event):
         """
             Snap Event
@@ -1442,13 +1515,17 @@ fitImage()
         else:
             self.setCursor(drwArea,None)
         
+#---------------------------------------------------------------------------------------------------
     def activateSnap(self):
         """
             Activate the snap functionality
         """
         self._activateSnap=True
-    #-- Matteo Boscolo
+
+
+#-- Matteo Boscolo
 #------------------------------------------------------------------
 def debug_print(string):
     if _debug is True:
         print "SDB Debug: " + string
+
