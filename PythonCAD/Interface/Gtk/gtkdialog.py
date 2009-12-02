@@ -18,13 +18,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-# code for dialogs
+# Functions For handling PythonCad Dialogs
 #
 import pygtk
 pygtk.require('2.0')
 import gtk
 import gobject
 import sys
+import os
 
 ioDebug=True
 
@@ -96,3 +97,27 @@ def _help_dialog(gtkimage,Command):
         2) load the command file 
     """
     pass
+
+def abautDialog():
+    """
+        Show The application debug dialog
+    """
+    _abautDialog=gtk.AboutDialog()
+    _abautDialog.set_name("PythonCad")
+    _abautDialog.set_program_name("PythonCad")
+    _abautDialog.set_version("DS1-R38-Alfa")
+    _abautDialog.set_comments("CAD built from Python")
+    _iconPath=os.path.join(os.getcwd(),"gtkpycad.png")
+    _pixBuf=gtk.gdk.pixbuf_new_from_file(_iconPath)
+    _abautDialog.set_logo(_pixBuf)
+    _abautDialog.set_website("http://sourceforge.net/projects/pythoncad")
+    _licMsg='PythonCAD is distributed in the hope that it will be useful, \n \
+        but WITHOUT ANY WARRANTY; without even the implied warranty of \n \
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n \
+        GNU General Public License for more details. \n \
+        You should have received a copy of the GNU General Public License \n \
+        along with PythonCAD; if not, write to the Free Software \n \
+        Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA'
+    _abautDialog.set_license(_licMsg)
+    response = _abautDialog.run()
+    _abautDialog.destroy()

@@ -69,6 +69,7 @@ from PythonCAD.Interface.Menu.viewmenu import IViewMenu
 from PythonCAD.Interface.Menu.snapmenu import ISnapMenu
 from PythonCAD.Interface.Menu.dimensionmenu import IDimensionMenu
 from PythonCAD.Interface.Menu.debugmenu import IDebugMenu
+from PythonCAD.Interface.Menu.helpmenu import IHelpMenu
 
 
 
@@ -121,8 +122,10 @@ class IMenuBar(object):
         # Debug menu
         self.__debug_menu = IDebugMenu(self.__gtkimage)
         self.__mb.append(self.__debug_menu.GtkMenu)
-        
-        
+        # Help menu
+        self.__help_menu = IHelpMenu(self.__gtkimage)
+        self.__mb.append(self.__help_menu.GtkMenu)
+
     # properties
     def __get_menubar(self):
         return self.__mb
