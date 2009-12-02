@@ -165,7 +165,13 @@ def draw_fillet_two_cb(menuitem, gtkimage):
     """
     _tool = tools.FilletTwoLineTool()
     gtkimage.getImage().setTool(_tool)
-
+def draw_hatch_cb(menuitem,gtkimage):
+    """
+        Start the hatch command
+    """
+    _tool = tools.HatchTool()
+    gtkimage.getImage().setTool(_tool)
+    
 def draw_leader_cb(menuitem, gtkimage):
     gtkimage.activateSnap()
     _tool = tools.LeaderTool()
@@ -295,7 +301,6 @@ class IDrawMenu(IBaseMenu):
 
     GtkMenu = property(__get_menu, None, None, "DrawMenu object.")
 
-
 #----------------------------------------------------------------------------------------------
     def __create_menu(self, actiongroup):
         _menu = gtk.Menu()
@@ -332,6 +337,12 @@ class IDrawMenu(IBaseMenu):
         _item = gtk.SeparatorMenuItem()
         _item.show()
         _menu.append(_item)
+        #
+        _act = gtk.Action('Hatch', _('Hatch'), None, None)
+        _act.connect('activate', draw_hatch_cb, self.gtkimage)
+        actiongroup.add_action(_act)
+        _menu.append(_act.create_menu_item())
+        #
         #
         _act = gtk.Action('Leaders', _('Lea_der'), None, None)
         _act.connect('activate', draw_leader_cb, self.gtkimage)

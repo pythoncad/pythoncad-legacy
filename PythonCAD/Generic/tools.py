@@ -128,20 +128,16 @@ This function purges the Tool's object list and handler dictionary.
         self.reset()
 
     def setHandler(self, key, func):
-        """Set a handler for the Tool.
-
-setHandler(key, func)
-
-There are two arguments for this function:
-
-key: A string used to identify a particular action
-func: A function object
-
-There are no restrictions on what the function 'func' does,
-the argument count, etc. Any call to setHandler() with
-a key that is already stored replaces the old 'func' argument
-with the new one. The function argument may be None, and
-the key argument must be a string.
+        """
+            Set a handler for the Tool.
+            There are two arguments for this function:
+            key: A string used to identify a particular action
+            func: A function object
+            There are no restrictions on what the function 'func' does,
+            the argument count, etc. Any call to setHandler() with
+            a key that is already stored replaces the old 'func' argument
+            with the new one. The function argument may be None, and
+            the key argument must be a string.
         """
         if key is None:
             raise ValueError, "Key value cannot be None."
@@ -152,13 +148,11 @@ the key argument must be a string.
         self.__handlers[key] = func
 
     def getHandler(self, key):
-        """Return the function for a particular key.
-
-getHandler(key)
-
-Given argument 'key', the function associated with it is
-returned. A KeyError is raised if the argument 'key' had
-not be used to store a function.
+        """
+            Return the function for a particular key.
+            Given argument 'key', the function associated with it is
+            returned. A KeyError is raised if the argument 'key' had
+            not be used to store a function.
         """
         if not isinstance(key, str):
             raise TypeError, "Invalid key type: " + `type(key)`
@@ -864,11 +858,63 @@ class ArcTool(CircleTool):
             _active_layer.addObject(_arc)
             self.reset()
 
-#
+class HatchTool(Tool):
+    """
+        Tool class to manage the hatch command
+    """
+
+    def __init__(self):
+        super(HatchTool, self).__init__()
+        self.__externalBborderGroup=[]
+        self.__ixternalBborderGroup=[]
+        self.__hatchType=None
+
+    def addInternalBorder(self,border):
+        """
+            Add a border group
+        """
+        if not isinstance(border,Path):
+             raise TypeError, "Invalid Path type : " + `type(border)`
+        self.__internalBorderGroup.add(border)
+        
+    def addEnternalBorder(self,border):
+        """
+            Add a border group
+        """
+        if not isinstance(border,Path):
+             raise TypeError, "Invalid Path type : " + `type(border)`
+        self.__internalBorderGroup.add(border)        
+
+    def removeInternalBorder(self, entitys):
+        """
+            Remove the border that contains the entitys
+        """
+        # loop on the self.__borderGroup
+        #is the entitys is in  ^ delete the borderGroup and exit
+        pass
+        
+    def removeEnternalBorder(self, entitys):
+        """
+            Remove the border that contains the entitys
+        """
+        # loop on the self.__borderGroup
+        #is the entitys is in  ^ delete the borderGroup and exit
+        pass
+    def setHatchType(self,hatchType):
+        """
+            Set the hatch used for filling the rea
+        """
+        self.__hatchType=hatchType
+    def create(self):
+        """
+            Create the hatch region
+        """
+        # loop on all the self.__borderGroup
+        # for each group fill the region..
+#   
 # The ChamferTool and FilletTool class are subclasses of
 # the Tool class but have no additional functionality (yet)
 #
-
 class ChamferTool(Tool):
     pass
         

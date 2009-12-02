@@ -117,6 +117,7 @@ class GTKImage(object):
         tools.ChamferTool : cmd.chamfer_mode_init,
         tools.FilletTool: cmd.fillet_mode_init,
         tools.FilletTwoLineTool: cmd.fillet_two_line_mode_init,
+        tools.HatchTool : cmd.hatch_mode_init,
         tools.LeaderTool : cmd.leader_mode_init,
         tools.PolylineTool : cmd.polyline_mode_init,
         tools.PolygonTool : cmd.polygon_mode_init,
@@ -535,6 +536,11 @@ close()
                 if _tool is not None and _tool.hasHandler("button_press"):
                     _rv = _tool.getHandler("button_press")(self, widget,
                                                            event, _tool)
+            if _button == 3:
+                if _tool is not None and _tool.hasHandler("right_button_press"):                 
+                    _rv = _tool.getHandler("right_button_press")(self, widget,
+                                                           event, _tool)
+            
             debug_print("__Move BUTTON_PRESS")
             self.__Move(widget, event)
         elif _type == gtk.gdk.BUTTON_RELEASE:

@@ -32,131 +32,82 @@ from PythonCAD.Generic import layer
 from PythonCAD.Generic import util
 
 class Path(object):
-    """The class for maintaining a list of objects defining a hatch border.
-
-A Path object contains one or more objects defining the boundary
-of a hatching. If the Path length is 1, the boundary is either a
-circle or an arc where the start angle and end angle are equal.
-There is no upper limit to the number of objects in the path.
-
-If a Path consists of Segments, Arcs, Chamfer, or Fillets, the
-Path can only be valid if starting at any point in any object
-in the Path the connections between the objects lead back to the
-starting point.
-
-A Path has the following methods:
-
-isExternal(): Check if the Path is an outer boundary
-isCircular(): Check if the Path is a Circle or closed Arc.
-getPath(): Return the objects comprising the Path
-inPath(): Test if a coordinate is inside a Path.
     """
-    def __init__(self, objs, external=True):
-        """Initialize a Path.
-
-p = Path(objs[, external])
-
-The required argument 'objs' is a list of objects defining
-the path. The valid objects are circles, arcs, segments,
-chamfers and fillets.
-
-The optional argument 'external' is by default True, meaning
-that this Path is an outer boundary. If the argument is False,
-then the Path represents an internal non-hatched area inside
-another Path.
+        The class for maintaining a list of objects defining a hatch border.
+        A Path object contains one or more objects defining the boundary
+        of a hatching. If the Path length is 1, the boundary is either a
+        circle or an arc where the start angle and end angle are equal.
+        There is no upper limit to the number of objects in the path.
+        If a Path consists of Segments, Arcs, Chamfer, or Fillets, the
+        Path can only be valid if starting at any point in any object
+        in the Path the connections between the objects lead back to the
+        starting point.
+    """
+    def __init__(self, objs):
+        """
+            Initialize a Path.
+            The required argument 'objs' is a list of objects defining
+            the path. The valid objects are circles, arcs, segments,
+            chamfers and fillets.
         """
         if not isinstance(objs, list):
             raise TypeError, "Unexpected list type: " + `type(objs)`
         if not len(objs):
             raise ValueError, "Invalid empty object list"
-        for _obj in objs:
-            _valid = False
-            if (isinstance(_obj, segment.Segment) or
-                isinstance(_obj, arc.Arc) or
-                isinstance(_obj, circle.Circle) or
-                isinstance(_obj, segjoint.Chamfer) or
-                isinstance(_obj, segjoint.Fillet)):
-                _valid = True
-            if not _valid:
-                raise TypeError, "Invalid object type in list: " + `type(_obj)`
-        _circular = False
         if len(objs) == 1:
             _circular = True
             _obj = objs[0]
-            _valid = False
             if isinstance(_obj, arc.Arc):
                 _sa = _obj.getStartAngle()
                 _ea = _obj.getEndAngle()
-                if abs(_sa - _ea) < 1e-10:
-                    _valid = True
-                if not _valid:
+                if not abs(_sa - _ea) < 1e-10:
                     raise ValueError, "Invalid single Arc path: " + str(_obj)
             elif isinstance(_obj, circle.Circle):
-                pass
+                self.__objs = objs[:]
+                return
             else:
                 raise TypeError, "Invalid single entity path: " + str(_obj)
+        for _obj in objs:
+            if not (isinstance(_obj, segment.Segment) or
+                    isinstance(_obj, arc.Arc) or
+                    isistance(_obj, segjoint.Chamfer) or
+                    isinstance(_obj, segjoint.Fillet)):
+                raise TypeError, "Invalid object type in list: " + `type(_obj)`
+        if pathIsClosed(objs):
+            self.__objs = objs[:]
         else:
-            _valid = True
-            for _obj in objs:
-                if isinstance(_obj, circle.Circle):
-                    if not isinstance(_obj, arc.Arc):
-                        _valid = False
-                        break
-            if not _valid:
-                raise TypeError, "Circle found in multi-object path"
-            _valid = True # _validate_path(objlist)
-            if not _valid:
-                raise ValueError, "Objlist objects do not make a closed path."
-        util.test_boolean(external)
-        self.__objs = objs[:]
-        self.__circular = _circular
-        self.__external = external
-
+            raise ValueError, "Array List mast be a closef path"
+        
     def __len__(self):
         return len(self.__objs)
 
     def __str__(self):
-        if self.__external:
-            print "External Path: ["
-        else:
-            print "Internal Path: ["
+        print "Element Path are: ["
         for _obj in self.__objs:
             print str(_obj)
         print "]"
 
-    def isExternal(self):
-        """Test if the Path is an external border.
-
-isExternal()
-        """
-        return self.__external
-
     def isCircular(self):
-        """Test if the Path is a Circle or closed Arc.
-
-isCircular()        
         """
+            Test if the Path is a Circle or closed Arc.
+        """
+        if len(self.__objs)==1:
+            if isistance(self.__objs,(arc.Arc,circle.Circle)):
+                return True
+        return False        
     def getPath(self):
-        """Return the objects defining the Path.
-
-getPath()
-
-This method returns a list of objects.
+        """
+            Return the objects defining the Path.
+            This method returns a list of objects.
         """
         return self.__objs[:]
 
     def inPath(self, x, y):
-        """Test if a coordinate pair are inside a Path.
-
-inPath(x, y)
-
-This method has two required arguments:
-
-x: A float giving the 'x' coordinate.
-y: A float giving the 'y' coordinate.
-
-This method returns True if the Point is inside the
-Path, and False otherwise.
+        """
+            Test if a coordinate pair are inside a Path.
+            This method has two required arguments:
+            This method returns True if the Point is inside the
+            Path, and False otherwise.
         """
         _x = util.get_float(x)
         _y = util.get_float(y)
@@ -234,17 +185,12 @@ or more Paths defining any areas inside the enclosing Path
 that are not hatched.
     """
     def __init__(self, extpath, voids=[]):
-        """Initialize a HatchRegion.
-
-h = HatchRegion(extpath[, voids])
-
-The required argument 'extpath' is a Path object defining
-the external boundary of the hatching. The optional argument
-'voids' is a list of Path objects defining areas within the
-external Path that are not to be hatched.
-
-A HatchRegion has the following methods:
-
+        """
+            Initialize a HatchRegion.
+            The required argument 'extpath' is a Path object defining
+            the external boundary of the hatching. The optional argument
+            'voids' is a list of Path objects defining areas within the
+            external Path that are not to be hatched.
         """
         if not isinstance(extpath, Path):
             raise TypeError, "Invalid external path: " + `extpath`
@@ -261,23 +207,20 @@ A HatchRegion has the following methods:
         self.__voids = voids[:]
 
     def getExternalPath(self):
-        """Return the external Path for the HatchRegion.
-
-getExternalPath()        
+        """
+            Return the external Path for the HatchRegion.
         """
         return self.__ext_path
 
     def hasVoids(self):
-        """Test if the HatchRegion has any internal non-hatched areas.
-
-hasVoids()        
+        """
+            Test if the HatchRegion has any internal non-hatched areas.      
         """
         return len(self.__voids) > 0
 
     def getVoids(self):
-        """Get any internal areas in the HatchRegion.
-
-getVoids()        
+        """
+            Get any internal areas in the HatchRegion.      
         """
         return self.__voids[:]
 
@@ -313,11 +256,9 @@ def _seg_joint_touch(seg, joint):
     return _touch
     
 def _old_validate_path(objlist):
-    """Test if the objects in the objlist make a closed path.
-
-_validate_path(objlist)
-
-This function is private the the hatching code.    
+    """
+        Test if the objects in the objlist make a closed path.
+        This function is private the the hatching code.    
     """
     if not isinstance(objlist, list):
         raise TypeError, "Invalid object list: " + `objlist`
@@ -390,11 +331,9 @@ def _can_touch(obja, objb):
     return _touch
 
 def _validate_path(lyr, objlist):
-    """Test if the objects in the objlist make a closed path.
-
-_validate_path(objlist)
-
-This function is private the the hatching code.    
+    """
+        Test if the objects in the objlist make a closed path.
+        This function is private the the hatching code.    
     """
     if not isinstance(objlist, list):
         raise TypeError, "Invalid object list: " + `objlist`

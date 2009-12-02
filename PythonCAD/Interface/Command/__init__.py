@@ -37,6 +37,7 @@ from cmdCPerpLine           import *
 from cmdLinearDimension     import *
 from cmdRadialDimension     import *
 from cmdAngularDimension    import *
+from cmdHatch               import *
 
 
 
