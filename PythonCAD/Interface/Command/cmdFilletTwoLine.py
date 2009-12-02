@@ -29,11 +29,13 @@ from math import hypot, pi, atan2
 
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
-from PythonCAD.Interface.Command import cmdCommon
 from PythonCAD.Generic.segjoint import  Fillet
-
 # import some functionality from thenormal fillet comand
 from PythonCAD.Interface.Command.cmdFillet import * 
+
+from PythonCAD.Interface.Command import cmdCommon
+import  PythonCAD.Interface.Gtk.gtkdialog as gtkdialog
+
 
 #
 # Init
@@ -102,10 +104,10 @@ def fillet_two_button_second_press_cb(gtkimage, widget, event, tool):
             tool.Create(_image)
         except ValueError,err:
             _errmsg = "Fillet ValueError error: %s" % str(err)
-            gtkDialog._error_dialog(gtkimage,_errmsg )
+            gtkdialog._error_dialog(gtkimage,_errmsg )
         except:
             _errmsg = "Fillet error: %s" % str( sys.exc_info()[0])
-            gtkDialog._error_dialog(gtkimage,_errmsg )
+            gtkdialog._error_dialog(gtkimage,_errmsg )
             for s in sys.exc_info():
                 print "Exception Error: %s"%str(s)
         finally:

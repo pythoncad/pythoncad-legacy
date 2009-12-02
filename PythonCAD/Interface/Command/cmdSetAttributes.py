@@ -32,6 +32,7 @@ from math import hypot, pi, atan2
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Generic.color import Color
 #
 # set the active style
 #
@@ -110,7 +111,7 @@ def set_active_color(gtkimage):
                 _color = _c
                 break
         if _color is None:
-            _color = color.Color(_r, _g, _b)
+            _color = Color(_r, _g, _b)
         _image.setOption('LINE_COLOR', _color)
     _dialog.destroy()
 
@@ -381,7 +382,7 @@ def set_colors_dialog(gtkimage):
             _g = int(round((_color.green/65535.0) * 255.0))
             _b = int(round((_color.blue/65535.0) * 255.0))
             if (_r, _g, _b) != _image.getOption(_opt).getColors():
-                _image.setOption(_opt, color.Color(_r, _g, _b))
+                _image.setOption(_opt, Color(_r, _g, _b))
     _widgets.clear()
     _dialog.destroy()
 
