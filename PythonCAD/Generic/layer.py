@@ -2217,7 +2217,23 @@ This method is private to the Layer object.
         else:
             raise ValueError, "Invalid layer entity '%s'" % entity
         return _objs
-
+    
+    def getAllEntitys(self):
+        """
+            Return all the entity stored in the layer
+        """
+        _entArray=[
+            'point', 'segment', 'circle', 'arc', 'hcline', 'vcline', 'acline',
+            'cline', 'ccircle', 'chamfer', 'fillet', 'leader', 'polyline',
+            'textblock', 'linear_dimension', 'horizontal_dimenions',
+            'vertical_dimension', 'radial_dimension','angular_dimension']
+        _eArr=[]
+        for _e in _entArray:
+            _objs=getLayerEntities(_e)
+            for _o in _objs:
+                _eArr.append(_o)
+        return _eArr
+    
     def canParent(self, obj):
         """
             Test if an Entity can be the parent of another Entity.

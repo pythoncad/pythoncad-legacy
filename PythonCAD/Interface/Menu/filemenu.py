@@ -70,6 +70,24 @@ def _get_filename_and_save(gtkimage, fname=None):
                 buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                             gtk.STOCK_OK, gtk.RESPONSE_OK),
                 action=gtk.FILE_CHOOSER_ACTION_SAVE)
+    
+    _filter = gtk.FileFilter()
+    _filter.set_name("Pythoncad")
+    _filter.add_mime_type("pythoncad/xml.gz")
+    _filter.add_pattern("*.xml.gz")
+    _dialog.add_filter(_filter)
+       
+    _filter = gtk.FileFilter()
+    _filter.set_name("Autocad")
+    _filter.add_mime_type("autocad/dxf")
+    _filter.add_pattern("*.dxf")
+    _dialog.add_filter(_filter)
+
+    _filter = gtk.FileFilter()
+    _filter.set_name("All files")
+    _filter.add_pattern("*")
+    _dialog.add_filter(_filter)
+    
     _dialog.set_filename(_fname)
     _response = _dialog.run()
     _save = False
@@ -89,6 +107,8 @@ def _get_filename_and_save(gtkimage, fname=None):
         #
         if _fname.endswith('.xml.gz'):
             _gzfile = _fname
+        if _fname.endswith('.dxf'):
+            _save_extFormats(gtkimage,_fname)
         else:
             _gzfile = _fname + '.gz'
         if os.path.exists(_gzfile):
@@ -112,7 +132,6 @@ def _get_filename_and_save(gtkimage, fname=None):
             _dialog2.destroy()
     _dialog.destroy()
     if _save:
-        # print "name: " + _gzfile
         gtkimage.image.setFilename(_gzfile)
         _window.set_title(os.path.basename(_gzfile))
         try:
@@ -155,7 +174,12 @@ def _save_file(gtkimage, filename):
     if _image.getFilename() is None:
         _image.setFilename(_abs)
         
-            
+def _save_extFormats(gtkimage,fileName):
+    """
+        save the current file as external formats 
+    """
+    exf=extFormat.ExtFormat(gtkimage)
+    exf.saveFile(_fname)         
 #############################################################################
 #
 # callbacks for the menu items
@@ -219,7 +243,6 @@ def file_open_cb(menuitem, gtkimage):
         _window.set_title(os.path.basename(_fname))
         _window.show_all()
         _gtkimage.fitImage()
-
 
 #----------------------------------------------------------------------------------------------
 def file_inport_cb(menuitem, gtkimage):

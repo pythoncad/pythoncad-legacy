@@ -43,9 +43,19 @@ class ExtFormat(object):
             Default Constructor
         """
         self.__gtkimage=gtkimage
+ 
     def openFile(self,fileName):
         """
            Open a generic file 
+        """
+        path,exte=os.path.splitext( fileName )
+        if( exte.upper()==".dxf".upper()):
+            dxf=Dxf(self.__gtkimage,fileName)
+            dxf.importEntitis()
+
+    def saveFile(self,fileName):
+        """
+            save the current file in a non pythoncad Format
         """
         path,exte=os.path.splitext( fileName )
         if( exte.upper()==".dxf".upper()):
@@ -63,13 +73,18 @@ class DrawingFile(object):
         print "Debug: DrawingFile constructor"
         self.__fn=fileName
         self.__fb=None
-    def ReadAsci(self):
+    def readAsci(self):
         """
             Read a generic file 
         """
         print "Debug: Read asci File"
         self.__fb=open(self.__fn,'r')
-    def FileObject(self):
+    def createAsci(self):
+        """
+            create the new file 
+        """
+        self.__fb=open(self.__fn,'w')
+    def fileObject(self):
         """
             Return the file opened 
         """
@@ -93,20 +108,50 @@ class Dxf(DrawingFile):
         DrawingFile.__init__(self,fileName)
         self.__gtkimage=gtkimage
         self.__image=gtkimage.getImage()
-        # Would be nice to create a new dxfLayer here with a progress number
         _layerName,_ext=os.path.splitext(os.path.basename(fileName))
         _layerName="Imported_"+_layerName
         _dxfLayer=Layer(_layerName)
         self.__image.addLayer(_dxfLayer)
-        self.__dxfLayer=_dxfLayer #self.__image.getActiveLayer() 
+        self.__dxfLayer=_dxfLayer 
 
+    def exportEntitis(self):
+        """
+            export The current file in dxf format
+        """
+        self.readAsci();
+        _fo=self.createAsci()
+        _objs=self.getAllEntitis()
+        for _e in _objs:
+            if isinstance(_e,Segment):
+                self.writeSegment(_e)
+    def getAllEntitis(self):
+        """
+            retrive all the entitys from the drawing 
+        """
+        _outLayers={}
+        _layers = [self.__image.getActiveLayer()]
+        while len(_layers):
+            _layerEnts=[]
+            _layer = _layers.pop()
+            _layerName=_layer.getName()
+            _objs=_layer.getAllEntitys()
+            for _o in _objs:
+                _layerEnts.append(_o)
+            _outLayers[_layerName]=_layerEnts
+        return _outLayers
+    
+    def writeSegment(self,_e):
+        """
+           write segment to the dxf file 
+        """
+        pass
     def importEntitis(self):
         """
             Open The file and create The entity in pythonCad
         """
         print "Debug: import entitys"
-        self.ReadAsci();
-        fo=self.FileObject()
+        self.readAsci();
+        fo=self.fileObject()
         self.createTrialFromDxf(fo)
         while True:
             line = fo.readline()
