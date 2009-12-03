@@ -59,7 +59,7 @@ from PythonCAD.Generic.image import Image
 from PythonCAD.Interface.Gtk import gtkdimprefs
 from PythonCAD.Interface.Gtk import gtktextprefs
 from PythonCAD.Interface.Gtk import gtkstyleprefs
-from PythonCAD.Interface.Gtk import gtkDialog
+from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 
 from PythonCAD.Interface.Menu.filemenu import IFileMenu
 from PythonCAD.Interface.Menu.editmenu import IEditMenu

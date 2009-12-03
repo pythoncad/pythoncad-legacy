@@ -40,7 +40,7 @@ from PythonCAD.Generic.segjoint import Chamfer, Fillet
 from PythonCAD.Generic import color
 from PythonCAD.Generic import util
 from PythonCAD.Generic import units
-from PythonCAD.Interface.Gtk import gtkDialog
+from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 from PythonCAD.Generic import tools   
 from PythonCAD.Generic import snap
 
