@@ -40,6 +40,7 @@ def hatch_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Select the external boundary entitys RightClick for internal.'))
     _tool = gtkimage.getImage().getTool()
     _tool.action=0
+    _tool.tempOljects=[]
     _tool.setHandler("initialize", hatch_mode_init)
     _tool.setHandler("button_press", hatch_entity_button_press_cb)
     _tool.setHandler("right_button_press",hatch_change_mode)
@@ -84,3 +85,14 @@ def hatch_option_entry_event_cb(gtkimage, widget, tool):
 #
 # Suport functions
 #
+def addSelectedEntity(gtkimage,tool,event,mode):
+    """
+        add entity at the selection
+    """
+    #   implements the selection like daleting moving  ...
+    #   manage the imput mode for the boundary 
+    if mode=="External":
+        _tool.tempOljects
+    if mode =="Internal":
+        pass
+        

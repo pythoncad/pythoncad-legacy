@@ -252,11 +252,11 @@ def file_inport_cb(menuitem, gtkimage):
             exf.openFile(_fname)
         except (IOError, OSError), e:
             _errmsg = "Error opening '%s' : %s'" % (_fname, e)
-            error_dialog(gtkimage, _errmsg)
+            gtkDialog._error_dialog(gtkimage, _errmsg)
             return
         except StandardError, e:
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
-            error_dialog(gtkimage, _errmsg)
+            gtkDialog._error_dialog(gtkimage, _errmsg)
             return
 
 
