@@ -62,10 +62,12 @@ from PythonCAD.Interface.Menu.basemenu import error_dialog
 
 #------------------------------------------------------------
 def _get_filename_and_save(gtkimage, fname=None):
+    """
+        make the save as operation
+    """
     _window = gtkimage.getWindow()
-    _fname = fname
-    if _fname is None:
-        _fname = _window.get_title()
+    if fname is None:
+       fname = _window.get_title()
     _dialog = gtk.FileChooserDialog(title=_('Save As ...'),
                 buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                             gtk.STOCK_OK, gtk.RESPONSE_OK),
@@ -88,61 +90,52 @@ def _get_filename_and_save(gtkimage, fname=None):
     _filter.add_pattern("*")
     _dialog.add_filter(_filter)
     
-    _dialog.set_filename(_fname)
+    _dialog.set_filename(fname)
     _response = _dialog.run()
-    _save = False
-    if _response == gtk.RESPONSE_OK:
-        _save = True
-        _fname = _dialog.get_filename()
-        if _fname == "":
-            _fname = 'Untitled.xml'
-        if not _fname.endswith('.xml.gz'):
-            if not _fname.endswith('.xml'):
-                _fname = _fname + '.xml'
-        #
-        # if the filename already exists see that the user
-        # really wants to overwrite it ...
-        #
-        # test for the filename + '.gz'
-        #
-        if _fname.endswith('.xml.gz'):
-            _gzfile = _fname
-        if _fname.endswith('.dxf'):
-            _save_extFormats(gtkimage,_fname)
-        else:
-            _gzfile = _fname + '.gz'
-        if os.path.exists(_gzfile):
-            _save = False
-            _dialog2 = gtk.Dialog(_('Overwrite Existing File'), _window,
-                                  gtk.DIALOG_MODAL,
-                                  (gtk.STOCK_OK, gtk.RESPONSE_OK,
-                                   gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
-            _hbox = gtk.HBox(False, 10)
-            _hbox.set_border_width(10)
-            _dialog2.vbox.pack_start(_hbox, False, False, 0)
-            _stock = gtk.image_new_from_stock(gtk.STOCK_DIALOG_QUESTION,
-                                              gtk.ICON_SIZE_DIALOG)
-            _hbox.pack_start(_stock, False, False, 0)
-            _label = gtk.Label(_('File already exists. Delete it?'))
-            _hbox.pack_start(_label, False, False, 0)
-            _dialog2.show_all()
-            _response = _dialog2.run()
-            if _response == gtk.RESPONSE_OK:
-                _save = True
-            _dialog2.destroy()
+    fname = _dialog.get_filename()
     _dialog.destroy()
-    if _save:
-        gtkimage.image.setFilename(_gzfile)
-        _window.set_title(os.path.basename(_gzfile))
-        try:
-            _save_file(gtkimage, _gzfile)
-        except (IOError, OSError), _e:
-            _errmsg = "Error saving '%s' : %s'" % (_gzfile, _e)
-            error_dialog(gtkimage, _errmsg)
-        except StandardError, _e:
-            _errmsg = "Non-system error saving '%s' : %s'" % (_gzfile, _e)
-            error_dialog(gtkimage, _errmsg)
+    
+    if _response == gtk.RESPONSE_OK:
+        if askForOverWrite(gtkimage,fname):
+            if fname.endswith('.xml.gz'):
+                _save_p_file(gtkimage,fname)
+            elif fname.endswith('.dxf'):
+                _save_extFormats(gtkimage,fname)
+            else:
+                fname=fname+".xml.gz"
+                _save_p_file(gtkimage,fname)
 
+def _save_p_file(gtkimage,fname):
+    """
+        save the active file and manage the errors
+    """
+    gtkimage.image.setFilename(fname)
+    _window = gtkimage.getWindow()
+    _window.set_title(os.path.basename(fname))
+    try:
+        _save_file(gtkimage, fname)
+    except (IOError, OSError), _e:
+        _errmsg = "Error saving '%s' : %s'" % (fname, _e)
+        error_dialog(gtkimage, _errmsg)
+    except StandardError, _e:
+        _errmsg = "Non-system error saving '%s' : %s'" % (fname, _e)
+        error_dialog(gtkimage, _errmsg)
+
+
+def askForOverWrite(gtkimage,fname):
+    """
+        popUp a menu for overwriting the exsisting file
+    """
+    if os.path.exists(fname):    
+        _msg=_("File " + str(fname) + " Olredy Exsist /n OverWrite ?")
+        _res=gtkDialog._yesno_dialog(gtkimage,_msg)
+        if _res==gtk.RESPONSE_ACCEPT:
+            return True
+        else:
+            return False
+    else:
+        return True
+    
 #------------------------------------------------------------
 def _save_file(gtkimage, filename):
     _image = gtkimage.getImage()
@@ -174,12 +167,19 @@ def _save_file(gtkimage, filename):
     if _image.getFilename() is None:
         _image.setFilename(_abs)
         
-def _save_extFormats(gtkimage,fileName):
+def _save_extFormats(gtkimage,fname):
     """
         save the current file as external formats 
     """
     exf=extFormat.ExtFormat(gtkimage)
-    exf.saveFile(_fname)         
+    try:
+        exf.saveFile(fname)  
+    except (IOError, OSError), _e:
+        _errmsg = "Error saving '%s' : %s'" % (fname, _e)
+        error_dialog(gtkimage, _errmsg)
+    except StandardError, _e:
+        _errmsg = "Non-system error saving '%s' : %s'" % (fname, _e)
+        error_dialog(gtkimage, _errmsg)       
 #############################################################################
 #
 # callbacks for the menu items
