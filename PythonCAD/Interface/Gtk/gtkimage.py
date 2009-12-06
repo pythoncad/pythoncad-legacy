@@ -1462,7 +1462,10 @@ fitImage()
             Make a drawing zoom of the scale quantity
         """
         if viewport_draw:
-            self.__da.zoom_out()
+            if scale > 1.0:
+                self.__da.zoom_out()
+            else:
+                self.__da.zoom_in()
         else:
             _fw = float(self.__disp_width)
             _fh = float(self.__disp_height)

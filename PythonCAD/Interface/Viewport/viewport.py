@@ -342,6 +342,12 @@ class IViewport(gtk.DrawingArea):
         print "IViewport.zoom_fit()"
         # world dimension
         self.__wxmin, self.__wymin, self.__wxmax, self.__wymax = self.__image.getExtents()
+        # modify to view a little margin
+        decrement = (self.__wxmax - self.__wxmin) / -100.0
+        self.__wxmin += decrement
+        self.__wxmax -= decrement
+        self.__wymin += decrement
+        self.__wymax -= decrement
         print "world (Xmin, Xmax): ", self.__wxmin, self.__wxmax
         print "world (Ymin, Ymax): ", self.__wymin, self.__wymax
         # set the view translation and scale factors
@@ -354,7 +360,12 @@ class IViewport(gtk.DrawingArea):
     def zoom_in(self):
         print "IViewport.zoom_in()"
         # modify world window
-
+        dx = (self.__wxmax - self.__wxmin) / 4.0
+        dy = (self.__wymax - self.__wymin) / 4.0
+        self.__wxmin += dx
+        self.__wxmax -= dx
+        self.__wymin += dy
+        self.__wymax -= dy
         # set the view translation and scale factors
         self.__calc_viewfactors()
         # redraw
@@ -365,7 +376,12 @@ class IViewport(gtk.DrawingArea):
     def zoom_out(self):
         print "IViewport.zoom_out()"
         # modify world window
-        
+        dx = (self.__wxmax - self.__wxmin) / 4.0
+        dy = (self.__wymax - self.__wymin) / 4.0
+        self.__wxmin -= dx
+        self.__wxmax += dx
+        self.__wymin -= dy
+        self.__wymax += dy      
         # set the view translation and scale factors
         self.__calc_viewfactors()
         # redraw
