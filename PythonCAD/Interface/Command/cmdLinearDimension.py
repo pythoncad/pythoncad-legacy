@@ -28,8 +28,6 @@ import pango
 
 from PythonCAD.Generic.dimension import Dimension
 from PythonCAD.Generic import snap
-
-from PythonCAD.Interface.Gtk import gtktext
 from PythonCAD.Interface.Command.cmdCommon import * 
 #
 # Init for linear,horizontal,vertical

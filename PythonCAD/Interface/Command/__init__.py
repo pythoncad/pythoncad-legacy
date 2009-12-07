@@ -38,6 +38,9 @@ from cmdLinearDimension     import *
 from cmdRadialDimension     import *
 from cmdAngularDimension    import *
 from cmdHatch               import *
+from cmdSelection           import *
+from cmdText                import *
+from cmdPaste               import *
 
 
 

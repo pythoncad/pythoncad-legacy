@@ -49,6 +49,7 @@ from PythonCAD.Generic.segjoint import Chamfer, Fillet
 from PythonCAD.Generic import pyGeoLib 
 from PythonCAD.Generic.snap import SnapPointStr
 
+from PythonCAD.Generic import error
 
 class Tool(object):
     """A generic tool object.
@@ -333,14 +334,12 @@ clearCurrentPoint()
         self.__curpoint = None
 
     def create(self, image):
-        """Create an object the tool is designed to construct.
-
-create(image)
-
-The argument 'image' is an image in which the newly created object
-will be added. In the Tool class, this method does nothing. It is
-meant to be overriden in classed using the Tool class as a base
-class.
+        """
+            Create an object the tool is designed to construct.
+            The argument 'image' is an image in which the newly created object
+            will be added. In the Tool class, this method does nothing. It is
+            meant to be overriden in classed using the Tool class as a base
+            class.
         """
         pass # override
 
@@ -909,8 +908,12 @@ class HatchTool(Tool):
         """
             Create the hatch region
         """
-        # loop on all the self.__borderGroup
-        # for each group fill the region..
+        try:
+            print "Debug :create hatch"
+            # loop on all the self.__borderGroup
+            # for each group fill the region..
+        except:
+            raise error.pythonCadEntityCreatioError("HatchTool","Unable to create the hatch")
 #   
 # The ChamferTool and FilletTool class are subclasses of
 # the Tool class but have no additional functionality (yet)

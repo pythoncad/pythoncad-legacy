@@ -33,10 +33,7 @@ pygtk.require('2.0')
 import gtk
 import gobject
 
-
-from PythonCAD.Interface.Gtk import gtktext
 from PythonCAD.Interface.Gtk import gtkactions
-
 from PythonCAD.Generic.image import Image
 from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.conobject import ConstructionObject
@@ -102,12 +99,11 @@ class GTKImage(object):
     from PythonCAD.Interface.Gtk import gtkmodify
     from PythonCAD.Interface.Gtk import gtkmirror
     from PythonCAD.Interface.Gtk import gtkprinting
-    from PythonCAD.Interface.Gtk import gtkedit
     import  PythonCAD.Interface.Command as cmd
     __inittool = {
-        tools.PasteTool : gtkedit.paste_mode_init,
-        tools.SelectTool : gtkedit.select_mode_init,
-        tools.DeselectTool : gtkedit.deselect_mode_init,
+        tools.PasteTool : cmd.paste_mode_init,
+        tools.SelectTool : cmd.select_mode_init,
+        tools.DeselectTool : cmd.deselect_mode_init,
         tools.PointTool : cmd.point_mode_init,
         tools.SegmentTool : cmd.segment_mode_init,
         tools.RectangleTool: cmd.rectangle_mode_init,
@@ -133,7 +129,7 @@ class GTKImage(object):
         tools.TwoPointCCircleTool : cmd.ccircle_tpmode_init,
         tools.TangentCCircleTool : cmd.tangent_ccircle_mode_init,
         tools.TwoPointTangentCCircleTool : cmd.two_cline_tancc_mode_init,
-        tools.TextTool : gtktext.text_add_init,
+        tools.TextTool : cmd.text_add_init,
         tools.HorizontalMoveTool : gtkmodify.move_horizontal_init,
         tools.VerticalMoveTool : gtkmodify.move_vertical_init,
         tools.MoveTool : gtkmodify.move_twopoint_init,
@@ -882,40 +878,40 @@ This value must be a positive float.
 
 #---------------------------------------------------------------------------------------------------
     def calcTextWidths(self):
-        """Calculate the width of the text strings in the Image.
-
-calcTextWidths()  
         """
+            Calculate the width of the text strings in the Image.
+        """
+        import  PythonCAD.Interface.Command as cmd
         _layers = [self.__image.getTopLayer()]
         while len(_layers):
             _layer = _layers.pop()
             for _tblock in _layer.getLayerEntities('text'):
-                gtktext.set_textblock_bounds(self, _tblock)
+                cmd.set_textblock_bounds(self, _tblock)
             for _dim in _layer.getLayerEntities('linear_dimension'):
                 _ds1, _ds2 = _dim.getDimstrings()
-                gtktext.set_textblock_bounds(self, _ds1)
+                cmd.set_textblock_bounds(self, _ds1)
                 if _dim.getDualDimMode():
-                    gtktext.set_textblock_bounds(self, _ds2)
+                    cmd.set_textblock_bounds(self, _ds2)
             for _dim in _layer.getLayerEntities('horizontal_dimension'):
                 _ds1, _ds2 = _dim.getDimstrings()
-                gtktext.set_textblock_bounds(self, _ds1)
+                cmd.set_textblock_bounds(self, _ds1)
                 if _dim.getDualDimMode():
-                    gtktext.set_textblock_bounds(self, _ds2)
+                    cmd.set_textblock_bounds(self, _ds2)
             for _dim in _layer.getLayerEntities('vertical_dimension'):
                 _ds1, _ds2 = _dim.getDimstrings()
-                gtktext.set_textblock_bounds(self, _ds1)
+                cmd.set_textblock_bounds(self, _ds1)
                 if _dim.getDualDimMode():
-                    gtktext.set_textblock_bounds(self, _ds2)
+                    cmd.set_textblock_bounds(self, _ds2)
             for _dim in _layer.getLayerEntities('radial_dimension'):
                 _ds1, _ds2 = _dim.getDimstrings()
-                gtktext.set_textblock_bounds(self, _ds1)
+                cmd.set_textblock_bounds(self, _ds1)
                 if _dim.getDualDimMode():
-                    gtktext.set_textblock_bounds(self, _ds2)
+                    cmd.set_textblock_bounds(self, _ds2)
             for _dim in _layer.getLayerEntities('angular_dimension'):
                 _ds1, _ds2 = _dim.getDimstrings()
-                gtktext.set_textblock_bounds(self, _ds1)
+                cmd.set_textblock_bounds(self, _ds1)
                 if _dim.getDualDimMode():
-                    gtktext.set_textblock_bounds(self, _ds2)
+                    cmd.set_textblock_bounds(self, _ds2)
             _layers.extend(_layer.getSublayers())
         
 #---------------------------------------------------------------------------------------------------

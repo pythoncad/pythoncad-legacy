@@ -29,7 +29,6 @@ import gtk.keysyms
 
 from PythonCAD.Interface.Gtk import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
-from PythonCAD.Interface.Gtk import gtktext
 from PythonCAD.Interface.Gtk import gtkprinting
 from PythonCAD.Interface.Gtk import gtkactions
 from PythonCAD.Generic import globals
@@ -240,7 +239,7 @@ def draw_set_thickness_cb(menuitem, gtkimage):
 
 def draw_text_cb(menuitem, gtkimage):
     gtkimage.activateSnap()
-    _text = gtktext.text_add_dialog(gtkimage)
+    _text = cmd.text_add_dialog(gtkimage)
     if _text is not None:
         _tool = tools.TextTool()
         _tool.setText(_text)

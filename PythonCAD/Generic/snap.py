@@ -38,6 +38,9 @@ from PythonCAD.Generic.cline    import CLine
 from PythonCAD.Generic.hcline   import HCLine
 from PythonCAD.Generic.vcline   import VCLine
 from PythonCAD.Generic.acline   import ACLine
+from PythonCAD.Generic.polyline import Polyline
+from PythonCAD.Generic.segjoint import Chamfer, Fillet
+
 from PythonCAD.Generic import globals
 
 class SnapPointStr(object):
@@ -355,6 +358,7 @@ def getSnapPoint(image,tol,excludeSnap=None):
     _sPnt=_sp.getSnap(tol)
     _sp.resetTemporatySnap()
     return _sPnt 
+
 def getOnlySnap(image,tol,onlySnapArray):
     """
         set the dinamic snap to get only the onlySnapArray
@@ -405,21 +409,34 @@ def getDrawedPoint(image ,tol,strPoint):
         _layers.extend(_layer.getSublayers())
     return None 
 
-def getSelections(gtkimage,objFilter):
+def getSelections(gtkimage,objFilter=None):
     """
-        get the object preselected or selected
+        get the first object  selected
+        objFilter arguments:
+        All: filter on all the entity
+        None : filter on segment
+        Segment Arc ... filter on the entity 
+        Multiple object selection could be declared as:
+        Segment,Arc,CCircle
     """
     _retVal=[]
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     if _image.hasSelection():
-        _objs= _image.getSelectedObjects()
-    else:
-        _x, _y = _image.getCurrentPoint()
-        _active_layer = _image.getActiveLayer()
-        objects=_active_layer.mapPoint((_x, _y), _tol)
-        if len(objects):
-            _mapObj ,point = objects[0]   
+        _image.clearSelectedObjects()
+    _x, _y = _image.getCurrentPoint()
+    _active_layer = _image.getActiveLayer()
+    _objs=_active_layer.mapPoint((_x, _y), _tol)
+    if len(_objs):
+        _mapObj ,point = _objs[0]  
+        if objFilter==None: 
             if isinstance(_mapObj,Segment):
+                return _mapObj,point
+        elif objFilter=="All":
+            return _mapObj,point
+        else:
+            _res=False
+            exec '_res=isinstance(_mapObj,(' + str(objFilter) + '))'
+            if _res:
                 return _mapObj,point
     return None,None

@@ -30,6 +30,17 @@ from math import hypot, pi, atan2
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Interface.Gtk import gtkerror
+from PythonCAD.Interface.Gtk import gtkdialog
+
+#Entity supported for the hatch command
+from PythonCAD.Generic.segment import Segment
+from PythonCAD.Generic.circle import Circle
+from PythonCAD.Generic.arc import Arc
+from PythonCAD.Generic.polyline import Polyline
+from PythonCAD.Generic.segjoint import Chamfer, Fillet
+
+_suportedEntity="Segment,Circle,Arc,Polyline,Chamfer,Fillet"
 #
 # Init
 #
@@ -40,7 +51,8 @@ def hatch_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Select the external boundary entitys RightClick for internal.'))
     _tool = gtkimage.getImage().getTool()
     _tool.action=0
-    _tool.tempOljects=[]
+    _tool.tempExtOljects=[]
+    _tool.tempIntOljects=[]
     _tool.setHandler("initialize", hatch_mode_init)
     _tool.setHandler("button_press", hatch_entity_button_press_cb)
     _tool.setHandler("right_button_press",hatch_change_mode)
@@ -54,13 +66,22 @@ def hatch_mode_init(gtkimage, tool=None):
 # Button press callBacks
 #
 def hatch_change_mode(gtkimage, widget, event, tool):
+    """
+        with the right mouse we change the imput selection
+        from outer region
+        to inner region
+        to command creation
+    """    
     tool.action+=1
+    if tool.action > 2: # Restart the mode selector
+        tool.action=0
+    if tool.action==0:
+        gtkimage.setPrompt(_('Select the External boundary entitys RightClick for switch Imput mode.'))
     if tool.action==1:
-        gtkimage.setPrompt(_('Select the Internal boundary entitys \
-                                    RightClick for Creating the hatch.'))
+        gtkimage.setPrompt(_('Select the Internal boundary entitys RightClick for switch Imput mode.'))
     if tool.action==2:
-        tool.create()
-        
+        gtkimage.setPrompt(_('Click to create the Hatch RightClick for switch Imput mode.'))
+
 def  hatch_entity_button_press_cb(gtkimage, widget, event, tool):
     """
         hatch entity press button
@@ -73,15 +94,17 @@ def  hatch_entity_button_press_cb(gtkimage, widget, event, tool):
                 addSelectedEntity(gtkimage,tool,event,"External")
             if tool.action==1:
                 addSelectedEntity(gtkimage,tool,event,"Internal")
-
+            if tool.action==2:
+                createHatch(gtkimage,tool)
+                hatch_mode_init(gtkimage, tool)
 #
 # Entry callBacks
 #
 def hatch_option_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
+    print "Debug: entry not yet implemented"
     pass
-    
 #
 # Suport functions
 #
@@ -89,10 +112,21 @@ def addSelectedEntity(gtkimage,tool,event,mode):
     """
         add entity at the selection
     """
-    #   implements the selection like daleting moving  ...
-    #   manage the imput mode for the boundary 
+    _obj,_pnt=snap.getSelections(gtkimage,_suportedEntity)    
     if mode=="External":
-        _tool.tempOljects
+        tool.tempExtOljects.append(_obj)
     if mode =="Internal":
-        pass
-        
+        tool.tempIntOljects.append(_obj)
+ 
+def createHatch(gtkimage,tool):
+    """
+        Create The hatch
+    """    
+    try:   
+        tool.create()
+    except pythonCadEntityCreatioError, (e):
+        _msg="Error on command " + e.getCommand + " Message: " +e.getMessage
+        gtkdialog._error_dialog(gtkimage,_msg)
+    except :
+        _msg="Unendled error "
+        gtkdialog._error_dialog(gtkimage,_msg)

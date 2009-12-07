@@ -118,12 +118,14 @@ class Dxf(DrawingFile):
         """
             export The current file in dxf format
         """
-        self.readAsci();
-        _fo=self.createAsci()
-        _objs=self.getAllEntitis()
-        for _e in _objs:
-            if isinstance(_e,Segment):
-                self.writeSegment(_e)
+        _fo=self.createAsci()               #open the file for writing
+        _layersEnts=self.getAllEntitis()    #get all the entities from the file
+        for _key in _layersEnts:            #Looping at all layer
+            for _obj in _layersEnt[_key]:   #looping at all entities in the layer
+                if isinstance(_obj,Segment):#if it's segment 
+                    self.writeSegment(_obj) # ad it at the dxf drawing
+                # go on end implements the other case arc circle ...
+                
     def getAllEntitis(self):
         """
             retrive all the entitys from the drawing 
@@ -140,7 +142,7 @@ class Dxf(DrawingFile):
             _outLayers[_layerName]=_layerEnts
         return _outLayers
     
-    def writeSegment(self,_e):
+    def writeSegment(self,e):
         """
            write segment to the dxf file 
         """

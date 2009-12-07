@@ -122,7 +122,8 @@ th: A float that overrides the line thickness in the Style.
                 ((_sp1 == _op2) and (_sp2 == _op1)))
 
     def __ne__(self, obj):
-        """Compare a Segment to another for inequality.
+        """
+            Compare a Segment to another for inequality.
         """
         if not isinstance(obj, Segment):
             return True
@@ -149,7 +150,6 @@ th: A float that overrides the line thickness in the Style.
         if not isinstance(s, style.Style):
             raise TypeError, "Invalid style: " + `type(s)`
         cls.__defstyle = s
-
     setDefaultStyle = classmethod(setDefaultStyle)
 
     def finish(self):

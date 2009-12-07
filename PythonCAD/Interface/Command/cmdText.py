@@ -1,26 +1,24 @@
 #
-# Copyright (c) 2003, 2004, 2006, 2007 Art Haas
-#
-#               2009 Matteo Boscolo
+# Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007 Art Haas
+# Copyright (c) 2009 Matteo Boscolo
 #
 # This file is part of PythonCAD.
-# 
+#
 # PythonCAD is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # PythonCAD is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
-# GTK interface code for dealing with text entities
+# <> command functions/Class 
 #
 
 import pygtk
@@ -29,8 +27,120 @@ import gtk
 import pango
 import copy
 
+from math import hypot, pi, atan2
+
 from PythonCAD.Generic.text import TextStyle, TextBlock
 from PythonCAD.Generic import snap
+from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic import snap 
+from PythonCAD.Interface.Command import cmdCommon
+#
+# Init
+#
+def text_add_init(gtkimage, tool=None):
+    _image = gtkimage.getImage()
+    _x, _y = _image.getCurrentPoint()
+    if tool is not None:
+        _image.setTool(tool)
+    _tool = _image.getTool()
+    _text = _tool.getText()
+    _ts = _image.getOption('TEXT_STYLE')
+    _tb = TextBlock(_x, _y, _text, _ts)
+    _f = _image.getOption('FONT_FAMILY')
+    if _f != _ts.getFamily():
+        _tb.setFamily(_f)
+    _s = _image.getOption('FONT_STYLE')
+    if _s != _ts.getStyle():
+        _tb.setStyle(_s)
+    _w = _image.getOption('FONT_WEIGHT')
+    if _w != _ts.getWeight():
+        _tb.setWeight(_w)
+    _c = _image.getOption('FONT_COLOR')
+    if _c != _ts.getColor():
+        _tb.setColor(_c)
+    _sz = _image.getOption('TEXT_SIZE')
+    if abs(_sz - _ts.getSize()) > 1e-10:
+        _tb.setSize(_sz)
+    _a = _image.getOption('TEXT_ANGLE')
+    if abs(_a - _ts.getAngle()) > 1e-10:
+        _tb.setAngle(_a)
+    _al = _image.getOption('TEXT_ALIGNMENT')
+    if _al != _ts.getAlignment():
+        _tb.setAlignment(_al)
+    _tool.setTextBlock(_tb)
+    _layout = _make_pango_layout(gtkimage, _text, _f, _s, _w, _sz)
+    _tool.setLayout(_layout)
+    _lw, _lh = _layout.get_pixel_size()
+    _tool.setPixelSize(_lw, _lh)
+    _upp = gtkimage.getUnitsPerPixel()
+    #
+    # the width and height calculations can be somewhat inaccurate
+    # as the unitsPerPixel value gets large
+    #
+    _w = _lw * _upp
+    _h = _lh * _upp
+    _tool.setBounds(_w, _h)
+    _tool.setHandler("motion_notify", text_motion_notify)
+    _tool.setHandler("button_press", text_button_press)
+    gtkimage.setPrompt(_('Click where to place the text'))
+    _gc = gtkimage.getGC()
+    _gc.set_line_attributes(1, gtk.gdk.LINE_SOLID,
+                            gtk.gdk.CAP_BUTT, gtk.gdk.JOIN_MITER)
+    _gc.set_function(gtk.gdk.INVERT)
+#
+# Motion Notifie
+#
+def text_motion_notify(gtkimage, widget, event, tool):
+    _tblock = tool.getTextBlock()
+    _tw, _th = tool.getPixelSize()
+    _gc = gtkimage.getGC()
+    _align = _tblock.getAlignment()
+    if _align == TextStyle.ALIGN_LEFT:    
+        _xoff = 0
+    elif _align == TextStyle.ALIGN_CENTER:
+        _xoff = _tw//2
+    elif _align == TextStyle.ALIGN_RIGHT:
+        _xoff = _tw
+    else:
+        raise ValueError, "Unexpected alignment value: %d" % _align
+    _cp = tool.getCurrentPoint()
+    if _cp is not None:
+        _xc, _yc = _cp
+        _xc = _xc - _xoff
+        widget.window.draw_rectangle(_gc, False, _xc, _yc, _tw, _th)
+    _snapArray={'perpendicular':False,'tangent':False}
+    _sn=snap.getSnapPoint(gtkimage.getImage(),gtkimage.getTolerance(),_snapArray)
+    _x, _y=_sn.point.getCoords()
+    _x = _x - _xoff    
+    _x,_y = gtkimage.coordToPixTransform(_x,_y)
+    tool.setCurrentPoint(_x,_y)
+    widget.window.draw_rectangle(_gc, False, _x, _y, _tw, _th)
+    return True
+#
+# Button press callBacks
+#
+def text_button_press(gtkimage, widget, event, tool):
+    _image=gtkimage.getImage()
+    _snapArray={'perpendicular':False,'tangent':False}
+    _sn=snap.getSnapPoint(_image,gtkimage.getTolerance(),_snapArray)
+    _x,_y=_sn.point.getCoords()    
+    tool.getTextBlock().setLocation(_x,_y)
+    _tool=copy.copy(tool)
+    _image.startAction()    
+    try:
+        tool.create(_image)
+    finally:
+        _image.endAction()
+    text_add_init(gtkimage,_tool)
+    return True
+#
+# Entry callBacks
+#
+
+#
+# Suport functions
+#
+
 
 def set_textblock_bounds(gtkimage, tblock):
     # print "set_textblock_bounds() ..."
@@ -172,99 +282,6 @@ def _make_pango_layout(gtkimage, text, family, style, weight, size):
     _fd.set_size(_sz)
     _layout.set_font_description(_fd)
     return _layout
-
-def text_button_press(gtkimage, widget, event, tool):
-    _image=gtkimage.getImage()
-    _snapArray={'perpendicular':False,'tangent':False}
-    _sn=snap.getSnapPoint(_image,gtkimage.getTolerance(),_snapArray)
-    _x,_y=_sn.point.getCoords()    
-    tool.getTextBlock().setLocation(_x,_y)
-    _tool=copy.copy(tool)
-    _image.startAction()    
-    try:
-        tool.create(_image)
-    finally:
-        _image.endAction()
-    text_add_init(gtkimage,_tool)
-    return True
-    
-def text_motion_notify(gtkimage, widget, event, tool):
-    _tblock = tool.getTextBlock()
-    _tw, _th = tool.getPixelSize()
-    _gc = gtkimage.getGC()
-    _align = _tblock.getAlignment()
-    if _align == TextStyle.ALIGN_LEFT:    
-        _xoff = 0
-    elif _align == TextStyle.ALIGN_CENTER:
-        _xoff = _tw//2
-    elif _align == TextStyle.ALIGN_RIGHT:
-        _xoff = _tw
-    else:
-        raise ValueError, "Unexpected alignment value: %d" % _align
-    _cp = tool.getCurrentPoint()
-    if _cp is not None:
-        _xc, _yc = _cp
-        _xc = _xc - _xoff
-        widget.window.draw_rectangle(_gc, False, _xc, _yc, _tw, _th)
-    _snapArray={'perpendicular':False,'tangent':False}
-    _sn=snap.getSnapPoint(gtkimage.getImage(),gtkimage.getTolerance(),_snapArray)
-    _x, _y=_sn.point.getCoords()
-    _x = _x - _xoff    
-    _x,_y = gtkimage.coordToPixTransform(_x,_y)
-    tool.setCurrentPoint(_x,_y)
-    widget.window.draw_rectangle(_gc, False, _x, _y, _tw, _th)
-    return True
-
-def text_add_init(gtkimage, tool=None):
-    _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
-    if tool is not None:
-        _image.setTool(tool)
-    _tool = _image.getTool()
-    _text = _tool.getText()
-    _ts = _image.getOption('TEXT_STYLE')
-    _tb = TextBlock(_x, _y, _text, _ts)
-    _f = _image.getOption('FONT_FAMILY')
-    if _f != _ts.getFamily():
-        _tb.setFamily(_f)
-    _s = _image.getOption('FONT_STYLE')
-    if _s != _ts.getStyle():
-        _tb.setStyle(_s)
-    _w = _image.getOption('FONT_WEIGHT')
-    if _w != _ts.getWeight():
-        _tb.setWeight(_w)
-    _c = _image.getOption('FONT_COLOR')
-    if _c != _ts.getColor():
-        _tb.setColor(_c)
-    _sz = _image.getOption('TEXT_SIZE')
-    if abs(_sz - _ts.getSize()) > 1e-10:
-        _tb.setSize(_sz)
-    _a = _image.getOption('TEXT_ANGLE')
-    if abs(_a - _ts.getAngle()) > 1e-10:
-        _tb.setAngle(_a)
-    _al = _image.getOption('TEXT_ALIGNMENT')
-    if _al != _ts.getAlignment():
-        _tb.setAlignment(_al)
-    _tool.setTextBlock(_tb)
-    _layout = _make_pango_layout(gtkimage, _text, _f, _s, _w, _sz)
-    _tool.setLayout(_layout)
-    _lw, _lh = _layout.get_pixel_size()
-    _tool.setPixelSize(_lw, _lh)
-    _upp = gtkimage.getUnitsPerPixel()
-    #
-    # the width and height calculations can be somewhat inaccurate
-    # as the unitsPerPixel value gets large
-    #
-    _w = _lw * _upp
-    _h = _lh * _upp
-    _tool.setBounds(_w, _h)
-    _tool.setHandler("motion_notify", text_motion_notify)
-    _tool.setHandler("button_press", text_button_press)
-    gtkimage.setPrompt(_('Click where to place the text'))
-    _gc = gtkimage.getGC()
-    _gc.set_line_attributes(1, gtk.gdk.LINE_SOLID,
-                            gtk.gdk.CAP_BUTT, gtk.gdk.JOIN_MITER)
-    _gc.set_function(gtk.gdk.INVERT)
     
 def text_add_dialog(gtkimage):
     _window = gtkimage.getWindow()
