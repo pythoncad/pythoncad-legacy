@@ -48,6 +48,7 @@ from PythonCAD.Generic import text
 from PythonCAD.Generic import dimension
 from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic.color import Color
+from PythonCAD.Generic.conobject import ConstructionObject
 
 # draw imports
 from PythonCAD.Interface.Viewport.aclinedraw import _draw_acline, _erase_acline
@@ -333,8 +334,8 @@ class IViewport(gtk.DrawingArea):
         # scale factor
         sx = 1.0 * self.__vwidth / self.__wwidth
         sy = 1.0 * self.__vheight / self.__wheight
-        self.__sx = sx
-        self.__sy = sy
+        self.__sx = min(sx, sy)
+        self.__sy = self.__sx
         print "Scale: ", self.__sx, self.__sy
 
 #---------------------------------------------------------------------------------------------------
@@ -452,6 +453,13 @@ class IViewport(gtk.DrawingArea):
         return _x, _y
 
 #---------------------------------------------------------------------------------------------------
+    def WorldToViewportSize(self, size):
+        print "Size (world): ", size
+        _size = size * self.__sx
+        return _size
+    
+    
+#---------------------------------------------------------------------------------------------------
     def draw(self):
         print "ViewportDraw.__draw()"
         #
@@ -525,4 +533,33 @@ class IViewport(gtk.DrawingArea):
             for _obj in _objs:
                 _obj.draw(self, color)
 
+#---------------------------------------------------------------------------------------------------
+    def draw_linestring(self, color, lineweight, linestyle, points):
+        print "ViewportDraw.draw_linestring()"
+        # use cairo
+        if self.__ctx is not None:
+            first_point = True
+            #begin
+            self.__ctx.save()
+            # set linestring properties
+            r, g, b = color.getColors()
+            self.__ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+            if linestyle is not None:
+                self.__ctx.set_dash(linestyle)
+            self.__ctx.set_line_width(lineweight)
+            # draw the points
+            for point in points:
+                # transform to display coordinates
+                x, y = point.getCoords()
+                px, py = self.WorldToViewport(x, y)
+                if first_point:
+                    self.__ctx.move_to(px, py)
+                    first_point = False
+                else:
+                    self.__ctx.line_to(px, py)
+            # end
+            self.__ctx.stroke()
+            self.__ctx.restore()
+
+        
 #---------------------------------------------------------------------------------------------------
