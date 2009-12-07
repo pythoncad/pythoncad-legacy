@@ -49,21 +49,24 @@ from PythonCAD.Generic import color
 #
 #from PythonCAD.Interface.Gtk import gtkimage
 
+_point_color = color.Color(255, 255, 255) # white
 
 
 #----------------------------------------------------------------------------------------------------
-def _draw_point(self, vp_draw, col=None):
+def _draw_point(self, viewport, col=None):
+    print "_draw_point()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):
         raise TypeError, "Invalid Color: " + `type(color)`
+    if color is None:
+        color = _point_color
     # point coordinates
-    #x, y = self.getCoords()
+    x, y = self.getCoords()
     # transformation to viewport coordinates
-    px, py = vp_draw.WorldToViewport(self.getCoords())
-    #w, h = gimage.getSize()
+    px, py = viewport.WorldToViewport(x, y)
     # cairo context
-    ctx = vp_draw.CairoContext
+    ctx = viewport.CairoContext
     if ctx is not None:
         ctx.save()
         r, g, b = color.getColors()
@@ -73,7 +76,7 @@ def _draw_point(self, vp_draw, col=None):
         ctx.stroke()
         ctx.restore()
     # draw the point in highlight color
-    if vp_draw.Image.getOption('HIGHLIGHT_POINTS'):
+    if viewport.Image.getOption('HIGHLIGHT_POINTS'):
         count = 0
         for user in self.getUsers():
             if not isinstance(user, dimension.Dimension):
@@ -82,9 +85,9 @@ def _draw_point(self, vp_draw, col=None):
                 break
         # 
         if count > 1:
-            color = vp_draw.Image.getOption('MULTI_POINT_COLOR')
+            color = viewport.Image.getOption('MULTI_POINT_COLOR')
         else:
-            color = vp_draw.Image.getOption('SINGLE_POINT_COLOR')
+            color = viewport.Image.getOption('SINGLE_POINT_COLOR')
         # use cairo to draw
         if ctx is not None:
             ctx.save()
@@ -95,7 +98,7 @@ def _draw_point(self, vp_draw, col=None):
             ctx.restore()
 
 #----------------------------------------------------------------------------------------------------
-def _erase_point(self, vp_draw):
+def _erase_point(self, viewport):
     _x, _y = self.getCoords()
     _px, _py = gimage.coordToPixTransform(_x, _y)
     _w, _h = gimage.getSize()
