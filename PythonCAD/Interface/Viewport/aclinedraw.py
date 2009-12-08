@@ -30,63 +30,36 @@ import gtk
 import pango
 
 from PythonCAD.Generic import color
-#from PythonCAD.Generic import point
-#from PythonCAD.Generic import segment
-#from PythonCAD.Generic import circle
-#from PythonCAD.Generic import arc
-#from PythonCAD.Generic import leader
-#from PythonCAD.Generic import polyline
-#from PythonCAD.Generic import segjoint
-#from PythonCAD.Generic import conobject
-#from PythonCAD.Generic import hcline
-#from PythonCAD.Generic import vcline
-#from PythonCAD.Generic import acline
-#from PythonCAD.Generic import cline
-#from PythonCAD.Generic import ccircle
-#from PythonCAD.Generic import text
-#from PythonCAD.Generic import dimension
-#from PythonCAD.Generic import layer
-#
-#from PythonCAD.Interface.Gtk import gtkimage
+from PythonCAD.Generic.point import Point
 
 
 #----------------------------------------------------------------------------------------------------
-def _draw_acline(self, gimage, col=None):
-    if not isinstance(gimage, gtkimage.GTKImage):
-        raise TypeError, "Invalid GTKImage: " + `type(gimage)`
-    _col = col
-    if _col is not None and not isinstance(_col, color.Color):
-        raise TypeError, "Invalid Color: " + `type(_col)`
-    _xmin, _ymin, _xmax, _ymax = gimage.getView()
-    _coords = self.clipToRegion(_xmin, _ymin, _xmax, _ymax)
-    if _coords is not None:
-        _lp = self.getLocation()
-        _x1, _y1, _x2, _y2 = _coords
-        _p1x, _p1y = gimage.coordToPixTransform(_x1, _y1)
-        _p2x, _p2y = gimage.coordToPixTransform(_x2, _y2)
-        _p1x, _p1y = gimage.coordToPixTransform(_x1, _y1)
-        _p2x, _p2y = gimage.coordToPixTransform(_x2, _y2)
-        if _col is None:
-            _col = self.getColor()
-        _dlist = self.getLinetype().getList()
-        _ctx = gimage.getCairoContext()
-        if _ctx is not None:
-            _ctx.save()
-            _r, _g, _b = _col.getColors()
-            _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-            if _dlist is not None:
-                _ctx.set_dash(_dlist)
-            _ctx.set_line_width(1.0)
-            _ctx.move_to(_p1x, _p1y)
-            _ctx.line_to(_p2x, _p2y)
-            _ctx.stroke()
-            _ctx.restore()
-        else:
-            _gc = gimage.getGC()
-            _set_gc_values(_gc, _dlist, gimage.getColor(_col), 1)
-            gimage.getPixmap().draw_line(_gc, _p1x, _p1y, _p2x, _p2y)
+def _draw_acline(self, viewport, col=None):
+    print "_draw_acline()"
+    color = col
+    # is color defined
+    if color is not None and not isinstance(color, color.Color):
+        raise TypeError, "Invalid Color: " + `type(color)`
+    # if color is not defined, take color of entity
+    if color is None:
+        color = self.getColor()
+    # display properties
+    lineweight = self.getThickness()
+    linestyle = self.getLinetype().getList()
+    # clip to visible area
+    coords = self.clipToRegion(viewport.WorldXmin, viewport.WorldYmin, viewport.WorldXmax, viewport.WorldYmax)
+    if coords is not None:
+        x1, y1, x2, y2 = coords
+        p1 = Point(x1, y1)
+        p2 = Point(x2, y2)
+        # add points to list
+        points = []
+        points.append(p1)
+        points.append(p2)
+        # do the actual draw of the linestring
+        viewport.draw_linestring(color, lineweight, linestyle, points)
 
 #----------------------------------------------------------------------------------------------------
-def _erase_acline(self, gimage):
-    self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
+def _erase_acline(self, viewport):
+    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
     
