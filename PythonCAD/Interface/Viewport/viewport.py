@@ -48,6 +48,7 @@ from PythonCAD.Generic import text
 from PythonCAD.Generic import dimension
 from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic.color import Color
+from PythonCAD.Generic.conobject import ConstructionObject
 
 # draw imports
 from PythonCAD.Interface.Viewport.aclinedraw import _draw_acline, _erase_acline
@@ -333,8 +334,8 @@ class IViewport(gtk.DrawingArea):
         # scale factor
         sx = 1.0 * self.__vwidth / self.__wwidth
         sy = 1.0 * self.__vheight / self.__wheight
-        self.__sx = sx
-        self.__sy = sy
+        self.__sx = min(sx, sy)
+        self.__sy = self.__sx
         print "Scale: ", self.__sx, self.__sy
 
 #---------------------------------------------------------------------------------------------------
@@ -408,6 +409,31 @@ class IViewport(gtk.DrawingArea):
         # show the scene/pixmap
         #self.window.draw_drawable(self.__gc, self.__pixmap, 0, 0, 0, 0, alloc.width, alloc.height)
 
+
+#---------------------------------------------------------------------------------------------------
+    def __get_wxmin(self):
+        return self.__wxmin
+
+    WorldXmin = property(__get_wxmin, None, None, "Generic Image")
+
+#---------------------------------------------------------------------------------------------------
+    def __get_wxmax(self):
+        return self.__wxmax
+
+    WorldXmax = property(__get_wxmax, None, None, "Generic Image")
+
+#---------------------------------------------------------------------------------------------------
+    def __get_wymin(self):
+        return self.__wymin
+
+    WorldYmin = property(__get_wymin, None, None, "Generic Image")
+
+#---------------------------------------------------------------------------------------------------
+    def __get_wymax(self):
+        return self.__wymax
+
+    WorldYmax = property(__get_wymax, None, None, "Generic Image")
+
 #---------------------------------------------------------------------------------------------------
     def __get_image(self):
         return self.__image
@@ -451,6 +477,13 @@ class IViewport(gtk.DrawingArea):
         print "Point (world): ", _x, _y
         return _x, _y
 
+#---------------------------------------------------------------------------------------------------
+    def WorldToViewportSize(self, size):
+        print "Size (world): ", size
+        _size = size * self.__sx
+        return _size
+    
+    
 #---------------------------------------------------------------------------------------------------
     def draw(self):
         print "ViewportDraw.__draw()"
@@ -525,4 +558,66 @@ class IViewport(gtk.DrawingArea):
             for _obj in _objs:
                 _obj.draw(self, color)
 
+#---------------------------------------------------------------------------------------------------
+    def draw_linestring(self, color, lineweight, linestyle, points):
+        print "ViewportDraw.draw_linestring()"
+        # use cairo
+        if self.__ctx is not None:
+            first_point = True
+            #begin
+            self.__ctx.save()
+            # set linestring properties
+            r, g, b = color.getColors()
+            print "color: ", r, g, b
+            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+            if linestyle is not None:
+                self.__ctx.set_dash(linestyle)
+                print "linestyle: ", linestyle
+            if lineweight > 0.0:
+                self.__ctx.set_line_width(lineweight)
+            print "lineweight: ", lineweight
+            # draw the points
+            for point in points:
+                # transform to display coordinates
+                x, y = point.getCoords()
+                px, py = self.WorldToViewport(x, y)
+                if first_point:
+                    self.__ctx.move_to(px, py)
+                    first_point = False
+                else:
+                    self.__ctx.line_to(px, py)
+            # end
+            self.__ctx.stroke()
+            self.__ctx.restore()
+
+#---------------------------------------------------------------------------------------------------
+    def draw_arc(self, color, lineweight, linestyle, center, radius, start, end):
+        print "ViewportDraw.draw_linestring()"
+        # use cairo
+        if self.__ctx is not None:
+            first_point = True
+            #begin
+            self.__ctx.save()
+            # set linestring properties
+            r, g, b = color.getColors()
+            print "color: ", r, g, b
+            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+            if linestyle is not None:
+                self.__ctx.set_dash(linestyle)
+                print "linestyle: ", linestyle
+            if lineweight > 0.0:
+                self.__ctx.set_line_width(lineweight)
+            print "lineweight: ", lineweight
+            # draw the arc
+            self.__ctx.new_sub_path()
+            # transform to display coordinates
+            x, y = center.getCoords()
+            px, py = self.WorldToViewport(x, y)
+            vradius = self.WorldToViewportSize(radius)
+            self.__ctx.arc(px, py, vradius, start, end)
+            # end
+            self.__ctx.stroke()
+            self.__ctx.restore()
+
+        
 #---------------------------------------------------------------------------------------------------

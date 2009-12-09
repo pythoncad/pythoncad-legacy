@@ -44,7 +44,7 @@ from PythonCAD.Generic import color
 #from PythonCAD.Generic import cline
 #from PythonCAD.Generic import ccircle
 #from PythonCAD.Generic import text
-#from PythonCAD.Generic import dimension
+from PythonCAD.Generic import dimension
 #from PythonCAD.Generic import layer
 #
 #from PythonCAD.Interface.Gtk import gtkimage
@@ -68,9 +68,11 @@ def _draw_point(self, viewport, col=None):
     # cairo context
     ctx = viewport.CairoContext
     if ctx is not None:
+        # draw the point itself
         ctx.save()
         r, g, b = color.getColors()
         ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+        # set path
         ctx.move_to(px, py)
         ctx.line_to(px, py)
         ctx.stroke()
@@ -90,52 +92,49 @@ def _draw_point(self, viewport, col=None):
             color = viewport.Image.getOption('SINGLE_POINT_COLOR')
         # use cairo to draw
         if ctx is not None:
+            # draw the point representation as a rectangle
             ctx.save()
             r, g, b = color.getColors()
             ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+            # set path
             ctx.rectangle((px - 5), (py - 5), 10, 10)
             ctx.stroke()
             ctx.restore()
 
 #----------------------------------------------------------------------------------------------------
 def _erase_point(self, viewport):
+    print "_erase_point()"
+    # point coordinates
+    x, y = self.getCoords()
+    # transformation to viewport coordinates
+    px, py = viewport.WorldToViewport(x, y)
+    
     _x, _y = self.getCoords()
     _px, _py = gimage.coordToPixTransform(_x, _y)
     _w, _h = gimage.getSize()
-    if (((_px + 5) < 0) or
-        ((_py + 5) < 0) or
-        ((_px - 5) > _w) or
-        ((_py - 5) > _h)):
-        return
     _image = gimage.getImage()
-    _col = _image.getOption('BACKGROUND_COLOR')
-    _pixmap = _gc = None
-    _ctx = gimage.getCairoContext()
-    if _ctx is not None:
-        _ctx.save()
-        if(_col!=None):
-            _r, _g, _b = _col.getColors()
-            _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        _ctx.move_to(_px, _py)
-        _ctx.line_to(_px, _py)
-        _ctx.stroke()
-        _ctx.restore()
-    else:
-        _gc = gimage.getGC()
-        _gc.set_foreground(gimage.getColor(_col))
-        _pixmap = gimage.getPixmap()
-        _pixmap.draw_point(_gc, _px, _py)
-    if _image.getOption('HIGHLIGHT_POINTS'):
-        if _ctx is not None:
-            _ctx.save()
-            _r, _g, _b = _col.getColors()
-            _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-            _ctx.rectangle((_px - 5), (_py - 5), 10, 10)
-            _ctx.stroke()
-            _ctx.restore()
-        else:
-            _gc.set_function(gtk.gdk.COPY)
-            _gc.set_line_attributes(1, gtk.gdk.LINE_SOLID,
-                                    gtk.gdk.CAP_ROUND, gtk.gdk.JOIN_MITER)
-            _pixmap.draw_rectangle(_gc, False, (_px - 5), (_py - 5), 10, 10)
+    color = viewport.Image.getOption('BACKGROUND_COLOR')
+    
+    # cairo context
+    ctx = viewport.CairoContext    
+    if ctx is not None:
+        # erase the point itself
+        ctx.save()
+        if(color != None):
+            r, g, b = color.getColors()
+            ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+        # set path
+        ctx.move_to(px, py)
+        ctx.line_to(px, py)
+        ctx.stroke()
+        ctx.restore()
+
+    if viewport.Image.getOption('HIGHLIGHT_POINTS'):
+        if ctx is not None:
+            ctx.save()
+            r, g, b = color.getColors()
+            ctx.set_source_rgb((r/255.0), (g/255.0), (b/255.0))
+            ctx.rectangle((px - 5), (py - 5), 10, 10)
+            ctx.stroke()
+            ctx.restore()
 
