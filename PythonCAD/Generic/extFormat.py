@@ -147,6 +147,7 @@ class Dxf(DrawingFile):
            write segment to the dxf file 
         """
         pass
+        
     def importEntitis(self):
         """
             Open The file and create The entity in pythonCad
@@ -154,13 +155,12 @@ class Dxf(DrawingFile):
         print "Debug: import entitys"
         self.readAsci();
         fo=self.fileObject()
-        self.createTrialFromDxf(fo)
+
         while True:
             line = fo.readline()
             if not line: break
             else:
                 #print "Debug: Read Line line = [%s] "%str(line), lineNumber
-                """Implement here your method"""
                 k = line
                 if k[0:4] == 'LINE':
                     self.createLineFromDxf(fo)
@@ -172,13 +172,12 @@ class Dxf(DrawingFile):
                     self.createTextFromDxf(fo)
                 if k[0:3] == 'ARC':
                     self.createArcFromDxf(fo)
-                #if k[0:6] == 'ENDSEC':
-                    #self.createPolylineFromDxf(fo)
+                if k[0:10] == 'LWPOLYLINE':
+                    self.createPolylineFromDxf(fo)
+                if k[0:8] == 'POLYLINE':
+                    self.createPolylineFromDxf(fo)
                 if not k : break
-                #break
-                # indicates the data of lines are there in next block of 19 lines
-                # Similar subroutine can be return for collecting data of circle/polyline/arc
-                # Matteo Boscolo ++
+
     def createLineFromDxf(self,fo):
         """
             read the line dxf section and create the line
@@ -233,10 +232,7 @@ class Dxf(DrawingFile):
                 #Z co ordinates are not used in PythonCAD we can live without this line
                 'I need a "create segment code" here to append the segment to image'
         self.createLine(x1,y1,x2,y2)
-                #g = 0 # Search for next line in the dxf file
-            
-        #x2+=2
-        #y2+=2 
+
 
     def createLine(self,x1,y1,x2,y2):
       """
@@ -434,16 +430,39 @@ class Dxf(DrawingFile):
             _tb.setAlignment(_al)
         _active_layer.addObject(_tb)
 
-    def createTrialFromDxf(self,fo):
+    def createPolylineFromDxf(self,fo):
         """
-            Trial for Polyline creation read the line dxf section and create the line
+        Polyline creation read the line dxf section and create the line
         """
-        print "Debug createTrialFromDxf" 
+        while True:
+            k = fo.readline()                        
+            if k[0:3] == ' 10':
+                break
         points=[]
-        points = [(0.0, 10.1), (2.0, 7.0), (15.01, 15.0)]
-        self.createTrial(points)
-
-    def createTrial(self,points):
+        p = ()
+        while True:
+            # this line of file contains start point"X" co ordinate
+            # print "Debug: Convert To flot x1: %s" % str(k[0:-1])
+            k = fo.readline()
+            x = (float(k[0:-1]))
+            k = fo.readline()#pass for k[0:3] == ' 20'
+            k = fo.readline()
+            y = (float(k[0:-1]))
+            p = (x,y)
+            points.append(p)
+            print points
+            k = fo.readline()
+            if k[0:3] == ' 30':
+                k = fo.readline()
+                z1 = (float(k[0:-1]))
+            elif k[0:3] != ' 10':
+                break
+        self.createPolyline(points)
+        
+    def createPolyline(self,points):
+        """
+            Crate poliline into Pythoncad
+        """
         _active_layer = self.__dxfLayer
         _x = 0.0
         _y = 0.0
