@@ -22,6 +22,7 @@
 # This code is written by Yagnesh Desai
 #
 
+dxfDebug=True
 
 import os.path
 import math # added to handle arc start and end point defination
@@ -155,13 +156,11 @@ class Dxf(DrawingFile):
         print "Debug: import entitys"
         self.readAsci();
         fo=self.fileObject()
-
         while True:
-            line = fo.readline()
-            if not line: break
+            k = fo.readline()
+            if not k: break
             else:
-                #print "Debug: Read Line line = [%s] "%str(line), lineNumber
-                k = line
+                print "Debug: Read Line line = [%s]"%str(k)
                 if k[0:4] == 'LINE':
                     self.createLineFromDxf(fo)
                 if k[0:6] == 'CIRCLE':
@@ -183,18 +182,15 @@ class Dxf(DrawingFile):
             read the line dxf section and create the line
         """
         print "Debug createLineFromDxf" 
-        #x1 = 0.0
-        #y1 = 0.0
-        #x2 = 10.0
-        #y2 = 10.0
+        x1 = None
+        y1 = None
+        x2 = None
+        y2 = None
         g = 0 # start counter to read lines
-        while g < 1:
+        while g < 18:
             line = fo.readline()
             #print "Debug g =", g
             #print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
-            #if not g>19:
-            #  g+=1
-            #  continue
             k = line
             #print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
             """if g == 5:# this line contains color property
@@ -228,10 +224,13 @@ class Dxf(DrawingFile):
                 #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
                 k = fo.readline()
                 z2 = (float(k[0:-1]))
-                g = 10
+                g = 30
                 #Z co ordinates are not used in PythonCAD we can live without this line
                 'I need a "create segment code" here to append the segment to image'
-        self.createLine(x1,y1,x2,y2)
+            g+=1
+        if not ( x1==None or y1 ==None or
+           x2==None or y2 ==None ):
+            self.createLine(x1,y1,x2,y2)
 
 
     def createLine(self,x1,y1,x2,y2):
@@ -273,19 +272,15 @@ class Dxf(DrawingFile):
             if k[0:3] == ' 10':
                 k = fo.readline()
                 x = (float(k[0:-1]))
-                print "circle center x =", x
             if k[0:3] == ' 20':
                 k = fo.readline()
                 y = (float(k[0:-1]))
-                print "circle center y =", y
             if k[0:3] == ' 30':
                 k = fo.readline()
                 z = (float(k[0:-1]))
-                print "circle center z =", z
             if k[0:3] == ' 40':
                 k = fo.readline()
                 r = (float(k[0:-1]))
-                print "circle radius=", r
                 g = 10 # g > 1 for break
                 'I need a "create Circle code" here to append the segment to image'
         self.createCircle(x,y,r)
@@ -434,6 +429,7 @@ class Dxf(DrawingFile):
         """
         Polyline creation read the line dxf section and create the line
         """
+        dPrint("Exec createPolylineFromDxf")
         while True:
             k = fo.readline()                        
             if k[0:3] == ' 10':
@@ -450,19 +446,21 @@ class Dxf(DrawingFile):
             y = (float(k[0:-1]))
             p = (x,y)
             points.append(p)
-            print points
+            dPrint( str(points))
             k = fo.readline()
             if k[0:3] == ' 30':
                 k = fo.readline()
                 z1 = (float(k[0:-1]))
             elif k[0:3] != ' 10':
                 break
-        self.createPolyline(points)
+        if len(points)>1:
+            self.createPolyline(points)
         
     def createPolyline(self,points):
         """
             Crate poliline into Pythoncad
         """
+        dPrint("Exec createPolyline")
         _active_layer = self.__dxfLayer
         _x = 0.0
         _y = 0.0
@@ -473,6 +471,7 @@ class Dxf(DrawingFile):
             _p = Point(_x, _y)
             _active_layer.addObject(_p)
             _pts.append(_p)
+        dPrint("Exec createPolyline lenPts(%s)"%str(len(_pts)))
         _s = self.__image.getOption('LINE_STYLE')
         _pline = Polyline(_pts, _s)
         _l = self.__image.getOption('LINE_TYPE')
@@ -485,6 +484,7 @@ class Dxf(DrawingFile):
         if abs(_t - _s.getThickness()) > 1e-10:
           _pline.setThickness(_t)
         _active_layer.addObject(_pline)
+
 
 def dPrint(msg):
     """
