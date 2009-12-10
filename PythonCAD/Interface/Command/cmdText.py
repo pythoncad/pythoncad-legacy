@@ -160,7 +160,7 @@ def set_textblock_bounds(gtkimage, tblock):
     try:
         _text=unicode(_text)
     except:
-        print "Debug Error on unicode conversione %s"%(str(_text))
+        _text=str(_text)
     _layout = _da.create_pango_layout(_text)
     _fd = pango.FontDescription()
     _fd.set_family(_family)
@@ -203,7 +203,7 @@ def set_textblock_bounds(gtkimage, tblock):
             try:
                 _text=unicode(_text)
             except:
-                print "Debug Error on unicode conversione %s"%(str(_text))
+                _text=str(_text)
             _layout = _da.create_pango_layout(_text)
             _fd = pango.FontDescription()
             _fd.set_family(_family)

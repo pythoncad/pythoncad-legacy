@@ -273,7 +273,6 @@ def file_inport_cb(menuitem, gtkimage):
         try:
             exf=extFormat.ExtFormat(gtkimage)
             exf.openFile(_fname)
-            gtkimage.fitImage()
         except (IOError, OSError), e:
             _errmsg = "Error opening '%s' : %s'" % (_fname, e)
             gtkDialog._error_dialog(gtkimage, _errmsg)

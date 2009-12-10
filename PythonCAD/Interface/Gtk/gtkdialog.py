@@ -121,3 +121,26 @@ def abautDialog():
     _abautDialog.set_license(_licMsg)
     response = _abautDialog.run()
     _abautDialog.destroy()
+
+def reportDialog(gtkimage,title,strArray):
+    """
+        Create a report dialog 
+    """
+    _window = gtkimage.getWindow()
+    _dialog = gtk.Dialog(_(title), _window,
+                         gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+    _tb = gtk.TextBuffer()
+    _tv = gtk.TextView(_tb)
+    _tv.set_editable(False)
+    _sw = gtk.ScrolledWindow()
+    _sw.set_size_request(400, 300)
+    _sw.add_with_viewport(_tv)
+    _dialog.vbox.pack_start(_sw, True, True, 0)
+    _dialog.show_all()
+    for _s in strArray:
+        _tb.insert_at_cursor(_s)
+    _response = _dialog.run()
+    
+    _dialog.destroy()
+    

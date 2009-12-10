@@ -33,6 +33,7 @@ from PythonCAD.Generic.circle import Circle
 from PythonCAD.Generic.arc import Arc
 from PythonCAD.Generic.polyline import Polyline
 from PythonCAD.Generic.layer import Layer
+from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 from PythonCAD.Generic.text import *
 
 class ExtFormat(object):
@@ -53,7 +54,10 @@ class ExtFormat(object):
         if( exte.upper()==".dxf".upper()):
             dxf=Dxf(self.__gtkimage,fileName)
             dxf.importEntitis()
-
+            self.__gtkimage.fitImage()            
+            if not dxf.getError() is None:
+                gtkDialog.reportDialog(self.__gtkimage,"Report On ImportFile",dxf.getError())
+            
     def saveFile(self,fileName):
         """
             save the current file in a non pythoncad Format
@@ -74,9 +78,10 @@ class DrawingFile(object):
         dPrint( "Debug: DrawingFile constructor")
         self.__fn=fileName
         self.__fb=None
-        self.__error=[]
+        self.__errors=[]
         self.__reading=False
         self.__lineNumber=0
+        
     def readAsci(self):
         """
             Read a generic file 
@@ -108,7 +113,7 @@ class DrawingFile(object):
             read a line and return it
         """
         if self.__reading:
-            self.__lineNumber=+1
+            self.__lineNumber=self.__lineNumber+1
             return self.__fb.readline()
         else:
             raise "Unable to perfor reading operation"
@@ -119,8 +124,17 @@ class DrawingFile(object):
         """
         _msg="Error on line %s function Name: %s Message %s"%(
             str(self.__lineNumber),functionName,msg)
-        self.__error.append(_msg)
-
+        self.__errors.append(_msg)
+        
+    def getError(self):
+        """
+        get the import export error
+        """
+        if len(self.__errors)>0:
+            return self.__errors
+        else: 
+            return None
+        
 class Dxf(DrawingFile):
     """
         this class provide dxf reading/writing capability 
@@ -138,7 +152,6 @@ class Dxf(DrawingFile):
         _dxfLayer=Layer(_layerName)
         self.__image.addLayer(_dxfLayer)
         self.__dxfLayer=_dxfLayer 
-        
 
     def exportEntitis(self):
         """
@@ -207,8 +220,6 @@ class Dxf(DrawingFile):
                     self.createPolylineFromDxf()
                     continue
                 if not _k : break
-                else:
-                    self.writeError("importEntitis","Entity Not supported %s"%str(_k))
 
     def createLineFromDxf(self):
         """
@@ -269,7 +280,10 @@ class Dxf(DrawingFile):
         if not ( x1==None or y1 ==None or
            x2==None or y2 ==None ):
             self.createLine(x1,y1,x2,y2)
-
+        else:
+            _msg="Read parameter from file x1: [%s] y1: [%s] x2: [%s] y2: [%s]"%(
+                        str(x1),str(y1),str(x2),str(y2))
+            self.writeError("createLineFromDxf",_msg)
 
     def createLine(self,x1,y1,x2,y2):
       """
@@ -351,6 +365,10 @@ class Dxf(DrawingFile):
         """
         dPrint( "Debug createTextFromDxf" )
         g = 0 # reset g
+        x = None
+        y = None
+        h = None
+        _t= None
         while g < 1:
             _k = self.readLine()
             dPrint("line value k="+ _k)
@@ -381,7 +399,13 @@ class Dxf(DrawingFile):
                 #print "Text itself is ", x, y, z, 'height', h, _t#
                 g = 10 # g > 1 for break
                 continue
-        self.createText(x,y,h,_t)
+        if not (x is None or y is None or h is None or _t is None):
+            self.createText(x,y,h,_t)
+        else:
+            _msg="Read parameter from file x: [%s] y: [%s] h: [%s] t: [%s]"%(
+                        str(x),str(y),str(h),str(_t))
+            self.writeError("createTextFromDxf",_msg)
+
     def createArcFromDxf(self):
         """
             Read and create the ARC into drawing
