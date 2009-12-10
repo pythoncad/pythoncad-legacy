@@ -141,7 +141,6 @@ def text_button_press(gtkimage, widget, event, tool):
 # Suport functions
 #
 
-
 def set_textblock_bounds(gtkimage, tblock):
     # print "set_textblock_bounds() ..."
     _text = tblock.getText()
@@ -158,6 +157,10 @@ def set_textblock_bounds(gtkimage, tblock):
     #
     # initial test layout ...
     #
+    try:
+        _text=unicode(_text)
+    except:
+        print "Debug Error on unicode conversione %s"%(str(_text))
     _layout = _da.create_pango_layout(_text)
     _fd = pango.FontDescription()
     _fd.set_family(_family)
@@ -197,6 +200,10 @@ def set_textblock_bounds(gtkimage, tblock):
         _fs = (_fs * _ph)/float(_h)
         # print "adjusted font size: %g" % (_fs)
         while True:
+            try:
+                _text=unicode(_text)
+            except:
+                print "Debug Error on unicode conversione %s"%(str(_text))
             _layout = _da.create_pango_layout(_text)
             _fd = pango.FontDescription()
             _fd.set_family(_family)

@@ -27,6 +27,7 @@ pygtk.require('2.0')
 import gtk
 import gtk.keysyms
 
+
 #from PythonCAD.Interface.Gtk.gtkimage import GTKImage
 
 from PythonCAD.Interface.Gtk import gtkprefs
@@ -272,6 +273,7 @@ def file_inport_cb(menuitem, gtkimage):
         try:
             exf=extFormat.ExtFormat(gtkimage)
             exf.openFile(_fname)
+            gtkimage.fitImage()
         except (IOError, OSError), e:
             _errmsg = "Error opening '%s' : %s'" % (_fname, e)
             gtkDialog._error_dialog(gtkimage, _errmsg)
@@ -280,8 +282,7 @@ def file_inport_cb(menuitem, gtkimage):
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
             gtkDialog._error_dialog(gtkimage, _errmsg)
             return
-
-
+        
 #----------------------------------------------------------------------------------------------
 def file_close_cb(menuitem, gtkimage):
     """

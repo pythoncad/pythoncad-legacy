@@ -22,7 +22,7 @@
 # This code is written by Yagnesh Desai
 #
 
-dxfDebug=True
+dxfDebug=False
 
 import os.path
 import math # added to handle arc start and end point defination
@@ -71,31 +71,55 @@ class DrawingFile(object):
         """
             Base Constructor
         """
-        print "Debug: DrawingFile constructor"
+        dPrint( "Debug: DrawingFile constructor")
         self.__fn=fileName
         self.__fb=None
+        self.__error=[]
+        self.__reading=False
+        self.__lineNumber=0
     def readAsci(self):
         """
             Read a generic file 
         """
-        print "Debug: Read asci File"
+        dPrint("Debug: Read asci File")
         self.__fb=open(self.__fn,'r')
+        self.__reading=True
+        
     def createAsci(self):
         """
             create the new file 
         """
         self.__fb=open(self.__fn,'w')
+        
     def fileObject(self):
         """
             Return the file opened 
         """
-        print "Debug: GetFileObject"
+        dPrint( "Debug: GetFileObject")
         if self.__fb is not None: 
-          print "Debug: Return file object"
+          dPrint( "Debug: Return file object")
           return self.__fb
         else: 
-          print "Debug: None"
+          dPrint( "Debug: None")
           return None
+    
+    def readLine(self):
+        """
+            read a line and return it
+        """
+        if self.__reading:
+            self.__lineNumber=+1
+            return self.__fb.readline()
+        else:
+            raise "Unable to perfor reading operation"
+        
+    def writeError(self,functionName,msg):
+        """
+            Add an Error to the Collection
+        """
+        _msg="Error on line %s function Name: %s Message %s"%(
+            str(self.__lineNumber),functionName,msg)
+        self.__error.append(_msg)
 
 class Dxf(DrawingFile):
     """
@@ -105,7 +129,7 @@ class Dxf(DrawingFile):
         """
             Default Constructor
         """
-        print "Debug: Dxf constructor"
+        dPrint( "Debug: Dxf constructor")
         DrawingFile.__init__(self,fileName)
         self.__gtkimage=gtkimage
         self.__image=gtkimage.getImage()
@@ -114,6 +138,7 @@ class Dxf(DrawingFile):
         _dxfLayer=Layer(_layerName)
         self.__image.addLayer(_dxfLayer)
         self.__dxfLayer=_dxfLayer 
+        
 
     def exportEntitis(self):
         """
@@ -153,78 +178,91 @@ class Dxf(DrawingFile):
         """
             Open The file and create The entity in pythonCad
         """
-        print "Debug: import entitys"
+        dPrint( "Debug: import entitys")
         self.readAsci();
-        fo=self.fileObject()
         while True:
-            k = fo.readline()
-            if not k: break
+            _k = self.readLine()
+            if not _k: break
             else:
-                print "Debug: Read Line line = [%s]"%str(k)
-                if k[0:4] == 'LINE':
-                    self.createLineFromDxf(fo)
-                if k[0:6] == 'CIRCLE':
-                    self.createCircleFromDxf(fo)
-                if k[0:5] == 'MTEXT':
-                    self.createTextFromDxf(fo)
-                if k[0:4] == 'TEXT':
-                    self.createTextFromDxf(fo)
-                if k[0:3] == 'ARC':
-                    self.createArcFromDxf(fo)
-                if k[0:10] == 'LWPOLYLINE':
-                    self.createPolylineFromDxf(fo)
-                if k[0:8] == 'POLYLINE':
-                    self.createPolylineFromDxf(fo)
-                if not k : break
+                dPrint( "Debug: Read Line line = [%s]"%str(_k))
+                if _k[0:4] == 'LINE':
+                    self.createLineFromDxf()
+                    continue
+                if _k[0:6] == 'CIRCLE':
+                    self.createCircleFromDxf()
+                    continue
+                if _k[0:5] == 'MTEXT':
+                    self.createTextFromDxf()
+                    continue
+                if _k[0:4] == 'TEXT':
+                    self.createTextFromDxf()
+                    continue
+                if _k[0:3] == 'ARC':
+                    self.createArcFromDxf()
+                    continue
+                if _k[0:10] == 'LWPOLYLINE':
+                    self.createPolylineFromDxf()
+                    continue
+                if _k[0:8] == 'POLYLINE':
+                    self.createPolylineFromDxf()
+                    continue
+                if not _k : break
+                else:
+                    self.writeError("importEntitis","Entity Not supported %s"%str(_k))
 
-    def createLineFromDxf(self,fo):
+    def createLineFromDxf(self):
         """
             read the line dxf section and create the line
         """
-        print "Debug createLineFromDxf" 
+        dPrint( "Debug createLineFromDxf" )
         x1 = None
         y1 = None
         x2 = None
         y2 = None
         g = 0 # start counter to read lines
         while g < 18:
-            line = fo.readline()
             #print "Debug g =", g
             #print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
-            k = line
+            _k = self.readLine()
             #print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
             """if g == 5:# this line contains color property
             we can get the color presently not implemented
             color=(float(k[0:-1]))"""
-            print "line value k=", k
-            if k[0:3] == ' 10':
-                print "debug 10", k
+            dPrint( "line value k="+_k)
+            if _k[0:3] == ' 10':
+                dPrint( "debug 10"+ _k)
                 # this line of file contains start point"X" co ordinate
                 #print "Debug: Convert To flot x1: %s" % str(k[0:-1])
-                k = fo.readline()
-                x1 = (float(k[0:-1]))
-            if k[0:3] == ' 20':# this line of file contains start point "Y" co ordinate
+                _k = self.readLine()
+                x1 = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 20':# this line of file contains start point "Y" co ordinate
                 #print "Debug: Convert To flot y1: %s" % str(k[0:-1])
-                k = fo.readline()
-                y1 = (float(k[0:-1]))
-            if k[0:3] == ' 30':# this line of file contains start point "Z" co ordinate
+                _k = self.readLine()
+                y1 = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 30':# this line of file contains start point "Z" co ordinate
                 #print "Debug: Convert To flot z1: %s" % str(k[0:-1])
-                k = fo.readline()
-                z1 = (float(k[0:-1])) 
+                _k = self.readLine()
+                z1 = (float(_k[0:-1])) 
+                continue
                 # Z co ordinates are not used in PythonCAD we can live without this line
-            if k[0:3] == ' 11':# this line of file contains End point "X" co ordinate
+            if _k[0:3] == ' 11':# this line of file contains End point "X" co ordinate
                 #print "Debug: Convert To flot x2: %s" % str(k[0:-1])
-                k = fo.readline()
-                x2 = (float(k[0:-1]))
-            if k[0:3] == ' 21':# this line of file contains End point "Y" co ordinate
+                _k = self.readLine()
+                x2 = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 21':# this line of file contains End point "Y" co ordinate
                 #print "Debug: Convert To flot y2: %s" % str(k[0:-1])
-                k = fo.readline()
-                y2 = (float(k[0:-1]))
-            if k[0:3] == ' 31':# this line of file contains End point "Z" co ordinate
+                _k = self.readLine()
+                y2 = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 31':# this line of file contains End point "Z" co ordinate
                 #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
-                k = fo.readline()
-                z2 = (float(k[0:-1]))
+                _k = self.readLine() 
+                z2 = (float(_k[0:-1]))
                 g = 30
+                continue
                 #Z co ordinates are not used in PythonCAD we can live without this line
                 'I need a "create segment code" here to append the segment to image'
             g+=1
@@ -241,7 +279,7 @@ class Dxf(DrawingFile):
           1) Create a new layer(ex: Dxf Import)
           2) Read dxf import style propertis and set it to the line
       """    
-      print "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) 
+      dPrint( "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) )
       _active_layer = self.__dxfLayer
       _p1 = Point(x1, y1)
       _active_layer.addObject(_p1)
@@ -260,27 +298,30 @@ class Dxf(DrawingFile):
           _seg.setThickness(_t)
       _active_layer.addObject(_seg)
     
-    def createCircleFromDxf(self,fo):
+    def createCircleFromDxf(self):
         """
             Read and create the Circle into drawing
         """
-        print "Debug createCircleFromDxf" 
+        dPrint( "Debug createCircleFromDxf" )
         g = 0 # reset g
         while g < 1:
-            k = fo.readline()
-            print "line value k=", k
-            if k[0:3] == ' 10':
-                k = fo.readline()
-                x = (float(k[0:-1]))
-            if k[0:3] == ' 20':
-                k = fo.readline()
-                y = (float(k[0:-1]))
-            if k[0:3] == ' 30':
-                k = fo.readline()
-                z = (float(k[0:-1]))
-            if k[0:3] == ' 40':
-                k = fo.readline()
-                r = (float(k[0:-1]))
+            _k = self.readLine()
+            dPrint( "line value k="+ _k)
+            if _k[0:3] == ' 10':
+                _k = self.readLine()
+                x = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 20':
+                _k = self.readLine()
+                y = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 30':
+                _k = self.readLine()
+                z = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 40':
+                _k = self.readLine()
+                r = (float(_k[0:-1]))
                 g = 10 # g > 1 for break
                 'I need a "create Circle code" here to append the segment to image'
         self.createCircle(x,y,r)
@@ -304,64 +345,74 @@ class Dxf(DrawingFile):
         if abs(_t - _s.getThickness()) > 1e-10:
             _circle.setThickness(_t)
         _active_layer.addObject(_circle)
-    def createTextFromDxf(self,fo):
+    def createTextFromDxf(self):
         """
             Read and create the Circle into drawing
         """
-        print "Debug createTextFromDxf" 
+        dPrint( "Debug createTextFromDxf" )
         g = 0 # reset g
         while g < 1:
-            k = fo.readline()
-            print "line value k=", k
-            if k[0:3] == ' 10':
-                k = fo.readline()
-                x = (float(k[0:-1]))
-                print "Text Loc x =", x
-            if k[0:3] == ' 20':
-                k = fo.readline()
-                y = (float(k[0:-1]))
-                print "Text Loc y =", y
-            if k[0:3] == ' 30':
-                k = fo.readline()
-                z = (float(k[0:-1]))
-                print "Text Loc z =", z
-            if k[0:3] == ' 40':
-                k = fo.readline()
-                h = (float(k[0:-1]))
-                print "Text Height =", h
-            if k[0:3] == '  1':
-                k = fo.readline()
-                t = k.replace('\~', ' ')
-                t = t.replace('\P', '\n')
-                print "Text itself is ", x, y, z, 'height', h, t
+            _k = self.readLine()
+            dPrint("line value k="+ _k)
+            if _k[0:3] == ' 10':
+                _k = self.readLine()
+                x = (float(_k[0:-1]))
+                #print "Text Loc x =", x
+                continue
+            if _k[0:3] == ' 20':
+                _k = self.readLine()
+                y = (float(_k[0:-1]))
+                #rint "Text Loc y =", y
+                continue
+            if _k[0:3] == ' 30':
+                _k = self.readLine()
+                z = (float(_k[0:-1]))
+                #print "Text Loc z =", z
+                continue
+            if _k[0:3] == ' 40':
+                _k = self.readLine()
+                h = (float(_k[0:-1]))
+                dPrint("Text Height =%s"%str(h))
+                continue
+            if _k[0:3] == '  1':
+                _k = self.readLine()
+                _t = _k.replace('\~', ' ')
+                _t = _t.replace('\P', '\n')
+                #print "Text itself is ", x, y, z, 'height', h, _t#
                 g = 10 # g > 1 for break
-        self.createText(x,y,h,t)
-    def createArcFromDxf(self,fo):
+                continue
+        self.createText(x,y,h,_t)
+    def createArcFromDxf(self):
         """
             Read and create the ARC into drawing
         """ 
         g = 0 # reset g
         while g < 1:
-            k = fo.readline()
-            if k[0:3] == ' 10':
-                k = fo.readline()
-                x = (float(k[0:-1]))
-            if k[0:3] == ' 20':
-                k = fo.readline()
-                y = (float(k[0:-1]))
-            if k[0:3] == ' 30':
-                k = fo.readline()
-                z = (float(k[0:-1]))
-            if k[0:3] == ' 40':
-                k = fo.readline()
-                r = (float(k[0:-1]))
-            if k[0:3] == ' 50':
-                k = fo.readline()
-                sa = (float(k[0:-1]))
-            if k[0:3] == ' 51':
-                k = fo.readline()
-                ea = (float(k[0:-1]))
+            _k = self.readLine()
+            if _k[0:3] == ' 10':
+                _k = self.readLine()
+                x = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 20':
+                _k = self.readLine()
+                y = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 30':
+                _k = self.readLine()
+                z = (float(_k[0:-1]))
+            if _k[0:3] == ' 40':
+                _k = self.readLine()
+                r = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 50':
+                _k = self.readLine()
+                sa = (float(_k[0:-1]))
+                continue
+            if _k[0:3] == ' 51':
+                _k = self.readLine()
+                ea = (float(_k[0:-1]))
                 g = 10 # g > 1 for break\\
+                continue
         self.createArc(x,y,sa,ea,r)
 
     def createArc(self,x,y,sa,ea,r):
@@ -398,19 +449,27 @@ class Dxf(DrawingFile):
             Create a Text entitys into the current drawing
         """
         _active_layer = self.__dxfLayer
-        _text = t
+        try:
+            _text = unicode(str(t))
+        except:
+            self.writeError("createText","Debug Error Converting in unicode [%s]"%t)
+            _text = str(t)
         _x, _y = x, y
         _ts = self.__image.getOption('TEXT_STYLE')
         _tb = TextBlock(_x, _y, _text, _ts)
+
         _f = self.__image.getOption('FONT_FAMILY')
         if _f != _ts.getFamily():
             _tb.setFamily(_f)
+
         _s = self.__image.getOption('FONT_STYLE')
         if _s != _ts.getStyle():
             _tb.setStyle(_s)
+
         _w = self.__image.getOption('FONT_WEIGHT')
         if _w != _ts.getWeight():
             _tb.setWeight(_w)
+            
         _c = self.__image.getOption('FONT_COLOR')
         if _c != _ts.getColor():
             _tb.setColor(_c)
@@ -425,33 +484,34 @@ class Dxf(DrawingFile):
             _tb.setAlignment(_al)
         _active_layer.addObject(_tb)
 
-    def createPolylineFromDxf(self,fo):
+    def createPolylineFromDxf(self):
         """
         Polyline creation read the line dxf section and create the line
         """
         dPrint("Exec createPolylineFromDxf")
         while True:
-            k = fo.readline()                        
-            if k[0:3] == ' 10':
+            _k = self.readLine()                  
+            if _k[0:3] == ' 10':
                 break
         points=[]
         p = ()
         while True:
             # this line of file contains start point"X" co ordinate
             # print "Debug: Convert To flot x1: %s" % str(k[0:-1])
-            k = fo.readline()
-            x = (float(k[0:-1]))
-            k = fo.readline()#pass for k[0:3] == ' 20'
-            k = fo.readline()
-            y = (float(k[0:-1]))
+            _k = self.readLine()
+            x = (float(_k[0:-1]))
+            _k = self.readLine()#pass for k[0:3] == ' 20'
+            _k = self.readLine()
+            y = (float(_k[0:-1]))
             p = (x,y)
             points.append(p)
             dPrint( str(points))
-            k = fo.readline()
-            if k[0:3] == ' 30':
-                k = fo.readline()
-                z1 = (float(k[0:-1]))
-            elif k[0:3] != ' 10':
+            _k = self.readLine()
+            if _k[0:3] == ' 30':
+                _k = self.readLine()
+                z1 = (float(_k[0:-1]))
+                continue
+            elif _k[0:3] != ' 10':
                 break
         if len(points)>1:
             self.createPolyline(points)
@@ -466,8 +526,8 @@ class Dxf(DrawingFile):
         _y = 0.0
         _pts = []
         for _x, _y in points:
-            print _x
-            print _y
+            dPrint(_x)
+            dPrint(_y)
             _p = Point(_x, _y)
             _active_layer.addObject(_p)
             _pts.append(_p)
@@ -486,6 +546,7 @@ class Dxf(DrawingFile):
         _active_layer.addObject(_pline)
 
 
+    
 def dPrint(msg):
     """
         Debug function for the dxf file
