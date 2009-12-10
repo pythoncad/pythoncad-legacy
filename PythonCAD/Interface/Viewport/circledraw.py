@@ -38,9 +38,6 @@ from PythonCAD.Generic.point import Point
 #----------------------------------------------------------------------------------------------------
 def _draw_circle(self, viewport, col=None):
     print "_draw_circle()"
-    # display quality (higher value = better circle draw) 
-    stroke_value = 5
-    #
     color = col
     if color is not None and not isinstance(color, color.Color):
         raise TypeError, "Invalid Color: " + `type(color)`
@@ -52,28 +49,10 @@ def _draw_circle(self, viewport, col=None):
     linestyle = self.getLinetype().getList()
     # centerpoint of the circle
     center = self.getCenter()
-    x, y = center.getCoords()
     # circle radius
     radius = self.getRadius()
-    size = viewport.WorldToViewportSize(radius)
-    if size < 10:
-        size = 10
-    increment_angle = stroke_value * pi / size
-    # start angle
-    angle = 0.0
-    # pointlist
-    points = []
-    # calculate points
-    while angle < pi2:
-        x1 = x + radius * cos(angle)
-        y1 = y + radius * sin(angle)
-        points.append(Point(x1, y1))
-        # next angle
-        angle += increment_angle
-    # add close point
-    points.append(points[0])
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)    
+    # do the actual draw of the arc
+    viewport.draw_arc(color, lineweight, linestyle, center, radius, 0.0, 360.0)    
 
 #----------------------------------------------------------------------------------------------------
 def _erase_circle(self, viewport):

@@ -37,9 +37,6 @@ from PythonCAD.Generic.point import Point
 #----------------------------------------------------------------------------------------------------
 def _draw_arc(self, viewport, col=None):
     print "_draw_arc()"
-    # display quality (higher value = better circle draw)
-    stroke_value = 5
-    #
     color = col
     if color is not None and not isinstance(color, color.Color):
         raise TypeError, "Invalid Color: " + `type(color)`
@@ -51,78 +48,13 @@ def _draw_arc(self, viewport, col=None):
     linestyle = self.getLinetype().getList()
     # centerpoint of the circle
     center = self.getCenter()
-    x, y = center.getCoords()
     # circle radius
     radius = self.getRadius()
-#    size = viewport.WorldToViewportSize(radius)
-#    if size < 10:
-#        size = 10
-#    increment_angle = stroke_value * pi / size
     # start and end angle
     start = self.getStartAngle()
     end = self.getEndAngle()
     # do the actual draw of the arc
     viewport.draw_arc(color, lineweight, linestyle, center, radius, start, end)
-#    # pointlist
-#    points = []
-#    # calculate points
-#    while startangle < endangle:
-#        x1 = x + radius * cos(startangle)
-#        y1 = y + radius * sin(startangle)
-#        points.append(Point(x1, y1))
-#        # next angle
-#        startangle += increment_angle
-#    # add close point
-#    #points.append(points[0])
-#    # do the actual draw of the linestring
-#    viewport.draw_linestring(color, lineweight, linestyle, points)
-#
-#
-#
-#
-#
-#
-#    if not isinstance(gimage, gtkimage.GTKImage):
-#        raise TypeError, "Invalid GTKImage: " + `type(gimage)`
-#    _col = col
-#    if _col is not None and not isinstance(_col, color.Color):
-#        raise TypeError, "Invalid Color: " + `type(_col)`
-#    _layer = self.getParent()
-#    if _layer is None:
-#        raise RuntimeError, "No parent Layer for Arc"
-#    _cp = self.getCenter()
-#    _x, _y = _cp.getCoords()
-#    _r = self.getRadius()
-#    _sa = self.getStartAngle()
-#    _ea = self.getEndAngle()
-#    _px, _py = gimage.coordToPixTransform(_x, _y)
-#    _rx, _ry = gimage.coordToPixTransform((_x + _r), _y)
-#    _rad = _rx - _px
-#    if _col is None:
-#        _col = self.getColor()
-#    _dlist = self.getLinetype().getList()
-#    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
-#    _ctx = gimage.getCairoContext()
-#    if _ctx is not None:
-#        _ctx.save()
-#        _r, _g, _b = _col.getColors()
-#        _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-#        if _dlist is not None:
-#            _ctx.set_dash(_dlist)
-#        _ctx.set_line_width(_lw)
-#        _rsa = _sa * _dtr
-#        _rea = _ea * _dtr
-#        #
-#        # arc drawing relies on Cairo transformations
-#        #
-#        _ctx.scale(1.0, -1.0)
-#        _ctx.translate(_px, -(_py))
-#        if abs(_sa - _ea) < 1e-10:
-#            _ctx.arc(0, 0, _rad, _rsa, (_rsa + (2.0 * pi)))
-#        else:
-#            _ctx.arc(0, 0, _rad, _rsa, _rea)
-#        _ctx.stroke()
-#        _ctx.restore()
 
 #----------------------------------------------------------------------------------------------------
 def _erase_arc(self, viewport):

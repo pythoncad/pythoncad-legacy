@@ -30,91 +30,39 @@ import gtk
 import pango
 
 from PythonCAD.Generic import color
-#from PythonCAD.Generic import point
-#from PythonCAD.Generic import segment
-#from PythonCAD.Generic import circle
-#from PythonCAD.Generic import arc
-#from PythonCAD.Generic import leader
-#from PythonCAD.Generic import polyline
-#from PythonCAD.Generic import segjoint
-#from PythonCAD.Generic import conobject
-#from PythonCAD.Generic import hcline
-#from PythonCAD.Generic import vcline
-#from PythonCAD.Generic import acline
-#from PythonCAD.Generic import cline
-#from PythonCAD.Generic import ccircle
-#from PythonCAD.Generic import text
-#from PythonCAD.Generic import dimension
-#from PythonCAD.Generic import layer
-#
-#from PythonCAD.Interface.Gtk import gtkimage
+from PythonCAD.Generic.point import Point
 
 
 #----------------------------------------------------------------------------------------------------
-def _draw_fillet(self, gimage, col=None):
-    if not isinstance(gimage, gtkimage.GTKImage):
-        raise TypeError, "Invalid GTKImage: " + `type(gimage)`
-    _col = col
-    if _col is not None and not isinstance(_col, color.Color):
-        raise TypeError, "Invalid Color: " + `type(_col)`
-    if _col is None:
-        _col = self.getColor()
-    _cx, _cy = self.getCenter()
-    _pcx, _pcy = gimage.coordToPixTransform(_cx, _cy)
-    _p1, _p2 = self.getMovingPoints()
-    _p1x, _p1y = gimage.coordToPixTransform(_p1.x, _p1.y)
-    _p2x, _p2y = gimage.coordToPixTransform(_p2.x, _p2.y)
-    _r = self.getRadius()
-    _rx, _ry = gimage.coordToPixTransform((_cx + _r), _cy)
-    _pr = _rx - _pcx
-    _sa1, _sa2 = self.getAngles()
-    _amin = min(_sa1, _sa2)
-    _amax = max(_sa1, _sa2)
-    if _amax - _amin > 180.0:
-        _a1 = _amax
-        _a2 = _amin
+def _draw_fillet(self, viewport, col=None):
+    print "_draw_fillet()"
+    color = col
+    # is color defined
+    if color is not None and not isinstance(color, color.Color):
+        raise TypeError, "Invalid Color: " + `type(color)`
+    # if color is not defined, take color of entity
+    if color is None:
+        color = self.getColor()
+    # display properties
+    lineweight = self.getThickness()
+    linestyle = self.getLinetype().getList()
+    # centerpoint of the circle
+    center = self.getCenter()
+    x, y = center.getCoords()
+    # circle radius
+    radius = self.getRadius()
+    # start and end angle
+    start, end = self.getAngles()
+    angle_min = min(start, end)
+    angle_max = max(start, end)
+    if angle_max - angle_min > 180.0:
+        # do the actual draw of the arc
+        viewport.draw_arc(color, lineweight, linestyle, center, radius, angle_max, angle_min)        
     else:
-        _a1 = _amin
-        _a2 = _amax
-    # print "a1: %g" % _a1
-    # print "a2: %g" % _a2
-    _dlist = self.getLinetype().getList()
-    _lw = self.getThickness()#/gimage.getUnitsPerPixel()
-    _ctx = gimage.getCairoContext()
-    if _ctx is not None:
-        _ctx.save()
-        _r, _g, _b = _col.getColors()
-        _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        if _dlist is not None:
-            _ctx.set_dash(_dlist)
-        _ctx.set_line_width(_lw)
-        _ra1 = _a1 * _dtr
-        _ra2 = _a2 * _dtr
-        #
-        # arc drawing relies on Cairo transformations
-        #
-        _ctx.scale(1.0, -1.0)
-        _ctx.translate(_pcx, -(_pcy))
-        _ctx.arc(0, 0, _pr, _ra1, _ra2)
-        _ctx.stroke()
-        _ctx.restore()
-    else:
-        _gc = gimage.getGC()
-        _set_gc_values(_gc, _dlist, gimage.getColor(_col), _lw)        
-        _pxmin = _pcx - _pr
-        _pymin = _pcy - _pr
-        _cw = _ch = _pr * 2
-        if _a1 > _a2:
-            _sweep = 360.0 - (_a1 - _a2)
-        else:
-            _sweep = _a2 - _a1
-        gimage.getPixmap().draw_arc(_gc, False,
-                                    _pxmin, _pymin,
-                                    _cw, _ch,
-                                    int(round(_a1 * 64)),
-                                    int(round(_sweep * 64)))
-
+        # do the actual draw of the arc
+        viewport.draw_arc(color, lineweight, linestyle, center, radius, angle_min, angle_max)        
+   
 #----------------------------------------------------------------------------------------------------
-def _erase_fillet(self, gimage):
-    self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
+def _erase_fillet(self, viewport):
+    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
 

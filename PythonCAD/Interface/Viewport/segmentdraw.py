@@ -56,6 +56,5 @@ def _draw_segment(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_segment(self, viewport):
-    print "_erase_segment()"
     self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
 

@@ -20,9 +20,6 @@
 # code for adding graphical methods to drawing entities
 #
 
-import types
-from math import pi
-_dtr = (pi/180.0)
 
 import pygtk
 pygtk.require('2.0')
@@ -30,110 +27,83 @@ import gtk
 import pango
 
 from PythonCAD.Generic import color
-#from PythonCAD.Generic import point
-#from PythonCAD.Generic import segment
-#from PythonCAD.Generic import circle
-#from PythonCAD.Generic import arc
-#from PythonCAD.Generic import leader
-#from PythonCAD.Generic import polyline
-#from PythonCAD.Generic import segjoint
-#from PythonCAD.Generic import conobject
-#from PythonCAD.Generic import hcline
-#from PythonCAD.Generic import vcline
-#from PythonCAD.Generic import acline
-#from PythonCAD.Generic import cline
-#from PythonCAD.Generic import ccircle
-#from PythonCAD.Generic import text
-#from PythonCAD.Generic import dimension
-#from PythonCAD.Generic import layer
-#
-#from PythonCAD.Interface.Gtk import gtkimage
-
+from PythonCAD.Generic import text
 
 
 #----------------------------------------------------------------------------------------------------
-def _format_layout(self, gimage, layout):
-    _fd = pango.FontDescription()
-    _fd.set_family(self.getFamily())
-    _val = self.getStyle()
-    if _val == text.TextStyle.FONT_NORMAL:
-        _style = pango.STYLE_NORMAL
-    elif _val == text.TextStyle.FONT_OBLIQUE:
-        _style = pango.STYLE_OBLIQUE
-    elif _val == text.TextStyle.FONT_ITALIC:
-        _style = pango.STYLE_ITALIC
+def _format_layout(self, viewport, layout):
+    font_descr = pango.FontDescription()
+    font_descr.set_family(self.getFamily())
+    # font style
+    font_style = self.getStyle()
+    if font_style == text.TextStyle.FONT_NORMAL:
+        pango_style = pango.STYLE_NORMAL
+    elif font_style == text.TextStyle.FONT_OBLIQUE:
+        pango_style = pango.STYLE_OBLIQUE
+    elif font_style == text.TextStyle.FONT_ITALIC:
+        pango_style = pango.STYLE_ITALIC
     else:
-        raise ValueError, "Unexpected TextBlock font style: %d" % _val
-    _fd.set_style(_style)
-    _val = self.getWeight()
-    if _val == text.TextStyle.WEIGHT_NORMAL:
-        _weight = pango.WEIGHT_NORMAL
-    elif _val == text.TextStyle.WEIGHT_LIGHT:
-        _weight = pango.WEIGHT_LIGHT
-    elif _val == text.TextStyle.WEIGHT_BOLD:
-        _weight = pango.WEIGHT_BOLD
-    elif _val == text.TextStyle.WEIGHT_HEAVY:
-        _weight = pango.WEIGHT_HEAVY
+        raise ValueError, "Unexpected TextBlock font style: %d" % font_style
+    # set font style
+    font_descr.set_style(pango_style)
+    # font weight
+    font_weight = self.getWeight()
+    if font_weight == text.TextStyle.WEIGHT_NORMAL:
+        pango_weight = pango.WEIGHT_NORMAL
+    elif font_weight == text.TextStyle.WEIGHT_LIGHT:
+        pango_weight = pango.WEIGHT_LIGHT
+    elif font_weight == text.TextStyle.WEIGHT_BOLD:
+        pango_weight = pango.WEIGHT_BOLD
+    elif font_weight == text.TextStyle.WEIGHT_HEAVY:
+        pango_weight = pango.WEIGHT_HEAVY
     else:
-        raise ValueError, "Unexpected TextBlock font weight: %d" % _val
-    _fd.set_weight(_weight)
-    _upp = gimage.getUnitsPerPixel()
-    _sz = int(pango.SCALE * (self.getSize()/_upp))
-    if _sz < pango.SCALE:
-        _sz = pango.SCALE
-    # print "pango units text size: %d" % _sz        
-    _fd.set_size(_sz)
+        raise ValueError, "Unexpected TextBlock font weight: %d" % font_weight
+    # set font weight
+    font_descr.set_weight(pango_weight)
+    
+    font_size = viewport.WorldToViewportSize(self.getSize())
+    pango_size = int(pango.SCALE * font_size)
+    if pango_size < pango.SCALE:
+        pango_size = pango.SCALE
+    # set font size      
+    font_descr.set_size(pango_size)
     #
     # todo: handle drawing rotated text
     #
-    _align = self.getAlignment()
-    if _align == text.TextStyle.ALIGN_LEFT:
+    font_alignment = self.getAlignment()
+    if font_alignment == text.TextStyle.ALIGN_LEFT:
         layout.set_alignment(pango.ALIGN_LEFT)
-    elif _align == text.TextStyle.ALIGN_CENTER:
+    elif font_alignment == text.TextStyle.ALIGN_CENTER:
         layout.set_alignment(pango.ALIGN_CENTER)
-    elif _align == text.TextStyle.ALIGN_RIGHT:
+    elif font_alignment == text.TextStyle.ALIGN_RIGHT:
         layout.set_alignment(pango.ALIGN_RIGHT)
     else:
-        raise ValueError, "Unexpected TextBlock alignment value: %d" % _align
-    layout.set_font_description(_fd)
+        raise ValueError, "Unexpected TextBlock alignment value: %d" % font_alignment
+    # set font alignment
+    layout.set_font_description(font_descr)
     if self.getLineCount() > 0:
-        _w, _h = layout.get_pixel_size()
-        self.setBounds((_w * _upp), (_h * _upp))
-
+        width, height = layout.get_pixel_size()
+        self.setBounds(viewport.ViewportToWorldSize(width), viewport.ViewportToWorldSize(height))
         
 #----------------------------------------------------------------------------------------------------
-def _draw_textblock(self, gimage, col=None):
-    if not isinstance(gimage, gtkimage.GTKImage):
-        raise TypeError, "Invalid GTKImage: " + `type(gimage)`
-    _col = col
-    if _col is not None and not isinstance(_col, color.Color):
-        raise TypeError, "Invalid Color: " + `type(_col)`
-    _text = self.getText()
-    _ctx = gimage.getCairoContext()
-    if _ctx is not None:
-        _layout = _ctx.create_layout()
-        _layout.set_text(_text)
-    else:
-        _layout = gimage.getDA().create_pango_layout(_text)
-    self._formatLayout(gimage, _layout)
-    _x, _y = self.getLocation()
-    _px, _py = gimage.coordToPixTransform(_x, _y)
-    if _col is None:
-        _col = self.getColor()
-    if _ctx is not None:
-        _ctx.save()
-        _r, _g, _b = _col.getColors()
-        _ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        _ctx.move_to(_px, _py)
-        _ctx.show_layout(_layout)
-        _ctx.restore()
-    else:
-        _gc = gimage.getGC()        
-        _gc.set_foreground(gimage.getColor(_col))
-        _gc.set_function(gtk.gdk.COPY)
-        gimage.getPixmap().draw_layout(_gc, _px, _py, _layout)
-    _layout = None
+def _draw_textblock(self, viewport, col=None):
+    color = col
+    # is color defined
+    if color is not None and not isinstance(color, color.Color):
+        raise TypeError, "Invalid Color: " + `type(color)`
+    # if color is not defined, take color of entity
+    if color is None:
+        color = self.getColor()
+    # create layout
+    layout = viewport.cairo_context.create_layout()
+    layout.set_text(self.getText())            
+    # do the formatting
+    self._formatLayout(viewport, layout)
+    # get the text location
+    location = self.getLocation()
+    # do the actual draw of the text
+    viewport.draw_text(color, location, layout)
     
 #----------------------------------------------------------------------------------------------------
-def _erase_textblock(self, gimage):
-    self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
+def _erase_textblock(self, viewport):
+    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))

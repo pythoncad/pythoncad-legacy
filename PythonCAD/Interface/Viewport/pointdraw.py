@@ -66,7 +66,7 @@ def _draw_point(self, viewport, col=None):
     # transformation to viewport coordinates
     px, py = viewport.WorldToViewport(x, y)
     # cairo context
-    ctx = viewport.CairoContext
+    ctx = viewport.cairo_context
     if ctx is not None:
         # draw the point itself
         ctx.save()
@@ -116,7 +116,7 @@ def _erase_point(self, viewport):
     color = viewport.Image.getOption('BACKGROUND_COLOR')
     
     # cairo context
-    ctx = viewport.CairoContext    
+    ctx = viewport.cairo_context    
     if ctx is not None:
         # erase the point itself
         ctx.save()
