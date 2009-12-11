@@ -35,7 +35,6 @@ from PythonCAD.Generic.point import Point
     
 #----------------------------------------------------------------------------------------------------
 def _draw_cline(self, viewport, col=None):
-    print "_draw_cline()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):

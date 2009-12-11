@@ -51,7 +51,7 @@ def _draw_ccircle(self, viewport, col=None):
     # circle radius
     radius = self.getRadius()
     # do the actual draw of the arc
-    viewport.draw_arc(color, lineweight, linestyle, center, radius, 0.0, 360.0)
+    viewport.draw_circle(color, lineweight, linestyle, center, radius)
 
 #----------------------------------------------------------------------------------------------------
 def _erase_ccircle(self, viewport):

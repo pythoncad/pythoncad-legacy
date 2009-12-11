@@ -20,10 +20,6 @@
 # code for adding graphical methods to drawing entities
 #
 
-import types
-from math import pi
-_dtr = (pi/180.0)
-
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -48,41 +44,6 @@ def _draw_polyline(self, viewport, col=None):
     points = self.getPoints()
     # do the actual draw of the linestring
     viewport.draw_linestring(color, lineweight, linestyle, points)    
-    
-    
-    
-    #if not isinstance(gimage, gtkimage.GTKImage):
-        #raise TypeError, "Invalid GTKImage: " + `type(gimage)`
-    #_col = col
-    #if _col is not None and not isinstance(_col, color.Color):
-        #raise TypeError, "Invalid Color: " + `type(_col)`
-    #_pts = []
-    #for _pt in self.getPoints():
-        #_x, _y = _pt.getCoords()
-        #_px, _py = gimage.coordToPixTransform(_x, _y)
-        #_pts.append((_px, _py))
-    #if _col is None:
-        #_col = self.getColor()
-    #_dlist = self.getLinetype().getList()
-    #_lw = self.getThickness()#/gimage.getUnitsPerPixel()
-    #_ctx = gimage.getCairoContext()
-    #if _ctx is not None:
-        #_ctx.save()
-        #_r, _g, _b = _col.getColors()
-        #_ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        #if _dlist is not None:
-            #_ctx.set_dash(_dlist)
-        #_ctx.set_line_width(_lw)
-        #_px, _py = _pts[0]
-        #_ctx.move_to(_px, _py)
-        #for _px, _py in _pts[1:]:
-            #_ctx.line_to(_px, _py)
-        #_ctx.stroke()
-        #_ctx.restore()
-    #else:
-        #_gc = gimage.getGC()
-        #_set_gc_values(_gc, _dlist, gimage.getColor(_col), _lw)
-        #gimage.getPixmap().draw_lines(_gc, _pts)
 
 #----------------------------------------------------------------------------------------------------
 def _erase_polyline(self, viewport):

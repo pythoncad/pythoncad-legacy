@@ -54,7 +54,6 @@ _point_color = color.Color(255, 255, 255) # white
 
 #----------------------------------------------------------------------------------------------------
 def _draw_point(self, viewport, col=None):
-    print "_draw_point()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):
@@ -103,7 +102,6 @@ def _draw_point(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_point(self, viewport):
-    print "_erase_point()"
     # point coordinates
     x, y = self.getCoords()
     # transformation to viewport coordinates

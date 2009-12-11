@@ -36,7 +36,6 @@ from PythonCAD.Generic.point import Point
 
 #----------------------------------------------------------------------------------------------------
 def _draw_arc(self, viewport, col=None):
-    print "_draw_arc()"
     color = col
     if color is not None and not isinstance(color, color.Color):
         raise TypeError, "Invalid Color: " + `type(color)`
