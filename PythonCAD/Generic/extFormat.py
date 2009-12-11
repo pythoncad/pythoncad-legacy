@@ -27,6 +27,8 @@ dxfDebug=False
 import os.path
 import math # added to handle arc start and end point defination
 import re # added to handle Mtext
+
+
 from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.segment import Segment
 from PythonCAD.Generic.circle import Circle
@@ -35,6 +37,7 @@ from PythonCAD.Generic.polyline import Polyline
 from PythonCAD.Generic.layer import Layer
 from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 from PythonCAD.Generic.text import *
+from PythonCAD.Generic import util
 
 class ExtFormat(object):
     """
@@ -474,10 +477,10 @@ class Dxf(DrawingFile):
         """
         _active_layer = self.__dxfLayer
         try:
-            _text = unicode(str(t))
+            _text = t.replace('\x00', '').decode('utf8', 'ignore').encode('utf8')
         except:
             self.writeError("createText","Debug Error Converting in unicode [%s]"%t)
-            _text = str(t)
+            _text ='Unable to convert in unicode'
         _x, _y = x, y
         _ts = self.__image.getOption('TEXT_STYLE')
         _tb = TextBlock(_x, _y, _text, _ts)

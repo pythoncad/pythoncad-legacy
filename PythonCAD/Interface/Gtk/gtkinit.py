@@ -46,6 +46,7 @@ from PythonCAD.Generic import ccircle
 from PythonCAD.Generic import text
 from PythonCAD.Generic import dimension
 from PythonCAD.Generic import layer
+from PythonCAD.Generic import util
 
 from PythonCAD.Interface.Gtk import gtkimage
 
@@ -731,7 +732,11 @@ def _draw_textblock(self, gimage, col=None):
     _col = col
     if _col is not None and not isinstance(_col, color.Color):
         raise TypeError, "Invalid Color: " + `type(_col)`
-    _text = self.getText()
+    try:
+        _text=util.to_unicode(self.getText())
+    except:
+        print "Debug: Unable to unicode %s"%str(self.getText())
+        _text='Error on converting in unicode'
     _ctx = gimage.getCairoContext()
     if _ctx is not None:
         _layout = _ctx.create_layout()

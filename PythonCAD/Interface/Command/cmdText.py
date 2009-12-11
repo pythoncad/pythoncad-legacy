@@ -34,6 +34,7 @@ from PythonCAD.Generic import snap
 from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+from PythonCAD.Generic import util
 #
 # Init
 #
@@ -158,9 +159,10 @@ def set_textblock_bounds(gtkimage, tblock):
     # initial test layout ...
     #
     try:
-        _text=unicode(_text)
+        _text=util.to_unicode(_text)
     except:
-        _text=str(_text)
+        print "Debug: Unable to unicode %s"%str(_text)
+        _text="Error on converting in unicode"
     _layout = _da.create_pango_layout(_text)
     _fd = pango.FontDescription()
     _fd.set_family(_family)
@@ -201,9 +203,10 @@ def set_textblock_bounds(gtkimage, tblock):
         # print "adjusted font size: %g" % (_fs)
         while True:
             try:
-                _text=unicode(_text)
+                _text=util.to_unicode(_text)
             except:
-                _text=str(_text)
+                print "Debug: Unable to unicode %s"%str(_text)
+                _text='Error on converting in unicode'
             _layout = _da.create_pango_layout(_text)
             _fd = pango.FontDescription()
             _fd.set_family(_family)

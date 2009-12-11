@@ -139,8 +139,18 @@ def reportDialog(gtkimage,title,strArray):
     _dialog.vbox.pack_start(_sw, True, True, 0)
     _dialog.show_all()
     for _s in strArray:
+        try:
+            _s=util.to_unicode(_s)
+        except:
+            _out=''
+            for _ss in _s:
+                try:
+                    util.to_unicode(_ss)
+                except:
+                    continue
+                _out=_out+_ss
+            _s=_out + ' Unicoding error !!'
         _tb.insert_at_cursor(_s)
     _response = _dialog.run()
     
     _dialog.destroy()
-    

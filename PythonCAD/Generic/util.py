@@ -264,3 +264,13 @@ in_region(x1, y1, x2, y2, xmin, ymin, xmax, ymax)
         if 0.0 < _r < 1.0:
             return True
     return False
+
+def to_unicode(obj, encoding='utf-8'):
+    """
+        Transform a string in a different format Default utf-8
+    """
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding)
+        return obj
+    raise TypeError, "Invalid object type : " + `type(obj)`
