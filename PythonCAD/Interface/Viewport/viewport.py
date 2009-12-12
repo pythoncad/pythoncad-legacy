@@ -20,6 +20,7 @@
 #
 #
 
+import math
 import types
 import pygtk
 pygtk.require('2.0')
@@ -50,6 +51,7 @@ from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic.color import Color
 from PythonCAD.Generic.conobject import ConstructionObject
 
+
 # draw imports
 from PythonCAD.Interface.Viewport.aclinedraw import _draw_acline, _erase_acline
 from PythonCAD.Interface.Viewport.arcdraw import _draw_arc, _erase_arc
@@ -57,7 +59,7 @@ from PythonCAD.Interface.Viewport.circledraw import _draw_circle,_erase_circle
 from PythonCAD.Interface.Viewport.ccircledraw import _draw_ccircle,_erase_ccircle
 from PythonCAD.Interface.Viewport.chamferdraw import _draw_chamfer, _erase_chamfer
 from PythonCAD.Interface.Viewport.clinedraw import _draw_cline, _erase_cline
-from PythonCAD.Interface.Viewport.dimdraw import _draw_ldim, _draw_rdim, _draw_adim, _draw_dimstrings, _erase_dim
+from PythonCAD.Interface.Viewport.dimdraw import _draw_ldim, _draw_rdim, _draw_adim, _draw_markers, _draw_dimstrings, _erase_dim
 from PythonCAD.Interface.Viewport.filletdraw import _draw_fillet, _erase_fillet
 from PythonCAD.Interface.Viewport.hclinedraw import _draw_hcline, _erase_hcline
 from PythonCAD.Interface.Viewport.leaderdraw import _draw_leader, _erase_leader
@@ -66,6 +68,8 @@ from PythonCAD.Interface.Viewport.polylinedraw import _draw_polyline, _erase_pol
 from PythonCAD.Interface.Viewport.segmentdraw import _draw_segment, _erase_segment
 from PythonCAD.Interface.Viewport.textblockdraw import _draw_textblock, _erase_textblock, _format_layout
 from PythonCAD.Interface.Viewport.vclinedraw import _draw_vcline, _erase_vcline
+
+
 
 
 
@@ -107,6 +111,10 @@ class IViewport(gtk.DrawingArea):
         # cairo scale factors
         self.__sx = 1.0
         self.__sy = 1.0
+        # 2pi
+        self.__2pi = 2.0 * math.pi
+        # angle deg => rad
+        self.__deg2rad = math.pi / 180.0
         # initialize entity drawing methods
         self.__init_draw_methods()
 
@@ -142,58 +150,80 @@ class IViewport(gtk.DrawingArea):
         """
         Add draw methods to the entity classes
         """
+        # point draw
         _class = point.Point
         _class.draw = types.MethodType(_draw_point, None, _class)
         _class.erase = types.MethodType(_erase_point, None, _class)
+        # segment draw
         _class = segment.Segment
         _class.draw = types.MethodType(_draw_segment, None, _class)
         _class.erase = types.MethodType(_erase_segment, None, _class)
+        # circle draw
         _class = circle.Circle
         _class.draw = types.MethodType(_draw_circle, None, _class)
         _class.erase = types.MethodType(_erase_circle, None, _class)
+        # arc draw
         _class = arc.Arc
         _class.draw = types.MethodType(_draw_arc, None, _class)
         _class.erase = types.MethodType(_erase_arc, None, _class)
+        # leader draw
         _class = leader.Leader
         _class.draw = types.MethodType(_draw_leader, None, _class)
         _class.erase = types.MethodType(_erase_leader, None, _class)
+        # polyline draw
         _class = polyline.Polyline
         _class.draw = types.MethodType(_draw_polyline, None, _class)
         _class.erase = types.MethodType(_erase_polyline, None, _class)
+        # chamfer draw
         _class = segjoint.Chamfer
         _class.draw = types.MethodType(_draw_chamfer, None, _class)
         _class.erase = types.MethodType(_erase_chamfer, None, _class)
+        # fillet draw
         _class = segjoint.Fillet
         _class.draw = types.MethodType(_draw_fillet, None, _class)
         _class.erase = types.MethodType(_erase_fillet, None, _class)
+        # hcline draw
         _class = hcline.HCLine
         _class.draw = types.MethodType(_draw_hcline, None, _class)
         _class.erase = types.MethodType(_erase_hcline, None, _class)
+        # vcline draw
         _class = vcline.VCLine
         _class.draw = types.MethodType(_draw_vcline, None, _class)
         _class.erase = types.MethodType(_erase_vcline, None, _class)
+        # acline draw
         _class = acline.ACLine
         _class.draw = types.MethodType(_draw_acline, None, _class)
         _class.erase = types.MethodType(_erase_acline, None, _class)
+        # cline draw
         _class = cline.CLine
         _class.draw = types.MethodType(_draw_cline, None, _class)
         _class.erase = types.MethodType(_erase_cline, None, _class)
+        # ccircle draw
         _class = ccircle.CCircle
         _class.draw = types.MethodType(_draw_ccircle, None, _class)
         _class.erase = types.MethodType(_erase_ccircle, None, _class)
+        # text draw
         _class = text.TextBlock
         _class._formatLayout = types.MethodType(_format_layout, None, _class)
         _class.draw = types.MethodType(_draw_textblock, None, _class)
         _class.erase = types.MethodType(_erase_textblock, None, _class)
+        # linear dimension draw
         _class = dimension.LinearDimension
         _class.draw = types.MethodType(_draw_ldim, None, _class)
+        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+        # radial dimension draw
         _class = dimension.RadialDimension
         _class.draw = types.MethodType(_draw_rdim, None, _class)
+        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+        # angular dimension draw
         _class = dimension.AngularDimension
         _class.draw = types.MethodType(_draw_adim, None, _class)
+        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+        # dimension draw
         _class = dimension.Dimension
         _class.erase = types.MethodType(_erase_dim, None, _class)
         _class._drawDimStrings = types.MethodType(_draw_dimstrings, None, _class)
+        
 #        _class = layer.Layer
 #        _class.draw = types.MethodType(_draw_layer, None, _class)
 #        _class.erase = types.MethodType(_erase_layer, None, _class)
@@ -322,21 +352,22 @@ class IViewport(gtk.DrawingArea):
         # viewport width and height
         self.__vwidth = self.__vxmax - self.__vxmin
         self.__vheight = self.__vymax - self.__vymin
-        # world width and height
-        self.__wwidth = self.__wxmax - self.__wxmin
-        self.__wheight = self.__wymax - self.__wymin
-        print "World (w, h):", self.__wwidth, self.__wheight
-        print "View (w, h):", self.__vwidth, self.__vheight
-        # translation
-        self.__dx = self.__wxmin
-        self.__dy = self.__wymin
-        print "Translate: ", self.__dx, self.__dy
-        # scale factor
-        sx = 1.0 * self.__vwidth / self.__wwidth
-        sy = 1.0 * self.__vheight / self.__wheight
-        self.__sx = min(sx, sy)
-        self.__sy = self.__sx
-        print "Scale: ", self.__sx, self.__sy
+        if self.__vwidth > 0 and self.__vheight > 0:
+            # world width and height
+            self.__wwidth = self.__wxmax - self.__wxmin
+            self.__wheight = self.__wymax - self.__wymin
+            print "World (w, h):", self.__wwidth, self.__wheight
+            print "View (w, h):", self.__vwidth, self.__vheight
+            # translation
+            self.__dx = self.__wxmin
+            self.__dy = self.__wymin
+            print "Translate: ", self.__dx, self.__dy
+            # scale factor
+            sx = 1.0 * self.__vwidth / self.__wwidth
+            sy = 1.0 * self.__vheight / self.__wheight
+            self.__sx = min(sx, sy)
+            self.__sy = self.__sx
+            print "Scale: ", self.__sx, self.__sy
 
 #---------------------------------------------------------------------------------------------------
     def zoom_fit(self):
@@ -444,7 +475,7 @@ class IViewport(gtk.DrawingArea):
     def __get_ctx(self):
         return self.__ctx
 
-    CairoContext = property(__get_ctx, None, None, "cairo context")
+    cairo_context = property(__get_ctx, None, None, "cairo context")
 
 #---------------------------------------------------------------------------------------------------
     def redraw(self):
@@ -483,6 +514,12 @@ class IViewport(gtk.DrawingArea):
         _size = size * self.__sx
         return _size
     
+#---------------------------------------------------------------------------------------------------
+    def ViewportToWorldSize(self, size):
+        print "Size (view): ", size
+        _size = size / self.__sx
+        return _size
+    
     
 #---------------------------------------------------------------------------------------------------
     def draw(self):
@@ -496,7 +533,7 @@ class IViewport(gtk.DrawingArea):
             layer = layers.pop()
             if layer is not active_layer:
                 # draw inactive layer
-                self.__draw_layer(layer, self.__ctx)
+                self.__draw_layer(layer)
             # add sublayers to the layer stack
             layers.extend(layer.getSublayers())
         # at last draw the active layer
@@ -559,6 +596,22 @@ class IViewport(gtk.DrawingArea):
                 _obj.draw(self, color)
 
 #---------------------------------------------------------------------------------------------------
+    def __draw_set_properties(self, color, lineweight, linestyle):
+        print "ViewportDraw.draw_set_properties()"
+        # set color property
+        r, g, b = color.getColors()
+        print "color: ", r, g, b
+        self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+        # set linestyle property
+        if linestyle is not None:
+            self.__ctx.set_dash(linestyle)
+            print "linestyle: ", linestyle
+        # set lineweight property
+        if lineweight > 0.0:
+            self.__ctx.set_line_width(lineweight)
+            print "lineweight: ", lineweight
+        
+#---------------------------------------------------------------------------------------------------
     def draw_linestring(self, color, lineweight, linestyle, points):
         print "ViewportDraw.draw_linestring()"
         # use cairo
@@ -566,16 +619,8 @@ class IViewport(gtk.DrawingArea):
             first_point = True
             #begin
             self.__ctx.save()
-            # set linestring properties
-            r, g, b = color.getColors()
-            print "color: ", r, g, b
-            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
-            if linestyle is not None:
-                self.__ctx.set_dash(linestyle)
-                print "linestyle: ", linestyle
-            if lineweight > 0.0:
-                self.__ctx.set_line_width(lineweight)
-            print "lineweight: ", lineweight
+            # set properties
+            self.__draw_set_properties(color, lineweight, linestyle)
             # draw the points
             for point in points:
                 # transform to display coordinates
@@ -591,33 +636,105 @@ class IViewport(gtk.DrawingArea):
             self.__ctx.restore()
 
 #---------------------------------------------------------------------------------------------------
-    def draw_arc(self, color, lineweight, linestyle, center, radius, start, end):
+    def draw_polygon(self, color, lineweight, linestyle, points, fill):
         print "ViewportDraw.draw_linestring()"
         # use cairo
         if self.__ctx is not None:
             first_point = True
             #begin
             self.__ctx.save()
-            # set linestring properties
-            r, g, b = color.getColors()
-            print "color: ", r, g, b
-            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
-            if linestyle is not None:
-                self.__ctx.set_dash(linestyle)
-                print "linestyle: ", linestyle
-            if lineweight > 0.0:
-                self.__ctx.set_line_width(lineweight)
-            print "lineweight: ", lineweight
-            # draw the arc
-            self.__ctx.new_sub_path()
-            # transform to display coordinates
-            x, y = center.getCoords()
-            px, py = self.WorldToViewport(x, y)
-            vradius = self.WorldToViewportSize(radius)
-            self.__ctx.arc(px, py, vradius, start, end)
+            # set properties
+            self.__draw_set_properties(color, lineweight, linestyle)
+            # draw the points
+            for point in points:
+                # transform to display coordinates
+                x, y = point.getCoords()
+                px, py = self.WorldToViewport(x, y)
+                if first_point:
+                    self.__ctx.move_to(px, py)
+                    first_point = False
+                else:
+                    self.__ctx.line_to(px, py)
+            # close
+            self.__ctx.close_path()
+            # fill?
+            if fill:
+                self.__ctx.fill()
             # end
             self.__ctx.stroke()
             self.__ctx.restore()
 
-        
+#---------------------------------------------------------------------------------------------------
+    def draw_arc(self, color, lineweight, linestyle, center, radius, start, end):
+        print "ViewportDraw.draw_arc()"
+        # use cairo
+        if self.__ctx is not None:
+            #begin
+            self.__ctx.save()
+            # set properties
+            self.__draw_set_properties(color, lineweight, linestyle)
+            # what is this: internal presentation of an arc in degrees??
+            rstart = start * self.__deg2rad
+            rend = end * self.__deg2rad
+            # transform to display coordinates
+            x, y = center.getCoords()
+            vx, vy = self.WorldToViewport(x, y)
+            vradius = self.WorldToViewportSize(radius)
+            # arc drawing relies on Cairo transformations
+            self.__ctx.scale(1.0, -1.0)
+            self.__ctx.translate(vx, -(vy))
+            # draw the arc
+            self.__ctx.arc(0.0, 0.0, vradius, rstart, rend)
+            # end
+            self.__ctx.stroke()
+            self.__ctx.restore()
+            
+#---------------------------------------------------------------------------------------------------
+    def draw_circle(self, color, lineweight, linestyle, center, radius, fill = False):
+        print "ViewportDraw.draw_arc()"
+        # use cairo
+        if self.__ctx is not None:
+            #begin
+            self.__ctx.save()
+            # set properties
+            self.__draw_set_properties(color, lineweight, linestyle)
+            # transform to display coordinates
+            x, y = center.getCoords()
+            vx, vy = self.WorldToViewport(x, y)
+            vradius = self.WorldToViewportSize(radius)
+            # arc drawing relies on Cairo transformations
+            self.__ctx.scale(1.0, -1.0)
+            self.__ctx.translate(vx, -(vy))
+            # draw the arc
+            self.__ctx.arc(0.0, 0.0, vradius, 0, self.__2pi)
+            # fill the circle?
+            if fill:
+                self.__ctx.close_path()
+                self.__ctx.fill()
+            # end
+            self.__ctx.stroke()
+            self.__ctx.restore()
+
+#---------------------------------------------------------------------------------------------------
+    def draw_text(self, color, location, layout):
+        print "ViewportDraw.draw_text()"
+        # return values
+        width = 0
+        height = 0
+        # use cairo
+        if self.__ctx is not None:
+            #begin
+            self.__ctx.save()
+            # set color property
+            r, g, b = color.getColors()
+            print "color: ", r, g, b
+            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+            # position
+            x = location[0]
+            y = location[1]
+            vx, vy = self.WorldToViewport(x, y)
+            self.__ctx.move_to(vx, vy)
+            self.__ctx.show_layout(layout)
+            self.__ctx.restore()    
+
 #---------------------------------------------------------------------------------------------------

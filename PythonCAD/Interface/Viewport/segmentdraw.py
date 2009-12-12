@@ -20,9 +20,6 @@
 # code for adding graphical methods to drawing entities
 #
 
-import types
-#from math import pi
-#_dtr = (pi/180.0)
 
 import pygtk
 pygtk.require('2.0')
@@ -34,7 +31,6 @@ from PythonCAD.Generic import color
 
 #----------------------------------------------------------------------------------------------------
 def _draw_segment(self, viewport, col=None):
-    print "_draw_segment()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):
@@ -56,6 +52,5 @@ def _draw_segment(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_segment(self, viewport):
-    print "_erase_segment()"
     self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
 

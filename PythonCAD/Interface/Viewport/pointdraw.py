@@ -54,7 +54,6 @@ _point_color = color.Color(255, 255, 255) # white
 
 #----------------------------------------------------------------------------------------------------
 def _draw_point(self, viewport, col=None):
-    print "_draw_point()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):
@@ -66,7 +65,7 @@ def _draw_point(self, viewport, col=None):
     # transformation to viewport coordinates
     px, py = viewport.WorldToViewport(x, y)
     # cairo context
-    ctx = viewport.CairoContext
+    ctx = viewport.cairo_context
     if ctx is not None:
         # draw the point itself
         ctx.save()
@@ -103,7 +102,6 @@ def _draw_point(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_point(self, viewport):
-    print "_erase_point()"
     # point coordinates
     x, y = self.getCoords()
     # transformation to viewport coordinates
@@ -116,7 +114,7 @@ def _erase_point(self, viewport):
     color = viewport.Image.getOption('BACKGROUND_COLOR')
     
     # cairo context
-    ctx = viewport.CairoContext    
+    ctx = viewport.cairo_context    
     if ctx is not None:
         # erase the point itself
         ctx.save()

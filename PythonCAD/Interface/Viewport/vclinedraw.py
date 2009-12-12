@@ -20,10 +20,6 @@
 # code for adding graphical methods to drawing entities
 #
 
-import types
-from math import pi
-_dtr = (pi/180.0)
-
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -35,7 +31,6 @@ from PythonCAD.Generic.point import Point
     
 #----------------------------------------------------------------------------------------------------
 def _draw_vcline(self, viewport, col=None):
-    print "_draw_vcline()"
     color = col
     # is color defined
     if color is not None and not isinstance(color, color.Color):
