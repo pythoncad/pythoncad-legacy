@@ -68,7 +68,7 @@ class ExtFormat(object):
         path,exte=os.path.splitext( fileName )
         if( exte.upper()==".dxf".upper()):
             dxf=Dxf(self.__gtkimage,fileName)
-            dxf.importEntitis()
+            dxf.exportEntitis()
 
 class DrawingFile(object):
     """
@@ -83,6 +83,7 @@ class DrawingFile(object):
         self.__fb=None
         self.__errors=[]
         self.__reading=False
+        self.__writing=False        
         self.__lineNumber=0
         
     def readAsci(self):
@@ -92,12 +93,15 @@ class DrawingFile(object):
         dPrint("Debug: Read asci File")
         self.__fb=open(self.__fn,'r')
         self.__reading=True
+        self.__writing=False
         
     def createAsci(self):
         """
             create the new file 
         """
         self.__fb=open(self.__fn,'w')
+        self.__reading=False
+        self.__writing=True
         
     def fileObject(self):
         """
@@ -120,6 +124,15 @@ class DrawingFile(object):
             return self.__fb.readline()
         else:
             raise "Unable to perfor reading operation"
+    
+    def writeLine(self,line):
+        """
+            write a line to the file
+        """
+        if self.__writing:
+            self.__fb.write(line)
+        else:
+            raise "Unable to perfor writing operation"
         
     def writeError(self,functionName,msg):
         """
@@ -137,7 +150,17 @@ class DrawingFile(object):
             return self.__errors
         else: 
             return None
-        
+    def close(self):
+        """
+        close the active fileObject
+        """
+        if not self.__fb is None:
+            self.__fb.close()
+    def getFileName(self):
+        """
+            Return The active file Name
+        """
+        return self.__fn
 class Dxf(DrawingFile):
     """
         this class provide dxf reading/writing capability 
@@ -150,12 +173,8 @@ class Dxf(DrawingFile):
         DrawingFile.__init__(self,fileName)
         self.__gtkimage=gtkimage
         self.__image=gtkimage.getImage()
-        _layerName,_ext=os.path.splitext(os.path.basename(fileName))
-        _layerName="Imported_"+_layerName
-        _dxfLayer=Layer(_layerName)
-        self.__image.addLayer(_dxfLayer)
-        self.__dxfLayer=_dxfLayer 
-
+        self.__dxfLayer=None
+        
     def exportEntitis(self):
         """
             export The current file in dxf format
@@ -163,11 +182,12 @@ class Dxf(DrawingFile):
         _fo=self.createAsci()               #open the file for writing
         _layersEnts=self.getAllEntitis()    #get all the entities from the file
         for _key in _layersEnts:            #Looping at all layer
-            for _obj in _layersEnt[_key]:   #looping at all entities in the layer
+            for _obj in _layersEnts[_key]:   #looping at all entities in the layer
                 if isinstance(_obj,Segment):#if it's segment 
                     self.writeSegment(_obj) # ad it at the dxf drawing
                 # go on end implements the other case arc circle ...
-                
+        self.close()
+        
     def getAllEntitis(self):
         """
             retrive all the entitys from the drawing 
@@ -177,7 +197,7 @@ class Dxf(DrawingFile):
         while len(_layers):
             _layerEnts=[]
             _layer = _layers.pop()
-            _layerName=_layer.getName()
+            _layerName=_layer.getName()            
             _objs=_layer.getAllEntitys()
             for _o in _objs:
                 _layerEnts.append(_o)
@@ -188,7 +208,13 @@ class Dxf(DrawingFile):
         """
            write segment to the dxf file 
         """
-        pass
+        x1,y1=e.getP1().getCoords()
+        x2,y2=e.getP2().getCoords()
+        # this is an exsample for writing the segments coords
+        self.writeLine("x1 : " +str(x1) +"\n")
+        self.writeLine("y1 : " +str(y1) +"\n")
+        self.writeLine("x2 : " +str(x2) +"\n")
+        self.writeLine("y2 : " +str(y2) +"\n")
         
     def importEntitis(self):
         """
@@ -196,6 +222,11 @@ class Dxf(DrawingFile):
         """
         dPrint( "Debug: import entitys")
         self.readAsci();
+        _layerName,_ext=os.path.splitext(os.path.basename(self.getFileName()))
+        _layerName="Imported_"+_layerName
+        _dxfLayer=Layer(_layerName)
+        self.__image.addLayer(_dxfLayer)
+        self.__dxfLayer=_dxfLayer 
         while True:
             _k = self.readLine()
             if not _k: break
@@ -522,6 +553,7 @@ class Dxf(DrawingFile):
                 break
         points=[]
         p = ()
+        t = 0
         while True:
             # this line of file contains start point"X" co ordinate
             # print "Debug: Convert To flot x1: %s" % str(k[0:-1])
@@ -537,9 +569,11 @@ class Dxf(DrawingFile):
             if _k[0:3] == ' 30':
                 _k = self.readLine()
                 z1 = (float(_k[0:-1]))
+                _k = self.readLine()
                 continue
-            elif _k[0:3] != ' 10':
+            if _k[0:3] != ' 10':
                 break
+            continue
         if len(points)>1:
             self.createPolyline(points)
         
