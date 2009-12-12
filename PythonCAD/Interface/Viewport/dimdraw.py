@@ -31,6 +31,7 @@ import pango
 
 from PythonCAD.Generic import color
 from PythonCAD.Generic.point import Point
+from PythonCAD.Generic import dimension
 
 
 #----------------------------------------------------------------------------------------------------
@@ -213,7 +214,38 @@ def _draw_circle_endpt(viewport, crossbar_pts, size):
     center = crossbar_pts[1]
     if center is not None:
         # do the actual draw of the circle
-        viewport.draw_circle(None, None, None, center, radius, True)    
+        viewport.draw_circle(None, None, None, center, radius, True) 
+        
+#----------------------------------------------------------------------------------------------------
+def _draw_crossbar(viewport, cross_bar, color):
+    p1, p2 = cross_bar.getEndpoints()
+    # add points to list
+    points = []
+    points.append(Point(p1[0], p1[1]))
+    points.append(Point(p2[0], p2[1]))
+    # do the actual draw of the linestring
+    viewport.draw_linestring(color, None, None, points)    
+
+   
+#----------------------------------------------------------------------------------------------------
+def _draw_crossarc(viewport, cross_arc, center, color):
+    start = cross_arc.getStartAngle()
+    end = cross_arc.getEndAngle()    
+    radius = cross_arc.getRadius()
+    # do the actual draw of the arc
+    viewport.draw_arc(color, None, None, center, radius, start, end) 
+
+#----------------------------------------------------------------------------------------------------
+def _draw_dimbar(viewport, dim_bar, color):
+    # first dimbar
+    p1, p2 = dim_bar.getEndpoints()
+    # add points to list
+    points = []
+    points.append(Point(p1[0], p1[1]))
+    points.append(Point(p2[0], p2[1]))
+    # do the actual draw of the linestring
+    viewport.draw_linestring(color, None, None, points)  
+
     
 #----------------------------------------------------------------------------------------------------
 def _draw_markers(self, viewport, dim_object):
@@ -258,36 +290,17 @@ def _draw_ldim(self, viewport, col=None):
         color = self.getColor()
     # display properties
     lineweight = self.getThickness()
-    linestyle = None #self.getLinetype().getList()
-    # dimension bar
+    # cross bar
     cross_bar = self.getDimCrossbar()
-    p1, p2 = cross_bar.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)
+    _draw_crossbar(viewport, cross_bar, color)
     # draw the dimension bars
     dim_bar1, dim_bar2 = self.getDimBars()
     # first dimbar
-    p1, p2 = dim_bar1.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)  
+    _draw_dimbar(viewport, dim_bar1, color)
     # second dimbar
-    p1, p2 = dim_bar2.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)  
+    _draw_dimbar(viewport, dim_bar2, color)
     # draw endpoint markers
-    self._draw_markers(viewport, cross_bar)
+    self.draw_markers(viewport, cross_bar)
     # dim text
     self._drawDimStrings(viewport, color)
 
@@ -302,18 +315,11 @@ def _draw_rdim(self, viewport, col=None):
         color = self.getColor()
     # display properties
     lineweight = self.getThickness()
-    linestyle = self.getLinetype().getList()
-    # dimension bar
+    # cross bar
     cross_bar = self.getDimCrossbar()
-    p1, p2 = cross_bar.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)    
+    _draw_crossbar(viewport, cross_bar, color)    
     # draw endpoint markers
-    self._draw_markers(viewport, cross_bar)
+    self.draw_markers(viewport, cross_bar)
     # dim text
     self._drawDimStrings(viewport, color)
 
@@ -328,37 +334,18 @@ def _draw_adim(self, viewport, col=None):
         color = self.getColor()
     # display properties
     lineweight = self.getThickness()
-    linestyle = self.getLinetype().getList()
     # draw cross arc
+    center = self.getVertexPoint()
     cross_arc = self.getDimCrossarc()
-    start = cross_arc.getStartAngle()
-    end = cross_arc.getEndAngle()    
-    center_x, center_y = self.getLocation()
-    center = Point(center_x, center_y)
-    #center = self.getVertexPoint()
-    radius = cross_arc.getRadius()
-    # do the actual draw of the arc
-    viewport.draw_arc(color, lineweight, linestyle, center, radius, start, end) 
+    _draw_crossarc(viewport, cross_arc, center, color)
     # draw the dimension bars
     dim_bar1, dim_bar2 = self.getDimBars()
     # first dimbar
-    p1, p2 = dim_bar1.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)  
+    _draw_dimbar(viewport, dim_bar1, color)
     # second dimbar
-    p1, p2 = dim_bar2.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)  
+    _draw_dimbar(viewport, dim_bar2, color)    
     # draw endpoint markers
-    self._draw_markers(viewport, cross_arc)
+    self.draw_markers(viewport, cross_arc)
     # dim text
     self._drawDimStrings(viewport, color)
 
