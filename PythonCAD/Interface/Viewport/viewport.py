@@ -684,6 +684,7 @@ class IViewport(gtk.DrawingArea):
             self.__ctx.scale(1.0, -1.0)
             self.__ctx.translate(vx, -(vy))
             # draw the arc
+            self.__ctx.new_sub_path()
             self.__ctx.arc(0.0, 0.0, vradius, rstart, rend)
             # end
             self.__ctx.stroke()
