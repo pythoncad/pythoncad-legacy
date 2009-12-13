@@ -783,9 +783,8 @@ TextBlock(x, y, text[, textstyle=None])
     setDefaultTextStyle = classmethod(setDefaultTextStyle)
 
     def finish(self):
-        """Finalization for TextBlock instances.
-
-finish()
+        """
+            Finalization for TextBlock instances.
         """
         if self.__color is not None:
             self.__color = None

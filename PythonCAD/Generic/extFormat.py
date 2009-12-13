@@ -138,7 +138,7 @@ class DrawingFile(object):
         """
             Add an Error to the Collection
         """
-        _msg="Error on line %s function Name: %s Message %s"%(
+        _msg=u'Error on line %s function Name: %s Message %s \n'%(
             str(self.__lineNumber),functionName,msg)
         self.__errors.append(_msg)
         
@@ -161,6 +161,7 @@ class DrawingFile(object):
             Return The active file Name
         """
         return self.__fn
+    
 class Dxf(DrawingFile):
     """
         this class provide dxf reading/writing capability 
@@ -315,9 +316,9 @@ class Dxf(DrawingFile):
            x2==None or y2 ==None ):
             self.createLine(x1,y1,x2,y2)
         else:
-            _msg="Read parameter from file x1: [%s] y1: [%s] x2: [%s] y2: [%s]"%(
+            _msg=u'Read parameter from file x1: [%s] y1: [%s] x2: [%s] y2: [%s]'%(
                         str(x1),str(y1),str(x2),str(y2))
-            self.writeError("createLineFromDxf",_msg)
+            self.writeError('createLineFromDxf',_msg)
 
     def createLine(self,x1,y1,x2,y2):
       """
@@ -402,7 +403,7 @@ class Dxf(DrawingFile):
         x = None
         y = None
         h = None
-        _t= None
+        _t= ''
         while g < 1:
             _k = self.readLine()
             dPrint("line value k="+ _k)
@@ -433,7 +434,7 @@ class Dxf(DrawingFile):
                 #print "Text itself is ", x, y, z, 'height', h, _t#
                 g = 10 # g > 1 for break
                 continue
-        if not (x is None or y is None or h is None or _t is None):
+        if not (x is None or y is None or h is None):
             self.createText(x,y,h,_t)
         else:
             _msg="Read parameter from file x: [%s] y: [%s] h: [%s] t: [%s]"%(

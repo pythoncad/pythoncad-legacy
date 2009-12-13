@@ -43,6 +43,7 @@ from PythonCAD.Generic import tools
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import keywords
 from PythonCAD.Generic import prompt
+from PythonCAD.Interface.Gtk import gtkdialog
 
 from PythonCAD.Interface.Gtk import gtkshell
 
@@ -330,9 +331,8 @@ class GTKImage(object):
 
     #------------------------------------------------------------------
     def close(self):
-        """Release the entites stored in the drawing.
-
-close()
+        """
+            Release the entites stored in the drawing.
         """
         self.__layerdisplay.close()
         self.__layerdisplay = None
@@ -354,14 +354,25 @@ close()
         self.__gc = None
 
     #------------------------------------------------------------------
+    def quit(self):
+        """
+        quit the gtkimage
+        """
+        self.__destroyEvent(None)
+        
     def __destroyEvent(self, widget, data=None):
         """
             Destroy event
         """
+        print "Debug Destroy event "
         if self.__image.isSaved()== False:
             # TODO ggr: fix this construction
-            from PythonCAD.Interface.Menu.filemenu import file_quit_cb
-            file_quit_cb(None,self) 
+            _image=self.getImage()
+            if _image.isSaved() == False:
+                _res=gtkdialog._yesno_dialog(self, "File Unsaved, Wold You Like To Save ?")
+                if gtk.RESPONSE_ACCEPT == _res:
+                    from PythonCAD.Interface.Menu import file_save_cb
+                    file_save_cb(None, self)
         self.close()
         for _i in xrange(len(globals.imagelist)):
             _gimage = globals.imagelist[_i]

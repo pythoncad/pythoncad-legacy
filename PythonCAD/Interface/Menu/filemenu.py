@@ -298,7 +298,7 @@ def file_close_cb(menuitem, gtkimage):
             del globals.imagelist[_i]
             gtkimage.window.destroy()
             if not len(globals.imagelist):
-                gtk.main_quit()
+                gtkimage.getWindow().destroy()
             break
 
 
@@ -360,14 +360,10 @@ def file_print_cb(menuitem, gtkimage):
 
 #------------------------------------------------------------
 def file_quit_cb(menuitem, gtkimage):
-    _image=gtkimage.getImage()
-    if _image.isSaved() == False:
-        _res=gtkDialog._yesno_dialog(gtkimage, "File Unsaved, Wold You Like To Save ?")
-        if gtk.RESPONSE_ACCEPT == _res:
-            file_save_cb(None, gtkimage)
-    gtk.main_quit()
-
-
+    """
+        Close the application
+    """
+    gtkimage.getWindow().destroy()
 
 #############################################################################
 #

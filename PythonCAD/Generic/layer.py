@@ -927,14 +927,12 @@ This method is private to the Layer object.
         return True
 
     def delObject(self, obj):
-        """Remove an object from this Layer.
-
-delObject(obj)
-
-The object should be a Point, Segment, Arc, Circle,
-HCLine, VCLine, ACLine, CLine, CCircle, Chamfer,
-Fillet, Leader, or Dimension. Anything else raises
-a TypeError exception.
+        """
+            Remove an object from this Layer.
+            The object should be a Point, Segment, Arc, Circle,
+            HCLine, VCLine, ACLine, CLine, CCircle, Chamfer,
+            Fillet, Leader, or Dimension. Anything else raises
+            a TypeError exception.
         """
         if self.isLocked():
             raise RuntimeError, "Deleting entity not allowed - layer locked."
@@ -1352,11 +1350,9 @@ This method is private to the Layer object.
                 self.delObject(_pt) # remove possibly unused point _pt
 
     def __delTextBlock(self, tb):
-        """Delete a TextBlock from the Layer.
-
-_delTextBlock(tb)
-
-This method is private to the Layer object.
+        """
+            Delete a TextBlock from the Layer.
+            This method is private to the Layer object.
         """
         _tbs = self.__textblocks
         _idx = None
