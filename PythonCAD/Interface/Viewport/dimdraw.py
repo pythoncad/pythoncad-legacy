@@ -36,121 +36,110 @@ from PythonCAD.Generic import dimension
 
 #----------------------------------------------------------------------------------------------------
 def _draw_dimstrings(self, viewport, col=None):
-    pass
-    #_ctx = gimage.getCairoContext()
-    #if _ctx is not None:
-        #_ctx.save()
-    #_da = gimage.getDA()
-    ##
-    ## fixme - calculating dimensions needs rework!
-    ##
-    #_image = gimage.getImage()
-    #_slen = _image.scaleLength(self.calculate())
-    #_dims = self.getDimensions(_slen)
-    #_dx, _dy = self.getLocation()
-    #_ds1 = _ds2 = _l1 = _l2 = _x1 = _y1 = _x2 = _y2 = None
-    #if self.getDualDimMode():
-        #_off = self.getDualModeOffset()
-        #_ds1 = self.getPrimaryDimstring()
-        #if _ctx is not None:
-            #_l1 = _ctx.create_layout()
-            #_l1.set_text(_ds1.getText())
-        #else:
-            #_l1 = _da.create_pango_layout(_ds1.getText())
-        #_ds1._formatLayout(gimage, _l1)
-        #_w1, _h1 = _ds1.getBounds()
-        #_ds1.setLocation((_dx - (_w1/2.0)), (_dy + _h1 + _off))
-        #_x1, _y1 = _ds1.getLocation()
-        #_ds2 = self.getSecondaryDimstring()
-        #if _ctx is not None:
-            #_l2 = _ctx.create_layout()
-            #_l2.set_text(_ds2.getText())
-        #else:
-            #_l2 = _da.create_pango_layout(_ds2.getText())
-        #_ds2._formatLayout(gimage, _l2)
-        #_w2, _h2 = _ds2.getBounds()
-        #_ds2.setLocation((_dx - (_w2/2.0)), (_dy - _off))
-        #_x2, _y2 = _ds2.getLocation()
-        #_brect = (min(_x1, _x2), # xmin
-                  #_y1, # ymax
-                  #max((_x1 + _w1), (_x2 + _w2)), # xmax
-                  #(_y2 - _h2)) # ymin
-    #else:
-        #_ds1 = self.getPrimaryDimstring()
-        #if _ctx is not None:
-            #_l1 = _ctx.create_layout()
-            #_l1.set_text(_ds1.getText())
-        #else:
-            #_l1 = _da.create_pango_layout(_ds1.getText())
-        #_ds1._formatLayout(gimage, _l1)
-        #_w, _h = _ds1.getBounds()
-        #_ds1.setLocation((_dx - (_w/2.0)), (_dy + (_h/2.0)))
-        #_x1, _y1 = _ds1.getLocation()
-        #_brect = (_x1, _y1, (_x1 + _w), (_y1 - _h))
-    #_bx1, _by1 = gimage.coordToPixTransform(_brect[0], _brect[1])
-    #_bx2, _by2 = gimage.coordToPixTransform(_brect[2], _brect[3])
-    #_pixmap = None
-    #_bgcol = _image.getOption('BACKGROUND_COLOR') #this is a string not an object
-    #print "Debug: _bhcol %s"%str(_bgcol)
-    #if _ctx is not None :
-        #_r, _g, _b = _bgcol.getColors()
-        #_ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        #_ctx.rectangle((_bx1 - 2), (_by1 - 2),
-                       #((_bx2 - _bx1) + 4), ((_by2 - _by1) + 4))
-        #_ctx.fill()
-    #else:
-        #_gc = gimage.getGC()
-        #_gc.set_function(gtk.gdk.COPY)
-        #_gc.set_foreground(gimage.getColor(_bgcol))
-        #_pixmap = gimage.getPixmap()
-        #_pixmap.draw_rectangle(_gc, True, (_bx1 - 2), (_by1 - 2),
-                               #((_bx2 - _bx1) + 4), ((_by2 - _by1) + 4))
-    #_col = col
-    
-    #if _col is None:
-        #_col = _ds1.getColor()
-    #_px, _py = gimage.coordToPixTransform(_x1, _y1)        
-    #if _ctx is not None:
-        #_r, _g, _b = _col.getColors()
-        #_ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-        #_ctx.move_to(_px, _py)
-        #_ctx.show_layout(_l1)
-    #else:
-        #_gc.set_foreground(gimage.getColor(_col))
-        #_px, _py = gimage.coordToPixTransform(_x1, _y1)
-        #_pixmap.draw_layout(_gc, _px, _py, _l1)
-    #if _ds2 is not None:
-        #_col = col
-        #if _col is None:
-            #_col = _ds2.getColor()
-        #if _ctx is not None:
-            #_r, _g, _b = _col.getColors()
-            #_ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-            #_px, _py = gimage.coordToPixTransform(_x2, _y2)
-            #_ctx.move_to(_px, _py)
-            #_ctx.show_layout(_l2)
-        #else:
-            #_gc.set_foreground(gimage.getColor(_col))
-            #_px, _py = gimage.coordToPixTransform(_x2, _y2)
-            #_pixmap.draw_layout(_gc, _px, _py, _l2)
-        #_col = col
-        #if _col is None:
-            #_col = self.getColor()
-        #_px1, _py1 = gimage.coordToPixTransform(_brect[0], _dy)
-        #_px2, _py2 = gimage.coordToPixTransform(_brect[2], _dy)
-        #if _ctx is not None:
-            #_r, _g, _b = _col.getColors()
-            #_ctx.set_source_rgb((_r/255.0), (_g/255.0), (_b/255.0))
-            #_ctx.move_to(_px1, _py1)
-            #_ctx.line_to(_px2, _py2)
-            #_ctx.stroke()
-        #else:
-            #_gc.set_foreground(gimage.getColor(_col))                    
-            #_pixmap.draw_line(_gc, _px1, _py1, _px2, _py2)
-        #_l2 = None
-    #_l1 = None
-    #if _ctx is not None:
-        #_ctx.restore()
+    return
+
+    #
+    # fixme - calculating dimensions needs rework!
+    #
+    length = self.calculate()
+
+#    _slen = _image.scaleLength(self.calculate())
+#    _dims = self.getDimensions(_slen)
+
+    location_x, location_y = self.getLocation()
+
+    primary_dimstring = secondary_dimstring = None
+    layout1 = layout2 = None
+    x1 = y1 = x2 = y2 = None
+
+    if self.getDualDimMode():
+        offset = self.getDualModeOffset()
+
+        primary_dimstring = self.getPrimaryDimstring()
+
+        layout1 = viewport.cairo_context.create_layout()
+        layout1.set_text(primary_dimstring.getText())
+
+        primary_dimstring._formatLayout(viewport, layout1)
+
+        width1, height1 = primary_dimstring.getBounds()
+        primary_dimstring.setLocation((location_x - (width1 / 2.0)), (location_y + height1 + offset))
+        x1, y1 = primary_dimstring.getLocation()
+
+        secondary_dimstring = self.getSecondaryDimstring()
+
+        layout2 = viewport.cairo_context.create_layout()
+        layout2.set_text(secondary_dimstring.getText())
+
+        secondary_dimstring._formatLayout(viewport, layout2)
+
+        width2, height2 = secondary_dimstring.getBounds()
+        secondary_dimstring.setLocation((location_x - (width2 / 2.0)), (location_y - offset))
+        x2, y2 = secondary_dimstring.getLocation()
+        boundary_rect = (min(x1, x2), # xmin
+                  y1, # ymax
+                  max((x1 + width1), (x2 + width2)), # xmax
+                  (y2 - height2)) # ymin
+
+
+
+    else:
+        primary_dimstring = self.getPrimaryDimstring()
+
+        layout1 = viewport.cairo_context.create_layout()
+        layout1.set_text(primary_dimstring.getText())
+
+        primary_dimstring._formatLayout(viewport, layout1)
+        width1, height1 = primary_dimstring.getBounds()
+        primary_dimstring.setLocation((location_x - (width1 / 2.0)), (location_y + (height1 / 2.0)))
+        x1, y1 = primary_dimstring.getLocation()
+        boundary_rect = (x1, y1, (x1 + width1), (y1 - height1))
+
+#    _bx1, _by1 = gimage.coordToPixTransform(boundary_rect[0], boundary_rect[1])
+#    _bx2, _by2 = gimage.coordToPixTransform(boundary_rect[2], boundary_rect[3])
+
+    background_color = _image.getOption('BACKGROUND_COLOR') #this is a string not an object
+    print "Debug: background_color %s" % str(background_color)
+
+    points = []
+    points.add(Point(boundary_rect[0], boundary_rect[1]))
+    points.add(Point(boundary_rect[2], boundary_rect[1]))
+    points.add(Point(boundary_rect[2], boundary_rect[3]))
+    points.add(Point(boundary_rect[0], boundary_rect[3]))
+    # draw rectangle in background color
+    self.draw_polygon(self, background_color, None, None, points, True)
+
+    color = col
+    # get the color from the object
+    if color is None:
+        color = primary_dimstring.getColor()
+    # get the text location
+    location = primary_dimstring.getLocation()
+    # do the actual draw of the text
+    viewport.draw_text(color, location, layout1)
+
+    if secondary_dimstring is not None:
+        color = col
+        if color is None:
+            color = secondary_dimstring.getColor()
+        # get the text location
+        location = secondary_dimstring.getLocation()
+        # do the actual draw of the text
+        viewport.draw_text(color, location, layout2)
+
+        color = col
+
+        if color is None:
+            color = self.getColor()
+
+        points = []
+        points.add(Point(boundary_rect[0], location_y))
+        points.add(Point(boundary_rect[2], location_y))
+        # draw rectangle in background color
+        self.draw_linestring(self, color, None, None, points)
+    # cleanup
+    layout2 = None
+    layout1 = None
 
 
 #----------------------------------------------------------------------------------------------------
@@ -164,6 +153,7 @@ def _draw_arrow_endpt(viewport, crossbar_pts, marker_pts, fill):
         points = []
         points.append(p1)
         points.append(p2)
+        points.append(p3)
         # do the actual draw of the arrow
         viewport.draw_polygon(None, None, None, points, fill)         
     # second marker
@@ -175,6 +165,7 @@ def _draw_arrow_endpt(viewport, crossbar_pts, marker_pts, fill):
         points = []
         points.append(p1)
         points.append(p2)
+        points.append(p3)
         # do the actual draw of the arrow
         viewport.draw_polygon(None, None, None, points, fill)         
 
@@ -356,5 +347,5 @@ def _erase_dim(self, viewport):
     # for deleting the dimension.
     # But when we close the application we get an error 
     # Adding pass to the erese_dim functions we not have any problems
-    # self.draw(gimage, gimage.image.getOption('BACKGROUND_COLOR'))
+    # self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
 
