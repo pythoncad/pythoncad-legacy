@@ -55,5 +55,5 @@ def _draw_ccircle(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_ccircle(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     

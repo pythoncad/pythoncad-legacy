@@ -69,81 +69,26 @@ from PythonCAD.Interface.Viewport.segmentdraw import _draw_segment, _erase_segme
 from PythonCAD.Interface.Viewport.textblockdraw import _draw_textblock, _erase_textblock, _format_layout
 from PythonCAD.Interface.Viewport.vclinedraw import _draw_vcline, _erase_vcline
 
+from PythonCAD.Interface.Viewport.inputhandler import IInputHandler
 
 
 
 
 
-class IViewport(gtk.DrawingArea):
+
+class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def __init__(self, parent):
-        super(IViewport, self).__init__()
-        #
-        self.__gtkimage = parent
-        self.__image = self.__gtkimage.getImage()
-        # view window size
-        self.__vxmin = 0
-        self.__vymin = 0
-        self.__vxmax = 0
-        self.__vymax = 0
-        self.__vwidth = 0
-        self.__vheight = 0
-        # world window size
-        self.__wxmin = 0
-        self.__wymin = 0
-        self.__wxmax = 0
-        self.__wymax = 0
-        self.__wwidth = 0
-        self.__wheight = 0
-        # draw properties
-        self.__need_redraw = True
-        # graphics context
-        self.__gc = None
+        super(IViewport, self).__init__(parent)
+        # cairo context
         self.__ctx = None
-        # pixmap
-        self.__pixmap = None
-        # pixmap scale factor (1=viewport size, 2=twice the size, 3=even larger)
-        self.__px_scale_factor = 2
-        # cairo translate factors
-        self.__dx = 0.0
-        self.__dy = 0.0
-        # cairo scale factors
-        self.__sx = 1.0
-        self.__sy = 1.0
         # 2pi
         self.__2pi = 2.0 * math.pi
         # angle deg => rad
         self.__deg2rad = math.pi / 180.0
         # initialize entity drawing methods
         self.__init_draw_methods()
-
-#        black = gtk.gdk.color_parse('black')
-#        self.__da.modify_fg(gtk.STATE_NORMAL, black)
-#        self.__da.modify_bg(gtk.STATE_NORMAL, black)
-#        pane.pack2(self.__da, True, False)
-#        self.__da.set_flags(gtk.CAN_FOCUS)
-        self.connect("event", self.__daEvent)
-        self.connect("expose_event", self.__exposeEvent)
-        self.connect("realize", self.__realizeEvent)
-
-#        self.__da.connect("configure_event", self.__configureEvent)
-#        # self.__da.connect("focus_in_event", self.__focusInEvent)
-#        # self.__da.connect("focus_out_event", self.__focusOutEvent)
-#
-        self.set_events(gtk.gdk.EXPOSURE_MASK |
-                             gtk.gdk.LEAVE_NOTIFY_MASK |
-                             gtk.gdk.BUTTON_PRESS_MASK |
-                             gtk.gdk.BUTTON_RELEASE_MASK |
-                             gtk.gdk.ENTER_NOTIFY_MASK|
-                             gtk.gdk.LEAVE_NOTIFY_MASK|
-                             gtk.gdk.KEY_PRESS_MASK |
-                             gtk.gdk.KEY_RELEASE_MASK |
-                             gtk.gdk.FOCUS_CHANGE_MASK |
-                             gtk.gdk.POINTER_MOTION_MASK)
-
-
-        # event handlers
 
 #----------------------------------------------------------------------------------------------------
     def __init_draw_methods(self):
@@ -229,196 +174,44 @@ class IViewport(gtk.DrawingArea):
 #        _class.erase = types.MethodType(_erase_layer, None, _class)
 
 #---------------------------------------------------------------------------------------------------
-    def __realizeEvent(self, widget, data=None):
-        print "IViewport.__realizeEvent()"
-        # create a graphic context if not exists
-        self.__gc = self.window.new_gc()
-
-#---------------------------------------------------------------------------------------------------
-    def __daEvent(self, widget, event, data=None):
-        _rv = False
-#        _type = event.type
-#        debug_print("__daEvent(): Event type: %d" % _type)
-#        _tool = self.__image.getTool()
-#        if _type==31:
-#            debug_print("if 31")
-#            if event.direction == gtk.gdk.SCROLL_UP:
-#                debug_print("BUTTON_PRESSS CROLL_UP")
-#                self.ZoomIn()
-#            if event.direction == gtk.gdk.SCROLL_DOWN:
-#                debug_print("BUTTON_PRESSS SCROLL_DOWN")
-#                self.ZoomOut()
-#        if _type == 12:
-#            debug_print("if 12")
-#        if _type == gtk.gdk.BUTTON_PRESS:
-#            debug_print("gtk.gdk.BUTTON_PRESS")
-#            self.setToolpoint(event)
-#            _button = event.button
-#            if _button == 1:
-#                if _tool is not None and _tool.hasHandler("button_press"):
-#                    _rv = _tool.getHandler("button_press")(self, widget,
-#                                                           event, _tool)
-#            debug_print("__Move BUTTON_PRESS")
-#            self.__Move(widget, event)
-#        elif _type == gtk.gdk.BUTTON_RELEASE:
-#            debug_print("gtk.gdk.BUTTON_RELEASE")
-#            self.setToolpoint(event)
-#            _button = event.button
-#            if _button == 1:
-#                if _tool is not None and _tool.hasHandler("button_release"):
-#                    _rv =_tool.getHandler("button_release")(self, widget,
-#                                                            event, _tool)
-#            debug_print("__Move BUTTON_RELEASE")
-#            self.__Move(widget, event)
-#        elif _type == gtk.gdk.MOTION_NOTIFY:
-#            debug_print("gtk.gdk.MOTION_NOTIFY")
-#            self.setToolpoint(event)
-#            if _tool is not None and _tool.hasHandler("motion_notify"):
-#                _rv = _tool.getHandler('motion_notify')(self, widget,
-#                                                        event, _tool)
-#            debug_print("__Move MOTION_NOTIFY")
-#            self.__MakeMove(widget,event)
-#            self.__ActiveSnapEvent(widget,event)
-#        elif _type == gtk.gdk.KEY_PRESS:
-#            debug_print("In __daEvent(), got key press!")
-#            _key = event.keyval
-#            if (_key == gtk.keysyms.Page_Up or
-#                _key == gtk.keysyms.Page_Down or
-#                _key == gtk.keysyms.Left or
-#                _key == gtk.keysyms.Right or
-#                _key == gtk.keysyms.Up or
-#                _key == gtk.keysyms.Down):
-#                debug_print("Got Arrow/PageUp/PageDown key")
-#                #KeyMoveDrawing(_key) # Matteo Boscolo 12-05-2009
-#                pass # handle moving the drawing in some fashion ...
-#            elif _key == gtk.keysyms.Escape:
-#                debug_print("Got escape key")
-#                self.reset()
-#                _rv = True
-#            elif _tool is not None and _tool.hasHandler("key_press"):
-#                debug_print("gtk.gdk.MOTION_NOTIFY")
-#                _rv = _tool.getHandler("key_press")(self, widget,
-#                                                    event, _tool)
-#            else:
-#                debug_print("ELSE")
-#                _entry = self.__entry
-#                _entry.grab_focus()
-#                if _key == gtk.keysyms.Tab:
-#                    _rv = True
-#                else:
-#                    _rv = _entry.event(event)
-#        elif _type == gtk.gdk.ENTER_NOTIFY:
-#            debug_print("gtk.gdk.ENTER_NOTIFY")
-#            self.setToolpoint(event)
-#            _rv = True
-#        elif _type == gtk.gdk.LEAVE_NOTIFY:
-#            debug_print("gtk.gdk.LEAVE_NOTIFY")
-#            self.setToolpoint(event)
-#            _rv = True
-#        else:
-#            debug_print("Got type %d" % _type)
-#            pass
-        return _rv
-
-#---------------------------------------------------------------------------------------------------
-    def __exposeEvent(self, widget, event, data=None):
-        print "IViewport.__exposeEvent()"
-        # view dimension
-        self.__vxmin, self.__vymin, width, height = event.area
-        self.__vxmax = self.__vxmin + width
-        self.__vymax = self.__vymin + height
-        print "viewport (Xmin, Xmax)", self.__vxmin, self.__vxmax
-        print "viewport (Ymin, Ymax)", self.__vymin, self.__vymax
-
-#        _, _, vp_width, vp_height = event.area
-#        print vp_width, vp_height
-#        # need to redraw the scene
-#        if self.__pixmap == None:
-#            print "need_redraw"
-#            self.__need_redraw = True
-#        else:
-#            px_width, px_height = self.__pixmap.get_size()
-#            if (px_width < vp_width) or (px_height < vp_height):
-#                print "need_redraw"
-#                self.__need_redraw = True
-        # refresh
-        self.__need_redraw = True
-        self.refresh()
-        return True
-
-#---------------------------------------------------------------------------------------------------
-    def __calc_viewfactors(self):
-        print "IViewport.__calc_viewfactors()"
-        # viewport width and height
-        self.__vwidth = self.__vxmax - self.__vxmin
-        self.__vheight = self.__vymax - self.__vymin
-        if self.__vwidth > 0 and self.__vheight > 0:
-            # world width and height
-            self.__wwidth = self.__wxmax - self.__wxmin
-            self.__wheight = self.__wymax - self.__wymin
-            print "World (w, h):", self.__wwidth, self.__wheight
-            print "View (w, h):", self.__vwidth, self.__vheight
-            # translation
-            self.__dx = self.__wxmin
-            self.__dy = self.__wymin
-            print "Translate: ", self.__dx, self.__dy
-            # scale factor
-            sx = 1.0 * self.__vwidth / self.__wwidth
-            sy = 1.0 * self.__vheight / self.__wheight
-            self.__sx = min(sx, sy)
-            self.__sy = self.__sx
-            print "Scale: ", self.__sx, self.__sy
-
-#---------------------------------------------------------------------------------------------------
     def zoom_fit(self):
         print "IViewport.zoom_fit()"
         # world dimension
-        self.__wxmin, self.__wymin, self.__wxmax, self.__wymax = self.__image.getExtents()
+        self._wxmin, self._wymin, self._wxmax, self._wymax = self._image.getExtents()
         # modify to view a little margin
-        decrement = (self.__wxmax - self.__wxmin) / -100.0
-        self.__wxmin += decrement
-        self.__wxmax -= decrement
-        self.__wymin += decrement
-        self.__wymax -= decrement
-        print "world (Xmin, Xmax): ", self.__wxmin, self.__wxmax
-        print "world (Ymin, Ymax): ", self.__wymin, self.__wymax
+        margin = (self._wxmax - self._wxmin) / 100.0
+        self._wxmin -= margin
+        self._wxmax += margin
+        self._wymin -= margin
+        self._wymax += margin
+        print "world (Xmin, Xmax): ", self._wxmin, self._wxmax
+        print "world (Ymin, Ymax): ", self._wymin, self._wymax
         # set the view translation and scale factors
-        self.__calc_viewfactors()
-        # redraw
-        self.__need_redraw = True
-        self.invalidate()
+        self._calc_viewfactors()
+
+#---------------------------------------------------------------------------------------------------
+    def __zoom_scale(self, scale):
+        print "IViewport.zoom_in()"
+        # new width and height
+        self._wwidth *= scale
+        self._wheight *= scale
+        # modify world window
+        self._wxmin = self._cur_wx - self._wwidth / 2.0
+        self._wxmax = self._cur_wx + self._wwidth / 2.0
+        self._wymin = self._cur_wy - self._wheight / 2.0 
+        self._wymax = self._cur_wy + self._wheight / 2.0
+        # set the view translation and scale factors
+        self._calc_viewfactors()
 
 #---------------------------------------------------------------------------------------------------
     def zoom_in(self):
         print "IViewport.zoom_in()"
-        # modify world window
-        dx = (self.__wxmax - self.__wxmin) / 4.0
-        dy = (self.__wymax - self.__wymin) / 4.0
-        self.__wxmin += dx
-        self.__wxmax -= dx
-        self.__wymin += dy
-        self.__wymax -= dy
-        # set the view translation and scale factors
-        self.__calc_viewfactors()
-        # redraw
-        self.__need_redraw = True
-        self.invalidate()
+        self.__zoom_scale(0.667)
 
 #---------------------------------------------------------------------------------------------------
     def zoom_out(self):
         print "IViewport.zoom_out()"
-        # modify world window
-        dx = (self.__wxmax - self.__wxmin) / 4.0
-        dy = (self.__wymax - self.__wymin) / 4.0
-        self.__wxmin -= dx
-        self.__wxmax += dx
-        self.__wymin -= dy
-        self.__wymax += dy      
-        # set the view translation and scale factors
-        self.__calc_viewfactors()
-        # redraw
-        self.__need_redraw = True
-        self.invalidate()
+        self.__zoom_scale(1.5)
 
 #---------------------------------------------------------------------------------------------------
     def invalidate(self):
@@ -433,43 +226,12 @@ class IViewport(gtk.DrawingArea):
     def refresh(self):
         print "IViewport.refresh()"
         # need to draw the scene?
-        if self.__need_redraw or self.__pixmap == None:
+        if self._need_redraw:
             # redraw the scene
             self.redraw()
-            self.__need_redraw = False
+            self._need_redraw = False
         # show the scene/pixmap
         #self.window.draw_drawable(self.__gc, self.__pixmap, 0, 0, 0, 0, alloc.width, alloc.height)
-
-
-#---------------------------------------------------------------------------------------------------
-    def __get_wxmin(self):
-        return self.__wxmin
-
-    WorldXmin = property(__get_wxmin, None, None, "Generic Image")
-
-#---------------------------------------------------------------------------------------------------
-    def __get_wxmax(self):
-        return self.__wxmax
-
-    WorldXmax = property(__get_wxmax, None, None, "Generic Image")
-
-#---------------------------------------------------------------------------------------------------
-    def __get_wymin(self):
-        return self.__wymin
-
-    WorldYmin = property(__get_wymin, None, None, "Generic Image")
-
-#---------------------------------------------------------------------------------------------------
-    def __get_wymax(self):
-        return self.__wymax
-
-    WorldYmax = property(__get_wymax, None, None, "Generic Image")
-
-#---------------------------------------------------------------------------------------------------
-    def __get_image(self):
-        return self.__image
-
-    Image = property(__get_image, None, None, "Generic Image")
 
 #---------------------------------------------------------------------------------------------------
     def __get_ctx(self):
@@ -487,47 +249,18 @@ class IViewport(gtk.DrawingArea):
         self.__ctx = self.window.cairo_create()
         # draw background
         self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
-        self.__ctx.rectangle(0, 0, self.__vwidth, self.__vheight)
+        self.__ctx.rectangle(0, 0, self._vwidth, self._vheight)
         self.__ctx.fill()
         # draw the scene
         self.draw()
-
-#---------------------------------------------------------------------------------------------------
-    def WorldToViewport(self, x, y):
-        print "Point (world): ", x, y
-        _x = (x - self.__dx) * self.__sx
-        _y = self.__vheight - ((y - self.__dy) * self.__sy)
-        print "Point (view): ", _x, _y
-        return _x, _y
-
-#---------------------------------------------------------------------------------------------------
-    def ViewportToWorld(self, x, y):
-        print "Point (view): ", x, y
-        _x = (x / self.__sx) + self.__dx
-        _y = ((self.__vheight - y) / self.__sy) + self.__dy
-        print "Point (world): ", _x, _y
-        return _x, _y
-
-#---------------------------------------------------------------------------------------------------
-    def WorldToViewportSize(self, size):
-        print "Size (world): ", size
-        _size = size * self.__sx
-        return _size
-    
-#---------------------------------------------------------------------------------------------------
-    def ViewportToWorldSize(self, size):
-        print "Size (view): ", size
-        _size = size / self.__sx
-        return _size
-    
     
 #---------------------------------------------------------------------------------------------------
     def draw(self):
         print "ViewportDraw.__draw()"
         #
-        active_layer = self.__image.getActiveLayer()
+        active_layer = self._image.getActiveLayer()
         # stack of layers
-        layers = [self.__image.getTopLayer()]
+        layers = [self._image.getTopLayer()]
         # iterate over stack of layers
         while (len(layers)):
             layer = layers.pop()
@@ -542,7 +275,7 @@ class IViewport(gtk.DrawingArea):
         # redraw selected entities
         #
         color = Color('#ff7733')
-        for obj in self.__image.getSelectedObjects(False):
+        for obj in self._image.getSelectedObjects(False):
             obj.draw(self, color)
 
 #---------------------------------------------------------------------------------------------------
@@ -567,19 +300,19 @@ class IViewport(gtk.DrawingArea):
         if not isinstance(layer, Layer):
             raise TypeError, "Invalid layer type: " + `type(layer)`
         #
-        if layer.getParent() is not self.__image:
+        if layer.getParent() is not self._image:
             raise ValueError, "Layer not found in Image"
         #
         if layer.isVisible():
-            color = self.__image.getOption('INACTIVE_LAYER_COLOR')
-            if layer is self.__image.getActiveLayer():
+            color = self._image.getOption('INACTIVE_LAYER_COLOR')
+            if layer is self._image.getActiveLayer():
                 color = None
             # lists with objects to draw
             _cobjs = []
             _objs = []
             _pts = []
             # select intities within the visible region
-            for _obj in layer.objsInRegion(self.__wxmin, self.__wymin, self.__wxmax, self.__wymax):
+            for _obj in layer.objsInRegion(self._wxmin, self._wymin, self._wxmax, self._wymax):
                 if _obj.isVisible():
                     if isinstance(_obj, point.Point):
                         _pts.append(_obj)
@@ -596,18 +329,19 @@ class IViewport(gtk.DrawingArea):
                 _obj.draw(self, color)
 
 #---------------------------------------------------------------------------------------------------
-    def __draw_set_properties(self, color, lineweight, linestyle):
+    def __set_draw_properties(self, color, lineweight, linestyle):
         print "ViewportDraw.draw_set_properties()"
-        # set color property
-        r, g, b = color.getColors()
-        print "color: ", r, g, b
-        self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+        if color is not None:
+            # set color property
+            r, g, b = color.getColors()
+            print "color: ", r, g, b
+            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
         # set linestyle property
         if linestyle is not None:
             self.__ctx.set_dash(linestyle)
             print "linestyle: ", linestyle
         # set lineweight property
-        if lineweight > 0.0:
+        if lineweight is not None and lineweight > 0.0:
             self.__ctx.set_line_width(lineweight)
             print "lineweight: ", lineweight
         
@@ -620,12 +354,12 @@ class IViewport(gtk.DrawingArea):
             #begin
             self.__ctx.save()
             # set properties
-            self.__draw_set_properties(color, lineweight, linestyle)
+            self.__set_draw_properties(color, lineweight, linestyle)
             # draw the points
             for point in points:
                 # transform to display coordinates
                 x, y = point.getCoords()
-                px, py = self.WorldToViewport(x, y)
+                px, py = self.world_to_view(x, y)
                 if first_point:
                     self.__ctx.move_to(px, py)
                     first_point = False
@@ -644,12 +378,12 @@ class IViewport(gtk.DrawingArea):
             #begin
             self.__ctx.save()
             # set properties
-            self.__draw_set_properties(color, lineweight, linestyle)
+            self.__set_draw_properties(color, lineweight, linestyle)
             # draw the points
             for point in points:
                 # transform to display coordinates
                 x, y = point.getCoords()
-                px, py = self.WorldToViewport(x, y)
+                px, py = self.world_to_view(x, y)
                 if first_point:
                     self.__ctx.move_to(px, py)
                     first_point = False
@@ -672,14 +406,14 @@ class IViewport(gtk.DrawingArea):
             #begin
             self.__ctx.save()
             # set properties
-            self.__draw_set_properties(color, lineweight, linestyle)
+            self.__set_draw_properties(color, lineweight, linestyle)
             # what is this: internal presentation of an arc in degrees??
             rstart = start * self.__deg2rad
             rend = end * self.__deg2rad
             # transform to display coordinates
             x, y = center.getCoords()
-            vx, vy = self.WorldToViewport(x, y)
-            vradius = self.WorldToViewportSize(radius)
+            vx, vy = self.world_to_view(x, y)
+            vradius = self.size_world_to_view(radius)
             # arc drawing relies on Cairo transformations
             self.__ctx.scale(1.0, -1.0)
             self.__ctx.translate(vx, -(vy))
@@ -698,11 +432,11 @@ class IViewport(gtk.DrawingArea):
             #begin
             self.__ctx.save()
             # set properties
-            self.__draw_set_properties(color, lineweight, linestyle)
+            self.__set_draw_properties(color, lineweight, linestyle)
             # transform to display coordinates
             x, y = center.getCoords()
-            vx, vy = self.WorldToViewport(x, y)
-            vradius = self.WorldToViewportSize(radius)
+            vx, vy = self.world_to_view(x, y)
+            vradius = self.size_world_to_view(radius)
             # arc drawing relies on Cairo transformations
             self.__ctx.scale(1.0, -1.0)
             self.__ctx.translate(vx, -(vy))
@@ -733,7 +467,7 @@ class IViewport(gtk.DrawingArea):
             # position
             x = location[0]
             y = location[1]
-            vx, vy = self.WorldToViewport(x, y)
+            vx, vy = self.world_to_view(x, y)
             self.__ctx.move_to(vx, vy)
             self.__ctx.show_layout(layout)
             self.__ctx.restore()    

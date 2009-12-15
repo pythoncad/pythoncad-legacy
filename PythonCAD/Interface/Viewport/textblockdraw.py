@@ -61,7 +61,7 @@ def _format_layout(self, viewport, layout):
     # set font weight
     font_descr.set_weight(pango_weight)
     
-    font_size = viewport.WorldToViewportSize(self.getSize())
+    font_size = viewport.size_world_to_view(self.getSize())
     pango_size = int(pango.SCALE * font_size)
     if pango_size < pango.SCALE:
         pango_size = pango.SCALE
@@ -83,7 +83,7 @@ def _format_layout(self, viewport, layout):
     layout.set_font_description(font_descr)
     if self.getLineCount() > 0:
         width, height = layout.get_pixel_size()
-        self.setBounds(viewport.ViewportToWorldSize(width), viewport.ViewportToWorldSize(height))
+        self.setBounds(viewport.size_view_to_world(width), viewport.size_view_to_world(height))
         
 #----------------------------------------------------------------------------------------------------
 def _draw_textblock(self, viewport, col=None):
@@ -106,4 +106,4 @@ def _draw_textblock(self, viewport, col=None):
     
 #----------------------------------------------------------------------------------------------------
 def _erase_textblock(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))

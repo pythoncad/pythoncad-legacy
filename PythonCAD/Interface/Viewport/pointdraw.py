@@ -63,7 +63,7 @@ def _draw_point(self, viewport, col=None):
     # point coordinates
     x, y = self.getCoords()
     # transformation to viewport coordinates
-    px, py = viewport.WorldToViewport(x, y)
+    px, py = viewport.world_to_view(x, y)
     # cairo context
     ctx = viewport.cairo_context
     if ctx is not None:
@@ -77,7 +77,7 @@ def _draw_point(self, viewport, col=None):
         ctx.stroke()
         ctx.restore()
     # draw the point in highlight color
-    if viewport.Image.getOption('HIGHLIGHT_POINTS'):
+    if viewport.gimage.getOption('HIGHLIGHT_POINTS'):
         count = 0
         for user in self.getUsers():
             if not isinstance(user, dimension.Dimension):
@@ -86,9 +86,9 @@ def _draw_point(self, viewport, col=None):
                 break
         # 
         if count > 1:
-            color = viewport.Image.getOption('MULTI_POINT_COLOR')
+            color = viewport.gimage.getOption('MULTI_POINT_COLOR')
         else:
-            color = viewport.Image.getOption('SINGLE_POINT_COLOR')
+            color = viewport.gimage.getOption('SINGLE_POINT_COLOR')
         # use cairo to draw
         if ctx is not None:
             # draw the point representation as a rectangle
@@ -105,13 +105,13 @@ def _erase_point(self, viewport):
     # point coordinates
     x, y = self.getCoords()
     # transformation to viewport coordinates
-    px, py = viewport.WorldToViewport(x, y)
+    px, py = viewport.world_to_view(x, y)
     
     _x, _y = self.getCoords()
     _px, _py = gimage.coordToPixTransform(_x, _y)
     _w, _h = gimage.getSize()
     _image = gimage.getImage()
-    color = viewport.Image.getOption('BACKGROUND_COLOR')
+    color = viewport.gimage.getOption('BACKGROUND_COLOR')
     
     # cairo context
     ctx = viewport.cairo_context    
@@ -127,7 +127,7 @@ def _erase_point(self, viewport):
         ctx.stroke()
         ctx.restore()
 
-    if viewport.Image.getOption('HIGHLIGHT_POINTS'):
+    if viewport.gimage.getOption('HIGHLIGHT_POINTS'):
         if ctx is not None:
             ctx.save()
             r, g, b = color.getColors()

@@ -46,7 +46,7 @@ def _draw_cline(self, viewport, col=None):
     lineweight = self.getThickness()
     linestyle = self.getLinetype().getList()
     # clip to visible area
-    coords = self.clipToRegion(viewport.WorldXmin, viewport.WorldYmin, viewport.WorldXmax, viewport.WorldYmax)
+    coords = self.clipToRegion(viewport.world_x_min, viewport.world_y_min, viewport.world_x_max, viewport.world_y_max)
     if coords is not None:
         x1, y1, x2, y2 = coords
         p1 = Point(x1, y1)
@@ -60,5 +60,5 @@ def _draw_cline(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_cline(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     

@@ -45,8 +45,8 @@ def _draw_vcline(self, viewport, col=None):
     location = self.getLocation()
     x, _ = location.getCoords()
     # calculate begin and endpoint
-    p1 = Point(x, viewport.WorldYmin)
-    p2 = Point(x, viewport.WorldYmax)
+    p1 = Point(x, viewport.world_y_min)
+    p2 = Point(x, viewport.world_y_max)
     # add points to list
     points = []
     points.append(p1)
@@ -56,5 +56,5 @@ def _draw_vcline(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_vcline(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     

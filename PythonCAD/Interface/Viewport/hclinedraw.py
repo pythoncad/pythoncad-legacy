@@ -51,8 +51,8 @@ def _draw_hcline(self, viewport, col=None):
     location = self.getLocation()
     _, y = location.getCoords()
     # calculate begin and endpoint
-    p1 = Point(viewport.WorldXmin, y)
-    p2 = Point(viewport.WorldXmax, y)
+    p1 = Point(viewport.world_x_min, y)
+    p2 = Point(viewport.world_x_max, y)
     # add points to list
     points = []
     points.append(p1)
@@ -62,5 +62,5 @@ def _draw_hcline(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_hcline(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     

@@ -347,5 +347,5 @@ def _erase_dim(self, viewport):
     # for deleting the dimension.
     # But when we close the application we get an error 
     # Adding pass to the erese_dim functions we not have any problems
-    # self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    # self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 
