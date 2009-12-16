@@ -26,6 +26,14 @@ import gtk
 from gtk import gdk
 
 from PythonCAD.Generic.point import Point
+from PythonCAD.Interface.Viewport.viewstate import ViewState
+
+pix_data = """/* XPM */
+static char * invisible_xpm[] = {
+"1 1 1 1",
+"       c None",
+" "};"""
+
 
 
 class IInputHandler(gtk.DrawingArea):
@@ -36,6 +44,11 @@ class IInputHandler(gtk.DrawingArea):
         # parent is gtk image
         self._gtkimage = parent
         self._image = self._gtkimage.getImage()
+        # state of the view (what to draw)
+        self._view_state = ViewState()
+        # current position in view coordinates
+        self._cur_vx = 0.0
+        self._cur_vy = 0.0
         # current position in world coordinates
         self._cur_wx = 0.0
         self._cur_wy = 0.0
@@ -53,12 +66,8 @@ class IInputHandler(gtk.DrawingArea):
         self._wymax = 1
         self._wwidth = 1
         self._wheight = 1
-        # draw properties
-        self._need_redraw = True
         # graphics context
-        self.__gc = None
-        # pixmap
-        self.__pixmap = None
+        self._gc = None
         # pixmap scale factor (1=viewport size, 2=twice the size, 3=even larger)
         self.__px_scale_factor = 2
         # cairo translate factors
@@ -85,8 +94,13 @@ class IInputHandler(gtk.DrawingArea):
 
 #---------------------------------------------------------------------------------------------------
     def __realize_event(self, widget, data=None):
+        # make cursor invisible
+        color = gtk.gdk.Color()
+        pix = gtk.gdk.pixmap_create_from_data(None, pix_data, 1, 1, 1, color, color)
+        invisble_cursor = gtk.gdk.Cursor(pix, pix, color, color, 0, 0)
+        self.window.set_cursor(invisble_cursor)
         # create a graphic context if not exists
-        self.__gc = self.window.new_gc()
+        self._gc = self.window.new_gc()
         
 #---------------------------------------------------------------------------------------------------
     def __expose_event(self, widget, event, data=None):
@@ -97,7 +111,6 @@ class IInputHandler(gtk.DrawingArea):
         print "viewport (Xmin, Xmax)", self._vxmin, self._vxmax
         print "viewport (Ymin, Ymax)", self._vymin, self._vymax
         # refresh
-        self._need_redraw = True
         self.refresh()
         return True
 
@@ -203,8 +216,15 @@ class IInputHandler(gtk.DrawingArea):
     
 #---------------------------------------------------------------------------------------------------
     def __set_tool_point(self, event):
-        self._cur_wx, self._cur_wy = self.view_to_world(event.x, event.y)
+        # view position
+        self._cur_vx = event.x
+        self._cur_vy = event.y
+        # world position
+        self._cur_wx, self._cur_wy = self.view_to_world(self._cur_vx, self._cur_vy)
         self._image.setCurrentPoint(self._cur_wx, self._cur_wy)
+        # redraw cursor
+        self._view_state.current = self._view_state.CursorMotion
+        self.invalidate()
         
 #---------------------------------------------------------------------------------------------------
     def _calc_viewfactors(self):
@@ -228,7 +248,7 @@ class IInputHandler(gtk.DrawingArea):
             self.__sy = self.__sx
             print "Scale: ", self.__sx, self.__sy
             # redraw
-            self._need_redraw = True
+            self._view_state.current = self._view_state.DrawScene
             self.invalidate()
 
 #---------------------------------------------------------------------------------------------------
@@ -258,4 +278,15 @@ class IInputHandler(gtk.DrawingArea):
         print "Size (view): ", size
         _size = size / self.__sx
         return _size
+            
+#---------------------------------------------------------------------------------------------------
+    def invalidate(self):
+        print "IViewport.invalidate()"
+        if self.window:
+            alloc = self.get_allocation()
+            rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
+            self.window.invalidate_rect(rect, True)
+            self.window.process_updates(True)
+            
+            
             

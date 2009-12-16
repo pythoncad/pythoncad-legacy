@@ -81,6 +81,8 @@ class IViewport(IInputHandler):
 #---------------------------------------------------------------------------------------------------
     def __init__(self, parent):
         super(IViewport, self).__init__(parent)
+        # pixmap
+        self.__pixmap = None
         # cairo context
         self.__ctx = None
         # 2pi
@@ -214,24 +216,15 @@ class IViewport(IInputHandler):
         self.__zoom_scale(1.5)
 
 #---------------------------------------------------------------------------------------------------
-    def invalidate(self):
-        print "IViewport.invalidate()"
-        if self.window:
-            alloc = self.get_allocation()
-            rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
-
-#---------------------------------------------------------------------------------------------------
     def refresh(self):
         print "IViewport.refresh()"
-        # need to draw the scene?
-        if self._need_redraw:
+        # viewport must have a sizxe
+        if self._vwidth > 0 and self._vheight > 0:        
             # redraw the scene
             self.redraw()
-            self._need_redraw = False
-        # show the scene/pixmap
-        #self.window.draw_drawable(self.__gc, self.__pixmap, 0, 0, 0, 0, alloc.width, alloc.height)
+            ## show the scene/pixmap
+            #if self._gc is not None and self.__pixmap is not None:
+                #self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
 
 #---------------------------------------------------------------------------------------------------
     def __get_ctx(self):
@@ -241,19 +234,56 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def redraw(self):
-        print "IViewport.redraw()"
-        # create new pixmap area
-        #self.__pixmap = gtk.gdk.Pixmap(self.window, width, height)
-        # create a cairo context for the pixmap
-        #ctx = self.__pixmap.cairo_create()
-        self.__ctx = self.window.cairo_create()
-        # draw background
-        self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
-        self.__ctx.rectangle(0, 0, self._vwidth, self._vheight)
-        self.__ctx.fill()
-        # draw the scene
-        self.draw()
+        # viewport must have a sizxe
+        if self._vwidth > 0 and self._vheight > 0:
+            # what to redraw
+            if self._view_state.current == self._view_state.CursorMotion:
+                self.redraw_cursor()
+            elif self._view_state.current == self._view_state.DrawScene:
+                self.redraw_scene()
+            
+#---------------------------------------------------------------------------------------------------
+    def redraw_cursor(self):
+        # viewport must have a sizxe
+        if self._vwidth > 0 and self._vheight > 0:
+            # show the current scene
+            if self._gc is not None and self.__pixmap is not None:
+                self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
+            # create a cairo context for the cursor
+            ctx = self.window.cairo_create()
+            # white cursor
+            ctx.set_source_rgb(1.0, 1.0, 1.0)
+            ctx.set_line_width(1.0)
+            # draw cursor horizontal line
+            ctx.move_to(self._cur_vx, 0)
+            ctx.line_to(self._cur_vx, self._vheight)
+            # draw cursor vertical line
+            ctx.move_to(0, self._cur_vy)
+            ctx.line_to(self._vwidth, self._cur_vy)
+            # draw rectangle
+            ctx.rectangle((self._cur_vx - 5), (self._cur_vy - 5), 10, 10)
+            # end
+            ctx.stroke()
     
+#---------------------------------------------------------------------------------------------------
+    def redraw_scene(self):
+        # viewport must have a sizxe
+        if self._vwidth > 0 and self._vheight > 0:
+            # create new pixmap area
+            self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
+            # create a cairo context for the pixmap
+            self.__ctx = self.__pixmap.cairo_create()
+            #self.__ctx = self.window.cairo_create()
+            # draw background
+            self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
+            self.__ctx.rectangle(0, 0, self._vwidth, self._vheight)
+            self.__ctx.fill()
+            # draw the scene
+            self.draw()
+            # show the scene
+            if self._gc is not None and self.__pixmap is not None:
+                self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
+
 #---------------------------------------------------------------------------------------------------
     def draw(self):
         print "ViewportDraw.__draw()"
