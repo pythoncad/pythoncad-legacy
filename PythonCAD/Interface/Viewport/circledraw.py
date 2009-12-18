@@ -56,5 +56,5 @@ def _draw_circle(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_circle(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 

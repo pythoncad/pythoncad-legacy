@@ -56,5 +56,5 @@ def _draw_chamfer(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_chamfer(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 

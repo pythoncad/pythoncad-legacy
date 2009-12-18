@@ -60,5 +60,5 @@ def _draw_leader(self, viewport, col=None):
 
 #----------------------------------------------------------------------------------------------------
 def _erase_leader(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     

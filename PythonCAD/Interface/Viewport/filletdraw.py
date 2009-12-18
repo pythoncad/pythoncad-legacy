@@ -63,5 +63,5 @@ def _draw_fillet(self, viewport, col=None):
    
 #----------------------------------------------------------------------------------------------------
 def _erase_fillet(self, viewport):
-    self.draw(viewport, viewport.Image.getOption('BACKGROUND_COLOR'))
+    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 
