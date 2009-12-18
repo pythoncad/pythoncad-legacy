@@ -28,7 +28,7 @@ from PythonCAD.Generic.tools import Tool
 from PythonCAD.Generic import snap 
 from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.segment import Segment
-
+from PythonCAD.Interface.Gtk import gtkdialog
 from PythonCAD.Interface.Command import cmdCommon
 
 #
@@ -121,21 +121,21 @@ def segment_second_entry_event_cb(gtkimage, widget, tool):
     _entry.delete_text(0, -1)    
     if len(_text):
         try:
-            _x, _y = make_tuple(_text, gtkimage.image.getImageVariables())
+            _x, _y = cmdCommon.make_tuple(_text, gtkimage.image.getImageVariables())
         except:
             if _text.strip()!="d:n" :
-                gtkDialog._message_dialog(gtkimage,"Wrong comand","inser a touple of values x,y")
+                gtkdialog._message_dialog(gtkimage,"Wrong comand","inser a touple of values x,y")
             return
         _str=snap.SnapPointStr("Freepoint",Point(_x, _y),None)
         tool.setSecondPoint(_str)
-        create_entity(gtkimage)
+        cmdCommon.create_entity(gtkimage)
 
 def segment_first_entry_event_cb(gtkimage, widget, tool): 
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
     _entry.delete_text(0,-1)
     if len(_text):
-        _x, _y = make_tuple(_text, gtkimage.image.getImageVariables())
+        _x, _y = cmdCommon.make_tuple(_text, gtkimage.image.getImageVariables())
         _str=snap.SnapPointStr("Freepoint",Point(_x, _y),None)
         tool.setFirstPoint(_str)
         tool.setHandler("button_press", segment_second_button_press_cb)

@@ -364,7 +364,6 @@ class GTKImage(object):
         """
             Destroy event
         """
-        print "Debug Destroy event "
         if self.__image.isSaved()== False:
             # TODO ggr: fix this construction
             _image=self.getImage()

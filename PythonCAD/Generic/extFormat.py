@@ -182,11 +182,14 @@ class Dxf(DrawingFile):
         """
         _fo=self.createAsci()               #open the file for writing
         _layersEnts=self.getAllEntitis()    #get all the entities from the file
+        self.writeLine("999\nExported from Pythoncad\nSECTION\n  2\nENTITIES\n")#header section for entities
         for _key in _layersEnts:            #Looping at all layer
-            for _obj in _layersEnts[_key]:   #looping at all entities in the layer
+            #create header section#
+            for _obj in _layersEnts[_key]:  #looping at all entities in the layer
                 if isinstance(_obj,Segment):#if it's segment 
                     self.writeSegment(_obj) # ad it at the dxf drawing
                 # go on end implements the other case arc circle ...
+        self.writeLine("  0\nENDSEC\n  0\nEOF")#writing End Of File
         self.close()
         
     def getAllEntitis(self):
@@ -212,11 +215,12 @@ class Dxf(DrawingFile):
         x1,y1=e.getP1().getCoords()
         x2,y2=e.getP2().getCoords()
         # this is an exsample for writing the segments coords
-        self.writeLine("x1 : " +str(x1) +"\n")
-        self.writeLine("y1 : " +str(y1) +"\n")
-        self.writeLine("x2 : " +str(x2) +"\n")
-        self.writeLine("y2 : " +str(y2) +"\n")
-        
+        self.writeLine("  0\nLINE\n100\nAcdbLine\n")
+        self.writeLine(" 10\n" +str(x1) +"\n")
+        self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
+        self.writeLine(" 11\n" +str(x2) +"\n")
+        self.writeLine(" 21\n" +str(y2) +"\n 31\n0.0\n")  
+              
     def importEntitis(self):
         """
             Open The file and create The entity in pythonCad
