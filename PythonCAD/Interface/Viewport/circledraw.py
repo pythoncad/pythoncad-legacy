@@ -37,10 +37,7 @@ from PythonCAD.Generic.point import Point
 
 #----------------------------------------------------------------------------------------------------
 def _draw_circle(self, viewport, col=None):
-    print "_draw_circle()"
     color = col
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # if color is not defined, take color of entity
     if color is None:
         color = self.getColor()

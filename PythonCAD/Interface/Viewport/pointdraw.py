@@ -46,8 +46,7 @@ from PythonCAD.Generic import color
 #from PythonCAD.Generic import text
 from PythonCAD.Generic import dimension
 #from PythonCAD.Generic import layer
-#
-#from PythonCAD.Interface.Gtk import gtkimage
+
 
 _point_color = color.Color(255, 255, 255) # white
 
@@ -56,8 +55,6 @@ _point_color = color.Color(255, 255, 255) # white
 def _draw_point(self, viewport, col=None):
     color = col
     # is color defined
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     if color is None:
         color = _point_color
     # point coordinates

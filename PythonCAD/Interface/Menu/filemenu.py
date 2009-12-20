@@ -28,8 +28,6 @@ import gtk
 import gtk.keysyms
 
 
-#from PythonCAD.Interface.Gtk.gtkimage import GTKImage
-
 from PythonCAD.Interface.Gtk import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtkprinting
@@ -235,7 +233,8 @@ def file_open_cb(menuitem, gtkimage):
             return
         
         # TODO: fix this
-        from PythonCAD.Interface.Gtk.gtkimage import GTKImage
+        from PythonCAD.Interface.Gtk.meta_gtkimage import GTKImage
+        
         globals.imagelist.append(_image)
         _image.setFilename(_fname)
         _gtkimage = GTKImage(_image)

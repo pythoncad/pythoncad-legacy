@@ -38,8 +38,6 @@ if sys.platform == 'darwin':
         print "Module igemacintegration not found, mac osx integration not possible"
 
 
-#from PythonCAD.Interface.Gtk.gtkimage import GTKImage
-
 from PythonCAD.Interface.Gtk import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtkprinting

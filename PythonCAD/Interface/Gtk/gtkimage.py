@@ -227,36 +227,30 @@ class GTKImage(object):
         self.__disp_height = None
         self.__units_per_pixel = 1.0
 
-        # TODO GGR
-        if viewport_draw:
-            print "using viewport_draw"
-            self.__da = IViewport(self)
-            pane.pack2(self.__da, True, False)
-        else:
-            self.__da = gtk.DrawingArea()
+        self.__da = gtk.DrawingArea()
 
-            black = gtk.gdk.color_parse('black')
-            self.__da.modify_fg(gtk.STATE_NORMAL, black)
-            self.__da.modify_bg(gtk.STATE_NORMAL, black)
-            pane.pack2(self.__da, True, False)
-            self.__da.set_flags(gtk.CAN_FOCUS)
-            self.__da.connect("event", self.__daEvent)
-            self.__da.connect("expose_event", self.__exposeEvent)
-            self.__da.connect("realize", self.__realizeEvent)
-            self.__da.connect("configure_event", self.__configureEvent)
-            # self.__da.connect("focus_in_event", self.__focusInEvent)
-            # self.__da.connect("focus_out_event", self.__focusOutEvent)
+        black = gtk.gdk.color_parse('black')
+        self.__da.modify_fg(gtk.STATE_NORMAL, black)
+        self.__da.modify_bg(gtk.STATE_NORMAL, black)
+        pane.pack2(self.__da, True, False)
+        self.__da.set_flags(gtk.CAN_FOCUS)
+        self.__da.connect("event", self.__daEvent)
+        self.__da.connect("expose_event", self.__exposeEvent)
+        self.__da.connect("realize", self.__realizeEvent)
+        self.__da.connect("configure_event", self.__configureEvent)
+        # self.__da.connect("focus_in_event", self.__focusInEvent)
+        # self.__da.connect("focus_out_event", self.__focusOutEvent)
 
-            self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
-                                 gtk.gdk.LEAVE_NOTIFY_MASK |
-                                 gtk.gdk.BUTTON_PRESS_MASK |
-                                 gtk.gdk.BUTTON_RELEASE_MASK |
-                                 gtk.gdk.ENTER_NOTIFY_MASK|
-                                 gtk.gdk.LEAVE_NOTIFY_MASK|
-                                 gtk.gdk.KEY_PRESS_MASK |
-                                 gtk.gdk.KEY_RELEASE_MASK |
-                                 gtk.gdk.FOCUS_CHANGE_MASK |
-                                 gtk.gdk.POINTER_MOTION_MASK)
+        self.__da.set_events(gtk.gdk.EXPOSURE_MASK |
+                             gtk.gdk.LEAVE_NOTIFY_MASK |
+                             gtk.gdk.BUTTON_PRESS_MASK |
+                             gtk.gdk.BUTTON_RELEASE_MASK |
+                             gtk.gdk.ENTER_NOTIFY_MASK|
+                             gtk.gdk.LEAVE_NOTIFY_MASK|
+                             gtk.gdk.KEY_PRESS_MASK |
+                             gtk.gdk.KEY_RELEASE_MASK |
+                             gtk.gdk.FOCUS_CHANGE_MASK |
+                             gtk.gdk.POINTER_MOTION_MASK)
 
         lower_hbox = gtk.HBox(False, 2)
         main_vbox.pack_start(lower_hbox, False, False)
@@ -470,14 +464,10 @@ class GTKImage(object):
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
         #print "GtkImage.__exposeEvent()"
-        # TODO GGR
-        if viewport_draw:
-            self.__da.refresh(event.area)
-        else:
-            _pixmap = self.__pixmap
-            _x, _y, _w, _h = event.area
-            _gc = widget.get_style().fg_gc[widget.state]
-            widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
+        _pixmap = self.__pixmap
+        _x, _y, _w, _h = event.area
+        _gc = widget.get_style().fg_gc[widget.state]
+        widget.window.draw_drawable(_gc, _pixmap, _x, _y, _x, _y, _w, _h)
         return True
 
     #------------------------------------------------------------------

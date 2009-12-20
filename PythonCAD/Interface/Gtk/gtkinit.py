@@ -48,7 +48,7 @@ from PythonCAD.Generic import dimension
 from PythonCAD.Generic import layer
 from PythonCAD.Generic import util
 
-from PythonCAD.Interface.Gtk import gtkimage
+from PythonCAD.Interface.Gtk import meta_gtkimage as gtkimage
 
 def _set_gc_values(gc, dl, c, t):
     if dl is None:

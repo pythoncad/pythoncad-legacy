@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-
+import os
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -28,11 +28,18 @@ from gtk import gdk
 from PythonCAD.Generic.point import Point
 from PythonCAD.Interface.Viewport.viewstate import ViewState
 
+
 pix_data = """/* XPM */
 static char * invisible_xpm[] = {
 "1 1 1 1",
 "       c None",
 " "};"""
+
+#pix_data = []
+#pix_data.append("1 1 1 1")
+#pix_data.append("       c None")
+#pix_data.append(" ")
+
 
 
 
@@ -76,6 +83,8 @@ class IInputHandler(gtk.DrawingArea):
         # cairo scale factors
         self.__sx = 1.0
         self.__sy = 1.0
+        # vertical exaggeration
+        self.__vert_exaggeration = 1.0
         # event handlers
         self.connect("event", self.__input_event)
         self.connect("expose_event", self.__expose_event)
@@ -95,10 +104,11 @@ class IInputHandler(gtk.DrawingArea):
 #---------------------------------------------------------------------------------------------------
     def __realize_event(self, widget, data=None):
         # make cursor invisible
-        color = gtk.gdk.Color()
-        pix = gtk.gdk.pixmap_create_from_data(None, pix_data, 1, 1, 1, color, color)
-        invisble_cursor = gtk.gdk.Cursor(pix, pix, color, color, 0, 0)
-        self.window.set_cursor(invisble_cursor)
+        #color = gtk.gdk.Color()
+        #pix = gtk.gdk.pixmap_new_from_xpm_data(pix_data)
+        #pix = gtk.gdk.pixmap_create_from_data(self.window, pix_data, 1, 1, 1, color, color)
+        #invisble_cursor = gtk.gdk.Cursor(pix, pix, color, color, 0, 0)
+        #self.window.set_cursor(invisble_cursor)
         # create a graphic context if not exists
         self._gc = self.window.new_gc()
         
@@ -130,7 +140,7 @@ class IInputHandler(gtk.DrawingArea):
             pass
         
         if event_type == gtk.gdk.BUTTON_PRESS:
-            self.__set_tool_point(event)
+            self._set_tool_point(event.x, event.y)
             _button = event.button
             if _button == 1:
                 if tool is not None and tool.hasHandler("button_press"):
@@ -138,7 +148,7 @@ class IInputHandler(gtk.DrawingArea):
             self.__Move(widget, event)
 
         elif event_type == gtk.gdk.BUTTON_RELEASE:
-            self.__set_tool_point(event)
+            self._set_tool_point(event.x, event.y)
             _button = event.button
             if _button == 1:
                 if tool is not None and tool.hasHandler("button_release"):
@@ -146,7 +156,7 @@ class IInputHandler(gtk.DrawingArea):
             self._gtkimage.__Move(widget, event)
         # mouse move
         elif event_type == gtk.gdk.MOTION_NOTIFY:
-            self.__set_tool_point(event)
+            self._set_tool_point(event.x, event.y)
             #if tool is not None and tool.hasHandler("motion_notify"):
                 #retval = tool.getHandler('motion_notify')(self, widget, event, tool)
             #self._gtkimage.__MakeMove(widget,event)
@@ -175,10 +185,10 @@ class IInputHandler(gtk.DrawingArea):
                 else:
                     retval = _entry.event(event)
         elif event_type == gtk.gdk.ENTER_NOTIFY:
-            self.__set_tool_point(event)
+            self._set_tool_point(event.x, event.y)
             retval = True
         elif event_type == gtk.gdk.LEAVE_NOTIFY:
-            self.__set_tool_point(event)
+            self._set_tool_point(event.x, event.y)
             retval = True
         else:
             pass
@@ -215,10 +225,10 @@ class IInputHandler(gtk.DrawingArea):
     gimage = property(__get_image, None, None, "Generic Image")
     
 #---------------------------------------------------------------------------------------------------
-    def __set_tool_point(self, event):
+    def _set_tool_point(self, x, y):
         # view position
-        self._cur_vx = event.x
-        self._cur_vy = event.y
+        self._cur_vx = x
+        self._cur_vy = y
         # world position
         self._cur_wx, self._cur_wy = self.view_to_world(self._cur_vx, self._cur_vy)
         self._image.setCurrentPoint(self._cur_wx, self._cur_wy)
@@ -235,18 +245,17 @@ class IInputHandler(gtk.DrawingArea):
             # world width and height
             self._wwidth = self._wxmax - self._wxmin
             self._wheight = self._wymax - self._wymin
-            print "World (w, h):", self._wwidth, self._wheight
-            print "View (w, h):", self._vwidth, self._vheight
             # translation
             self.__dx = self._wxmin
             self.__dy = self._wymin
-            print "Translate: ", self.__dx, self.__dy
             # scale factor
             sx = 1.0 * self._vwidth / self._wwidth
             sy = 1.0 * self._vheight / self._wheight
             self.__sx = min(sx, sy)
-            self.__sy = self.__sx
-            print "Scale: ", self.__sx, self.__sy
+            self.__sy = self.__sx * self.__vert_exaggeration
+            # visible world area
+            self._wxmax = self._wxmin + self.size_view_to_world(self._vwidth)
+            self._wymax = self._wymin + self.size_view_to_world(self._vheight)
             # redraw
             self._view_state.current = self._view_state.DrawScene
             self.invalidate()

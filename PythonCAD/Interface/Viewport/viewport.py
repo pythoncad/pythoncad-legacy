@@ -27,6 +27,8 @@ pygtk.require('2.0')
 import gtk
 from gtk import gdk
 
+import cairo
+
 #from PythonCAD.Generic.image import Image
 #from PythonCAD.Generic.layer import Layer
 #from PythonCAD.Interface.Entities.ipoint import IPoint
@@ -194,26 +196,23 @@ class IViewport(IInputHandler):
 #---------------------------------------------------------------------------------------------------
     def __zoom_scale(self, scale):
         print "IViewport.zoom_in()"
-        # new width and height
-        self._wwidth *= scale
-        self._wheight *= scale
         # modify world window
-        self._wxmin = self._cur_wx - self._wwidth / 2.0
-        self._wxmax = self._cur_wx + self._wwidth / 2.0
-        self._wymin = self._cur_wy - self._wheight / 2.0 
-        self._wymax = self._cur_wy + self._wheight / 2.0
+        self._wxmin = self._cur_wx - (self._cur_wx - self._wxmin) * scale
+        self._wxmax = self._cur_wx + (self._wxmax - self._cur_wx) * scale
+        self._wymin = self._cur_wy - (self._cur_wy - self._wymin) * scale
+        self._wymax = self._cur_wy + (self._wymax - self._cur_wy) * scale
         # set the view translation and scale factors
         self._calc_viewfactors()
 
 #---------------------------------------------------------------------------------------------------
     def zoom_in(self):
         print "IViewport.zoom_in()"
-        self.__zoom_scale(0.667)
+        self.__zoom_scale(0.75)
 
 #---------------------------------------------------------------------------------------------------
     def zoom_out(self):
         print "IViewport.zoom_out()"
-        self.__zoom_scale(1.5)
+        self.__zoom_scale(1.25)
 
 #---------------------------------------------------------------------------------------------------
     def refresh(self):
@@ -273,8 +272,12 @@ class IViewport(IInputHandler):
             self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
             # create a cairo context for the pixmap
             self.__ctx = self.__pixmap.cairo_create()
+            self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
             #self.__ctx = self.window.cairo_create()
             # draw background
+            color = self._image.getOption('BACKGROUND_COLOR')
+            r, g, b = color.getColors()
+            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
             self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
             self.__ctx.rectangle(0, 0, self._vwidth, self._vheight)
             self.__ctx.fill()
@@ -283,6 +286,8 @@ class IViewport(IInputHandler):
             # show the scene
             if self._gc is not None and self.__pixmap is not None:
                 self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
+            # update point
+            #self._set_tool_point(self._cur_vx, self._cur_vy)
 
 #---------------------------------------------------------------------------------------------------
     def draw(self):
