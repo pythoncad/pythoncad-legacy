@@ -22,7 +22,7 @@
 
 # new viewport draw functions (not implemented yet)
 viewport_draw = False
-viewport_draw = True
+#viewport_draw = True
 
 if viewport_draw:
     print "Using R38 draw"
