@@ -23,7 +23,7 @@
 
 class ViewState(object):
     def __init__(self):
-        names = 'None DrawScene CursorMotion RubberBand'
+        names = 'None DrawScene CursorMotion RubberBand Pan'
         for number, name in enumerate(names.split()):
             setattr(self, name, number)
         # current state

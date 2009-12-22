@@ -58,9 +58,6 @@ _debug = False ##  SDB debug stuff
 globals.gtkcolors = {}
 globals.gtklinetypes = {}
 
-# new viewport draw functions (not implemented yet)
-viewport_draw = False
-#viewport_draw = True
 
 
 class GTKImage(object):
@@ -1106,10 +1103,6 @@ allocated color.
 
 fitImage()
         """
-        if viewport_draw:
-            self.__da.zoom_fit()
-            return
-        
         _fw = float(self.__disp_width)
         _fh = float(self.__disp_height)
         _xmin, _ymin, _xmax, _ymax = self.__image.getExtents()
@@ -1465,21 +1458,15 @@ fitImage()
         """
             Make a drawing zoom of the scale quantity
         """
-        if viewport_draw:
-            if scale > 1.0:
-                self.__da.zoom_out()
-            else:
-                self.__da.zoom_in()
-        else:
-            _fw = float(self.__disp_width)
-            _fh = float(self.__disp_height)
-            _xdiff = abs(self.__xmax-self.__xmin)
-            _ydiff = abs(self.__ymax-self.__ymin)
-            _xmid = (self.__xmin + self.__xmax)/2.0
-            _ymid = (self.__ymin + self.__ymax)/2.0
-            _xm = _xmid - (_fw/2.0) * scale
-            _ym = _ymid - (_fh/2.0) * scale
-            self.setView(_xm, _ym, scale)
+        _fw = float(self.__disp_width)
+        _fh = float(self.__disp_height)
+        _xdiff = abs(self.__xmax-self.__xmin)
+        _ydiff = abs(self.__ymax-self.__ymin)
+        _xmid = (self.__xmin + self.__xmax)/2.0
+        _ymid = (self.__ymin + self.__ymax)/2.0
+        _xm = _xmid - (_fw/2.0) * scale
+        _ym = _ymid - (_fh/2.0) * scale
+        self.setView(_xm, _ym, scale)
 
 #---------------------------------------------------------------------------------------------------
     def StartPanImage(self):

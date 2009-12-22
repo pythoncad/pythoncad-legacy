@@ -213,7 +213,27 @@ class IViewport(IInputHandler):
     def zoom_out(self):
         print "IViewport.zoom_out()"
         self.__zoom_scale(1.25)
+        
+#---------------------------------------------------------------------------------------------------
+    def start_pan(self):
+        print "IViewport.start_pan()"
+        self.__pan_x = self._cur_vx
+        self.__pan_y = self._cur_vy
+        self._view_state.current = self._view_state.Pan
 
+#---------------------------------------------------------------------------------------------------
+    def stop_pan(self):
+        print "IViewport.stop_pan()"
+        self._view_state.current = self._view_state.None
+        
+#---------------------------------------------------------------------------------------------------
+    def _do_pan(self, x, y):
+        print "IViewport._do_pan()"
+        dx = x - self.__pan_x
+        dy = y - self.__pan_y
+        if self._gc is not None and self.__pixmap is not None:
+            self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, dx, dy, self._vwidth, self._vheight)
+            
 #---------------------------------------------------------------------------------------------------
     def refresh(self):
         print "IViewport.refresh()"

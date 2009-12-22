@@ -156,7 +156,10 @@ class IInputHandler(gtk.DrawingArea):
             self._gtkimage.__Move(widget, event)
         # mouse move
         elif event_type == gtk.gdk.MOTION_NOTIFY:
-            self._set_tool_point(event.x, event.y)
+            if self._view_state == self._view_state.Pan:
+                self._do_pan(event.x, event.y)
+            else:
+                self._set_tool_point(event.x, event.y)
             #if tool is not None and tool.hasHandler("motion_notify"):
                 #retval = tool.getHandler('motion_notify')(self, widget, event, tool)
             #self._gtkimage.__MakeMove(widget,event)
@@ -297,5 +300,7 @@ class IInputHandler(gtk.DrawingArea):
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)
             
-            
+#---------------------------------------------------------------------------------------------------
+    def _do_pan(self, x, y):
+        pass
             

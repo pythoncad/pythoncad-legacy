@@ -1428,16 +1428,14 @@ fitImage()
         """
             Start Pan Image
         """
-        self.StopMove=True
-        self.__StartMoving=True
+        self.__da.start_pan()
 
 #---------------------------------------------------------------------------------------------------
     def StopPanImage(self):
         """
             Stop Pan Operation
         """
-        self.StopMove=False
-        self.__StartMoving=False
+        self.__da.stop_pan()
 
 #---------------------------------------------------------------------------------------------------
     def isPan(self):
