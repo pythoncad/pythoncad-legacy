@@ -23,10 +23,38 @@
 
 class ViewState(object):
     def __init__(self):
-        names = 'None DrawScene CursorMotion RubberBand Pan'
+        # different view states
+        names = 'None DrawScene CursorMotion RubberBand ZoomPan ZoomWindow'
         for number, name in enumerate(names.split()):
+            #print name, "=", number
             setattr(self, name, number)
         # current state
-        self.current = self.None
+        self.__current = self.None
+        # is the view initialized
+        self.__initialized = False
+
+    def __set_current(self, value):
+        #print "ViewState.__set_current"
+        self.__current = value
+
+    def __get_current(self):
+        #print "ViewState.__get_current"
+        return self.__current
+
+    current = property(__get_current, __set_current, None, "get/set current state")
             
-        
+    def __set_initialized(self, value):
+        self.__initialized = value
+
+    def __get_initialized(self):
+        #print "ViewState.__get_current"
+        return self.__initialized
+
+    initialized = property(__get_initialized, __set_initialized, None, "get/set initialized")
+
+
+    def reset(self):
+        #print "ViewState.reset"
+        self.__previous = self.__current = self.None
+
+            

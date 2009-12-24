@@ -102,13 +102,13 @@ class IInputHandler(gtk.DrawingArea):
                              gtk.gdk.POINTER_MOTION_MASK)
 
 #---------------------------------------------------------------------------------------------------
+    def __get_view_state(self):
+        return self._view_state
+    
+    view_state = property(__get_view_state, None, None, "Get the view state")
+
+#---------------------------------------------------------------------------------------------------
     def __realize_event(self, widget, data=None):
-        # make cursor invisible
-        #color = gtk.gdk.Color()
-        #pix = gtk.gdk.pixmap_new_from_xpm_data(pix_data)
-        #pix = gtk.gdk.pixmap_create_from_data(self.window, pix_data, 1, 1, 1, color, color)
-        #invisble_cursor = gtk.gdk.Cursor(pix, pix, color, color, 0, 0)
-        #self.window.set_cursor(invisble_cursor)
         # create a graphic context if not exists
         self._gc = self.window.new_gc()
         
@@ -118,10 +118,14 @@ class IInputHandler(gtk.DrawingArea):
         self._vxmin, self._vymin, width, height = event.area
         self._vxmax = self._vxmin + width
         self._vymax = self._vymin + height
-        print "viewport (Xmin, Xmax)", self._vxmin, self._vxmax
-        print "viewport (Ymin, Ymax)", self._vymin, self._vymax
-        # refresh
-        self.refresh()
+        ##print "viewport (Xmin, Xmax)", self._vxmin, self._vxmax
+        ##print "viewport (Ymin, Ymax)", self._vymin, self._vymax
+        # if expose is called for the first time then do a fit
+        if not self._view_state.initialized:
+            self.zoom_fit()
+            self._view_state.initialized = True
+        else:
+            self._refresh()
         return True
 
 #---------------------------------------------------------------------------------------------------
@@ -129,7 +133,7 @@ class IInputHandler(gtk.DrawingArea):
         retval = False
         event_type = event.type
         tool = self._image.getTool()
-        
+
         if event_type == 31:
             if event.direction == gtk.gdk.SCROLL_UP:
                 self._gtkimage.ZoomIn()
@@ -144,26 +148,30 @@ class IInputHandler(gtk.DrawingArea):
             _button = event.button
             if _button == 1:
                 if tool is not None and tool.hasHandler("button_press"):
-                    retval = tool.getHandler("button_press")(self, widget, event, tool)
-            self.__Move(widget, event)
+                    retval = tool.getHandler("button_press")(self._gtkimage, widget, event, tool)
+            #self.__Move(widget, event)
 
         elif event_type == gtk.gdk.BUTTON_RELEASE:
             self._set_tool_point(event.x, event.y)
             _button = event.button
             if _button == 1:
                 if tool is not None and tool.hasHandler("button_release"):
-                    retval =tool.getHandler("button_release")(self, widget, event, tool)
-            self._gtkimage.__Move(widget, event)
+                    retval = tool.getHandler("button_release")(self._gtkimage, widget, event, tool)
+            #self._gtkimage.__Move(widget, event)
         # mouse move
         elif event_type == gtk.gdk.MOTION_NOTIFY:
-            if self._view_state == self._view_state.Pan:
-                self._do_pan(event.x, event.y)
-            else:
-                self._set_tool_point(event.x, event.y)
-            #if tool is not None and tool.hasHandler("motion_notify"):
-                #retval = tool.getHandler('motion_notify')(self, widget, event, tool)
-            #self._gtkimage.__MakeMove(widget,event)
-            #self._gtkimage.__ActiveSnapEvent(widget,event)
+            # update point in current tool
+            self._set_tool_point(event.x, event.y)
+            # motion update for tool
+            if tool is not None and tool.hasHandler("motion_notify"):
+                retval = tool.getHandler('motion_notify')(self._gtkimage, widget, event, tool)
+#            self._gtkimage.__MakeMove(widget,event)
+#            self._gtkimage.__ActiveSnapEvent(widget,event)
+#
+#            if self._view_state.current == self._view_state.Pan:
+#                self._do_pan(event.x, event.y)
+#            else:
+#                self._set_tool_point(event.x, event.y)
         
         elif event_type == gtk.gdk.KEY_PRESS:
             _key = event.keyval
@@ -179,7 +187,7 @@ class IInputHandler(gtk.DrawingArea):
                 self.reset()
                 retval = True
             elif tool is not None and tool.hasHandler("key_press"):
-                retval = tool.getHandler("key_press")(self, widget, event, tool)
+                retval = tool.getHandler("key_press")(self._gtkimage, widget, event, tool)
             else:
                 _entry = self.__entry
                 _entry.grab_focus()
@@ -201,25 +209,37 @@ class IInputHandler(gtk.DrawingArea):
     def __get_wxmin(self):
         return self._wxmin
 
-    world_x_min = property(__get_wxmin, None, None, "Generic Image")
+    def __set_wxmin(self, value):
+        self._wxmin = value
+
+    world_x_min = property(__get_wxmin, __set_wxmin, None, "World x-min point")
 
 #---------------------------------------------------------------------------------------------------
     def __get_wxmax(self):
         return self._wxmax
 
-    world_x_max = property(__get_wxmax, None, None, "Generic Image")
+    def __set_wxmax(self, value):
+        self._wxmax = value
+
+    world_x_max = property(__get_wxmax, __set_wxmax, None, "World x-max point")
 
 #---------------------------------------------------------------------------------------------------
     def __get_wymin(self):
         return self._wymin
 
-    world_y_min = property(__get_wymin, None, None, "Generic Image")
+    def __set_wymin(self, value):
+        self._wymin = value
+
+    world_y_min = property(__get_wymin, __set_wymin, None, "World y-min point")
 
 #---------------------------------------------------------------------------------------------------
     def __get_wymax(self):
         return self._wymax
 
-    world_y_max = property(__get_wymax, None, None, "Generic Image")
+    def __set_wymax(self, value):
+        self._wymax = value
+
+    world_y_max = property(__get_wymax, __set_wymax, None, "World y-max point")
 
 #---------------------------------------------------------------------------------------------------
     def __get_image(self):
@@ -229,15 +249,18 @@ class IInputHandler(gtk.DrawingArea):
     
 #---------------------------------------------------------------------------------------------------
     def _set_tool_point(self, x, y):
+        #print "IInputHandler._set_tool_point"
         # view position
         self._cur_vx = x
         self._cur_vy = y
         # world position
         self._cur_wx, self._cur_wy = self.view_to_world(self._cur_vx, self._cur_vy)
         self._image.setCurrentPoint(self._cur_wx, self._cur_wy)
-        # redraw cursor
-        self._view_state.current = self._view_state.CursorMotion
-        self.invalidate()
+        # if the state is None redraw the cursor
+        if self._view_state.current == self._view_state.None:
+            # redraw cursor
+            self._view_state.current = self._view_state.CursorMotion
+            self.invalidate()
         
 #---------------------------------------------------------------------------------------------------
     def _calc_viewfactors(self):
@@ -265,35 +288,35 @@ class IInputHandler(gtk.DrawingArea):
 
 #---------------------------------------------------------------------------------------------------
     def world_to_view(self, x, y):
-        print "Point (world): ", x, y
+        ##print "Point (world): ", x, y
         _x = (x - self.__dx) * self.__sx
         _y = self._vheight - ((y - self.__dy) * self.__sy)
-        print "Point (view): ", _x, _y
+        ##print "Point (view): ", _x, _y
         return _x, _y
 
 #---------------------------------------------------------------------------------------------------
     def view_to_world(self, x, y):
-        print "Point (view): ", x, y
+        ##print "Point (view): ", x, y
         _x = (x / self.__sx) + self.__dx
         _y = ((self._vheight - y) / self.__sy) + self.__dy
-        print "Point (world): ", _x, _y
+        ##print "Point (world): ", _x, _y
         return _x, _y
 
 #---------------------------------------------------------------------------------------------------
     def size_world_to_view(self, size):
-        print "Size (world): ", size
+        ##print "Size (world): ", size
         _size = size * self.__sx
         return _size
     
 #---------------------------------------------------------------------------------------------------
     def size_view_to_world(self, size):
-        print "Size (view): ", size
+        ##print "Size (view): ", size
         _size = size / self.__sx
         return _size
             
 #---------------------------------------------------------------------------------------------------
     def invalidate(self):
-        print "IViewport.invalidate()"
+        ##print "IViewport.invalidate()"
         if self.window:
             alloc = self.get_allocation()
             rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
@@ -302,5 +325,9 @@ class IInputHandler(gtk.DrawingArea):
             
 #---------------------------------------------------------------------------------------------------
     def _do_pan(self, x, y):
+        #print "IInputHandler._do_pan()"
         pass
-            
+      
+#---------------------------------------------------------------------------------------------------
+    def _refresh(self):
+        pass

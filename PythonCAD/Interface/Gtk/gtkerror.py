@@ -26,17 +26,4 @@ class userInterfaceError(Exception): pass
 
 class imputError(Exception):
     def __init__(self,command,msg):
-        self.__command=command
-        self.__msg=msg
         
-    def getMessage(self):
-        """
-            get The message error
-        """
-        return self.__msg
-        
-    def getCommand(self):
-        """
-            get the command that throw the exception
-        """
-        return self.__command

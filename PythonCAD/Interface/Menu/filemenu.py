@@ -192,6 +192,7 @@ def file_new_cb(menuitem, data=None):
     _image.setOption('BACKGROUND_COLOR', _background)
     globals.imagelist.append(_image)
     _gtkimage.window.show_all()
+    _gtkimage.fitImage()
 
 
 #----------------------------------------------------------------------------------------------

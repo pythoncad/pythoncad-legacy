@@ -72,6 +72,7 @@ from PythonCAD.Interface.Viewport.textblockdraw import _draw_textblock, _erase_t
 from PythonCAD.Interface.Viewport.vclinedraw import _draw_vcline, _erase_vcline
 
 from PythonCAD.Interface.Viewport.inputhandler import IInputHandler
+from PythonCAD.Interface.Viewport.zoomtool import ZoomTool
 
 
 
@@ -93,6 +94,11 @@ class IViewport(IInputHandler):
         self.__deg2rad = math.pi / 180.0
         # initialize entity drawing methods
         self.__init_draw_methods()
+        # pan translation
+        self.__pan_dx = 0
+        self.__pan_dy = 0
+        # zoom tool
+        self.__zoom_tool = ZoomTool(self)
 
 #----------------------------------------------------------------------------------------------------
     def __init_draw_methods(self):
@@ -178,6 +184,12 @@ class IViewport(IInputHandler):
 #        _class.erase = types.MethodType(_erase_layer, None, _class)
 
 #---------------------------------------------------------------------------------------------------
+    def __get_window_tool(self):
+        return self.__zoom_tool
+
+    zoom_tool = property(__get_window_tool, None, None, "zoom tool")
+
+#---------------------------------------------------------------------------------------------------
     def zoom_fit(self):
         print "IViewport.zoom_fit()"
         # world dimension
@@ -188,14 +200,32 @@ class IViewport(IInputHandler):
         self._wxmax += margin
         self._wymin -= margin
         self._wymax += margin
-        print "world (Xmin, Xmax): ", self._wxmin, self._wxmax
-        print "world (Ymin, Ymax): ", self._wymin, self._wymax
+        #print "world (Xmin, Xmax): ", self._wxmin, self._wxmax
+        #print "world (Ymin, Ymax): ", self._wymin, self._wymax
         # set the view translation and scale factors
         self._calc_viewfactors()
 
+##---------------------------------------------------------------------------------------------------
+#    def init_zoom_window(self, x, y):
+#        self.__zoom_window = ZoomWindow(self)
+#        self.__zoom_window.anchor_point = Point(x, y)
+#        self._view_state.current == self._view_state.Zoom
+#
+##---------------------------------------------------------------------------------------------------
+#    def drag_zoom_window(self, x, y):
+#        if self.__zoom_window is not None:
+#            self.__zoom_window.point = Point(x, y)
+#        self.invalidate()
+#
+##---------------------------------------------------------------------------------------------------
+#    def drag_zoom_window(self, x, y):
+#        if self.__zoom_window is not None:
+#            self.__zoom_window.point = Point(x, y)
+#        self.invalidate()
+
 #---------------------------------------------------------------------------------------------------
     def __zoom_scale(self, scale):
-        print "IViewport.zoom_in()"
+        #print "IViewport.zoom_in()"
         # modify world window
         self._wxmin = self._cur_wx - (self._cur_wx - self._wxmin) * scale
         self._wxmax = self._cur_wx + (self._wxmax - self._cur_wx) * scale
@@ -206,44 +236,50 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def zoom_in(self):
-        print "IViewport.zoom_in()"
+        #print "IViewport.zoom_in()"
         self.__zoom_scale(0.75)
 
 #---------------------------------------------------------------------------------------------------
     def zoom_out(self):
-        print "IViewport.zoom_out()"
+        #print "IViewport.zoom_out()"
         self.__zoom_scale(1.25)
         
-#---------------------------------------------------------------------------------------------------
-    def start_pan(self):
-        print "IViewport.start_pan()"
-        self.__pan_x = self._cur_vx
-        self.__pan_y = self._cur_vy
-        self._view_state.current = self._view_state.Pan
-
-#---------------------------------------------------------------------------------------------------
-    def stop_pan(self):
-        print "IViewport.stop_pan()"
-        self._view_state.current = self._view_state.None
-        
-#---------------------------------------------------------------------------------------------------
-    def _do_pan(self, x, y):
-        print "IViewport._do_pan()"
-        dx = x - self.__pan_x
-        dy = y - self.__pan_y
-        if self._gc is not None and self.__pixmap is not None:
-            self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, dx, dy, self._vwidth, self._vheight)
+##---------------------------------------------------------------------------------------------------
+#    def toggle_pan(self):
+#        if self._view_state.current == self._view_state.Pan:
+#            #print "stop pan()"
+#            # pan translation
+#            dx = self.size_view_to_world(self.__pan_dx)
+#            dy = self.size_view_to_world(self.__pan_dy)
+#            #print "dx, dy:", dx, dy
+#            # calculate new world window
+#            self._wxmin -= dx
+#            self._wxmax -= dx
+#            self._wymin += dy
+#            self._wymax += dy
+#            # redraw the scene
+#            self._calc_viewfactors()
+#        else:
+#            #print "start pan()"
+#            self._view_state.current = self._view_state.Pan
+#            self.__pan_x = self._cur_vx
+#            self.__pan_y = self._cur_vy
+#
+##---------------------------------------------------------------------------------------------------
+#    def _do_pan(self, x, y):
+#        #print "IViewport._do_pan()"
+#        self.__pan_dx = int(x - self.__pan_x)
+#        self.__pan_dy = int(y - self.__pan_y)
+#        # redraw
+#        self.invalidate()
             
 #---------------------------------------------------------------------------------------------------
-    def refresh(self):
-        print "IViewport.refresh()"
+    def _refresh(self):
+        ##print "IViewport.refresh()"
         # viewport must have a sizxe
-        if self._vwidth > 0 and self._vheight > 0:        
+        if self._vwidth > 0 and self._vheight > 0:     
             # redraw the scene
-            self.redraw()
-            ## show the scene/pixmap
-            #if self._gc is not None and self.__pixmap is not None:
-                #self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
+            self.__redraw()
 
 #---------------------------------------------------------------------------------------------------
     def __get_ctx(self):
@@ -252,66 +288,95 @@ class IViewport(IInputHandler):
     cairo_context = property(__get_ctx, None, None, "cairo context")
 
 #---------------------------------------------------------------------------------------------------
-    def redraw(self):
-        # viewport must have a sizxe
+    def regenerate(self):
+        self._view_state.current = self._view_state.DrawScene
+        # calculate new display factors
+        self._calc_viewfactors()
+
+#---------------------------------------------------------------------------------------------------
+    def __redraw(self):
+        # viewport must have a size
         if self._vwidth > 0 and self._vheight > 0:
             # what to redraw
             if self._view_state.current == self._view_state.CursorMotion:
-                self.redraw_cursor()
+                # redraw cursor
+                self.__redraw_cursor()
+                self._view_state.reset()
+            # pan the scene
+            elif self._view_state.current == self._view_state.ZoomPan:
+                # redraw pan translation
+                self.__zoom_tool.pan_drag()
+                # update zoom window
+            elif self._view_state.current == self._view_state.ZoomWindow:
+                # redraw zoom window
+                self.__zoom_tool.window_drag()
+            # redraw the visible scene
             elif self._view_state.current == self._view_state.DrawScene:
-                self.redraw_scene()
-            
+                # regenerate scene
+                self.__redraw_scene()
+                self._view_state.reset()
+
+
 #---------------------------------------------------------------------------------------------------
-    def redraw_cursor(self):
-        # viewport must have a sizxe
-        if self._vwidth > 0 and self._vheight > 0:
-            # show the current scene
-            if self._gc is not None and self.__pixmap is not None:
-                self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
-            # create a cairo context for the cursor
-            ctx = self.window.cairo_create()
-            # white cursor
-            ctx.set_source_rgb(1.0, 1.0, 1.0)
-            ctx.set_line_width(1.0)
-            # draw cursor horizontal line
-            ctx.move_to(self._cur_vx, 0)
-            ctx.line_to(self._cur_vx, self._vheight)
-            # draw cursor vertical line
-            ctx.move_to(0, self._cur_vy)
-            ctx.line_to(self._vwidth, self._cur_vy)
-            # draw rectangle
-            ctx.rectangle((self._cur_vx - 5), (self._cur_vy - 5), 10, 10)
-            # end
-            ctx.stroke()
+    def __clear(self, ctx):
+        # draw background
+        color = self._image.getOption('BACKGROUND_COLOR')
+        r, g, b = color.getColors()
+        ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
+        ctx.set_source_rgb(0.5, 0.5, 0.5)
+        ctx.rectangle(0, 0, self._vwidth, self._vheight)
+        ctx.fill()
+
+#---------------------------------------------------------------------------------------------------
+    def show_scene(self, x = 0, y = 0):
+        # create a cairo context for the background
+        ctx = self.window.cairo_create()
+        self.__clear(ctx)
+        # move picture of scene
+        if self._gc is not None and self.__pixmap is not None:
+            self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, x, y, self._vwidth, self._vheight)
+
+#---------------------------------------------------------------------------------------------------
+    def __redraw_cursor(self):
+        # show current scene
+        self.show_scene()
+        # create a cairo context for the cursor
+        ctx = self.window.cairo_create()
+        # white cursor
+        ctx.set_source_rgb(1.0, 1.0, 1.0)
+        ctx.set_line_width(1.0)
+        # draw cursor horizontal line
+        ctx.move_to(self._cur_vx, 0)
+        ctx.line_to(self._cur_vx, self._vheight)
+        # draw cursor vertical line
+        ctx.move_to(0, self._cur_vy)
+        ctx.line_to(self._vwidth, self._cur_vy)
+        # draw rectangle
+        ctx.rectangle((self._cur_vx - 5), (self._cur_vy - 5), 10, 10)
+        # end
+        ctx.stroke()
+        # reset view draw state
+        self._view_state.reset()
     
 #---------------------------------------------------------------------------------------------------
-    def redraw_scene(self):
-        # viewport must have a sizxe
-        if self._vwidth > 0 and self._vheight > 0:
-            # create new pixmap area
-            self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
-            # create a cairo context for the pixmap
-            self.__ctx = self.__pixmap.cairo_create()
-            self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
-            #self.__ctx = self.window.cairo_create()
-            # draw background
-            color = self._image.getOption('BACKGROUND_COLOR')
-            r, g, b = color.getColors()
-            self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
-            self.__ctx.set_source_rgb(0.5, 0.5, 0.5)
-            self.__ctx.rectangle(0, 0, self._vwidth, self._vheight)
-            self.__ctx.fill()
-            # draw the scene
-            self.draw()
-            # show the scene
-            if self._gc is not None and self.__pixmap is not None:
-                self.window.draw_drawable(self._gc, self.__pixmap, 0, 0, 0, 0, self._vwidth, self._vheight)
-            # update point
-            #self._set_tool_point(self._cur_vx, self._cur_vy)
+    def __redraw_scene(self):
+        # create new pixmap area
+        self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
+        # create a cairo context for the pixmap
+        self.__ctx = self.__pixmap.cairo_create()
+        self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
+        # clear viewport
+        self.__clear(self.__ctx)
+        # draw the scene
+        self.draw()
+        # show the scene
+        self.show_scene()
+        # reset view draw state
+        self._view_state.reset()
 
 #---------------------------------------------------------------------------------------------------
     def draw(self):
-        print "ViewportDraw.__draw()"
+        #print "ViewportDraw.__draw()"
         #
         active_layer = self._image.getActiveLayer()
         # stack of layers
@@ -335,7 +400,7 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def __draw_layer(self, layer):
-        print "ViewportDraw.__draw_layer()"
+        #print "ViewportDraw.__draw_layer()"
 #        # is it a layer object
 #        if not isinstance(layer, Layer):
 #            raise TypeError, "Invalid layer type: " + `type(layer)`
@@ -385,24 +450,24 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def __set_draw_properties(self, color, lineweight, linestyle):
-        print "ViewportDraw.draw_set_properties()"
+        #print "ViewportDraw.draw_set_properties()"
         if color is not None:
             # set color property
             r, g, b = color.getColors()
-            print "color: ", r, g, b
+            #print "color: ", r, g, b
             self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
         # set linestyle property
         if linestyle is not None:
             self.__ctx.set_dash(linestyle)
-            print "linestyle: ", linestyle
+            ##print "linestyle: ", linestyle
         # set lineweight property
         if lineweight is not None and lineweight > 0.0:
             self.__ctx.set_line_width(lineweight)
-            print "lineweight: ", lineweight
+            #print "lineweight: ", lineweight
         
 #---------------------------------------------------------------------------------------------------
     def draw_linestring(self, color, lineweight, linestyle, points):
-        print "ViewportDraw.draw_linestring()"
+        ##print "ViewportDraw.draw_linestring()"
         # use cairo
         if self.__ctx is not None:
             first_point = True
@@ -426,7 +491,7 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def draw_polygon(self, color, lineweight, linestyle, points, fill):
-        print "ViewportDraw.draw_linestring()"
+        ##print "ViewportDraw.draw_linestring()"
         # use cairo
         if self.__ctx is not None:
             first_point = True
@@ -455,7 +520,7 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def draw_arc(self, color, lineweight, linestyle, center, radius, start, end):
-        print "ViewportDraw.draw_arc()"
+        ##print "ViewportDraw.draw_arc()"
         # use cairo
         if self.__ctx is not None:
             #begin
@@ -481,7 +546,7 @@ class IViewport(IInputHandler):
             
 #---------------------------------------------------------------------------------------------------
     def draw_circle(self, color, lineweight, linestyle, center, radius, fill = False):
-        print "ViewportDraw.draw_arc()"
+        ##print "ViewportDraw.draw_arc()"
         # use cairo
         if self.__ctx is not None:
             #begin
@@ -507,17 +572,17 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def draw_text(self, color, location, layout):
-        print "ViewportDraw.draw_text()"
+        ##print "ViewportDraw.draw_text()"
         # return values
-        width = 0
-        height = 0
+        #width = 0
+        #height = 0
         # use cairo
         if self.__ctx is not None:
             #begin
             self.__ctx.save()
             # set color property
             r, g, b = color.getColors()
-            print "color: ", r, g, b
+            #print "color: ", r, g, b
             self.__ctx.set_source_rgb((r / 255.0), (g / 255.0), (b / 255.0))
             # position
             x = location[0]
