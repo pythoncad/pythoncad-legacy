@@ -188,6 +188,14 @@ class Dxf(DrawingFile):
             for _obj in _layersEnts[_key]:  #looping at all entities in the layer
                 if isinstance(_obj,Segment):#if it's segment 
                     self.writeSegment(_obj) # ad it at the dxf drawing
+                if isinstance(_obj,Circle):
+                    self.writeCircle(_obj)
+                if isinstance(_obj,Arc):
+                    self.writeArc(_obj)
+                if isinstance(_obj,Polyline):
+                    self.writePolyline(_obj)
+                if isinstance(_obj,TextBlock):
+                    self.writeText(_obj)
                 # go on end implements the other case arc circle ...
         self.writeLine("  0\nENDSEC\n  0\nEOF")#writing End Of File
         self.close()
@@ -219,8 +227,61 @@ class Dxf(DrawingFile):
         self.writeLine(" 10\n" +str(x1) +"\n")
         self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
         self.writeLine(" 11\n" +str(x2) +"\n")
-        self.writeLine(" 21\n" +str(y2) +"\n 31\n0.0\n")  
-              
+        self.writeLine(" 21\n" +str(y2) +"\n 31\n0.0\n")        
+    def writeCircle(self,e):
+        """
+           Write Circle to the dxf file
+        """
+        x1,y1=e.getCenter().getCoords()
+        r=e.getRadius()
+        self.writeLine("  0\nCIRCLE\n100\nAcDbCircle\n")
+        self.writeLine(" 10\n" +str(x1) +"\n")
+        self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
+        self.writeLine(" 40\n" +str(r) +"\n")
+    def writeArc(self,e):
+        """
+           Write Arc to the dxf file
+        """
+        x1,y1 = e.getCenter().getCoords()
+        r = e.getRadius()
+        sa = e.getStartAngle()
+        ea = e.getEndAngle()
+        self.writeLine("  0\nARC\n100\nAcDbCircle\n")
+        self.writeLine(" 10\n" +str(x1) +"\n")
+        self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
+        self.writeLine(" 40\n" +str(r) +"\n")
+        self.writeLine(" 50\n" +str(sa) +"\n 51\n"+str(ea)+"\n")
+    def writePolyline(self,e):
+        """
+           Write Polyline to the dxf file
+        """
+        self.writeLine("  0\nLWPOLYLINE\n100\nAcDbPolyline\n")
+        count = e.getNumPoints()
+        self.writeLine(" 90\n" +str(count)+ "\n")
+        self.writeLine(" 70\n0\n")
+        self.writeLine(" 43\n0\n")
+        c = 0
+        points = []
+        while c < count:
+            x1,y1 = e.getPoint(c).getCoords()
+            print "p = ", x1,y1
+            self.writeLine(" 10\n" +str(x1) +"\n")
+            self.writeLine(" 20\n" +str(y1) +"\n")
+            c = c + 1
+    def writeText(self,e):
+        """
+           Write Text to the dxf file
+        """
+        x1,y1=e.getLocation()
+        h = e.getSize()
+        txt = e.getText()
+        txt = txt.replace(' ', '\~')
+        txt = txt.replace('\n', '\P')
+        self.writeLine("  0\nMTEXT\n100\nAcDbMText\n")
+        self.writeLine(" 10\n" +str(x1) +"\n")
+        self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
+        self.writeLine(" 40\n" +str(h) +"\n")
+        self.writeLine("  1\n" +str(txt) +"\n")
     def importEntitis(self):
         """
             Open The file and create The entity in pythonCad
