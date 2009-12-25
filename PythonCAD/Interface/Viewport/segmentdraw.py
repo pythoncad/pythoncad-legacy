@@ -32,9 +32,6 @@ from PythonCAD.Generic import color
 #----------------------------------------------------------------------------------------------------
 def _draw_segment(self, viewport, col=None):
     color = col
-    # is color defined
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # if color is not defined, take color of entity
     if color is None:
         color = self.getColor()

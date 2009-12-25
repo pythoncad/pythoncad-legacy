@@ -273,9 +273,6 @@ def _draw_markers(self, viewport, dim_object):
 #----------------------------------------------------------------------------------------------------
 def _draw_ldim(self, viewport, col=None):
     color = col
-    # is color defined
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # if color is not defined, take color of entity
     if color is None:
         color = self.getColor()
@@ -298,9 +295,6 @@ def _draw_ldim(self, viewport, col=None):
 #----------------------------------------------------------------------------------------------------
 def _draw_rdim(self, viewport, col=None):
     color = col
-    # is color defined
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # if color is not defined, take color of entity
     if color is None:
         color = self.getColor()
@@ -317,9 +311,6 @@ def _draw_rdim(self, viewport, col=None):
 #----------------------------------------------------------------------------------------------------
 def _draw_adim(self, viewport, col=None):
     color = col
-    # is color defined
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # if color is not defined, take color of entity
     if color is None:
         color = self.getColor()

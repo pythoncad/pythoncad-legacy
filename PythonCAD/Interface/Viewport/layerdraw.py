@@ -47,7 +47,6 @@ from PythonCAD.Generic import color
 #from PythonCAD.Generic import dimension
 #from PythonCAD.Generic import layer
 #
-#from PythonCAD.Interface.Gtk import gtkimage
 
 
 #----------------------------------------------------------------------------------------------------

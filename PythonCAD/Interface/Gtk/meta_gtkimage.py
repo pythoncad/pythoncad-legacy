@@ -1,11 +1,11 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007 Art Haas
-# Copyright (c) 2009 Matteo Boscolo
+# Copyright (c) 2009 Matteo Boscolo, Gertwin Groen
 #
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the termscl_bo of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
@@ -18,12 +18,15 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# <ui error> command functions/Class 
 #
 
+# new viewport draw functions (not implemented yet)
+viewport_draw = False
+#viewport_draw = True
 
-class userInterfaceError(Exception): pass
-
-class imputError(Exception):
-    def __init__(self,command,msg):
-        
+if viewport_draw:
+    print "Using R38 draw"
+    from PythonCAD.Interface.Gtk.gtkimage_r38 import GTKImage
+else:
+    print "Using R37 draw"
+    from PythonCAD.Interface.Gtk.gtkimage import GTKImage

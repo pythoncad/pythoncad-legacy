@@ -36,8 +36,6 @@ from PythonCAD.Generic.point import Point
 #----------------------------------------------------------------------------------------------------
 def _draw_hcline(self, viewport, col=None):
     color = col
-    if color is not None and not isinstance(color, color.Color):
-        raise TypeError, "Invalid Color: " + `type(color)`
     # is color defined
     if color is not None and not isinstance(color, color.Color):
         raise TypeError, "Invalid Color: " + `type(color)`
