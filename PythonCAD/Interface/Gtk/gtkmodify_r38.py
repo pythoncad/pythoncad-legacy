@@ -2443,6 +2443,8 @@ def invert_adim_init(gtkimage, tool=None):
 #---------------------------------------------------------------------------------------------------
 def zoom_end_button_press_cb(gtkimage, widget, event, tool):
     gtkimage.viewport.zoom_tool.set()
+    gtkimage.getImage().setTool(None)
+    gtkimage.setPrompt(_('Enter Command:'))
     return True
 
 #---------------------------------------------------------------------------------------------------

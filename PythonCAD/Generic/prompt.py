@@ -24,9 +24,10 @@
 # Author: David Broadwell ( dbroadwell@mindspring.com, 05/26/2003 )
 #
 
-from PythonCAD.Generic import tools
+from PythonCAD.Generic.Tools import tools
 
-''' defines the internal maping for a human name like circle() to
+
+''' defines the internal mping for a human name like circle() to
     an internal function, so that the config file can look all
     clean and pretty. AKA: evalkey interface Release 5/25/03 '''
 
@@ -50,6 +51,7 @@ def lookup(text):
     lookup(text) or 'None' if no Tool found for command.
     """
     return promptdefs.get(text)
+
 
 promptdefs = {
     'pcline' : tools.ParallelOffsetTool,
@@ -111,7 +113,7 @@ promptdefs = {
     # 'refresh' : "self.refresh()",
     # 'pref' : "gtkmenus.prefs_cb('prefs',self)",
     # 'dimpref' : "gtkmenus.dimension_prefs_cb('dimension_prefs',self)",
-    'zoomd' : tools.ZoomTool,
+    #'zoomd' : ZoomTool,
     'print' : tools.PlotTool,
     # 'zoomi' : "gtkmenus.zoom_in_cb('zoom_in',self)",
     # 'zoomo' : "gtkmenus.zoom_out_cb('zoom_out',self)",

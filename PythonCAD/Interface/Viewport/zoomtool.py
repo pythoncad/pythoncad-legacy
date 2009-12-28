@@ -20,17 +20,10 @@
 #
 #
 
-#import math
-#import types
 import pygtk
 pygtk.require('2.0')
-#import gtk
-#from gtk import gdk
-
-#import cairo
 
 from PythonCAD.Generic.point import Point
-#from PythonCAD.Interface.Viewport.viewport import IViewport
 
 
 class ZoomTool(object):
@@ -42,6 +35,57 @@ class ZoomTool(object):
         self.__anchor_y = 0
         self.__x = 0
         self.__y = 0
+        # zoom in/out factor
+        self.__zoom_factor = 1.5
+
+#---------------------------------------------------------------------------------------------------
+    def zoom_fit(self):
+        # world dimension
+        self.__viewport.world_x_min, self.__viewport.world_y_min, self.__viewport.world_x_max, self.__viewport.world_y_max = self.__viewport.image.getExtents()
+        # modify to view a little margin
+        margin = (self.__viewport.world_x_max - self.__viewport.world_x_min) / 100.0
+        self.__viewport.world_x_min -= margin
+        self.__viewport.world_x_max += margin
+        self.__viewport.world_y_min -= margin
+        self.__viewport.world_y_max += margin
+        # zoom to new world window
+        self.__viewport.regenerate()
+
+#---------------------------------------------------------------------------------------------------
+    def __zoom_scale(self, scale, position = None):
+        x = 0.0
+        y = 0.0
+        # zoom on a specified position?
+        if position is not None:
+            # current world position
+            x, y = self.__viewport.world_pos.getCoords()
+        else:
+            # world center position
+            x = (self.__viewport.world_x_max + self.__viewport.world_x_min) / 2.0
+            y = (self.__viewport.world_y_max + self.__viewport.world_y_min) / 2.0
+        # modify world window
+        self.__viewport.world_x_min = x - (x - self.__viewport.world_x_min) * scale
+        self.__viewport.world_x_max = x + (self.__viewport.world_x_max - x) * scale
+        self.__viewport.world_y_min = y - (y - self.__viewport.world_y_min) * scale
+        self.__viewport.world_y_max = y + (self.__viewport.world_y_max - y) * scale
+        # zoom to new world window
+        self.__viewport.regenerate()
+
+#---------------------------------------------------------------------------------------------------
+    def zoom_wheel_in(self):
+        self.__zoom_scale(1.0 / self.__zoom_factor, self.__viewport.world_pos)
+
+#---------------------------------------------------------------------------------------------------
+    def zoom_wheel_out(self):
+        self.__zoom_scale(self.__zoom_factor, self.__viewport.world_pos)
+        
+#---------------------------------------------------------------------------------------------------
+    def zoom_in(self):
+        self.__zoom_scale(1.0 / self.__zoom_factor)
+
+#---------------------------------------------------------------------------------------------------
+    def zoom_out(self):
+        self.__zoom_scale(self.__zoom_factor)
 
 #---------------------------------------------------------------------------------------------------
     def window_init(self, x, y):

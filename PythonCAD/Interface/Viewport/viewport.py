@@ -72,7 +72,7 @@ from PythonCAD.Interface.Viewport.textblockdraw import _draw_textblock, _erase_t
 from PythonCAD.Interface.Viewport.vclinedraw import _draw_vcline, _erase_vcline
 
 from PythonCAD.Interface.Viewport.inputhandler import IInputHandler
-from PythonCAD.Interface.Viewport.zoomtool import ZoomTool
+#from PythonCAD.Interface.Viewport.zoomtool import ZoomTool
 
 
 
@@ -97,8 +97,8 @@ class IViewport(IInputHandler):
         # pan translation
         self.__pan_dx = 0
         self.__pan_dy = 0
-        # zoom tool
-        self.__zoom_tool = ZoomTool(self)
+        ## zoom tool
+        #self.__zoom_tool = ZoomTool(self)
 
 #----------------------------------------------------------------------------------------------------
     def __init_draw_methods(self):
@@ -183,99 +183,9 @@ class IViewport(IInputHandler):
 #        _class.draw = types.MethodType(_draw_layer, None, _class)
 #        _class.erase = types.MethodType(_erase_layer, None, _class)
 
-#---------------------------------------------------------------------------------------------------
-    def __get_window_tool(self):
-        return self.__zoom_tool
-
-    zoom_tool = property(__get_window_tool, None, None, "zoom tool")
-
-#---------------------------------------------------------------------------------------------------
-    def zoom_fit(self):
-        print "IViewport.zoom_fit()"
-        # world dimension
-        self._wxmin, self._wymin, self._wxmax, self._wymax = self._image.getExtents()
-        # modify to view a little margin
-        margin = (self._wxmax - self._wxmin) / 100.0
-        self._wxmin -= margin
-        self._wxmax += margin
-        self._wymin -= margin
-        self._wymax += margin
-        #print "world (Xmin, Xmax): ", self._wxmin, self._wxmax
-        #print "world (Ymin, Ymax): ", self._wymin, self._wymax
-        # set the view translation and scale factors
-        self._calc_viewfactors()
-
-##---------------------------------------------------------------------------------------------------
-#    def init_zoom_window(self, x, y):
-#        self.__zoom_window = ZoomWindow(self)
-#        self.__zoom_window.anchor_point = Point(x, y)
-#        self._view_state.current == self._view_state.Zoom
-#
-##---------------------------------------------------------------------------------------------------
-#    def drag_zoom_window(self, x, y):
-#        if self.__zoom_window is not None:
-#            self.__zoom_window.point = Point(x, y)
-#        self.invalidate()
-#
-##---------------------------------------------------------------------------------------------------
-#    def drag_zoom_window(self, x, y):
-#        if self.__zoom_window is not None:
-#            self.__zoom_window.point = Point(x, y)
-#        self.invalidate()
-
-#---------------------------------------------------------------------------------------------------
-    def __zoom_scale(self, scale):
-        #print "IViewport.zoom_in()"
-        # modify world window
-        self._wxmin = self._cur_wx - (self._cur_wx - self._wxmin) * scale
-        self._wxmax = self._cur_wx + (self._wxmax - self._cur_wx) * scale
-        self._wymin = self._cur_wy - (self._cur_wy - self._wymin) * scale
-        self._wymax = self._cur_wy + (self._wymax - self._cur_wy) * scale
-        # set the view translation and scale factors
-        self._calc_viewfactors()
-
-#---------------------------------------------------------------------------------------------------
-    def zoom_in(self):
-        #print "IViewport.zoom_in()"
-        self.__zoom_scale(0.75)
-
-#---------------------------------------------------------------------------------------------------
-    def zoom_out(self):
-        #print "IViewport.zoom_out()"
-        self.__zoom_scale(1.25)
         
-##---------------------------------------------------------------------------------------------------
-#    def toggle_pan(self):
-#        if self._view_state.current == self._view_state.Pan:
-#            #print "stop pan()"
-#            # pan translation
-#            dx = self.size_view_to_world(self.__pan_dx)
-#            dy = self.size_view_to_world(self.__pan_dy)
-#            #print "dx, dy:", dx, dy
-#            # calculate new world window
-#            self._wxmin -= dx
-#            self._wxmax -= dx
-#            self._wymin += dy
-#            self._wymax += dy
-#            # redraw the scene
-#            self._calc_viewfactors()
-#        else:
-#            #print "start pan()"
-#            self._view_state.current = self._view_state.Pan
-#            self.__pan_x = self._cur_vx
-#            self.__pan_y = self._cur_vy
-#
-##---------------------------------------------------------------------------------------------------
-#    def _do_pan(self, x, y):
-#        #print "IViewport._do_pan()"
-#        self.__pan_dx = int(x - self.__pan_x)
-#        self.__pan_dy = int(y - self.__pan_y)
-#        # redraw
-#        self.invalidate()
-            
 #---------------------------------------------------------------------------------------------------
     def _refresh(self):
-        ##print "IViewport.refresh()"
         # viewport must have a sizxe
         if self._vwidth > 0 and self._vheight > 0:     
             # redraw the scene
@@ -289,7 +199,6 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def regenerate(self):
-        self._view_state.current = self._view_state.DrawScene
         # calculate new display factors
         self._calc_viewfactors()
 
@@ -305,11 +214,11 @@ class IViewport(IInputHandler):
             # pan the scene
             elif self._view_state.current == self._view_state.ZoomPan:
                 # redraw pan translation
-                self.__zoom_tool.pan_drag()
+                self._zoom_tool.pan_drag()
                 # update zoom window
             elif self._view_state.current == self._view_state.ZoomWindow:
                 # redraw zoom window
-                self.__zoom_tool.window_drag()
+                self._zoom_tool.window_drag()
             # redraw the visible scene
             elif self._view_state.current == self._view_state.DrawScene:
                 # regenerate scene
@@ -368,14 +277,14 @@ class IViewport(IInputHandler):
         # clear viewport
         self.__clear(self.__ctx)
         # draw the scene
-        self.draw()
+        self.__draw()
         # show the scene
         self.show_scene()
         # reset view draw state
         self._view_state.reset()
 
 #---------------------------------------------------------------------------------------------------
-    def draw(self):
+    def __draw(self):
         #print "ViewportDraw.__draw()"
         #
         active_layer = self._image.getActiveLayer()
@@ -400,23 +309,6 @@ class IViewport(IInputHandler):
 
 #---------------------------------------------------------------------------------------------------
     def __draw_layer(self, layer):
-        #print "ViewportDraw.__draw_layer()"
-#        # is it a layer object
-#        if not isinstance(layer, Layer):
-#            raise TypeError, "Invalid layer type: " + `type(layer)`
-#        # layer must belong to the image
-#        if layer.getParent() is not self.__image:
-#            raise ValueError, "Layer not found in Image"
-#        # only draw visible layers
-#        if layer.isVisible():
-#            color = self.__image.getOption('INACTIVE_LAYER_COLOR')
-#            if layer is self.__image.getActiveLayer():
-#                color = None
-#            # draw the points
-#            for obj in layer.getLayerEntities("point"):
-#                if obj.isVisible():
-#                    iobj = IPoint(ctx, obj)
-#                    iobj.draw(color)
         if not isinstance(layer, Layer):
             raise TypeError, "Invalid layer type: " + `type(layer)`
         #

@@ -36,7 +36,7 @@ from PythonCAD.Generic.vcline import VCLine
 from PythonCAD.Generic.acline import ACLine
 from PythonCAD.Generic.cline import CLine
 from PythonCAD.Generic.util import *
-from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
 #
@@ -68,7 +68,7 @@ def parallel_conline_button_press_cb(gtkimage, widget, event, tool):
                     tool.setConstructionLine(_obj)
                     tool.setHandler("button_press", parallel_refpt_button_press_cb)
                     gtkimage.setPrompt(_('Click on the side to place the new construction line.'))
-                    
+
 def parallel_refpt_button_press_cb(gtkimage, widget, event, tool):
     _image = gtkimage.getImage()
     _x, _y = _image.getCurrentPoint()
@@ -76,9 +76,9 @@ def parallel_refpt_button_press_cb(gtkimage, widget, event, tool):
     _init_func = tool.getHandler("initialize")
     _image.startAction()
     try:
-    	tool.create(gtkimage.image)
+        tool.create(gtkimage.image)
     finally:
-    	_image.endAction()
+        _image.endAction()
     _init_func(gtkimage)
     return True
 

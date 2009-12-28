@@ -27,7 +27,7 @@ import gtk
 
 from math import hypot, pi, atan2
 
-from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Generic.segjoint import  Fillet
 # import some functionality from thenormal fillet comand

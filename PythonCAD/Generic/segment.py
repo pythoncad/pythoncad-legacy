@@ -34,6 +34,7 @@ from PythonCAD.Generic import point
 from PythonCAD.Generic import util
 from PythonCAD.Generic import quadtree
 from PythonCAD.Generic import pyGeoLib
+
   
 class Segment(graphicobject.GraphicObject):
     """A class representing a line segment.

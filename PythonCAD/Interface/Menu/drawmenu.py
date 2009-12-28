@@ -32,7 +32,6 @@ from PythonCAD.Interface.Gtk import gtkactions
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import fileio
 from PythonCAD.Generic import imageio
-from PythonCAD.Generic import tools
 from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject
@@ -47,6 +46,8 @@ from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 
 from PythonCAD.Interface.Menu.basemenu import IBaseMenu
 import  PythonCAD.Interface.Command as cmd
+
+from PythonCAD.Generic.Tools import *
 
 #############################################################################
 #

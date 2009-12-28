@@ -32,7 +32,7 @@ from PythonCAD.Interface.Gtk import gtkactions
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import fileio
 from PythonCAD.Generic import imageio
-from PythonCAD.Generic import tools
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject
@@ -60,6 +60,8 @@ def zoom_cb(menuitem, gtkimage):
     
 
 def zoom_in_cb(menuitem, gtkimage):
+#    gtkimage.viewport.zoom_tool.zoom_in()
+#    return
     #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
     #_scale = gtkimage.getUnitsPerPixel()
     #_xdiff = abs(_xmax - _xmin)
@@ -73,6 +75,8 @@ def zoom_in_cb(menuitem, gtkimage):
     
     
 def zoom_out_cb(menuitem, gtkimage):
+#    gtkimage.viewport.zoom_tool.zoom_out()
+#    return    
     #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
     #_scale = gtkimage.getUnitsPerPixel()
     #_xdiff = abs(_xmax - _xmin)
