@@ -24,7 +24,7 @@
 class ViewState(object):
     def __init__(self):
         # different view states
-        names = 'None DrawScene CursorMotion RubberBand ZoomPan ZoomWindow'
+        names = 'None DrawScene DrawObject CursorMotion RubberBand ZoomPan ZoomWindow'
         for number, name in enumerate(names.split()):
             #print name, "=", number
             setattr(self, name, number)

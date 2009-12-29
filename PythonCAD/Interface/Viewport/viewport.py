@@ -99,6 +99,8 @@ class IViewport(IInputHandler):
         self.__pan_dy = 0
         ## zoom tool
         #self.__zoom_tool = ZoomTool(self)
+        # temporary object to draw
+        self.__temp_object = None
 
 #----------------------------------------------------------------------------------------------------
     def __init_draw_methods(self):
@@ -201,6 +203,14 @@ class IViewport(IInputHandler):
     def regenerate(self):
         # calculate new display factors
         self._calc_viewfactors()
+        
+#---------------------------------------------------------------------------------------------------
+    def draw_object(self, object):
+        # copy object to a temp var for later use
+        self.__temp_object = object
+        # set state to draw a single object
+        self._view_state.current = self._view_state.DrawObject
+        self.invalidate()
 
 #---------------------------------------------------------------------------------------------------
     def __redraw(self):
@@ -223,6 +233,10 @@ class IViewport(IInputHandler):
             elif self._view_state.current == self._view_state.DrawScene:
                 # regenerate scene
                 self.__redraw_scene()
+                self._view_state.reset()
+            # redraw a single object
+            elif self._view_state.current == self._view_state.DrawObject:
+                self.__redraw_object()
                 self._view_state.reset()
 
 
@@ -267,6 +281,24 @@ class IViewport(IInputHandler):
         # reset view draw state
         self._view_state.reset()
     
+#---------------------------------------------------------------------------------------------------
+    def __redraw_object(self):
+        # temp object must exist
+        if self.__temp_object is not None:
+            # if the pixmap not exist create one
+            if self.__pixmap is None:
+                self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
+            # create a cairo context for the pixmap
+            self.__ctx = self.__pixmap.cairo_create()
+            self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
+            # draw the object
+            self.__temp_object.draw(self)
+            # show the updated scene
+            self.show_scene()
+            # reset temp object
+            self.__temp_object = None
+            
+
 #---------------------------------------------------------------------------------------------------
     def __redraw_scene(self):
         # create new pixmap area

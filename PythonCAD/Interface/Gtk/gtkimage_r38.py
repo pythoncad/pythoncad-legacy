@@ -1240,8 +1240,6 @@ fitImage()
 #---------------------------------------------------------------------------------------------------
     def __layerAddedChild(self, obj, *args):
         print "__layerAddedChild"
-        return
-        # print "__layerAddedChild()"
         _alen = len(args)
         if _alen < 1:
             raise ValueError, "Invalid argument count: %d" % _alen
@@ -1250,7 +1248,7 @@ fitImage()
         _child.connect('change_pending', self.__objChangePending)
         _child.connect('change_complete', self.__objChangeComplete)
         if _child.isVisible() and obj.isVisible():
-            self.__drawObject(_child)
+            self.viewport.draw_object(_child)
 
 #---------------------------------------------------------------------------------------------------
     def __imageRemovedChild(self, obj, *args):
