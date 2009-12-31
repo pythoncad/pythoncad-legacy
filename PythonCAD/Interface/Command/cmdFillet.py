@@ -27,7 +27,7 @@ import gtk
 
 from math import hypot, pi, atan2
 
-from PythonCAD.Generic.tools import FilletTool,FilletTwoLineTool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
 from PythonCAD.Generic.point import Point

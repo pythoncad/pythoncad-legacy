@@ -36,7 +36,7 @@ from PythonCAD.Generic.vcline import VCLine
 from PythonCAD.Generic.acline import ACLine
 from PythonCAD.Generic.cline import CLine
 
-from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
 #

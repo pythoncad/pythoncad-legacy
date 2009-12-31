@@ -26,4 +26,5 @@ class userInterfaceError(Exception): pass
 
 class imputError(Exception):
     def __init__(self,command,msg):
+        pass
         

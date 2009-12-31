@@ -41,7 +41,7 @@ from PythonCAD.Generic import color
 from PythonCAD.Generic import util
 from PythonCAD.Generic import units
 from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
-from PythonCAD.Generic import tools   
+from PythonCAD.Generic.Tools import *   
 from PythonCAD.Generic import snap
 
 

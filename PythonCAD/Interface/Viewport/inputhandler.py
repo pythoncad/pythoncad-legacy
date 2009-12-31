@@ -27,7 +27,7 @@ from gtk import gdk
 
 from PythonCAD.Generic.point import Point
 from PythonCAD.Interface.Viewport.viewstate import ViewState
-
+from PythonCAD.Interface.Viewport.zoomtool import ZoomTool
 
 pix_data = """/* XPM */
 static char * invisible_xpm[] = {
@@ -53,6 +53,8 @@ class IInputHandler(gtk.DrawingArea):
         self._image = self._gtkimage.getImage()
         # state of the view (what to draw)
         self._view_state = ViewState()
+        # zoom tool
+        self._zoom_tool = ZoomTool(self)
         # current position in view coordinates
         self._cur_vx = 0.0
         self._cur_vy = 0.0
@@ -102,10 +104,34 @@ class IInputHandler(gtk.DrawingArea):
                              gtk.gdk.POINTER_MOTION_MASK)
 
 #---------------------------------------------------------------------------------------------------
+    def __get_gtk_image(self):
+        return self._gtkimage
+    
+    gtk_image = property(__get_gtk_image, None, None, "Get the GtkImage class")
+
+#---------------------------------------------------------------------------------------------------
+    def __get_image(self):
+        return self._image
+    
+    image = property(__get_image, None, None, "Get the Image class")
+
+#---------------------------------------------------------------------------------------------------
     def __get_view_state(self):
         return self._view_state
     
     view_state = property(__get_view_state, None, None, "Get the view state")
+
+#---------------------------------------------------------------------------------------------------
+    def __get_zoom_tool(self):
+        return self._zoom_tool
+
+    zoom_tool = property(__get_zoom_tool, None, None, "Get the zoom tool")
+    
+#---------------------------------------------------------------------------------------------------
+    def __get_cur_world_pos(self):
+        return Point(self._cur_wx, self._cur_wy)
+    
+    world_pos = property(__get_cur_world_pos, None, None, "Get the pointer position")
 
 #---------------------------------------------------------------------------------------------------
     def __realize_event(self, widget, data=None):
@@ -118,11 +144,9 @@ class IInputHandler(gtk.DrawingArea):
         self._vxmin, self._vymin, width, height = event.area
         self._vxmax = self._vxmin + width
         self._vymax = self._vymin + height
-        ##print "viewport (Xmin, Xmax)", self._vxmin, self._vxmax
-        ##print "viewport (Ymin, Ymax)", self._vymin, self._vymax
         # if expose is called for the first time then do a fit
         if not self._view_state.initialized:
-            self.zoom_fit()
+            self._zoom_tool.zoom_fit()
             self._view_state.initialized = True
         else:
             self._refresh()
@@ -136,9 +160,9 @@ class IInputHandler(gtk.DrawingArea):
 
         if event_type == 31:
             if event.direction == gtk.gdk.SCROLL_UP:
-                self._gtkimage.ZoomIn()
+                self._zoom_tool.zoom_wheel_in()
             if event.direction == gtk.gdk.SCROLL_DOWN:
-                self._gtkimage.ZoomOut()
+                self._zoom_tool.zoom_wheel_out()
                 
         if event_type == 12:
             pass

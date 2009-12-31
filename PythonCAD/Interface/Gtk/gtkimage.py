@@ -39,7 +39,7 @@ from PythonCAD.Generic.point import Point
 from PythonCAD.Generic.conobject import ConstructionObject
 from PythonCAD.Generic.color import Color
 from PythonCAD.Generic.layer import Layer
-from PythonCAD.Generic import tools
+#from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import keywords
 from PythonCAD.Generic import prompt
@@ -49,6 +49,9 @@ from PythonCAD.Interface.Gtk import gtkshell
 
 from PythonCAD.Interface.Menu.menubar import IMenuBar
 from PythonCAD.Interface.Viewport.viewport import IViewport
+
+# Tools
+from PythonCAD.Generic.Tools import *
 
 #
 # Global variables

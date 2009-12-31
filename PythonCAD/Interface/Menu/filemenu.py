@@ -35,7 +35,7 @@ from PythonCAD.Interface.Gtk import gtkactions
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import fileio
 from PythonCAD.Generic import imageio
-from PythonCAD.Generic import tools
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject
@@ -65,18 +65,18 @@ def _get_filename_and_save(gtkimage, fname=None):
     """
     _window = gtkimage.getWindow()
     if fname is None:
-       fname = _window.get_title()
+        fname = _window.get_title()
     _dialog = gtk.FileChooserDialog(title=_('Save As ...'),
-                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                            gtk.STOCK_OK, gtk.RESPONSE_OK),
-                action=gtk.FILE_CHOOSER_ACTION_SAVE)
-    
+                                    buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                             gtk.STOCK_OK, gtk.RESPONSE_OK),
+                                    action=gtk.FILE_CHOOSER_ACTION_SAVE)
+
     _filter = gtk.FileFilter()
     _filter.set_name("Pythoncad")
     _filter.add_mime_type("pythoncad/xml.gz")
     _filter.add_pattern("*.xml.gz")
     _dialog.add_filter(_filter)
-       
+
     _filter = gtk.FileFilter()
     _filter.set_name("Autocad")
     _filter.add_mime_type("autocad/dxf")
@@ -87,12 +87,12 @@ def _get_filename_and_save(gtkimage, fname=None):
     _filter.set_name("All files")
     _filter.add_pattern("*")
     _dialog.add_filter(_filter)
-    
+
     _dialog.set_filename(fname)
     _response = _dialog.run()
     fname = _dialog.get_filename()
     _dialog.destroy()
-    
+
     if _response == gtk.RESPONSE_OK:
         if askForOverWrite(gtkimage,fname):
             if fname.endswith('.xml.gz'):
@@ -133,7 +133,7 @@ def askForOverWrite(gtkimage,fname):
             return False
     else:
         return True
-    
+
 #------------------------------------------------------------
 def _save_file(gtkimage, filename):
     _image = gtkimage.getImage()
@@ -164,7 +164,7 @@ def _save_file(gtkimage, filename):
         os.chmod(_abs, _mode)
     if _image.getFilename() is None:
         _image.setFilename(_abs)
-        
+
 def _save_extFormats(gtkimage,fname):
     """
         save the current file as external formats 
@@ -200,9 +200,9 @@ def file_open_cb(menuitem, gtkimage):
     _open = False
     _fname = None
     _dialog = gtk.FileChooserDialog(title=_('Open File ...'),
-                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                            gtk.STOCK_OK, gtk.RESPONSE_OK),
-                action=gtk.FILE_CHOOSER_ACTION_OPEN)
+                                    buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                             gtk.STOCK_OK, gtk.RESPONSE_OK),
+                                    action=gtk.FILE_CHOOSER_ACTION_OPEN)
     while not _open:
         _response = _dialog.run()
         if _response == gtk.RESPONSE_OK:
@@ -232,10 +232,10 @@ def file_open_cb(menuitem, gtkimage):
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
             error_dialog(gtkimage, _errmsg)
             return
-        
+
         # TODO: fix this
         from PythonCAD.Interface.Gtk.meta_gtkimage import GTKImage
-        
+
         globals.imagelist.append(_image)
         _image.setFilename(_fname)
         _gtkimage = GTKImage(_image)
@@ -252,9 +252,9 @@ def file_inport_cb(menuitem, gtkimage):
     _open = False
     _fname = None
     _dialog = gtk.FileChooserDialog(title=_('Import File ...'),
-                buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                            gtk.STOCK_OK, gtk.RESPONSE_OK),
-                action=gtk.FILE_CHOOSER_ACTION_OPEN)
+                                    buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                             gtk.STOCK_OK, gtk.RESPONSE_OK),
+                                    action=gtk.FILE_CHOOSER_ACTION_OPEN)
     # _dialog.hide_fileop_buttons()
     while not _open:
         _response = _dialog.run()
@@ -281,7 +281,7 @@ def file_inport_cb(menuitem, gtkimage):
             _errmsg = "Non-system error opening '%s' : %s'" % (_fname, e)
             gtkDialog._error_dialog(gtkimage, _errmsg)
             return
-        
+
 #----------------------------------------------------------------------------------------------
 def file_close_cb(menuitem, gtkimage):
     """

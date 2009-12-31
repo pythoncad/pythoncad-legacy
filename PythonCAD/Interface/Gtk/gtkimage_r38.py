@@ -457,7 +457,7 @@ class GTKImage(object):
 #        _gc.set_exposures(True)
 #        self.setGC(_gc)
         # zoom fit
-        self.__viewport.zoom_fit()
+        self.__viewport.zoom_tool.zoom_fit()
 
     #------------------------------------------------------------------
     def __configureEvent(self, widget, event, data=None):
@@ -466,7 +466,7 @@ class GTKImage(object):
         _disp_width, _disp_height = self.getSize()
         if _disp_width != _width or _disp_height != _height:
             self.setSize(_width, _height)
-            self.__viewport.zoom_fit()
+            self.__viewport.zoom_tool.zoom_fit()
         return True
     
     #------------------------------------------------------------------
@@ -1067,7 +1067,7 @@ allocated color.
 
 fitImage()
         """
-        self.__viewport.zoom_fit()
+        self.__viewport.zoom_tool.zoom_fit()
 
 ##---------------------------------------------------------------------------------------------------
 #    def refresh(self):
@@ -1240,8 +1240,6 @@ fitImage()
 #---------------------------------------------------------------------------------------------------
     def __layerAddedChild(self, obj, *args):
         print "__layerAddedChild"
-        return
-        # print "__layerAddedChild()"
         _alen = len(args)
         if _alen < 1:
             raise ValueError, "Invalid argument count: %d" % _alen
@@ -1250,7 +1248,7 @@ fitImage()
         _child.connect('change_pending', self.__objChangePending)
         _child.connect('change_complete', self.__objChangeComplete)
         if _child.isVisible() and obj.isVisible():
-            self.__drawObject(_child)
+            self.viewport.draw_object(_child)
 
 #---------------------------------------------------------------------------------------------------
     def __imageRemovedChild(self, obj, *args):
@@ -1382,22 +1380,6 @@ fitImage()
         self.__activeY=event.y
 
 #---------------------------------------------------------------------------------------------------
-    def ZoomInEx(self):
-        self.__viewport.zoom_in()
-
-#---------------------------------------------------------------------------------------------------
-    def ZoomOutEx(self):
-        self.__viewport.zoom_out()
-        
-#---------------------------------------------------------------------------------------------------
-    def ZoomIn(self):
-        self.__viewport.zoom_in()
-
-#---------------------------------------------------------------------------------------------------
-    def ZoomOut(self):
-        self.__viewport.zoom_out()
-
-#---------------------------------------------------------------------------------------------------
     def MoveFromTo(self,xFrom,yFrom,xTo,yTo):
         """
             Do the Zoom or Move action  
@@ -1418,22 +1400,6 @@ fitImage()
             self.__ymax=self.__ymax+deltaY                   
         self.redraw()
 
-#---------------------------------------------------------------------------------------------------
-    def ZoomScale(self,scale):
-        """
-            Make a drawing zoom of the scale quantity
-        """
-        if scale > 1.0:
-            self.__viewport.zoom_out()
-        else:
-            self.__viewport.zoom_in()
-
-#---------------------------------------------------------------------------------------------------
-    def toggle_pan(self):
-        """
-            Start Pan Image
-        """
-        self.__viewport.toggle_pan()
 
 #---------------------------------------------------------------------------------------------------
     def setCursor(self,drwArea,snObject):

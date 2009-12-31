@@ -47,7 +47,7 @@ from PythonCAD.Generic import baseobject
 from PythonCAD.Generic import entity
 from PythonCAD.Generic import logger
 from PythonCAD.Generic import util
-from PythonCAD.Generic import tools
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap
 
 class Image(entity.Entity):

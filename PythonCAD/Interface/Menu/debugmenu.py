@@ -34,7 +34,7 @@ from PythonCAD.Interface.Gtk import gtkactions
 from PythonCAD.Generic import globals
 from PythonCAD.Generic import fileio
 from PythonCAD.Generic import imageio
-from PythonCAD.Generic import tools
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import plotfile
 from PythonCAD.Generic import text
 from PythonCAD.Generic import graphicobject

@@ -21,7 +21,7 @@
 # Point command functions/Class 
 #
 
-from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
 

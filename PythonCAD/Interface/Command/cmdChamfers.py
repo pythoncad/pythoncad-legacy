@@ -25,7 +25,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-from PythonCAD.Generic.tools import Tool
+from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Generic.segment import Segment
 from PythonCAD.Generic.point import Point
