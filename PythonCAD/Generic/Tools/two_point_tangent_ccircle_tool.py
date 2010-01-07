@@ -119,7 +119,8 @@ This method extends the TangentCircleTool::reset() method.
         self.__cobj1 = None
         self.__cobj2 = None
 
-    def setLocation(self, x, y):
+    #-----------------------------------------------------------------------------------------------
+    def setLocation(self, point):
         """Store an x/y coordinate pair in the tool.
 
 setLocation(x, y)
@@ -127,14 +128,14 @@ setLocation(x, y)
 Arguments 'x' and 'y' should be floats. This method extends
 the TangentCircleTool::setLocation() methods.
         """
-        super(TwoPointTangentCCircleTool, self).setLocation(x, y)
-        _tx, _ty = self.getLocation()
+        super(TwoPointTangentCCircleTool, self).setLocation(point)
+        _tx, _ty = self.getLocation().getCoords()
         _obja = self.__cobj1
         _objb = self.__cobj2
         _tandata = tangent.calc_tangent_circle(_obja, _objb, _tx, _ty)
         if _tandata is not None:
             _cx, _cy, _radius = _tandata
-            self.setCenter(_cx, _cy)
+            self.setCenter(Point(_cx, _cy))
             self.setRadius(_radius)
 
 

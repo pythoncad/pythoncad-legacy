@@ -67,55 +67,62 @@ class TangentCircleTool(Tool):
         self.__radius = None
         self.__rect = None
 
+    #-----------------------------------------------------------------------------------------------
     def setCenter(self, x, y):
-        """Store the tangent circle center point in the tool.
-
-setCenter(x, y)
-
-Arguments 'x' and 'y' should be floats.
+        """
+        Store the tangent circle center point in the tool.
+        Arguments 'x' and 'y' should be floats.
         """
         _x = util.get_float(x)
         _y = util.get_float(y)
-        self.__center = (_x, _y)
+        self.__center = Point(_x, _y)
 
+    #-----------------------------------------------------------------------------------------------
+    def setCenter(self, point):
+        """
+        Store the tangent circle center point in the tool.
+        Argument point is of type Point.
+        """
+        self.__center = point
+
+    #-----------------------------------------------------------------------------------------------
     def getCenter(self):
-        """Return the center of the tangent circle.
+        """
+        Return the center of the tangent circle.
 
-getCenter()
-
-This method returns a tuple holding two floats, the first
-is the 'x' coordinate of the center, the second is the 'y'
-coordinate. If the tool has not yet been invoked with a
-setLocation() call, this method returns None.
+        This method returns a tuple holding two floats, the first
+        is the 'x' coordinate of the center, the second is the 'y'
+        coordinate. If the tool has not yet been invoked with a
+        setLocation() call, this method returns None.
         """
         return self.__center
 
+    #-----------------------------------------------------------------------------------------------
     def setRadius(self, radius):
-        """Store the radius in the tool.
+        """
+        Store the radius in the tool.
 
-setRadius(radius)
-
-Argument 'radius' should be a float.
+        Argument 'radius' should be a float.
         """
         _radius = util.get_float(radius)
         self.__radius = _radius
 
+    #-----------------------------------------------------------------------------------------------
     def getRadius(self):
-        """Return the center of the tangent circle.
+        """
+        Return the center of the tangent circle.
 
-getRadius()
-
-This method returns a float giving the radius of the tangent
-circle, or None if the radius is not set.
+        This method returns a float giving the radius of the tangent
+        circle, or None if the radius is not set.
         """
         return self.__radius
 
+    #-----------------------------------------------------------------------------------------------
     def setPixelRect(self, xmin, ymin, width, height):
-        """Store the screen coordinates used to draw the circle.
+        """
+        Store the screen coordinates used to draw the circle.
 
-setPixelRect(xmin, ymin, width, height)
-
-All the arguments should be integer values.
+        All the arguments should be integer values.
         """
         _xmin = xmin
         if not isinstance(_xmin, int):
@@ -131,6 +138,7 @@ All the arguments should be integer values.
             _height = int(height)
         self.__rect = (_xmin, _ymin, _width, _height)
 
+    #-----------------------------------------------------------------------------------------------
     def getPixelRect(self):
         """Return the screen boundary of the circle to draw
 
@@ -145,6 +153,7 @@ this method will return None.
         """
         return self.__rect
 
+    #-----------------------------------------------------------------------------------------------
     def reset(self):
         """Restore the tool to its initial state.
 
@@ -157,6 +166,7 @@ This method extends Tool::reset().
         self.__radius = None
         self.__rect = None
 
+    #-----------------------------------------------------------------------------------------------
     def create(self, image):
         """Create a new CCircle and add it to the image.
 
@@ -165,7 +175,7 @@ create(image)
 This method overrides the Tool::create() method.
         """
         _active_layer = image.getActiveLayer()
-        _x, _y = self.__center
+        _x, _y = self.__center.getCoords()
         _radius = self.__radius
         _pts = _active_layer.find('point', _x, _y)
         if len(_pts) == 0:

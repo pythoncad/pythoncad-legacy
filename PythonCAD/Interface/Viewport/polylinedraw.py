@@ -46,4 +46,20 @@ def _draw_polyline(self, viewport, col=None):
 def _erase_polyline(self, viewport):
     self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 
+#----------------------------------------------------------------------------------------------------
+def _sample_polyline(self, viewport, color):
+    # display properties
+    lineweight = None
+    linestyle = None
+    # add points to list
+    points = []
+    # point tuples
+    x_y_points = self.getPoints()
+    # convert tuples to points
+    for x_y_point in x_y_points:
+        points.append(x_y_point.point)
+    # append last point
+    points.append(self.getCurrentPoint())
+    # do the actual draw of the linestring
+    viewport.draw_linestring(color, lineweight, linestyle, points)    
 

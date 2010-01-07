@@ -28,45 +28,30 @@ import gtk
 from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def circle_tp_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("button_press", circle_tp_first_button_press_cb)
     _tool.setHandler("entry_event", circle_tp_first_entry_event_cb)
     _tool.setHandler("initialize", circle_tp_mode_init)
+    
 #
-# Motion Notifie
-#
+# Motion Notify
+#---------------------------------------------------------------------------------------------------
 def circle_tp_motion_notify_cb(gtkimage, widget, event, tool):
-    _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
-    _radius = tool.getRadius()
-    _upp = gtkimage.getUnitsPerPixel()
-    if _radius is not None:
-        _cx, _cy = tool.getCenter().point.getCoords()
-        _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-        _pr = int(_radius/_upp)
-        _xmin = _pcx - _pr
-        _ymin = _pcy - _pr
-        _cw = _ch = _pr * 2
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,0, 360*64)
-    snap.setDinamicSnap(gtkimage,tool.setSecondPoint,None)
-    _cx, _cy = tool.getCenter().point.getCoords()
-    _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-    _radius = tool.getRadius()
-    _pr = int(_radius/_upp)
-    _xmin = _pcx - _pr
-    _ymin = _pcy - _pr
-    _cw = _ch = _pr * 2
-    widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,0, 360*64)
-    return True
+    # snap
+    snap.setDinamicSnap(gtkimage, tool.setSecondPoint, None)
+    # sample tool
+    gtkimage.viewport.sample(tool)    
+    return True    
+
 #
 # Button press callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def circle_tp_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -77,9 +62,10 @@ def circle_tp_first_button_press_cb(gtkimage, widget, event, tool):
     tool.setHandler("motion_notify", circle_tp_motion_notify_cb)
     tool.setHandler("entry_event", circle_tp_second_entry_event_cb)
     gtkimage.setPrompt(_('Enter the second point or click in the drawing area'))
-    gtkimage.getGC().set_function(gtk.gdk.INVERT)
+##    gtkimage.getGC().set_function(gtk.gdk.INVERT)
     return True
 
+#---------------------------------------------------------------------------------------------------
 def circle_tp_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -91,7 +77,7 @@ def circle_tp_second_button_press_cb(gtkimage, widget, event, tool):
 
 #
 # Entry callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def circle_tp_first_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -104,6 +90,7 @@ def circle_tp_first_entry_event_cb(gtkimage, widget, tool):
         gtkimage.setPrompt(_('Enter another point or click in the drawing area'))
         gtkimage.getGC().set_function(gtk.gdk.INVERT)
 
+#---------------------------------------------------------------------------------------------------
 def circle_tp_second_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()

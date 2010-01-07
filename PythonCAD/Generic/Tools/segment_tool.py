@@ -35,12 +35,15 @@ class SegmentTool(Tool):
         it shares the attributes and methods of that class. The
         SegmentTool class has the following additional methods:
     """
+    
+    #---------------------------------------------------------------------------------------------------------
     def __init__(self):
         super(SegmentTool, self).__init__()
         self.__first_point = None
         self.__second_point = None
         self.__direction = None
 
+    #---------------------------------------------------------------------------------------------------------
     def setFirstPoint(self, snapPoint):
         """
             Store the first point of the Segment.
@@ -48,6 +51,7 @@ class SegmentTool(Tool):
         """
         self.__first_point = snapPoint
 
+    #---------------------------------------------------------------------------------------------------------        
     def getFirstPoint(self):
         """
             Get the first point of the Segment.
@@ -57,6 +61,7 @@ class SegmentTool(Tool):
         """
         return self.__first_point
 
+    #---------------------------------------------------------------------------------------------------------
     def setSecondPoint(self, snapPoint):
         """
             Store the second point of the Segment.
@@ -68,6 +73,7 @@ class SegmentTool(Tool):
             raise ValueError, "SegmentTool first snapPoint is not set."
         self.__second_point = snapPoint
 
+    #---------------------------------------------------------------------------------------------------------
     def getSecondPoint(self):
         """
             Get the second point of the Segment.
@@ -77,6 +83,7 @@ class SegmentTool(Tool):
         """
         return self.__second_point
 
+    #---------------------------------------------------------------------------------------------------------
     def reset(self):
         """
             Restore the tool to its initial state.
@@ -86,6 +93,7 @@ class SegmentTool(Tool):
         self.__first_point = None
         self.__second_point = None
 
+    #---------------------------------------------------------------------------------------------------------
     def create(self, image):
         """
             Create a new Segment and add it to the image.
@@ -120,19 +128,81 @@ class SegmentTool(Tool):
                 _seg.setThickness(_t)
             _active_layer.addObject(_seg)
             self.reset()
-    def setDirection(self,angle):
+            
+    #---------------------------------------------------------------------------------------------------------
+    def setDirection(self, angle):
         """
-            set orizontal
+        set direction
         """
         if angle is None:
-            self.__direction=None 
+            self.__direction = None 
             return
-        _ang=float(angle)
-        self.__direction=_ang
+        self.__direction = float(angle)
+        
+    #---------------------------------------------------------------------------------------------------------
     def getDirection(self):
         """
-            get the direction
+        get the direction
         """
         return self.__direction
-    direction=property(getDirection,setDirection,None,"Direction of the line")
+    
+    direction = property(getDirection, setDirection, None, "Direction of the line")
         
+
+    #
+    # Suport functions
+    #
+    #---------------------------------------------------------------------------------------------------
+    def transformCoords(self, p1, p2):
+        """
+            trasform the given cordinate with en angle
+            useful in case you whant to force a segment to be in a partuicular
+            direction
+        """
+        x, y = p1.getCoords()
+        _x, _y = p2.getCoords()
+        angle = self.__direction
+        
+        if angle is not None:
+            if angle == 90.0 or angle == 270.0:
+                _x = x
+            elif angle == 0.0 or angle == 180.0:
+                _y = y
+            else:
+                _radDir = (math.pi * angle) / 180.0           
+                _tan = math.tan(_radDir) * abs(x - x1)  
+                if x>x1:
+                    _y = y-_tan
+                    _x = x - abs(x - x1)
+                else:
+                    _y = y +_tan
+                    _x = x + abs(x - x1)
+        return Point(_x, _y)
+    
+    #---------------------------------------------------------------------------------------------------
+    def segment_set_direction(self, text):
+        """
+            parse the text and set the direction into the tool
+        """
+        if isinstance(text,str):
+            if text.find(':') > 0:
+                cmdArgs = text.split(':')
+                if len(cmdArgs) == 2:
+                    _firstArgs = cmdArgs[0].strip().lower()
+                    if _firstArgs == 'd':
+                        _r = self.setSegmentDirection(cmdArgs[1])            
+                        return _r
+        return False
+    
+    #---------------------------------------------------------------------------------------------------
+    def setSegmentDirection(self, angle):
+        """
+            set the segment direction 
+        """
+        if str(angle).strip().lower() == "n":
+            self.__direction = None
+            return False
+        else:
+            self.__direction = angle
+            return True
+    

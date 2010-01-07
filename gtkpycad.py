@@ -199,12 +199,6 @@ def main():
             sys.exit()
 
     #
-    # add graphic methods to classes
-    #
-
-    gtkinit.add_graphic_methods()
-    
-    #
     # load up global and user preferences
     #
 

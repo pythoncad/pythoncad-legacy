@@ -49,7 +49,7 @@ def chamfer_mode_init(gtkimage, tool=None):
 def chamfer_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _x, _y = _image.getCurrentPoint().getCoords()
     _pt, _new_pt = _image.findPoint(_x, _y, _tol)
     if _pt is not None and not _new_pt:
         _active_layer = _image.getActiveLayer()

@@ -189,8 +189,9 @@ class IInputHandler(gtk.DrawingArea):
             # motion update for tool
             if tool is not None and tool.hasHandler("motion_notify"):
                 retval = tool.getHandler('motion_notify')(self._gtkimage, widget, event, tool)
-#            self._gtkimage.__MakeMove(widget,event)
-#            self._gtkimage.__ActiveSnapEvent(widget,event)
+
+#            self._gtkimage.__MakeMove(self, event)
+            self._gtkimage.ActiveSnapEvent(self, event)
 #
 #            if self._view_state.current == self._view_state.Pan:
 #                self._do_pan(event.x, event.y)
@@ -281,10 +282,10 @@ class IInputHandler(gtk.DrawingArea):
         self._cur_wx, self._cur_wy = self.view_to_world(self._cur_vx, self._cur_vy)
         self._image.setCurrentPoint(self._cur_wx, self._cur_wy)
         # if the state is None redraw the cursor
-        if self._view_state.current == self._view_state.None:
-            # redraw cursor
-            self._view_state.current = self._view_state.CursorMotion
-            self.invalidate()
+##        if self._view_state.current == self._view_state.None:
+##            # redraw cursor
+##            self._view_state.current = self._view_state.CursorMotion
+##            self.invalidate()
         
 #---------------------------------------------------------------------------------------------------
     def _calc_viewfactors(self):
@@ -306,6 +307,8 @@ class IInputHandler(gtk.DrawingArea):
             # visible world area
             self._wxmax = self._wxmin + self.size_view_to_world(self._vwidth)
             self._wymax = self._wymin + self.size_view_to_world(self._vheight)
+            # sets the new tolerance
+            self._gtkimage.tolerance = 1.0 / sx * 5.0
             # redraw
             self._view_state.current = self._view_state.DrawScene
             self.invalidate()

@@ -31,46 +31,34 @@ from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
 from PythonCAD.Generic import HCLine, VCLine, ACLine, CLine, CCircle
+
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def two_cline_tancc_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click on the first construction line or construction circle for tangency.'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("initialize", two_cline_tancc_mode_init)
     _tool.setHandler("button_press", two_cline_first_button_press_cb)
+    
 #
-# Motion Notifie
-#
+# Motion Notify
+#---------------------------------------------------------------------------------------------------
 def two_cline_motion_notify_cb(gtkimage, widget, event, tool):
-    _gc = gtkimage.getGC()
-    _upp = gtkimage.getUnitsPerPixel()
-    _rect = tool.getPixelRect()
-    if _rect is not None:
-        _xmin, _ymin, _width, _height = _rect
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _width, _height,
-                               0, 360*64)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    tool.setLocation(_ix, _iy)
-    _radius = tool.getRadius()
-    if _radius > 0.0:
-        _cx, _cy = tool.getCenter()
-        _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-        _pr = int(_radius/_upp)
-        _xmin = _pcx - _pr
-        _ymin = _pcy - _pr
-        _width = _height = _pr * 2
-        tool.setPixelRect(_xmin, _ymin, _width, _height)
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _width, _height,
-                               0, 360*64)
-    return True
+    # current location of pointer
+    point = gtkimage.image.getCurrentPoint()
+    tool.setLocation(point)
+    # sample tool
+    gtkimage.viewport.sample(tool)    
+    return True    
+
 #
 # Button press callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def two_cline_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _x, _y = _image.getCurrentPoint().getCoords()
     _objdict = _image.mapPoint(_x, _y, _tol, 1)
     if len(_objdict):
         _active_layer = _image.getActiveLayer()
@@ -82,10 +70,11 @@ def two_cline_first_button_press_cb(gtkimage, widget, event, tool):
                     gtkimage.setPrompt(_('Click on the second construction line for tangency.'))
     return True
 
+#---------------------------------------------------------------------------------------------------
 def two_cline_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _x, _y = _image.getCurrentPoint()
+    _x, _y = _image.getCurrentPoint().getCoords()
     _objdict = _image.mapPoint(_x, _y, _tol, 1)
     if len(_objdict):
         _active_layer = _image.getActiveLayer()
@@ -99,21 +88,21 @@ def two_cline_second_button_press_cb(gtkimage, widget, event, tool):
                     tool.setHandler("motion_notify", two_cline_motion_notify_cb)
                     tool.setSecondConObject(_obj)
                     gtkimage.setPrompt(_('Click where you want the tangent circle to be.'))
-                    gtkimage.getGC().set_function(gtk.gdk.INVERT)
     return True
+
 #
 # Entry callBacks
 #
 
 #
 # Suport functions
-#
+#---------------------------------------------------------------------------------------------------
 def two_cline_set_circle_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _snapArray={'perpendicular':False}
-    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()    
-    tool.setLocation(_x, _y)
+    _snapArray = { 'perpendicular':False }
+    point = snap.getSnapPoint(_image, _tol, _snapArray).point 
+    tool.setLocation(point)
     cmdCommon.create_entity(gtkimage)
 
 

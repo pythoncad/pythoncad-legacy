@@ -20,7 +20,6 @@
 # code for adding graphical methods to drawing entities
 #
 
-
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -28,43 +27,24 @@ import pango
 
 from PythonCAD.Generic import color
 from PythonCAD.Generic.point import Point
-
-
-#----------------------------------------------------------------------------------------------------
-def _draw_segment(self, viewport, col=None):
-    color = col
-    # if color is not defined, take color of entity
-    if color is None:
-        color = self.getColor()
-    # display properties
-    lineweight = self.getThickness()
-    linestyle = self.getLinetype().getList()
-    # get begin and endpoint
-    p1, p2 = self.getEndpoints()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
-    # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)
+    
 
 #----------------------------------------------------------------------------------------------------
-def _erase_segment(self, viewport):
-    # draw the element in the background color
-    self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
-
-#----------------------------------------------------------------------------------------------------
-def _sample_segment(self, viewport, color):
+def _sample_polygon(self, viewport, color):
     # display properties
     lineweight = None
     linestyle = None
-    # get begin and endpoint
-    p1 = self.getFirstPoint().point
-    p2 = self.getCurrentPoint()
     # add points to list
     points = []
+    # first sides
+    x, y = self.getCoord(0)
+    p1 = Point(x, y)
     points.append(p1)
-    points.append(p2)
+    count = self.getSideCount()
+    for i in range(1, count):
+        x, y = self.getCoord(i)
+        points.append(Point(x, y))
+    # append first point to close
+    points.append(p1)
     # do the actual draw of the linestring
-    viewport.draw_linestring(color, lineweight, linestyle, points)
-
+    viewport.draw_linestring(color, lineweight, linestyle, points)    

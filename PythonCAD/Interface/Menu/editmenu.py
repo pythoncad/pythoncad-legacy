@@ -25,7 +25,7 @@ pygtk.require('2.0')
 import gtk
 import gtk.keysyms
 
-from PythonCAD.Interface.Gtk import gtkprefs
+from PythonCAD.Interface.Preferences import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtkprinting
 from PythonCAD.Interface.Gtk import gtkactions
@@ -40,9 +40,9 @@ from PythonCAD.Generic import dimension
 from PythonCAD.Generic import extFormat
 
 from PythonCAD.Generic.image import Image
-from PythonCAD.Interface.Gtk import gtkdimprefs
-from PythonCAD.Interface.Gtk import gtktextprefs
-from PythonCAD.Interface.Gtk import gtkstyleprefs
+from PythonCAD.Interface.Preferences import gtkdimprefs
+from PythonCAD.Interface.Preferences import gtktextprefs
+from PythonCAD.Interface.Preferences import gtkstyleprefs
 from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 
 from PythonCAD.Interface.Menu.basemenu import IBaseMenu

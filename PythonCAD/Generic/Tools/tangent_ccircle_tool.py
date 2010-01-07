@@ -94,7 +94,8 @@ set with the setConstructionLine() method.
             raise ValueError, "Construction object is not defined."
         return _conobj
 
-    def setLocation(self, x, y):
+    #-----------------------------------------------------------------------------------------------
+    def setLocation(self, point):
         """Store an x/y coordinate pair in the tool.
 
 setLocation(x, y)
@@ -102,25 +103,25 @@ setLocation(x, y)
 Arguments 'x' and 'y' should be floats. This method extends
 the TangentCircleTool::setLocation() methods.
         """
-        super(TangentCCircleTool, self).setLocation(x, y)
-        _tx, _ty = self.getLocation()
+        super(TangentCCircleTool, self).setLocation(point)
+        _tx, _ty = self.getLocation().getCoords()
         _conobj = self.__conobj
         _cx = _cy = _radius = None
         if isinstance(_conobj, HCLine):
             _x, _y = _conobj.getLocation().getCoords()
             _cx = _tx
-            _cy = (_ty + _y)/2.0
-            _radius = abs(_ty - _y)/2.0
+            _cy = (_ty + _y) / 2.0
+            _radius = abs(_ty - _y) / 2.0
         elif isinstance(_conobj, VCLine):
             _x, _y = _conobj.getLocation().getCoords()
-            _cx = (_tx + _x)/2.0
+            _cx = (_tx + _x) / 2.0
             _cy = _ty
-            _radius = abs(_tx - _x)/2.0
+            _radius = abs(_tx - _x) / 2.0
         elif isinstance(_conobj, (ACLine, CLine)):
             _px, _py = _conobj.getProjection(_tx, _ty)
-            _cx = (_tx + _px)/2.0
-            _cy = (_ty + _py)/2.0
-            _radius = math.hypot((_tx - _px), (_ty - _py))/2.0
+            _cx = (_tx + _px) / 2.0
+            _cy = (_ty + _py) / 2.0
+            _radius = math.hypot((_tx - _px), (_ty - _py)) / 2.0
         elif isinstance(_conobj, CCircle):
             _ccx, _ccy = _conobj.getCenter().getCoords()
             _rad = _conobj.getRadius()
@@ -130,12 +131,12 @@ the TangentCircleTool::setLocation() methods.
             _angle = math.atan2((_ty - _ccy), (_tx - _ccx))
             _px = _ccx + (_rad * math.cos(_angle))
             _py = _ccy + (_rad * math.sin(_angle))
-            _cx = (_tx + _px)/2.0
-            _cy = (_ty + _py)/2.0
-            _radius = math.hypot((_tx - _px), (_ty - _py))/2.0
+            _cx = (_tx + _px) / 2.0
+            _cy = (_ty + _py) / 2.0
+            _radius = math.hypot((_tx - _px), (_ty - _py)) / 2.0
         else:
             raise TypeError, "Invalid construction entity type: " + `type(_conobj)`
-        self.setCenter(_cx, _cy)
+        self.setCenter(Point(_cx, _cy))
         self.setRadius(_radius)
 
 

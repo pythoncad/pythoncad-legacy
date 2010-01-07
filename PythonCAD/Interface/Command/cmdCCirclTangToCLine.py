@@ -35,40 +35,27 @@ from PythonCAD.Generic import HCLine, VCLine, ACLine, CLine, CCircle
 
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def tangent_ccircle_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click on the construction object used for tangency.'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("initialize", tangent_ccircle_mode_init)
     _tool.setHandler("button_press", ccircle_single_first_button_press_cb)
+    
 #
-# Motion Notifie
-#
-
+# Motion Notify
+#---------------------------------------------------------------------------------------------------
 def ccircle_single_motion_notify_cb(gtkimage, widget, event, tool):
-    _gc = gtkimage.getGC()
-    _upp = gtkimage.getUnitsPerPixel()
-    _rect = tool.getPixelRect()
-    if _rect is not None:
-        _xmin, _ymin, _width, _height = _rect
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _width, _height,
-                               0, 360*64)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    tool.setLocation(_ix, _iy)
-    _cx, _cy = tool.getCenter()
-    _radius = tool.getRadius()
-    _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-    _pr = int(_radius/_upp)
-    _xmin = _pcx - _pr
-    _ymin = _pcy - _pr
-    _width = _height = _pr * 2
-    tool.setPixelRect(_xmin, _ymin, _width, _height)
-    widget.window.draw_arc(_gc, False, _xmin, _ymin, _width, _height,
-                           0, 360*64)
+    # current location of pointer
+    point = gtkimage.image.getCurrentPoint()
+    tool.setLocation(point)
+    # sample tool
+    gtkimage.viewport.sample(tool)    
     return True
+
 #
 # Button press callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def ccircle_single_first_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -81,17 +68,19 @@ def ccircle_single_first_button_press_cb(gtkimage, widget, event, tool):
             tool.setHandler("button_press", ccircle_single_second_button_press_cb)
             tool.setHandler("motion_notify", ccircle_single_motion_notify_cb)
             gtkimage.setPrompt(_('Click where the circle should be drawn.'))
-            gtkimage.getGC().set_function(gtk.gdk.INVERT)
     return True
 
+#---------------------------------------------------------------------------------------------------
 def ccircle_single_second_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _snapArray={'perpendicular':False,'tangent':False}
-    _x,_y=snap.getSnapPoint(_image,_tol,_snapArray).point.getCoords()
-    tool.setLocation(_x, _y)
+    point = snap.getSnapPoint(_image,_tol,_snapArray).point
+    tool.setLocation(point)
     cmdCommon.create_entity(gtkimage)
     return True
+
+
 #
 # Entry callBacks
 #

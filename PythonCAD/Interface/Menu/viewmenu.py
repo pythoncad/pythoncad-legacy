@@ -25,7 +25,7 @@ pygtk.require('2.0')
 import gtk
 import gtk.keysyms
 
-from PythonCAD.Interface.Gtk import gtkprefs
+from PythonCAD.Interface.Preferences import gtkprefs
 from PythonCAD.Interface.Gtk import gtkmodify
 from PythonCAD.Interface.Gtk import gtkprinting
 from PythonCAD.Interface.Gtk import gtkactions
@@ -40,9 +40,9 @@ from PythonCAD.Generic import dimension
 from PythonCAD.Generic import extFormat
 
 from PythonCAD.Generic.image import Image
-from PythonCAD.Interface.Gtk import gtkdimprefs
-from PythonCAD.Interface.Gtk import gtktextprefs
-from PythonCAD.Interface.Gtk import gtkstyleprefs
+from PythonCAD.Interface.Preferences import gtkdimprefs
+from PythonCAD.Interface.Preferences import gtktextprefs
+from PythonCAD.Interface.Preferences import gtkstyleprefs
 from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 
 from PythonCAD.Interface.Menu.basemenu import IBaseMenu
@@ -60,33 +60,11 @@ def zoom_cb(menuitem, gtkimage):
     
 
 def zoom_in_cb(menuitem, gtkimage):
-#    gtkimage.viewport.zoom_tool.zoom_in()
-#    return
-    #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
-    #_scale = gtkimage.getUnitsPerPixel()
-    #_xdiff = abs(_xmax - _xmin)
-    #_ydiff = abs(_ymax - _ymin)
-    #_xmin = (_xmin + _xmax)/2.0 - _xdiff/4.0
-    #_ymin = (_ymin + _ymax)/2.0 - _ydiff/4.0
-    #gtkimage.setView(_xmin, _ymin, (_scale/2.0))
-    ActiveScale = gtkimage.getUnitsPerPixel()
-    ActiveScale = ActiveScale*0.5 #This Value here could be a global variable to put in the application option
-    gtkimage.ZoomScale(ActiveScale)
+    gtkimage.viewport.zoom_tool.zoom_in()
     
     
 def zoom_out_cb(menuitem, gtkimage):
-#    gtkimage.viewport.zoom_tool.zoom_out()
-#    return    
-    #_xmin, _ymin, _xmax, _ymax = gtkimage.getView()
-    #_scale = gtkimage.getUnitsPerPixel()
-    #_xdiff = abs(_xmax - _xmin)
-    #_ydiff = abs(_ymax - _ymin)
-    #_xmin = (_xmin + _xmax)/2.0 - _xdiff
-    #_ymin = (_ymin + _ymax)/2.0 - _ydiff
-    #gtkimage.setView(_xmin, _ymin, (_scale * 2.0))
-    ActiveScale = gtkimage.getUnitsPerPixel()
-    ActiveScale = ActiveScale*2 #This Value here could be a global variable to put in the application option
-    gtkimage.ZoomScale(ActiveScale)
+    gtkimage.viewport.zoom_tool.zoom_out()
     
     
 def zoom_fit_cb(menuitem, gtkimage):

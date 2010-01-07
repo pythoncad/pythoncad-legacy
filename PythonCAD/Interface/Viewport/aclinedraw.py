@@ -59,3 +59,18 @@ def _draw_acline(self, viewport, col=None):
 def _erase_acline(self, viewport):
     self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     
+#----------------------------------------------------------------------------------------------------
+def _sample_acline(self, viewport, color):
+    # display properties
+    lineweight = None
+    linestyle = None
+    # get begin and endpoint
+    p1 = self.getPoint().point
+    p2 = self.getCurrentPoint()
+    # add points to list
+    points = []
+    points.append(p1)
+    points.append(p2)
+    # do the actual draw of the linestring
+    viewport.draw_linestring(color, lineweight, linestyle, points)
+    

@@ -33,7 +33,6 @@ __all__ = [
     'gtkmenus',
     'gtkmirror',
     'gtkmodify',
-    'gtkprefs',
     'gtkprinting',
     'gtkshell',
     'gtktext'
