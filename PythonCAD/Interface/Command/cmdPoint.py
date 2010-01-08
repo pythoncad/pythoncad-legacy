@@ -51,3 +51,4 @@ def point_mode_init(gtkimage, tool=None):
     _tool.setHandler("initialize", point_mode_init)
     _tool.setHandler("button_press", point_button_press_cb)
     _tool.setHandler("entry_event", point_entry_event_cb)
+    

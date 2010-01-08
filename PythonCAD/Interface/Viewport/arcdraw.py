@@ -57,3 +57,20 @@ def _draw_arc(self, viewport, col=None):
 def _erase_arc(self, viewport):
     self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     
+#----------------------------------------------------------------------------------------------------
+def _sample_arc(self, viewport, color):
+    # display properties
+    lineweight = None
+    linestyle = None
+    # centerpoint of the circle
+    center = self.getCenter().point
+    # circle radius
+    radius = self.getRadius()
+    # start and end angle
+    start = self.getStartAngle()
+    end = self.getEndAngle()
+    # do the actual draw of the arc
+    viewport.draw_arc(color, lineweight, linestyle, center, radius, start, end)
+    
+    
+    

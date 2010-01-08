@@ -194,7 +194,7 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
         """
         super(Image, self).__init__(**kw)
         self.__scale = 1.0
-        self.__cp = None
+        self.__curpoint = None
         self.__styles = []
         self.__dimstyles = []
         self.__textstyles = []
@@ -329,7 +329,7 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
 close()
         """
         # print "in image::close()"
-        self.__cp = None
+        self.__curpoint = None
         del self.__styles[:]
         del self.__dimstyles[:]
         del self.__textstyles[:]
@@ -1047,7 +1047,7 @@ getCurrentPoint()
 This method returns a tuple containing two floats, or None if the point
 has not been defined
         """
-        return self.__cp
+        return self.__curpoint
 
     def setCurrentPoint(self, x, y):
         """Set the current point.
@@ -1058,14 +1058,20 @@ Arguments 'x' and 'y' should be floats
         """
         _x = util.get_float(x)
         _y = util.get_float(y)
-        if self.__cp is not None:
-            _cx, _cy = self.__cp
-        if self.__cp is None or abs(_cx - _x) > 1e-10 or abs(_cy - _y) > 1e-10:
-            self.__cp = (_x, _y)
+        # contruct a new current point
+        new_point = point.Point(_x, _y)
+        # if the new point is near the old one don't update
+        if self.__curpoint is not None:
+            if self.__curpoint.Dist(new_point) > 1e-10:
+                self.__curpoint = new_point
+                self.sendMessage('current_point_changed')
+        else:
+            self.__curpoint = new_point
             self.sendMessage('current_point_changed')
 
     current_point = property(getCurrentPoint, None, None, 'Current point')
         
+
     def __objectModified(self, obj, *args):
         # print "Image::objectModified()"
         # print "obj: " + `obj`

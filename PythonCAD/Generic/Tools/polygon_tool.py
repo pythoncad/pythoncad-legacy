@@ -158,9 +158,8 @@ setLocation(x, y)
 This method extends Tool::setLocation() and calculates the polygon
 points.
         """
-        _x,_y=p.point.getCoords()
-        super(PolygonTool, self).setLocation(_x, _y)
-        _x, _y = self.getLocation()
+        super(PolygonTool, self).setLocation(p.point)
+        _x, _y = self.getLocation().getCoords()
         _count = self.__nsides
         _inc = self.__increment
         if self.__external:

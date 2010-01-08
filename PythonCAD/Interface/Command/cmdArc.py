@@ -29,88 +29,51 @@ import math
 from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def arc_center_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("button_press", arc_center_button_press_cb)
     _tool.setHandler("entry_event", arc_center_entry_event_cb)
     _tool.setHandler("initialize", arc_center_mode_init)
+    
 #
-# Motion Notifie
-#
-
+# Motion Notify
+#---------------------------------------------------------------------------------------------------
 def arc_angle_motion_notify_cb(gtkimage, widget, event, tool):
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    _cx, _cy = tool.getCenter().point.getCoords() # arc center
-    _radius = tool.getRadius()
-    _sa = tool.getStartAngle()
-    _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-    _upp = gtkimage.getUnitsPerPixel()
-    _pr = int(_radius/_upp)
-    _xmin = _pcx - _pr
-    _ymin = _pcy - _pr
-    _cw = _ch = _pr * 2
-    _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
-    _ea = tool.getEndAngle()
-    _win = widget.window
-    if _ea is not None:
-        if _sa < _ea:
-            _sweep = _ea - _sa
-        else:
-            _sweep = 360.0 - (_sa - _ea)
-        _win.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                      int(_sa * 64), int(_sweep * 64))
-    _ea = (180.0/math.pi) * math.atan2((_iy - _cy), (_ix - _cx))
-    if _ea < 0.0:
-        _ea = _ea + 360.0
-    tool.setEndAngle(_ea)
-    if _sa < _ea:
-        _sweep = _ea - _sa
-    else:
-        _sweep = 360.0 - (_sa - _ea)
-    _win.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                  int(_sa * 64), int(_sweep * 64))
+    cx, cy = tool.getCenter().point.getCoords()
+    x, y = gtkimage.image.getCurrentPoint().getCoords()
+    end_angle = (180.0 / math.pi) * math.atan2((y - cy), (x - cx))
+    tool.setEndAngle(end_angle)
+    # sample tool
+    gtkimage.viewport.sample(tool)    
     return True
 
+#---------------------------------------------------------------------------------------------------
 def arc_radius_motion_notify_cb(gtkimage, widget, event, tool):
-    _cx, _cy = tool.getCenter().point.getCoords()
-    _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-    _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
-    _radius = tool.getRadius()
-    _upp = gtkimage.getUnitsPerPixel()
-    if _radius is not None:
-        _pr = int(_radius/_upp)
-        _xmin = _pcx - _pr
-        _ymin = _pcy - _pr
-        _cw = _ch = _pr * 2
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                               0, 360*64)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    _radius = math.hypot((_cx - _ix), (_cy - _iy))
-    tool.setRadius(_radius)
-    _pr = int(_radius/_upp)
-    _xmin = _pcx - _pr
-    _ymin = _pcy - _pr
-    _cw = _ch = _pr * 2
-    widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                           0, 360*64)
+    cx, cy = tool.getCenter().point.getCoords()
+    x, y = gtkimage.image.getCurrentPoint().getCoords()
+    radius = math.hypot((cx - x), (cy - y))
+    tool.setRadius(radius)
+    tool.setStartAngle(0)
+    tool.setEndAngle(360)
+    # sample tool
+    gtkimage.viewport.sample(tool)      
     return True
+
 #
 # Button press callBacks
 #
+#---------------------------------------------------------------------------------------------------
 def arc_center_end_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
-    _snapArray={'perpendicular':False,'tangent':False}
-    _snp=snap.getSnapPoint(_image,_tol,_snapArray)
-    _x,_y=_snp.point.getCoords()
+    _snapArray = { 'perpendicular':False, 'tangent':False }
+    _snp = snap.getSnapPoint(_image,_tol,_snapArray)
+    _x,_y = _snp.point.getCoords()
     _cx, _cy = tool.getCenter().point.getCoords()
     _angle = (180.0/math.pi) * math.atan2((_y - _cy),(_x - _cx))
     if _angle < 0.0:
@@ -119,18 +82,19 @@ def arc_center_end_button_press_cb(gtkimage, widget, event, tool):
     cmdCommon.create_entity(gtkimage)
     return True
 
+#---------------------------------------------------------------------------------------------------
 def arc_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
     _snapArray={'perpendicular':False,'tangent':False}
     snap.setSnap(_image,tool.setCenter,_tol,_snapArray)
-    gtkimage.getGC().set_function(gtk.gdk.INVERT)
     tool.setHandler("motion_notify", arc_radius_motion_notify_cb)
     tool.setHandler("entry_event", arc_center_radius_entry_cb)
     tool.setHandler("button_press", arc_center_radius_button_press_cb)
     gtkimage.setPrompt(_('Enter the radius or click in the drawing area'))
     return True
 
+#---------------------------------------------------------------------------------------------------
 def arc_center_radius_button_press_cb(gtkimage, widget, event, tool):
     _cx, _cy = tool.getCenter().point.getCoords()
     _tol = gtkimage.getTolerance()
@@ -146,12 +110,11 @@ def arc_center_radius_button_press_cb(gtkimage, widget, event, tool):
     tool.setStartAngle(_angle)
     tool.delHandler("entry_event")
     tool.setHandler("motion_notify", arc_angle_motion_notify_cb)
-    gtkimage.refresh()
-    gtkimage.getGC().set_function(gtk.gdk.INVERT)
     tool.setHandler("button_press", arc_center_end_button_press_cb)
     gtkimage.setPrompt(_('Click in the drawing area to finish the arc'))
     return True
 
+#---------------------------------------------------------------------------------------------------
 def arc_start_angle_button_press_cb(gtkimage, widget, event, tool):
     _cx, _cy = tool.getCenter()
     _tol = gtkimage.getTolerance()
@@ -167,10 +130,11 @@ def arc_start_angle_button_press_cb(gtkimage, widget, event, tool):
     tool.setHandler("entry_event", arc_center_ea_entry_event_cb)
     gtkimage.setPrompt(_('Enter the end angle of the arc.'))
     return True
+
 #
 # Entry callBacks
 #
-
+#---------------------------------------------------------------------------------------------------
 def arc_center_ea_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -180,6 +144,7 @@ def arc_center_ea_entry_event_cb(gtkimage, widget, tool):
         tool.setEndAngle(_angle)
         cmdCommon.create_entity(gtkimage)
 
+#---------------------------------------------------------------------------------------------------
 def arc_center_sa_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -191,6 +156,7 @@ def arc_center_sa_entry_event_cb(gtkimage, widget, tool):
         tool.setHandler("entry_event", arc_center_ea_entry_event_cb)
         gtkimage.setPrompt(_('Enter the end angle of the arc.'))
         
+#---------------------------------------------------------------------------------------------------
 def arc_center_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -204,6 +170,7 @@ def arc_center_entry_event_cb(gtkimage, widget, tool):
         tool.setHandler("entry_event", arc_center_radius_entry_cb)
         gtkimage.setPrompt(_('Enter the arc radius or click in the drawing area'))
 
+#---------------------------------------------------------------------------------------------------
 def arc_center_radius_entry_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -216,6 +183,7 @@ def arc_center_radius_entry_cb(gtkimage, widget, tool):
         tool.setHandler("entry_event", arc_center_sa_entry_event_cb)
         tool.setHandler("button_press", arc_start_angle_button_press_cb)
         gtkimage.setPrompt(_('Enter the start angle of the arc.'))
+
 #
 # Suport functions
 #

@@ -105,7 +105,7 @@ way to find the distance between two Point objects.
         """
             Compare a Point to either another Point or a tuple for inequality.
         """
-        if not isinstance(obj, (Point,tuple)):
+        if not isinstance(obj, (Point, tuple)):
             return True
         if isinstance(obj, Point):
             if obj is self:
@@ -116,6 +116,7 @@ way to find the distance between two Point objects.
         if abs(self.__x - _x) < 1e-10 and abs(self.__y - _y) < 1e-10:
             return False
         return True
+    
     def __add__(self,obj):
         """
             Add two Point

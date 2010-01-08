@@ -53,11 +53,13 @@ from PythonCAD.Generic.layer import Layer
 from PythonCAD.Generic.color import Color
 from PythonCAD.Generic.conobject import ConstructionObject
 
+from PythonCAD.Generic.Tools import tools
+
 
 # draw imports
-from PythonCAD.Interface.Viewport.aclinedraw import _draw_acline, _erase_acline
-from PythonCAD.Interface.Viewport.arcdraw import _draw_arc, _erase_arc
-from PythonCAD.Interface.Viewport.circledraw import _draw_circle,_erase_circle
+from PythonCAD.Interface.Viewport.aclinedraw import _draw_acline, _erase_acline, _sample_acline
+from PythonCAD.Interface.Viewport.arcdraw import _draw_arc, _erase_arc, _sample_arc
+from PythonCAD.Interface.Viewport.circledraw import _draw_circle, _erase_circle, _sample_circle
 from PythonCAD.Interface.Viewport.ccircledraw import _draw_ccircle,_erase_ccircle
 from PythonCAD.Interface.Viewport.chamferdraw import _draw_chamfer, _erase_chamfer
 from PythonCAD.Interface.Viewport.clinedraw import _draw_cline, _erase_cline
@@ -66,8 +68,9 @@ from PythonCAD.Interface.Viewport.filletdraw import _draw_fillet, _erase_fillet
 from PythonCAD.Interface.Viewport.hclinedraw import _draw_hcline, _erase_hcline
 from PythonCAD.Interface.Viewport.leaderdraw import _draw_leader, _erase_leader
 from PythonCAD.Interface.Viewport.pointdraw import _draw_point, _erase_point
-from PythonCAD.Interface.Viewport.polylinedraw import _draw_polyline, _erase_polyline
-from PythonCAD.Interface.Viewport.segmentdraw import _draw_segment, _erase_segment
+from PythonCAD.Interface.Viewport.polylinedraw import _draw_polyline, _erase_polyline, _sample_polyline
+from PythonCAD.Interface.Viewport.polygondraw import _sample_polygon
+from PythonCAD.Interface.Viewport.segmentdraw import _draw_segment, _erase_segment, _sample_segment
 from PythonCAD.Interface.Viewport.textblockdraw import _draw_textblock, _erase_textblock, _format_layout
 from PythonCAD.Interface.Viewport.vclinedraw import _draw_vcline, _erase_vcline
 
@@ -94,13 +97,15 @@ class IViewport(IInputHandler):
         self.__deg2rad = math.pi / 180.0
         # initialize entity drawing methods
         self.__init_draw_methods()
+        # initialize tools drawing methods
+        self.__init_sample_methods()
         # pan translation
         self.__pan_dx = 0
         self.__pan_dy = 0
         ## zoom tool
         #self.__zoom_tool = ZoomTool(self)
-        # temporary object to draw
-        self.__temp_object = None
+        # temporary object to sample
+        self.__tool_to_sample = None
 
 #----------------------------------------------------------------------------------------------------
     def __init_draw_methods(self):
@@ -181,10 +186,82 @@ class IViewport(IInputHandler):
         _class.erase = types.MethodType(_erase_dim, None, _class)
         _class._drawDimStrings = types.MethodType(_draw_dimstrings, None, _class)
         
-#        _class = layer.Layer
-#        _class.draw = types.MethodType(_draw_layer, None, _class)
-#        _class.erase = types.MethodType(_erase_layer, None, _class)
+#----------------------------------------------------------------------------------------------------
+    def __init_sample_methods(self):
+        """
+        Add draw methods to the tools classes
+        """
+##        # point sample
+##        _class = tools.PointTool
+##        _class.sample = types.MethodType(_sample_point, None, _class)
+        # segment sample
+        _class = tools.SegmentTool
+        _class.sample = types.MethodType(_sample_segment, None, _class)
+        # circle sample
+        _class = tools.TwoPointCircleTool
+        _class.sample = types.MethodType(_sample_circle, None, _class)
+        #
+        _class = tools.CircleTool
+        _class.sample = types.MethodType(_sample_circle, None, _class)
+        #
+        _class = tools.TangentCCircleTool
+        _class.sample = types.MethodType(_sample_circle, None, _class)
+        #
+        _class = tools.TwoPointTangentCCircleTool
+        _class.sample = types.MethodType(_sample_circle, None, _class)
+        # arc sample
+        _class = tools.ArcTool
+        _class.sample = types.MethodType(_sample_arc, None, _class)
+##        # leader sample
+##        _class = tools.LeaderTool
+##        _class.sample = types.MethodType(_sample_leader, None, _class)
+        # polyline sample
+        _class = tools.PolylineTool
+        _class.sample = types.MethodType(_sample_polyline, None, _class)
+        # polygon sample
+        _class = tools.PolygonTool
+        _class.sample = types.MethodType(_sample_polygon, None, _class)
 
+##        # chamfer sample
+##        _class = tools.ChamferTool
+##        _class.sample = types.MethodType(_sample_chamfer, None, _class)
+##        # fillet sample
+##        _class = tools.FilletTool
+##        _class.sample = types.MethodType(_sample_fillet, None, _class)
+##        # hcline sample
+##        _class = tools.HCLineTool
+##        _class.sample = types.MethodType(_sample_hcline, None, _class)
+##        # vcline sample
+##        _class = tools.VCLineTool
+##        _class.sample = types.MethodType(_sample_vcline, None, _class)
+        # acline sample
+        _class = tools.ACLineTool
+        _class.sample = types.MethodType(_sample_acline, None, _class)
+##        # cline sample
+##        _class = tools.CLineTool
+##        _class.sample = types.MethodType(_sample_cline, None, _class)
+##        # ccircle sample
+##        _class = tools.CCircleTool
+##        _class.sample = types.MethodType(_sample_ccircle, None, _class)
+##        # text sample
+##        _class = tools.TextTool
+##        _class._formatLayout = types.MethodType(_format_layout, None, _class)
+##        _class.sample = types.MethodType(_sample_textblock, None, _class)
+##        # linear dimension sample
+##        _class = tools.LinearDimensionTool
+##        _class.sample = types.MethodType(_sample_ldim, None, _class)
+##        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+##        # radial dimension sample
+##        _class = tools.RadialDimensionTool
+##        _class.sample = types.MethodType(_sample_rdim, None, _class)
+##        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+##        # angular dimension sample
+##        _class = tools.AngularDimensionTool
+##        _class.sample = types.MethodType(_sample_adim, None, _class)
+##        _class.draw_markers = types.MethodType(_draw_markers, None, _class)
+##        # dimension sample
+##        _class = tools.DimensionTool
+##        _class._drawDimStrings = types.MethodType(_sample_dimstrings, None, _class)
         
 #---------------------------------------------------------------------------------------------------
     def _refresh(self):
@@ -238,6 +315,10 @@ class IViewport(IInputHandler):
             elif self._view_state.current == self._view_state.DrawObject:
                 self.__redraw_object()
                 self._view_state.reset()
+            # sample/rubberband a tool
+            elif self._view_state.current == self._view_state.SampleTool:
+                self.__sample_tool()
+                self._view_state.reset()
 
 
 #---------------------------------------------------------------------------------------------------
@@ -290,14 +371,13 @@ class IViewport(IInputHandler):
                 self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
             # create a cairo context for the pixmap
             self.__ctx = self.__pixmap.cairo_create()
-            self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
+            self.__ctx.set_antialias(cairo.ANTIALIAS_DEFAULT)
             # draw the object
             self.__temp_object.draw(self)
             # show the updated scene
             self.show_scene()
             # reset temp object
             self.__temp_object = None
-            
 
 #---------------------------------------------------------------------------------------------------
     def __redraw_scene(self):
@@ -305,7 +385,7 @@ class IViewport(IInputHandler):
         self.__pixmap = gtk.gdk.Pixmap(self.window, self._vwidth, self._vheight)
         # create a cairo context for the pixmap
         self.__ctx = self.__pixmap.cairo_create()
-        self.__ctx.set_antialias(cairo.ANTIALIAS_NONE)
+        self.__ctx.set_antialias(cairo.ANTIALIAS_DEFAULT)
         # clear viewport
         self.__clear(self.__ctx)
         # draw the scene
@@ -517,3 +597,23 @@ class IViewport(IInputHandler):
             self.__ctx.restore()    
 
 #---------------------------------------------------------------------------------------------------
+# tool sample functions
+#---------------------------------------------------------------------------------------------------
+    def sample(self, tool):
+        # copy object to a temp var for later use
+        self.__tool_to_sample = tool
+        # set state to draw a single object
+        self._view_state.current = self._view_state.SampleTool
+        self.invalidate()
+
+#---------------------------------------------------------------------------------------------------
+    def __sample_tool(self):
+        if self.__tool_to_sample is not None:
+            # show current scene
+            self.show_scene()
+            # create a cairo context for the sample
+            self.__ctx = self.window.cairo_create()
+            # sample color
+            color = Color(255, 255, 255)
+            self.__tool_to_sample.sample(self, color)
+            

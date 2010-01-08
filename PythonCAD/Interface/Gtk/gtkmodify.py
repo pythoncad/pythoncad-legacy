@@ -2438,81 +2438,56 @@ def invert_adim_init(gtkimage, tool=None):
 # arbitrary zoom
 #
 
+
+# Zoom
+#---------------------------------------------------------------------------------------------------
 def zoom_end_button_press_cb(gtkimage, widget, event, tool):
-    _xp, _yp = gtkimage.image.getCurrentPoint()
-    _x1, _y1 = tool.getLocation()
-    _xmin = min(_xp, _x1)
-    _ymin = min(_yp, _y1)
-    _width, _height = gtkimage.getSize()
-    _fw = float(_width)
-    _fh = float(_height)
-    _wpp = abs(_x1 - _xp)/_fw
-    _hpp = abs(_y1 - _yp)/_fh
-    if _wpp > _hpp:
-        _scale = _wpp
-    else:
-        _scale = _hpp
-    gtkimage.setView(_xmin, _ymin, _scale)
-    zoom_init(gtkimage)
+    gtkimage.viewport.zoom_tool.set()
+    gtkimage.getImage().setTool(None)
+    gtkimage.setPrompt(_('Enter Command:'))
     return True
 
+#---------------------------------------------------------------------------------------------------
 def zoom_motion_notify(gtkimage, widget, event, tool):
-    _tx, _ty = tool.getLocation()
-    _px, _py = gtkimage.coordToPixTransform(_tx, _ty)
-    # width, height = gtkimage.getSize()
-    _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
-    _cp = tool.getCurrentPoint()
-    #
-    # it would be nice to draw the rectangle in the current
-    # shape of the window ...
-    #
-    if _cp is not None:
-        _xc, _yc = _cp
-        _xmin = min(_px, _xc)
-        _ymin = min(_py, _yc)
-        _rw = abs(_xc - _px)
-        _rh = abs(_yc - _py)
-        widget.window.draw_rectangle(_gc, False, _xmin, _ymin, _rw, _rh)
-    _xmin = min(_x, _px)
-    _ymin = min(_y, _py)
-    tool.setCurrentPoint(_x, _y)
-    _rw = abs(_x - _px)
-    _rh = abs(_y - _py)
-    widget.window.draw_rectangle(_gc, False, _xmin, _ymin, _rw, _rh)
+    gtkimage.viewport.zoom_tool.drag_point(event.x, event.y)
     return True
 
+# Window Zoom
+#---------------------------------------------------------------------------------------------------
 def zoom_button_press_cb(gtkimage, widget, event, tool):
-    _x, _y = gtkimage.image.getCurrentPoint()
-    tool.setLocation(_x, _y)
+    p = gtkimage.image.getCurrentPoint()
+    tool.setLocation(p)
     tool.setHandler("motion_notify", zoom_motion_notify)
     tool.setHandler("button_press", zoom_end_button_press_cb)
     gtkimage.setPrompt(_('Click a second point to define the zoom window'))
-    _gc = gtkimage.getGC()
-    _gc.set_line_attributes(1, gtk.gdk.LINE_SOLID,
-                            gtk.gdk.CAP_BUTT, gtk.gdk.JOIN_MITER)
-    _gc.set_function(gtk.gdk.INVERT)
+    # init zoom window
+    gtkimage.viewport.zoom_tool.window_init(p)
     return True
 
-def zoom_init(gtkimage, tool=None):
+#---------------------------------------------------------------------------------------------------
+def zoom_init(gtkimage, tool = None):
     gtkimage.setPrompt(_('Click in the window.'))
     _tool = gtkimage.getImage().getTool()
     _tool.initialize()
     _tool.setHandler("button_press", zoom_button_press_cb)
-#
+    
 # Pan Zoom 
-#
-def zoomPan_init(gtkimage, tool=None):
-    gtkimage.setPrompt(_('Press Left Mouse Button To Make Pan'))
+#---------------------------------------------------------------------------------------------------
+def pan_init(gtkimage, tool = None):
+    gtkimage.setPrompt(_('Press Left Mouse Button To Start Pan'))
     _tool = gtkimage.getImage().getTool()
     _tool.initialize()
-    _tool.setHandler("button_press", zoomPan_button_press_cb)
+    _tool.setHandler("button_press", pan_button_press_cb)
     
-def zoomPan_button_press_cb(gtkimage, widget, event, tool):
-    gtkimage.setPrompt(_('Press Right Mouse Button To Stop Pan'))
-    if(gtkimage.isPan()):
-        gtkimage.StopPanImage()
-    else:    
-        gtkimage.StartPanImage()
+#---------------------------------------------------------------------------------------------------
+def pan_button_press_cb(gtkimage, widget, event, tool):
+    p = gtkimage.image.getCurrentPoint()
+    tool.setLocation(p)
+    tool.setHandler("motion_notify", zoom_motion_notify)
+    tool.setHandler("button_press", zoom_end_button_press_cb)
+    gtkimage.setPrompt(_('Press Left Mouse Button To Stop Pan'))
+    # init zoom window
+    gtkimage.viewport.zoom_tool.pan_init(p)
     return True
+
+

@@ -69,12 +69,11 @@ class ACLineTool(PointTool):
             Set the location of the Tool.
             This method extends the Tool::setLocation() method.
         """
-        _x,_y=p.point.getCoords()
-        super(ACLineTool, self).setLocation(_x, _y)
+        super(ACLineTool, self).setLocation(p.point)
         _loc = self.getLocation()
         if _loc is None:
             return
-        _x, _y = _loc
+        _x, _y = _loc.getCoords()
         _x1, _y1 = self.getPoint().point.getCoords()
         if abs(_y - _y1) < 1e-10: # horizontal
             self.__angle = 0.0

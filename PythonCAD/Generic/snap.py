@@ -51,33 +51,44 @@ class SnapPointStr(object):
     __snapPoint=None
     __snapEnt=None
     __snapCursor=gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
+    
     def __init__(self,k,p,e):
         self.kind=k
         self.point=p
         self.entity=e
+        
     def getKind(self):
         return self.__snapKind
+    
     def setKind(self,k):
         self.__snapKind=k
+        
     def getPoint(self):
         return self.__snapPoint
+    
     def setPoint(self,p):
         if not isinstance(p,Point):
             raise TypeError, "Invalid Point type : " + `type(p)`
         self.__snapPoint=p
+        
     def getEnt(self):
         return self.__snapEnt
+    
     def setEnt(self,e):
         self.__snapEnt=e
+        
     def getCursor(self):
         return self.__snapCursor
+    
     def setCursor(self,c):
         self.__snapCursor=c
+        
     kind=property(getKind,setKind,None,"Set/Get the kind of snap that is required")
     point=property(getPoint,setPoint,None,"Set/get the Point clicked that is required")
     entity=property(getEnt,setEnt,None,"Set/Get the Entity Clicked")
     cursor=property(getCursor,setCursor,None,"Define the Cursor")
 
+    
 class SnapServices(object):
     """
         Provide all snap functionality for the user
@@ -86,59 +97,63 @@ class SnapServices(object):
         self.__image=image
         self.__topLayer=image.getTopLayer()
         self.__temporarySnap=None
+        
     def getSnap(self,t,snapArray=None):
         """
             return a snap snapPointStr clicked by the user 
         """
-        if snapArray is None:_snapArray=globals.snapOption
-        else:_snapArray=snapArray
-        _currentX, _currentY = self.__image.getCurrentPoint()
-        _mausePoint=Point(_currentX, _currentY)
-        #print "Debug: Mouse Point %s"%str(_mausePoint)
-        _mouseEnt = self.getEnt(_currentX,_currentY,t)
-        retObj=SnapPointStr("Freepoint",Point(_currentX,_currentY),_mouseEnt)
-        retObj.cursor=gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)            
-        if self.__temporarySnap is not None: _snapArray=self.__temporarySnap 
+        if snapArray is None:
+            _snapArray = globals.snapOption
+        else:
+            _snapArray = snapArray
+        _mousePoint = self.__image.getCurrentPoint()
+
+        #print "Debug: Mouse Point %s"%str(_mousePoint)
+        _mouseEnt = self.getEnt(_mousePoint, t)
+        retObj = SnapPointStr("Freepoint",_mousePoint,_mouseEnt)
+        retObj.cursor = gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_ARROW)            
+        if self.__temporarySnap is not None:
+            _snapArray=self.__temporarySnap 
         if 'mid' in  _snapArray:
             if _snapArray['mid']:
-                _midPnt=self.getMid(_currentX, _currentY,t)
+                _midPnt=self.getMid(_mousePoint, t)
                 if  _midPnt != None:
                     retObj.point=_midPnt
                     retObj.kind="Mid"
                     retObj.cursor=gtk.gdk.Cursor(gtk.gdk.SB_H_DOUBLE_ARROW)
         if 'end' in  _snapArray:
             if _snapArray['end']:
-                _endPnt=self.getEndPoint(_currentX, _currentY,_mouseEnt)
+                _endPnt=self.getEndPoint(_mousePoint,_mouseEnt)
                 if _endPnt != None:
                     if retObj.kind=="Freepoint":
                         retObj.point=_endPnt 
                         retObj.kind="End"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.DOTBOX)
-                    if _mausePoint.Dist(_endPnt)<_mausePoint.Dist(retObj.point):
+                    if _mousePoint.Dist(_endPnt)<_mousePoint.Dist(retObj.point):
                         retObj.point=_endPnt
                         retObj.kind="End"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.DOTBOX)
         if 'intersection' in  _snapArray:
             if _snapArray['intersection']:
-                _intPnt=self.getIntersection(_currentX, _currentY,t)
+                _intPnt=self.getIntersection(_mousePoint,t)
                 if _intPnt != None:
                     if retObj.kind=="Freepoint":
                         retObj.point=_intPnt
                         retObj.kind="Mid"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
-                    if _mausePoint.Dist(_intPnt)<_mausePoint.Dist(retObj.point):
+                    if _mousePoint.Dist(_intPnt)<_mousePoint.Dist(retObj.point):
                         retObj.point=_intPnt
                         retObj.kind="Mid"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.X_CURSOR)
         if 'point' in _snapArray:
             if _snapArray['point']:
-                _pntPnt=self.getPoint(_currentX, _currentY,t)
+                _pntPnt=self.getPoint(_mousePoint,t)
                 if _pntPnt != None:
                     if retObj.kind=="Freepoint":
                         retObj.point=_pntPnt
                         retObj.kind="Point"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.IRON_CROSS)
-                    if _mausePoint.Dist(_pntPnt)<_mausePoint.Dist(retObj.point):
+                    if _mousePoint.Dist(_pntPnt)<_mousePoint.Dist(retObj.point):
                         retObj.point=_pntPnt
                         retObj.kind="Point"
                         retObj.cursor=gtk.gdk.Cursor(gtk.gdk.IRON_CROSS)
@@ -151,33 +166,38 @@ class SnapServices(object):
                 return retObj
         if 'perpendicular' in  _snapArray:
             if _snapArray['perpendicular']:
-                retObj.point=Point(_currentX, _currentY)
+                retObj.point=Point(_mousePoint)
                 retObj.kind="Perpendicular"
                 retObj.cursor=gtk.gdk.Cursor(gtk.gdk.BOTTOM_TEE)
                 return retObj
         if 'tangent' in _snapArray:
             if _snapArray['tangent']:
-                retObj.point=Point(_currentX, _currentY)
+                retObj.point=_mousePoint
                 retObj.kind="Tangent"
                 retObj.cursor=gtk.gdk.Cursor(gtk.gdk.EXCHANGE)
                 return retObj
         if 'center' in _snapArray:
             if _snapArray['center']:
-                _cenPnt=self.getCenter(_currentX, _currentY,t)
-                if _cenPnt != (None,None):
-                    retObj.point=Point(_cenPnt)
+                _cenPnt=self.getCenter(_mousePoint,t)
+                if _cenPnt != None:
+                    retObj.point=_cenPnt
                     retObj.kind="Center"
                     retObj.cursor=gtk.gdk.Cursor(gtk.gdk.CIRCLE)
                     return retObj
         return retObj
-    def getEnt(self,x,y,_t,types=None):
+    
+    
+    def getEnt(self, point, _t, types=None):
         """
             Get The Entity Under the Mouse Pointer
         """
         _objlist = []
         _intlist = []
+
+        x, y = point.getCoords()
+        
         if types is not None:
-            _types=types
+            _types = types
         else:
             _types = {'point' : True,
                   'segment' : True,
@@ -199,36 +219,42 @@ class SnapServices(object):
                     if(_obj is not None):
                         return _obj
         return None
-    def getMid(self,x,y,t):
+    
+    def getMid(self, point, t):
         """"
             Calculate the mid point 
         """
         _types = {'segment' : True}
-        _obj=self.getEnt(x,y,t,_types)
-        if _obj is None: return None
-        _ix,_iy=_obj.getMiddlePoint()
+        _obj = self.getEnt(point, t,_types)
+        if _obj is None:
+            return None
+        _ix,_iy =_obj.getMiddlePoint()
         return Point(_ix,_iy)
+    
 
-    def getEndPoint(self,x,y,entityHits):
+    def getEndPoint(self, point, entityHits):
         """
             Get The Segment End Point nearest to the coord x,y            
         """
-        nearestPoint = (None,None)
         if not entityHits is None:            
-            mousePoint=Point(x,y)
-            if isinstance(entityHits,Segment):
+            if isinstance(entityHits, Segment):
                 _op1, _op2 = entityHits.getEndpoints()
-                if(mousePoint.Dist(_op1)<mousePoint.Dist(_op2)):
+                if(point.Dist(_op1) < point.Dist(_op2)):
                     return _op1
                 else:
                     return _op2
         return None  
-    def getIntersection(self,x,y,t):
+    
+    
+    def getIntersection(self, point, t):
         """
             Calculate the intersection point
         """
         _objlist = []
         _intlist = []
+
+        x, y = point.getCoords()
+        
         _types = {'point':False,
                   'segment' : True,
                   'circle' : True,
@@ -241,6 +267,7 @@ class SnapServices(object):
                   'ccircle' : True,
                   }
         _layers = [self.__topLayer]
+        
         while len(_layers):
             _layer = _layers.pop()
             _hits = _layer.mapCoords(x, y, tolerance=t, types=_types)
@@ -263,48 +290,59 @@ class SnapServices(object):
             if _cp is not None:
                 return Point(_cp[0],_cp[1])
         return None
-    def getCenter(self,x,y,t):
+    
+    
+    def getCenter(self, point, t):
         """
             Get The Center point over the mouse
         """
-        _types = {'ccircle' : True
+        
+        _types = { 'ccircle' : True
         ,'ccircle' : True
         ,'circle' : True
         ,'arc' : True
-        ,'fillet':True}
-        _obj=self.getEnt(x,y,t,_types)
-        if _obj is None: return (None,None)
-        _ix,_iy=_obj.getCenter().getCoords()
-        return (_ix,_iy)
-    def getPoint(self,x,y,t):
+        ,'fillet':True }
+        
+        _obj = self.getEnt(point, t, _types)
+        if _obj is None:
+            return None
+        return _obj.getCenter()
+
+    
+    def getPoint(self, point, t):
         """
             Get The point over the mouse
         """
         _types = {'point' : True}
-        _obj=self.getEnt(x,y,t,_types)
-        if _obj is None : return None
-        _ix,_iy=_obj.getCoords()
-        return Point(_ix,_iy)
-        
-    def setOneTemporarySnap(self,snap):
+        _obj = self.getEnt(point, t, _types)
+        if _obj is None:
+            return None
+        return _obj
+
+    
+    def setOneTemporarySnap(self, snap):
         """
             Set only One snap 
             snap mast be a string 
             es: 'mid'
         """
-        _array={}
-        _array[snap]=True
-        self.__temporarySnap=_array
-    def setTemporarySnapArray(self,snapArray):
+        _array = {}
+        _array[snap] = True
+        self.__temporarySnap = _array
+        
+        
+    def setTemporarySnapArray(self, snapArray):
         """
             set to temporary snap array
             snapArray Mast be a dic 
             es: {'mid':true,'end':false,....}
         """
-        if not isinstance(snapArray,dict):
+        if not isinstance(snapArray, dict):
             raise TypeError, "Unexpected type for snapArray: " + `type(snapArray)`
-        self.__temporarySnap=snapArray
-    def excludeSnapArray(self,excludeSnap):
+        self.__temporarySnap = snapArray
+        
+        
+    def excludeSnapArray(self, excludeSnap):
         """
             set the value of the exludeSnap to the global snap 
         """
@@ -321,7 +359,8 @@ class SnapServices(object):
         """
         self.__temporarySnap=None
 
-def setSnap(image,toolFunction,tol,excludeSnap=None):
+        
+def setSnap(image, toolFunction, tol, excludeSnap=None):
     """
         set the snap to the toolFunctionMethod
         image           : image or GTKImage
@@ -332,7 +371,7 @@ def setSnap(image,toolFunction,tol,excludeSnap=None):
     _sPnt=getSnapPoint(image,tol,excludeSnap)
     toolFunction(_sPnt )
     
-def setDinamicSnap(gtkimage,toolFunction,excludeSnap=None):
+def setDinamicSnap(gtkimage, toolFunction, excludeSnap=None):
     """
         set the dinamic snap for using withe preview douring motion functions
     """
@@ -405,7 +444,6 @@ def getDrawedPoint(image ,tol,strPoint):
                 _pt = _pts[0]
             if _pt is not None:
                 return _pt
-                break
         _layers.extend(_layer.getSublayers())
     return None 
 

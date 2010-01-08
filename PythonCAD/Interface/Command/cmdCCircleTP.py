@@ -34,13 +34,14 @@ from PythonCAD.Interface.Command import cmdCommon
 from PythonCAD.Interface.Command import cmdCircleTwoPoint
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def ccircle_tpmode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a Point'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("button_press", cmdCircleTwoPoint.circle_tp_first_button_press_cb)
     _tool.setHandler("entry_event", cmdCircleTwoPoint.circle_tp_first_entry_event_cb)
     _tool.setHandler("initialize", ccircle_tpmode_init)
+    
 #
 # Motion Notifie
 #

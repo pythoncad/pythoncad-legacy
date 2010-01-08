@@ -30,50 +30,33 @@ import math
 from PythonCAD.Generic.Tools import *
 from PythonCAD.Generic import snap 
 from PythonCAD.Interface.Command import cmdCommon
+
+
 #
 # Init
-#
+#---------------------------------------------------------------------------------------------------
 def circle_center_mode_init(gtkimage, tool=None):
     gtkimage.setPrompt(_('Click in the drawing area or enter a point.'))
     _tool = gtkimage.getImage().getTool()
     _tool.setHandler("button_press", circle_center_button_press_cb)
     _tool.setHandler("entry_event", circle_point_entry_event_cb)
     _tool.setHandler("initialize", circle_center_mode_init)
+    
 #
 # Motion Notifie
-#
+#---------------------------------------------------------------------------------------------------
 def circle_center_motion_notify_cb(gtkimage, widget, event, tool):
-    _cx, _cy = tool.center.point.getCoords()
-    _pcx, _pcy = gtkimage.coordToPixTransform(_cx, _cy)
-    _upp = gtkimage.getUnitsPerPixel()
-    _gc = gtkimage.getGC()
-    _x = int(event.x)
-    _y = int(event.y)
-    _radius = tool.getRadius()
-    if _radius is not None:
-        _pr = int(_radius/_upp)
-        _xmin = _pcx - _pr
-        _ymin = _pcy - _pr
-        _cw = _ch = _pr * 2
-        widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                               0, 360*64)
-    _ix, _iy = gtkimage.image.getCurrentPoint()
-    _radius = math.hypot((_cx - _ix),(_cy - _iy))
-    
-    if _radius<0.0:
-        print "Debug: R: "+ str(_radius)
-        _radius=0.1 # Convention if radius is less the 0 i assume 0.1
-    tool.setRadius(_radius)
-    _pr = int(_radius/_upp)
-    _xmin = _pcx - _pr
-    _ymin = _pcy - _pr
-    _cw = _ch = _pr * 2
-    widget.window.draw_arc(_gc, False, _xmin, _ymin, _cw, _ch,
-                           0, 360*64)
-    return True
+    cx, cy = tool.getCenter().point.getCoords()
+    x, y = gtkimage.image.getCurrentPoint().getCoords()
+    radius = math.hypot((cx - x), (cy - y))
+    tool.setRadius(radius)
+    # sample tool
+    gtkimage.viewport.sample(tool)    
+    return True        
+
 #
 # Button press callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -85,6 +68,7 @@ def circle_radius_button_press_cb(gtkimage, widget, event, tool):
     cmdCommon.create_entity(gtkimage)
     return True
 
+#---------------------------------------------------------------------------------------------------
 def circle_center_button_press_cb(gtkimage, widget, event, tool):
     _tol = gtkimage.getTolerance()
     _image = gtkimage.getImage()
@@ -94,11 +78,11 @@ def circle_center_button_press_cb(gtkimage, widget, event, tool):
     tool.setHandler("motion_notify", circle_center_motion_notify_cb)
     tool.setHandler("entry_event", circle_radius_entry_event_cb)
     gtkimage.setPrompt(_('Enter the radius or click in the drawing area'))
-    gtkimage.getGC().set_function(gtk.gdk.INVERT)
     return True
+
 #
 # Entry callBacks
-#
+#---------------------------------------------------------------------------------------------------
 def circle_radius_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -110,6 +94,7 @@ def circle_radius_entry_event_cb(gtkimage, widget, tool):
         tool.setRadius(_r)
         cmdCommon.create_entity(gtkimage)
 
+#---------------------------------------------------------------------------------------------------        
 def circle_point_entry_event_cb(gtkimage, widget, tool):
     _entry = gtkimage.getEntry()
     _text = _entry.get_text()
@@ -121,7 +106,7 @@ def circle_point_entry_event_cb(gtkimage, widget, tool):
         tool.setHandler("motion_notify", circle_center_motion_notify_cb)
         tool.setHandler("entry_event", circle_radius_entry_event_cb)
         gtkimage.setPrompt(_('Enter the radius or click in the drawing area'))
-        gtkimage.getGC().set_function(gtk.gdk.INVERT)
+##        gtkimage.getGC().set_function(gtk.gdk.INVERT)
         #stop snap object
         stopOneShutSnap(gtkimage) 
 #

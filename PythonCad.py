@@ -199,12 +199,6 @@ def main():
             sys.exit()
 
     #
-    # add graphic methods to classes
-    #
-
-    gtkinit.add_graphic_methods()
-    
-    #
     # load up global and user preferences
     #
 
@@ -222,7 +216,7 @@ def main():
 
     assert 'BACKGROUND_COLOR' in globals.prefs, "BACKGROUND_COLOR missing"
     _background = globals.prefs['BACKGROUND_COLOR']
-    from PythonCAD.Interface.Gtk.meta_gtkimage import GTKImage
+    from PythonCAD.Interface.Gtk.gtkimage import GTKImage
     from PythonCAD.Generic.image import Image, ImageLog
     for _arg in args:
         if os.path.exists(_arg):

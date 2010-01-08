@@ -55,3 +55,15 @@ def _draw_circle(self, viewport, col=None):
 def _erase_circle(self, viewport):
     self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
 
+#----------------------------------------------------------------------------------------------------
+def _sample_circle(self, viewport, color):
+    # display properties
+    lineweight = None
+    linestyle = None    
+    # centerpoint of the circle
+    center = self.getCenter()
+    # circle radius
+    radius = self.getRadius()
+    # do the actual draw of the circle
+    viewport.draw_circle(color, lineweight, linestyle, center, radius, False)
+    

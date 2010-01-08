@@ -88,7 +88,8 @@ class ZoomTool(object):
         self.__zoom_scale(self.__zoom_factor)
 
 #---------------------------------------------------------------------------------------------------
-    def window_init(self, x, y):
+    def window_init(self, point):
+        x, y = point.getCoords()
         self.__anchor_x = x
         self.__anchor_y = y
         self.__x = self.__anchor_x
@@ -104,16 +105,22 @@ class ZoomTool(object):
         px2, py2 = self.__viewport.world_to_view(self.__x, self.__y)
         # create a cairo context for the cursor
         ctx = self.__viewport.window.cairo_create()
-        # white transparent zoom window
-        ctx.set_source_rgba(1.0, 1.0, 1.0, 0.3)
-        ctx.set_line_width(1.0)
         # draw a rectangle
+        ctx.set_source_rgb(1.0, 1.0, 1.0)
+        ctx.set_line_width(1.0)
+        ctx.rectangle(px1, py1, px2 - px1, py2 - py1)
+        ctx.stroke()
+        # white transparent greenish zoom window
+        ctx.set_source_rgba(0.5, 1.0, 0.0, 0.3)
+        ctx.set_line_width(1.0)
+        # draw transparant interior
         ctx.rectangle(px1, py1, px2 - px1, py2 - py1)
         ctx.fill()
         ctx.stroke()
 
 #---------------------------------------------------------------------------------------------------
-    def pan_init(self, x, y):
+    def pan_init(self, p):
+        x, y = p.getCoords()
         self.__anchor_x = x
         self.__anchor_y = y
         self.__x = self.__anchor_x
