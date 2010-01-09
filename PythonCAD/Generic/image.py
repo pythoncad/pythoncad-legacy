@@ -1670,7 +1670,7 @@ setDefaults()
         if tool is not None and not isinstance(tool, tools.Tool):
             raise TypeError, "Invalid tool: " + `type(tool)`
         _ot = self.__tool
-        self.setUnsaved() #each time i set a tool i make some modification 
+        self.setUnsaved() # Each time i set a tool i make some modification 
         if (_ot is not tool):
             self.__tool = tool
             self.sendMessage('tool_changed')

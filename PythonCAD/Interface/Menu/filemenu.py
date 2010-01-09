@@ -186,6 +186,7 @@ def _save_extFormats(gtkimage,fname):
 
 #----------------------------------------------------------------------------------------------
 def file_new_cb(menuitem, data=None):
+    from PythonCAD.Interface.Gtk.gtkimage import GTKImage    
     _image = Image()
     _gtkimage = GTKImage(_image)
     _background = globals.prefs['BACKGROUND_COLOR']

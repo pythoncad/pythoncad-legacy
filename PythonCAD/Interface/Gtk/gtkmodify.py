@@ -2466,6 +2466,7 @@ def zoom_button_press_cb(gtkimage, widget, event, tool):
 
 #---------------------------------------------------------------------------------------------------
 def zoom_init(gtkimage, tool = None):
+    print("Debug zoom_init")
     gtkimage.setPrompt(_('Click in the window.'))
     _tool = gtkimage.getImage().getTool()
     _tool.initialize()
