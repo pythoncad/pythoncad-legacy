@@ -33,7 +33,7 @@ import pango
 
 from PythonCAD.Generic import color
 from PythonCAD.Generic.point import Point
-
+from PythonCAD.Generic.snap import SnapPointStr
 
 #----------------------------------------------------------------------------------------------------
 def _draw_circle(self, viewport, col=None):
@@ -46,6 +46,8 @@ def _draw_circle(self, viewport, col=None):
     linestyle = self.getLinetype().getList()
     # centerpoint of the circle
     center = self.getCenter()
+    if isinstance(center,SnapPointStr):
+        center=center.point
     # circle radius
     radius = self.getRadius()
     # do the actual draw of the circle
@@ -62,6 +64,8 @@ def _sample_circle(self, viewport, color):
     linestyle = None    
     # centerpoint of the circle
     center = self.getCenter()
+    if isinstance(center,SnapPointStr):
+        center=center.point
     # circle radius
     radius = self.getRadius()
     # do the actual draw of the circle
