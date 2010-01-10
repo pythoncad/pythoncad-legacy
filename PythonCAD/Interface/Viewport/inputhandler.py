@@ -144,6 +144,9 @@ class IInputHandler(gtk.DrawingArea):
         self._vxmin, self._vymin, width, height = event.area
         self._vxmax = self._vxmin + width
         self._vymax = self._vymin + height
+        # size of window
+        self._vwidth = self._vxmax - self._vxmin
+        self._vheight = self._vymax - self._vymin
         # if expose is called for the first time then do a fit
         if not self._view_state.initialized:
             self._zoom_tool.zoom_fit()
@@ -289,9 +292,6 @@ class IInputHandler(gtk.DrawingArea):
         
 #---------------------------------------------------------------------------------------------------
     def _calc_viewfactors(self):
-        # viewport width and height
-        self._vwidth = self._vxmax - self._vxmin
-        self._vheight = self._vymax - self._vymin
         if self._vwidth > 0 and self._vheight > 0:
             # world width and height
             self._wwidth = self._wxmax - self._wxmin
