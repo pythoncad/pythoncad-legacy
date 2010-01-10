@@ -38,12 +38,12 @@ class Messenger(object):
 
     def finish(self):
         if self.__connections is not None:
-            print "remaining connections for obj: " + `self`
+            print "Debug : remaining connections for obj: " + `self`
             for _message in self.__connections:
-                print "message: %s" % _message
+                print "Debug : message: %s" % _message
                 for _method in self.__connections[_message]:
                     _obj = _method.im_self
-                    print "connected to obj: " + `_obj`
+                    print "Debug : connected to obj: " + `_obj`
 
     def connect(self, message, method):
         if not self.sendsMessage(message):

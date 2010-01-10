@@ -1206,14 +1206,14 @@ Arguments 'x' and 'y' should be floats
 
     def printStack(self, undo):
         if undo:
-            print "Image undo list:"
+            print "Debug : Image undo list:"
             _stack = self.__undo
         else:
-            print "Image redo list:"
+            print "Debug : Image redo list:"
             _stack = self.__redo
-        print "length: %d" % len(_stack)
+        print "Debug : length: %d" % len(_stack)
         for _data in _stack:
-            print _data
+            print "Debug: %s" % str(_data)
 
     def canUndo(self):
         return len(self.__undo) > 0
@@ -2021,7 +2021,7 @@ class ImageLog(entity.EntityLog):
             _keys = values.keys()
             _keys.sort()
             for _key in _keys:
-                print "key: %s: value: %s" % (_key, str(values.get(_key)))
+                print "Debug : key: %s: value: %s" % (_key, str(values.get(_key)))
             raise RuntimeError, "Invalid layer values"
         _id = values.get('id')
         if _id is None:

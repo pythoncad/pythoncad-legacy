@@ -409,7 +409,7 @@ class GTKImage(object):
                     try:
                         _handler(self, widget, _tool)
                     except StandardError, e:
-                        print "exception called: " + str(e)
+                        print "Error : exception called: " + str(e)
                 else:
                     _cmds = keywords.defaultglobals
                     _entry.delete_text(0,-1)
@@ -428,7 +428,7 @@ class GTKImage(object):
                         try:
                             exec _text in self.__image.getImageVariables()
                         except:
-                            print "error executing '%s' " % _text
+                            print "Error executing '%s' " % _text
         #
         # set the focus back to the DisplayArea widget
         #
@@ -570,9 +570,9 @@ class GTKImage(object):
         newX=actualX
         newY=actualY
         if (key == gtk.keysyms.Page_Up):
-            print("ZoomUp")
+            print("Debug : ZoomUp")
         if (key == gtk.keysyms.Page_Down):
-            print("ZoomDown")
+            print("Debug : ZoomDown")
         if (key == gtk.keysyms.Left):
             newX=actualX-actualStep
             newY=actualY
@@ -604,7 +604,7 @@ class GTKImage(object):
             raise ValueError, "Invalid argument count: %d" % _alen
         _obj = args[0]
         if _debug:
-            print "Selected object: " + `_obj`
+            print "Debug : Selected object: " + `_obj`
         _parent = _obj.getParent()
         if _parent.isVisible() and _obj.isVisible():
             _color = Color('#ff7733') # FIXME color should be adjustable
@@ -618,7 +618,7 @@ class GTKImage(object):
             raise ValueError, "Invalid argument count: %d" % _alen
         _obj = args[0]
         if _debug:
-            print "Deselected object: " + `_obj`
+            print "Debug : Deselected object: " + `_obj`
         _parent = _obj.getParent()
         if _parent.isVisible() and _obj.isVisible():
             _obj.draw(self)
@@ -631,7 +631,7 @@ class GTKImage(object):
             raise ValueError, "Invalid argument count: %d" % _alen
         _opt = args[0]
         if _debug:
-            print "Option changed: '%s'" % _opt
+            print "Debug : Option changed: '%s'" % _opt
         if _opt == 'BACKGROUND_COLOR':
             _bc = self.__image.getOption('BACKGROUND_COLOR')
             _col = gtk.gdk.color_parse(str(_bc))
@@ -1094,7 +1094,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def redraw(self):
-        print "GtkImage.redraw"
+        print "Debug : GtkImage.redraw"
         self.__viewport.regenerate()
 
 #        """
@@ -1183,7 +1183,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def reset(self):
-        print "GtkImage.reset"
+        print "Debug : GtkImage.reset"
         """
             Set the image to an initial drawing state.
         """
@@ -1234,7 +1234,7 @@ fitImage()
         
 #---------------------------------------------------------------------------------------------------
     def __imageAddedChild(self, obj, *args):
-        print "__imageAddedChild"
+        print "Debug : __imageAddedChild"
         return
         # print "__imageAddedChild()"
         _alen = len(args)
@@ -1248,7 +1248,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def __layerAddedChild(self, obj, *args):
-        print "__layerAddedChild"
+        print "Debug : __layerAddedChild"
         _alen = len(args)
         if _alen < 1:
             raise ValueError, "Invalid argument count: %d" % _alen
@@ -1261,7 +1261,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def __imageRemovedChild(self, obj, *args):
-        print "__imageRemovedChild"
+        print "Debug : __imageRemovedChild"
         return
         # print "__imageRemovedChild()"
         _alen = len(args)
@@ -1274,7 +1274,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def __layerRemovedChild(self, obj, *args):
-        print "__layerRemovedChild"
+        print "Debug : __layerRemovedChild"
         return
         # print "__layerRemovedChild()"
         _alen = len(args)
@@ -1313,7 +1313,7 @@ fitImage()
         
 #---------------------------------------------------------------------------------------------------
     def __objChangePending(self, obj, *args):
-        print "__objChangePending"
+        print "Debug : __objChangePending"
         return
         # print "__objChangePending()" + `obj`
         _alen = len(args)
@@ -1328,7 +1328,7 @@ fitImage()
 
 #---------------------------------------------------------------------------------------------------
     def __objChangeComplete(self, obj, *args):
-        print "__objChangeComplete"
+        print "Debug : __objChangeComplete"
         return
         # print "__objChangeComplete()" + `obj`
         if obj.isVisible() and obj.getParent().isVisible():
@@ -1336,7 +1336,7 @@ fitImage()
             
 #---------------------------------------------------------------------------------------------------
     def __refreshObject(self, obj, *args):
-        print "__refreshObject"
+        print "Debug : __refreshObject"
         return
         # print "__refreshObject()"
         _col = None
