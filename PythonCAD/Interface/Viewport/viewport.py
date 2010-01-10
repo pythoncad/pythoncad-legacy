@@ -319,6 +319,9 @@ class IViewport(IInputHandler):
             elif self._view_state.current == self._view_state.SampleTool:
                 self.__sample_tool()
                 self._view_state.reset()
+            # if no action is defined used show the scene
+            else:
+                self.show_scene()
 
 
 #---------------------------------------------------------------------------------------------------

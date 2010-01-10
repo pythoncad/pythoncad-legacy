@@ -246,7 +246,7 @@ def file_open_cb(menuitem, gtkimage):
         _gtkimage.fitImage()
 
 #----------------------------------------------------------------------------------------------
-def file_inport_cb(menuitem, gtkimage):
+def file_import_cb(menuitem, gtkimage):
     """
         Temporary Call back for testing the import of a dxfDwgFile
     """
@@ -425,8 +425,8 @@ class IFileMenu(IBaseMenu):
         #
         # Item File-Inport
         #
-        _act = gtk.Action('Inport', _('_Inport'), None, gtk.STOCK_OPEN)
-        _act.connect('activate', file_inport_cb, self.gtkimage)
+        _act = gtk.Action('Import', _('_Import'), None, gtk.STOCK_OPEN)
+        _act.connect('activate', file_import_cb, self.gtkimage)
         _act.set_accel_group(_accel)
         actiongroup.add_action_with_accel(_act, None)
         _item = _act.create_menu_item()
