@@ -56,6 +56,7 @@ def make_tuple(text, gdict):
 def create_entity(gtkimage, tool=None):
     _tool = gtkimage.getImage().getTool()
     _init_func = _tool.getHandler("initialize")
+    print("Debud: _init_func %s"%str(_init_func))
     _image = gtkimage.getImage()
     _image.startAction()
     try:

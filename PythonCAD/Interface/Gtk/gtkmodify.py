@@ -51,6 +51,7 @@ from PythonCAD.Generic import util
 from PythonCAD.Generic import split
 from PythonCAD.Generic import snap
 
+
 import PythonCAD.Generic.units
 import PythonCAD.Generic.move
 import PythonCAD.Generic.transfer
@@ -2445,6 +2446,7 @@ def zoom_end_button_press_cb(gtkimage, widget, event, tool):
     gtkimage.viewport.zoom_tool.set()
     gtkimage.getImage().setTool(None)
     gtkimage.setPrompt(_('Enter Command:'))
+    zoom_init(gtkimage,tool)
     return True
 
 #---------------------------------------------------------------------------------------------------
@@ -2466,10 +2468,13 @@ def zoom_button_press_cb(gtkimage, widget, event, tool):
 
 #---------------------------------------------------------------------------------------------------
 def zoom_init(gtkimage, tool = None):
-    print("Debug zoom_init")
     gtkimage.setPrompt(_('Click in the window.'))
-    _tool = gtkimage.getImage().getTool()
-    _tool.initialize()
+    if tool is None:
+        _tool = gtkimage.getImage().getTool()
+        _tool.initialize()
+    else:
+        gtkimage.getImage().setTool(tool)
+        _tool=tool
     _tool.setHandler("button_press", zoom_button_press_cb)
     
 # Pan Zoom 
