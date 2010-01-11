@@ -70,8 +70,8 @@ inRegion(): Returns True if the point is in some area.
         elif isinstance(x,Point):
             _x,_y=x.getCoords()
         else:
-            print "Debug : x[%s] y[%s]"%(str(x),str(y))
-            print "Debug : type x %s"%str(type(x))
+            #print "Debug : x[%s] y[%s]"%(str(x),str(y))
+            #print "Debug : type x %s"%str(type(x))
             raise SyntaxError, "Invalid call to Point()."
         self.__x = _x
         self.__y = _y
