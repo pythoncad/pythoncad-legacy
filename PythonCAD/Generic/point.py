@@ -55,9 +55,10 @@ inRegion(): Returns True if the point is in some area.
     def __init__(self, x, y=None, **kw):
         """
             Initialize a Point.
-            There are two ways to initialize a Point:
+            There are Tree ways to initialize a Point:
             Point(xc,yc) - Two arguments, with both arguments being floats
             Point((xc,yc)) - A single tuple containing two float objects
+            Point(Point) - A single Point Object
         """
         super(Point, self).__init__(**kw)
         if isinstance(x, tuple):

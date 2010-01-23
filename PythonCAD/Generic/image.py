@@ -187,6 +187,7 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
         'group_action_ended' : True,
         'option_changed' : True
         }
+        
     def __init__(self, **kw):
         """
             Instatiate a Image object.
@@ -243,6 +244,7 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
             Sai if the file is saved
         """
         return self.__saved
+    
     def setSaved(self):
         """
             force the file to be saved
@@ -253,7 +255,11 @@ getAction(): Return the number of startAction()/endAction() blocks performed.
             force the file to be unsaved
         """
         self.__saved=False
+        
     def save(self,filename=None):
+        """
+            save the layer
+        """
         if filename==None:
             filename=self.__filename
         _abs = os.path.abspath(filename)
