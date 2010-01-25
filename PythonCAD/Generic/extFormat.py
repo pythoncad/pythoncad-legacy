@@ -581,12 +581,13 @@ class Dxf(DrawingFile):
             _k = self.readLine()
             if not _k: break
             else:
-                dPrint( "Debug: Read Line line = [%s]"%str(_k))
-                if _k[0:5] == 'TABLE':
-                    self.readTable()
-                    continue
+                #dPrint( "Debug: Read Line line = [%s]"%str(_k))
+                #if _k[0:5] == 'TABLE':
+                #    self.readTable()
+                #    continue
                 if _k[0:4] == 'LINE':
                     self.createLineFromDxf()
+                    print "debug line found"
                     continue
                 if _k[0:6] == 'CIRCLE':
                     self.createCircleFromDxf()
@@ -599,6 +600,7 @@ class Dxf(DrawingFile):
                     continue
                 if _k[0:3] == 'ARC':
                     self.createArcFromDxf()
+                    print "debug arc found"
                     continue
                 if _k[0:10] == 'LWPOLYLINE':
                     self.createPolylineFromDxf()
@@ -606,7 +608,7 @@ class Dxf(DrawingFile):
                 if _k[0:8] == 'POLYLINE':
                     self.createPolylineFromDxf()
                     continue
-                if not _k : break
+                #if not _k : break
     def readTable(self):
         """
         Reading the data in the dxf file under TABLE section
@@ -689,13 +691,13 @@ class Dxf(DrawingFile):
                 #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
                 _k = self.readLine() 
                 z2 = (float(_k[0:-1]))
-            '''if _k[0:3] == ' 62':# COLOR
+                g=119
+                '''if _k[0:3] == ' 62':# COLOR
                 _k = self.readLine() 
                 c = (float(_k[0:-1]))                
                 g = 30
                 continue'''
-                #Z co ordinates are not used in PythonCAD we can live without this line
-            g+=1
+                #Z co ordinates are not used in PythonCAD we can live without this line                
         if not ( x1==None or y1 ==None or
            x2==None or y2 ==None ):
             self.createLine(x1,y1,x2,y2)
@@ -723,11 +725,11 @@ class Dxf(DrawingFile):
         _l = self.__image.getOption('LINE_TYPE')
         if _l != _s.getLinetype():
           _seg.setLinetype(_l)
-        _c = '#ffff00'
-        #_c = self.__image.getOption('LINE_COLOR')
+        #_c = '#ffff00'
+        _c = self.__image.getOption('LINE_COLOR')
         if _c != _s.getColor():
           _seg.setColor(_c)
-        print _c
+        #print _c
         _t = self.__image.getOption('LINE_THICKNESS')
         if abs(_t - _s.getThickness()) > 1e-10:
           _seg.setThickness(_t)
@@ -782,7 +784,7 @@ class Dxf(DrawingFile):
         _active_layer.addObject(_circle)
     def createTextFromDxf(self):
         """
-            Read and create the Circle into drawing
+            Read and create the Text into drawing
         """
         dPrint( "Debug createTextFromDxf" )
         g = 0 # reset g
@@ -935,7 +937,7 @@ class Dxf(DrawingFile):
         """
         dPrint("Exec createPolylineFromDxf")
         while True:
-            _k = self.readLine()                  
+            _k = self.readLine()  
             if _k[0:3] == ' 10':
                 break
         points=[]
