@@ -39,7 +39,7 @@ from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
 from PythonCAD.Generic.text import *
 from PythonCAD.Generic import util
 
-changecolor = {
+cgcol = {
 '#000000':0, 0:'#000000',
 '#ff0000':1, 1:'#ff0000',
 '#ffff00':2, 2:'#ffff00',
@@ -298,7 +298,18 @@ changecolor = {
 '#ffffff':255, 255:'#ffffff',
 }
 
-
+def ChangeColor(x):
+    try:
+        newcolor = cgcol[x]
+    except:
+        newcolor = 256
+    return newcolor
+def changeColorFromDxf(col):
+    if col == '256':
+        newcol = layerColor[col]#Work in progress layerColor captured under readLayer needs to be used
+    else:
+        newcol = ChangeColor(col)
+    return newcol
 class ExtFormat(object):
     """
         This class provide base class for hendly different drawing format in pythoncad
@@ -484,7 +495,7 @@ class Dxf(DrawingFile):
         x2,y2=e.getP2().getCoords()
         _c = e.getColor()
         _c = str(_c)
-        _c = changecolor[_c]
+        _c = ChangeColor(_c)
         dPrint("debug line color are %s"%str( _c))
         self.writeLine("  0\nLINE\n100\nAcdbLine\n")
         self.writeLine(" 62\n" + str(_c) +"\n")
@@ -501,7 +512,7 @@ class Dxf(DrawingFile):
         r=e.getRadius()
         _c = e.getColor()
         _c = str(_c)
-        _c = changecolor[_c]
+        _c = ChangeColor(_c)
         dPrint(" circle color are %s"%str(_c))
         self.writeLine("  0\nCIRCLE\n100\nAcDbCircle\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
@@ -518,7 +529,7 @@ class Dxf(DrawingFile):
         ea = e.getEndAngle()
         _c = e.getColor()
         _c = str(_c)
-        _c = changecolor[_c]
+        _c = ChangeColor(_c)
         print "debug Arc color are", _c
         self.writeLine("  0\nARC\n100\nAcDbCircle\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
@@ -532,7 +543,7 @@ class Dxf(DrawingFile):
         """
         _c = e.getColor()
         _c = str(_c)
-        _c = changecolor[_c]
+        _c = ChangeColor(_c)
         print "debug Arc color are", _c
         self.writeLine("  0\nLWPOLYLINE\n100\nAcDbPolyline\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
@@ -555,7 +566,7 @@ class Dxf(DrawingFile):
         h = e.getSize()
         _c = e.getColor()
         _c = str(_c)
-        _c = changecolor[_c]
+        _c = ChangeColor(_c)
         print "debug Text color are", _c
         txt = e.getText()
         txt = txt.replace(' ', '\~')
@@ -581,13 +592,19 @@ class Dxf(DrawingFile):
             _k = self.readLine()
             if not _k: break
             else:
+                #print  "debug: readline", _k
                 #dPrint( "Debug: Read Line line = [%s]"%str(_k))
-                #if _k[0:5] == 'TABLE':
-                #    self.readTable()
-                #    continue
+                if _k[0:5] == 'TABLE':
+                    _k = self.readLine() # for tag "  2"
+                    _k = self.readLine() # for table name
+                    print "debug TABLE found"
+                    if _k[0:5] == 'LAYER':
+                        self.readLayer()
+                        print "debug LAYER found"
+                    continue
                 if _k[0:4] == 'LINE':
                     self.createLineFromDxf()
-                    print "debug line found"
+                    #print "debug line found"
                     continue
                 if _k[0:6] == 'CIRCLE':
                     self.createCircleFromDxf()
@@ -600,7 +617,7 @@ class Dxf(DrawingFile):
                     continue
                 if _k[0:3] == 'ARC':
                     self.createArcFromDxf()
-                    print "debug arc found"
+                    #print "debug arc found"
                     continue
                 if _k[0:10] == 'LWPOLYLINE':
                     self.createPolylineFromDxf()
@@ -608,38 +625,34 @@ class Dxf(DrawingFile):
                 if _k[0:8] == 'POLYLINE':
                     self.createPolylineFromDxf()
                     continue
-                #if not _k : break
-    def readTable(self):
+                if not _k : break
+    def readLayer(self):
         """
         Reading the data in the dxf file under TABLE section
         it collects the information regarding the
         Layers, Colors and Linetype 
         WORK IN PROGRESS
         """
-        print 'debug table found !'
-        layerData = {}
+        #print 'debug Layer found !'
+        layerColor = {}
         dxfColor = 0
         layerName = '0'
-        _k = self.readLine()
-        if _k[0:3] == '  2':
+        #_k = self.readLine()
+        while True:
             _k = self.readLine()
-            if _k[0:5] != 'LAYER':
-                pass
-            while True:
+            if _k[0:6] == 'ENDTAB':
+                break
+            if _k[0:3] == '  2':
                 _k = self.readLine()
-                if _k[0:6] == 'ENDTAB':
-                    break
-                if _k[0:3] == '  2':
-                    _k = self.readLine()
-                    layerName = _k
-                    print "Debug New LayerName=", layerName
-                if _k[0:3] == ' 62':
-                    _k = self.readLine()
-                    dxfColor = _k
-                    print "Debug new dxfColor = ", dxfColor
-                layerData[layerName] = dxfColor
-        print "Debug layerData", layerData
-            
+                layerName = _k.replace('\n', '')
+                print "Debug New LayerName=", layerName
+            if _k[0:3] == ' 62':
+                _k = self.readLine()
+                dxfColor = _k.replace('\n', '')
+                print "Debug new dxfColor = ", dxfColor
+            layerColor[layerName] = dxfColor
+        return layerColor
+        
     def createLineFromDxf(self):
         """
             read the line dxf section and create the line
@@ -650,15 +663,16 @@ class Dxf(DrawingFile):
         x2 = None
         y2 = None
         g = 0 # start counter to read lines
+        c = 0
         while g < 18:
             #print "Debug g =", g
             #print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
             _k = self.readLine()
             #print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
-            """if g == 5:# this line contains color property
-            we can get the color presently not implemented
-            color=(float(k[0:-1]))"""
-            dPrint( "line value k="+_k)
+            #dPrint( "line value k="+_k)
+            if _k[0:3] == ' 62':# COLOR
+                _k = self.readLine() 
+                c = (int(_k[0:-1])) 
             if _k[0:3] == ' 10':
                 dPrint( "debug 10"+ _k)
                 # this line of file contains start point"X" co ordinate
@@ -690,23 +704,21 @@ class Dxf(DrawingFile):
             if _k[0:3] == ' 31':# this line of file contains End point "Z" co ordinate
                 #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
                 _k = self.readLine() 
-                z2 = (float(_k[0:-1]))
-                g=119
-                '''if _k[0:3] == ' 62':# COLOR
-                _k = self.readLine() 
-                c = (float(_k[0:-1]))                
-                g = 30
-                continue'''
-                #Z co ordinates are not used in PythonCAD we can live without this line                
+                z2 = (float(_k[0:-1]))               
+                g = 119
+                continue
+                #Z co ordinates are not used in PythonCAD we can live without this line
+        if c == None:
+            c = 7
         if not ( x1==None or y1 ==None or
            x2==None or y2 ==None ):
-            self.createLine(x1,y1,x2,y2)
+            self.createLine(x1,y1,x2,y2,c)
         else:
             _msg=u'Read parameter from file x1: [%s] y1: [%s] x2: [%s] y2: [%s]'%(
                         str(x1),str(y1),str(x2),str(y2))
             self.writeError('createLineFromDxf',_msg)
 
-    def createLine(self,x1,y1,x2,y2):
+    def createLine(self,x1,y1,x2,y2,c):
         """
           Create the line into the current drawing
           In this implementation all the lines gose to the active layer and use the global settings of pythoncad
@@ -714,6 +726,7 @@ class Dxf(DrawingFile):
           1) Create a new layer(ex: Dxf Import)
           2) Read dxf import style propertis and set it to the line
         """    
+        #print "debug c=", c
         dPrint( "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) )
         _active_layer = self.__dxfLayer
         _p1 = Point(x1, y1)
@@ -725,8 +738,8 @@ class Dxf(DrawingFile):
         _l = self.__image.getOption('LINE_TYPE')
         if _l != _s.getLinetype():
           _seg.setLinetype(_l)
-        #_c = '#ffff00'
-        _c = self.__image.getOption('LINE_COLOR')
+        _c = changeColorFromDxf(int(c))
+        #_c = self.__image.getOption('LINE_COLOR')
         if _c != _s.getColor():
           _seg.setColor(_c)
         #print _c
@@ -741,9 +754,13 @@ class Dxf(DrawingFile):
         """
         dPrint( "Debug createCircleFromDxf" )
         g = 0 # reset g
+        c = 0
         while g < 1:
             _k = self.readLine()
             dPrint( "line value k="+ _k)
+            if _k[0:3] == ' 62':# COLOR
+                _k = self.readLine() 
+                c = (int(_k[0:-1])) 
             if _k[0:3] == ' 10':
                 _k = self.readLine()
                 x = (float(_k[0:-1]))
@@ -761,9 +778,11 @@ class Dxf(DrawingFile):
                 r = (float(_k[0:-1]))
                 g = 10 # g > 1 for break
                 'I need a "create Circle code" here to append the segment to image'
-        self.createCircle(x,y,r)
+        if c == None:
+            c = 7
+        self.createCircle(x,y,r,c)
         
-    def createCircle(self,x,y,r):
+    def createCircle(self,x,y,r,c):
         """
             create a circle entitys into the current drawing
         """
@@ -775,7 +794,9 @@ class Dxf(DrawingFile):
         _l = self.__image.getOption('LINE_TYPE')
         if _l != _s.getLinetype():
             _circle.setLinetype(_l)
-        _c = self.__image.getOption('LINE_COLOR')
+        _c = changeColorFromDxf(c)
+        #print "Debug: circle color = ", _c
+        #_c = self.__image.getOption('LINE_COLOR')
         if _c != _s.getColor():
             _circle.setColor(_c)
         _t = self.__image.getOption('LINE_THICKNESS')
@@ -795,6 +816,9 @@ class Dxf(DrawingFile):
         while g < 1:
             _k = self.readLine()
             dPrint("line value k="+ _k)
+            #if _k[0:3] == ' 62':# COLOR
+            #    _k = self.readLine() 
+            #    c = (int(_k[0:-1])) 
             if _k[0:3] == ' 10':
                 _k = self.readLine()
                 x = (float(_k[0:-1]))
@@ -834,8 +858,12 @@ class Dxf(DrawingFile):
             Read and create the ARC into drawing
         """ 
         g = 0 # reset g
+        c = 0
         while g < 1:
             _k = self.readLine()
+            if _k[0:3] == ' 62':# COLOR
+                _k = self.readLine() 
+                c = (int(_k[0:-1])) 
             if _k[0:3] == ' 10':
                 _k = self.readLine()
                 x = (float(_k[0:-1]))
@@ -860,9 +888,11 @@ class Dxf(DrawingFile):
                 ea = (float(_k[0:-1]))
                 g = 10 # g > 1 for break\\
                 continue
-        self.createArc(x,y,sa,ea,r)
+        if c == None:
+                c = 7
+        self.createArc(x,y,sa,ea,r,c)
 
-    def createArc(self,x,y,sa,ea,r):
+    def createArc(self,x,y,sa,ea,r,c):
         """
             Create a Arc entitys into the current drawing
         """
@@ -883,7 +913,8 @@ class Dxf(DrawingFile):
         _l = self.__image.getOption('LINE_TYPE')
         if _l != _s.getLinetype():
             _arc.setLinetype(_l)
-        _c = self.__image.getOption('LINE_COLOR')
+        _c = changeColorFromDxf(c)
+        #_c = self.__image.getOption('LINE_COLOR')
         if _c != _s.getColor():
             _arc.setColor(_c)
         _t = self.__image.getOption('LINE_THICKNESS')
@@ -916,7 +947,7 @@ class Dxf(DrawingFile):
         _w = self.__image.getOption('FONT_WEIGHT')
         if _w != _ts.getWeight():
             _tb.setWeight(_w)
-            
+        #_c = changeColorFromDxf(c)
         _c = self.__image.getOption('FONT_COLOR')
         if _c != _ts.getColor():
             _tb.setColor(_c)
@@ -936,8 +967,12 @@ class Dxf(DrawingFile):
         Polyline creation read the line dxf section and create the line
         """
         dPrint("Exec createPolylineFromDxf")
+        c = 0
         while True:
-            _k = self.readLine()  
+            _k = self.readLine()
+            if _k[0:3] == ' 62':# COLOR
+                _k = self.readLine() 
+                c = (int(_k[0:-1])) 
             if _k[0:3] == ' 10':
                 break
         points=[]
@@ -963,10 +998,12 @@ class Dxf(DrawingFile):
             if _k[0:3] != ' 10':
                 break
             continue
+        if c == None:
+                c = 7
         if len(points)>1:
-            self.createPolyline(points)
+            self.createPolyline(points,c)
         
-    def createPolyline(self,points):
+    def createPolyline(self,points,c):
         """
             Crate poliline into Pythoncad
         """
@@ -987,7 +1024,8 @@ class Dxf(DrawingFile):
         _l = self.__image.getOption('LINE_TYPE')
         if _l != _s.getLinetype():
           _pline.setLinetype(_l)
-        _c = self.__image.getOption('LINE_COLOR')
+        _c = changeColorFromDxf(c)        
+        #_c = self.__image.getOption('LINE_COLOR')
         if _c != _s.getColor():
           _pline.setColor(_c)
         _t = self.__image.getOption('LINE_THICKNESS')
