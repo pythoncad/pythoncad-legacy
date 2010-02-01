@@ -305,6 +305,14 @@ def file_close_cb(menuitem, gtkimage):
 
 #------------------------------------------------------------
 def file_save_cb(menuitem, gtkimage):
+    """
+        call back for save the file 
+    """
+    from PythonCAD.Generic import testImport
+    _image=gtkimage.image
+    testImport.saveLayers(_image)
+    return
+
     _fname = gtkimage.image.getFilename()
     if _fname is None:
         _get_filename_and_save(gtkimage)

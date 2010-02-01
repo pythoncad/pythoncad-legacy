@@ -97,6 +97,4 @@ class PointTool(Tool):
         if self.__point is not None:
             _active_layer = image.getActiveLayer()
             _active_layer.addObject(self.__point.point)
-            self.reset()
-
-            
+            self.reset()          
