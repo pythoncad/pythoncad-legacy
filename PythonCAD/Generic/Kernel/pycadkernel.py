@@ -45,13 +45,13 @@ class PyCadEnt(PyCadObject):
         if not isinstance(constructionPoints,dict):
             raise TypeError,'type error in dictionary'
         self.__PointDic=constructionPoints
-        
+
     def getConstructionPoint(self):
         """
             return the base entity array
         """      
         return self.__PointDic
-    
+
     def getEntityType(self):
         """
             Get the entity type 
@@ -83,7 +83,7 @@ class PyCadPoint(object):
         self.__x=x
         self.__y=y
         self.__z=z
-        
+
     def getXYCoords(self):
         """
             return a tuple of x,y point 
@@ -95,15 +95,15 @@ class PyCadPoint(object):
         """    
         self.__x=x
         self.__y=y
-    
+
 class PyCadStyle(PyCadObject):
-        """
-            this class rappresent the style in pythoncad
-            objID iss the object that rappresent the id in the db
-        """
-        def __init__(self,objId):
-            self.__logger=logging.getLogger('PyCadStyle')
-            PyCadObject.__init__(self,objId)     
+    """
+        this class rappresent the style in pythoncad
+        objID iss the object that rappresent the id in the db
+    """
+    def __init__(self,objId):
+        self.__logger=logging.getLogger('PyCadStyle')
+        PyCadObject.__init__(self,objId)     
 
 class PyCadDbKernel(object):
     """
@@ -117,10 +117,10 @@ class PyCadDbKernel(object):
         self.__logger=logging.getLogger('PyCadDbKernel')
         self.__logger.debug('__init__')
         if dbPath is None:
-           dbPath='pythoncad.pdr' 
+            dbPath='pythoncad.pdr' 
         if not os.path.exists(dbPath):
-                self.__logger.error('Unable lo get the db %s'%str(dbPath))
-                sys.exit()
+            self.__logger.error('Unable lo get the db %s'%str(dbPath))
+            sys.exit()
         self.__logger.debug('Connect db')
         self.__connection = sql.connect(dbPath)
         #Check the database structure
@@ -149,7 +149,7 @@ class PyCadDbKernel(object):
         #pycad_security_id
         #pycad_locked
         return
-        
+
     def getEntity(self,entityId):
         """
             get the entity from a given id
@@ -201,7 +201,7 @@ class PyCadDbKernel(object):
         except :
             for s in sys.exc_info():
                 self.__logger.error("Generic Error: %s"%str(s))
-            
+
 
     def saveEntIntoDb(self,entity_id,entity):
         """
@@ -219,12 +219,12 @@ class PyCadDbKernel(object):
                     pycad_undo_index,
                     pycad_object_definition,pycad_style_id)
                     VALUES(%s,\"%s\",%s,\"%s\",%s)"""%(
-            str(_newEnityId),
-            str(type(entity)),
-            str(_newUndoId),
-            str(_entityDump),
-            str(self.__activeStyleObj.getId())
-            )      
+                                                         str(_newEnityId),
+                                                         str(type(entity)),
+                                                         str(_newUndoId),
+                                                         str(_entityDump),
+                                                         str(self.__activeStyleObj.getId())
+                                                     )      
         try:
             _res=self.makeSqlInsertUpdate(_statement)
         except:
@@ -257,7 +257,7 @@ class PyCadDbKernel(object):
             for s in sys.exc_info():
                 self.__logger.error("Generic Error: %s"%str(s))
             return False
-        
+
     def getNewUndoId(self):
         """
             get the new undo id from the db
@@ -275,7 +275,7 @@ class PyCadDbKernel(object):
             _undoId=_undoId+1
             self.setUndoId(_undoId)
         return _undoId
-    
+
     def setUndoId(self,objId):
         """
             set the undo id in the table
@@ -313,7 +313,7 @@ class PyCadDbKernel(object):
         # get from db the object style pickled
         # set in a global variable self.__activeStyleObj=_newStyle
         pass
-        
+
     def getStyle(self,id,name=None):
         """
             get the style object 
@@ -328,7 +328,7 @@ class PyCadDbKernel(object):
         # Make a query at the style Table and return an array of (stylesName,id)
         # this method is used for populate the style form ..
         pass
-        
+
     activeStyleId=property(getActiveStyle,setActiveStyle)
 
 class PyCadBaseDb(object):
@@ -348,7 +348,7 @@ class PyCadBaseDb(object):
             self.__logger.error('Unable lo get the db %s'%str(dbPath))
             sys.exit()
         self.__dbConnection = sql.connect(dbPath)
-        
+
     def setConnection(self,dbConnection):
         """
             set the connection with the database
@@ -357,7 +357,7 @@ class PyCadBaseDb(object):
             # Todo fire a warning
             self.__dbConnection.close()
         self.__dbConnection=dbConnection
-        
+
     def makeSelect(self,statment):
         """
             perform a select operation
@@ -374,7 +374,7 @@ class PyCadBaseDb(object):
                 self.__logger.error("Generic Error: %s"%str(s))
             return None
         return _rows
-    
+
     def makeUpdateInsert(self,statment):
         """
             make an update Inster operation
@@ -394,7 +394,7 @@ class PyCadBaseDb(object):
             close the database connection
         """
         self.__dbConnection.close()
-        
+
 class PyCadUndoDb(PyCadBaseDb):
     """
         this Class Provide all the basic operation to be made on the
@@ -415,7 +415,7 @@ class PyCadUndoDb(PyCadBaseDb):
                                 )
                                 """
                 self.makeUpdateInsert(_sqlCreation)
-                
+
     def getLastUndoIndex(self):
         """
             get the last undo index
@@ -428,7 +428,7 @@ class PyCadUndoDb(PyCadBaseDb):
             self.makeUpdateInsert(_sqlInser)
             _rows=self.makeSelect(_sqlCheck) 
         if _rows== None:
-                raise TypeError, "No row fatched in undo search "
+            raise TypeError, "No row fatched in undo search "
         _row=_rows.fetchone()
         return _row[0] # get the max index of the table 
 
@@ -439,7 +439,7 @@ class PyCadUndoDb(PyCadBaseDb):
         self.resetUndoTable()
         _sqlSetLastUndo="""update pycadundo set pycad_undo_state='active' where pycad_id='%s'"""%str(undoId)
         self.makeUpdateInsert(_sqlSetLastUndo)
-        
+
     def resetUndoTable(self):
         """
             reset all the table value to no-value
@@ -456,7 +456,7 @@ class PyCadUndoDb(PyCadBaseDb):
         _sqlInser="""INSERT INTO pycadundo (pycad_undo_state) VALUES ('active')"""    
         self.makeUpdateInsert(_sqlInser)
         return self.getLastUndoIndex()
-    
+
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel
@@ -486,7 +486,7 @@ class PyCadkernelEvent(object):
     __isub__ = unhandle
     __call__ = fire
     __len__  = getHandlerCount
-         
+
 def test():
     logging.debug("Create a point")
     basePoint=PyCadPoint(10,10)
@@ -512,5 +512,5 @@ def test1():
     p1.dump()
     print "*"*10
 
-    
+
 #test1()
