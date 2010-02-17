@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 # Copyright (c) 2010 Matteo Boscolo
 #
@@ -25,6 +26,7 @@ import os
 import sys
 import cPickle
 import logging
+import time
 
 from pycadundodb    import PyCadUndoDb
 from pycadentdb     import PyCadEntDb
@@ -32,7 +34,7 @@ from pycadent       import PyCadEnt
 from pycadbasedb    import PyCadBaseDb
 from pycadstyle     import PyCadStyle
 
-from PythonCAD.Generic.point import Point
+from Entity.point import *
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,
@@ -71,7 +73,17 @@ class PyCadDbKernel(PyCadBaseDb):
         self.saveEntityEvent=PyCadkernelEvent()
         self.deleteEntityEvent=PyCadkernelEvent()
         self.__logger.debug('Done inizialization')
-        
+        self.__undoActive=True
+    def suspendUndo(self):
+        """
+            suspend the undo for write operation
+        """
+        self.__undoActive=False
+    def activeUndo(self):
+        """
+            Reactive the undo trace 
+        """
+        self.__undoActive=True
     def getEntity(self,entId):
         """
             get the entity from a given id
@@ -93,14 +105,26 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the point in to the dartabase
         """
+        startTime=time.clock()
         _newId=self.__pyCadEntDb.getNewEntId()
+        endTime=time.clock()-startTime
+        print "Get New id in : %ss"%(str(endTime))
         _newId+=1
         _points={}
         _points['POINT']=point
+        startTime=time.clock()
         _newDbEnt=PyCadEnt('POINT',_points,self.getActiveStyle(),_newId)
+        endTime=time.clock()-startTime
+        print "Create PyCadEnt in : %ss"%(str(endTime))
+        startTime=time.clock()
         self.__pyCadEntDb.saveEntity(_newDbEnt)
-        self.__pyCadUndoDb.getNextUndo(_newId)
-            
+        endTime=time.clock()-startTime
+        print "Save PyCadEnt in : %ss"%(str(endTime))
+        if self.__undoActive:
+            startTime=time.clock()
+            self.__pyCadUndoDb.getNextUndo(_newId)
+            endTime=time.clock()-startTime
+            print "getNextUndo  in : %ss"%(str(endTime))            
         
     def getActiveStyle(self):
         """
@@ -177,9 +201,9 @@ def test():
     logging.debug( "Create db kernel")
     kr=PyCadDbKernel()
     logging.debug("Create a point")
-    import time
     startTime=time.clock()
     nEnt=1
+    #kr.suspendUndo()
     for i in range(nEnt):
         basePoint=Point(10,i)
         kr.saveEntity(basePoint)
