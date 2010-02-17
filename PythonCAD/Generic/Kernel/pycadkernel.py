@@ -1,8 +1,31 @@
+#
+# Copyright (c) 2010 Matteo Boscolo
+#
+# This file is part of PythonCAD.
+#
+# PythonCAD is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PythonCAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with PythonCAD; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#
+# This  module all the interface needed to talk with pythoncad database
+#
+
 import os
 import sys
-import sqlite3 as sql
 import cPickle
 import logging
+from  pycadundodb import PyCadUndoDb
 
 PY_CAD_ENT=['POINT','SEGMENT']
 
@@ -17,60 +40,7 @@ level = LEVELS.get('PyCad_Error', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
-class PyCadObject(object):
-    """
-        this class provide basic information usefoul for the
-        db like id for exsample
-    """
-    def __init__(self,objId):
-        self.__entityId=objId
-    def getId(self):
-        """
-            get the entity id
-        """
-        return self.__entityId
 
-class PyCadEnt(PyCadObject):
-    """
-        basic PythonCad entity structure
-    """
-    def __init__(self,entType,constructionPoints,style=None):
-        PyCadObject.__init__(self,None)
-        if not entType in PY_CAD_ENT:
-            raise TypeError,'entType not supported' 
-        self.__entType=entType
-        if not (PyCadStyle is None or isinstance(style,PyCadStyle) ):          
-            raise TypeError,'style not supported' 
-        self.__style=style        
-        if not isinstance(constructionPoints,dict):
-            raise TypeError,'type error in dictionary'
-        self.__PointDic=constructionPoints
-        
-    def getConstructionPoint(self):
-        """
-            return the base entity array
-        """      
-        return self.__PointDic
-    
-    def getEntityType(self):
-        """
-            Get the entity type 
-        """
-        return self.__entType
-    eType=property(getEntityType,None,None,"Get the etity type read only attributes")
-    def getStyle(self):
-        """
-            get the object style
-        """
-        return self.__style
-    def setStyle(self,style):
-        """
-            set/update the entity style
-        """
-        if not isinstance(style,PyCadStyle):
-            raise TypeError,'Type error in style'
-        self.__style=style        
-    style=property(getStyle,setStyle,None,"Get/Set the entity style")
 
 class PyCadPoint(object):
     """
@@ -96,14 +66,7 @@ class PyCadPoint(object):
         self.__x=x
         self.__y=y
     
-class PyCadStyle(PyCadObject):
-        """
-            this class rappresent the style in pythoncad
-            objID iss the object that rappresent the id in the db
-        """
-        def __init__(self,objId):
-            self.__logger=logging.getLogger('PyCadStyle')
-            PyCadObject.__init__(self,objId)     
+   
 
 class PyCadDbKernel(object):
     """
@@ -330,133 +293,7 @@ class PyCadDbKernel(object):
         pass
         
     activeStyleId=property(getActiveStyle,setActiveStyle)
-
-class PyCadBaseDb(object):
-    """
-        this class provide base db operation
-    """
-    def __init__(self):
-        self.__logger=logging.getLogger('PyCadBaseDb')
-        self.__dbConnection=None
-    def createConnection(self,dbPath=None):
-        """
-            create the connection with the database
-        """
-        if dbPath is None:
-            dbPath='pythoncad.pdr' 
-        if not os.path.exists(dbPath):
-            self.__logger.error('Unable lo get the db %s'%str(dbPath))
-            sys.exit()
-        self.__dbConnection = sql.connect(dbPath)
-        
-    def setConnection(self,dbConnection):
-        """
-            set the connection with the database
-        """
-        if not self.__dbConnection is None:
-            # Todo fire a warning
-            self.__dbConnection.close()
-        self.__dbConnection=dbConnection
-        
-    def makeSelect(self,statment):
-        """
-            perform a select operation
-        """
-        try:
-            _cursor = self.__dbConnection.cursor()
-            _rows = _cursor.execute(statment)
-        except sql.Error, _e:
-            self.__logger.error("Sql Phrase: %s"%str(statment))       
-            self.__logger.error("Sql Error: %s"%str( _e.args[0] ))
-            return None
-        except :
-            for s in sys.exc_info():
-                self.__logger.error("Generic Error: %s"%str(s))
-            return None
-        return _rows
-    
-    def makeUpdateInsert(self,statment):
-        """
-            make an update Inster operation
-        """
-        try:
-            _cursor = self.__dbConnection.cursor()
-            _rows = _cursor.execute(statment)
-            self.__dbConnection.commit()
-        except sql.Error, _e:
-            self.__logger.error("Sql Phrase: %s"%str(statment))       
-            self.__logger.error("Sql Error: %s"%str( _e.args[0] ))
-        except :
-            for s in sys.exc_info():
-                self.__logger.error("Generic Error: %s"%str(s))
-    def close(self):
-        """
-            close the database connection
-        """
-        self.__dbConnection.close()
-        
-class PyCadUndoDb(PyCadBaseDb):
-    """
-        this Class Provide all the basic operation to be made on the
-        undo 
-    """
-    def __init__(self,dbConnection):
-        PyCadBaseDb.__init__(self)
-        self.setConnection(dbConnection)
-        self.__logger=logging.getLogger('PyCadUndoDb')
-        self.__logger.debug('__init__')
-        def checkTables():
-            _sqlCheck="""select * from sqlite_master where name like 'pycadundo'"""
-            if self.makeSelect(_sqlCheck) is None:
-                self.__logger.info("create undo table")
-                _sqlCreation="""CREATE TABLE "pycadundo" (
-                                "pycad_id" INTEGER PRIMARY KEY,
-                                "pycad_undo_state" TEXT
-                                )
-                                """
-                self.makeUpdateInsert(_sqlCreation)
-                
-    def getLastUndoIndex(self):
-        """
-            get the last undo index
-        """
-        _sqlCheck="select max(pycad_id) from pycadundo"
-        _rows=self.makeSelect(_sqlCheck) 
-        if _rows is None:
-            # no entity in the table
-            _sqlInser="""INSERT INTO pycadundo (pycad_undo_state) VALUES ("active")"""
-            self.makeUpdateInsert(_sqlInser)
-            _rows=self.makeSelect(_sqlCheck) 
-        if _rows== None:
-                raise TypeError, "No row fatched in undo search "
-        _row=_rows.fetchone()
-        return _row[0] # get the max index of the table 
-
-    def setActiveUndo(self,undoId):
-        """
-            set the active undo 
-        """
-        self.resetUndoTable()
-        _sqlSetLastUndo="""update pycadundo set pycad_undo_state='active' where pycad_id='%s'"""%str(undoId)
-        self.makeUpdateInsert(_sqlSetLastUndo)
-        
-    def resetUndoTable(self):
-        """
-            reset all the table value to no-value
-        """
-        _sqlReset="""update pycadundo set pycad_undo_state='no-value'"""
-        self.makeUpdateInsert(_sqlReset)
-
-    def getNextUndo(self):
-        """
-            get the next undo index pycadundo 
-        """
-        self.resetUndoTable()
-        _lastUndo=self.getLastUndoIndex()
-        _sqlInser="""INSERT INTO pycadundo (pycad_undo_state) VALUES ('active')"""    
-        self.makeUpdateInsert(_sqlInser)
-        return self.getLastUndoIndex()
-    
+ 
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel
@@ -486,7 +323,110 @@ class PyCadkernelEvent(object):
     __isub__ = unhandle
     __call__ = fire
     __len__  = getHandlerCount
-         
+
+
+def pyCadEntDb(PyCadBaseDb):
+    """
+        this class provide the besic operation for the entity
+    """
+    def __init__(self,dbConnection):
+        PyCadBaseDb.__init__(self)
+        if dbConnection is None:
+            self.createConnection()
+        else:
+            self.setConnection(dbConnection)
+        self.__logger=logging.getLogger('PyCadUndoDb')
+        self.__logger.debug('__init__')
+       
+        _sqlCheck="""select * from sqlite_master where name like 'pycadent'"""
+        _table=self.makeSelect(_sqlCheck).fetchone()
+        if _table is None:
+            self.__logger.info("create undo table")
+            _sqlCreation="""CREATE TABLE pycadent(
+                    pycad_id INTEGER PRIMARY KEY,
+                    pycad_entity_id NUMERIC,
+                    pycad_object_type TEXT,
+                    pycad_object_definition BLOB,
+                    pycad_style_id INTEGER,
+                    pycad_security_id INTEGER,
+                    pycad_locked INTEGER)"""
+            self.makeUpdateInsert(_sqlCreation)
+            
+    def saveEntity(self,entityObj):
+        """
+            this method save the entity in the db
+            entityObj = object that we whant to store
+        """
+        _entityId=entity.getId()
+        _entityDump=cPickle.dumps(entity.getConstructionPoint(),2)
+        _entityType=entity.getEntityType()
+        _styleId=entityObj.getStyle().getId()
+        _sqlInsert="""INSERT INTO pycadent (
+                    pycad_entity_id,
+                    pycad_object_type,
+                    pycad_object_definition,
+                    pycad_style_id) VALUES
+                    (%s,%s,%s,%s)"""%(str(_entityId),str(_entityType),str(_entityDump),str(_styleId))
+        self.makeUpdateInsert(_sqlInsert)
+        
+    def getEntity(self,entityTableId):
+        """
+            Get the entity object from the database Univoc id
+        """
+        _outObj=None
+        _sqlGet="""SELECT   pycad_entity_id,
+                            pycad_object_type,
+                            pycad_object_definition,
+                            pycad_style_id
+                FROM pycadent
+                WHERE pycad_id=%s"""%str(entityTableId)
+        _dbEntRow=self.makeSelect(_sqlCheck).fetchone()
+        if _dbEntRow is not None:
+            _style=_dbEntRow[3]
+            _dumpObj=cPickle.loads(_dbEntRow[2])
+            _outObj=PyCadEnt(_dbEntRow[1],_dumpObj,_style,_dbEntRow[0])
+        return _outObj
+    
+    def getEntitys(self,entityId):
+        """
+            get all the entity with the entity id
+            remarcs:
+            this method return all the history of the entity
+        """
+        _outObj={}
+        _sqlGet="""SELECT   pycad_id,
+                            pycad_entity_id,
+                            pycad_object_type,
+                            pycad_object_definition,
+                            pycad_style_id
+                FROM pycadent
+                WHERE pycad_entity_id=%s ORDER BY pycad_id"""%str(entityId)
+        _dbEntRow=self.makeSelect(_sqlCheck)
+        for _row in _dbEntRow: 
+            _style=_row[4]
+            _dumpObj=cPickle.loads(_row[3])
+            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+        return _outObj
+
+    def getEntitysFromStyle(self,styleId):
+        """
+            return all the entity that match the styleId
+        """
+        _outObj={}
+        _sqlGet="""SELECT   pycad_id,
+                            pycad_entity_id,
+                            pycad_object_type,
+                            pycad_object_definition,
+                            pycad_style_id
+                FROM pycadent
+                WHERE pycad_style_id=%s ORDER BY pycad_id"""%str(styleId)
+        _dbEntRow=self.makeSelect(_sqlCheck)
+        for _row in _dbEntRow: 
+            _style=_row[4]
+            _dumpObj=cPickle.loads(_row[3])
+            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+        return _outObj
+        
 def test():
     logging.debug("Create a point")
     basePoint=PyCadPoint(10,10)
@@ -512,5 +452,6 @@ def test1():
     p1.dump()
     print "*"*10
 
-    
+
+
 #test1()
