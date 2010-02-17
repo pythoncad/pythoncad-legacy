@@ -22,11 +22,13 @@
 #
 
 import cPickle
-import logging
-from pycadbasedb import PyCadBaseDb 
-from pycadent import PyCadEnt
+
+
+from pycadbasedb import PyCadBaseDb
+from pycadent       import PyCadEnt
+from pycadstyle     import PyCadStyle
  
-def pyCadEntDb(PyCadBaseDb):
+class PyCadEntDb(PyCadBaseDb):
     """
         this class provide the besic operation for the entity
     """
@@ -36,18 +38,15 @@ def pyCadEntDb(PyCadBaseDb):
             self.createConnection()
         else:
             self.setConnection(dbConnection)
-        self.__logger=logging.getLogger('PyCadUndoDb')
-        self.__logger.debug('__init__')
-       
+
         _sqlCheck="""select * from sqlite_master where name like 'pycadent'"""
         _table=self.makeSelect(_sqlCheck).fetchone()
         if _table is None:
-            self.__logger.info("create undo table")
             _sqlCreation="""CREATE TABLE pycadent(
                     pycad_id INTEGER PRIMARY KEY,
                     pycad_entity_id NUMERIC,
                     pycad_object_type TEXT,
-                    pycad_object_definition BLOB,
+                    pycad_object_definition TEXT,
                     pycad_style_id INTEGER,
                     pycad_security_id INTEGER,
                     pycad_locked INTEGER)"""
@@ -58,16 +57,16 @@ def pyCadEntDb(PyCadBaseDb):
             this method save the entity in the db
             entityObj = object that we whant to store
         """
-        _entityId=entity.getId()
-        _entityDump=cPickle.dumps(entity.getConstructionPoint(),2)
-        _entityType=entity.getEntityType()
+        _entityId=entityObj.getId()
+        _entityDump=cPickle.dumps(entityObj.getConstructionPoint())
+        _entityType=entityObj.getEntityType()
         _styleId=entityObj.getStyle().getId()
         _sqlInsert="""INSERT INTO pycadent (
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
                     pycad_style_id) VALUES
-                    (%s,%s,%s,%s)"""%(str(_entityId),str(_entityType),str(_entityDump),str(_styleId))
+                    (%s,"%s","%s",%s)"""%(str(_entityId),str(_entityType),str(_entityDump),str(_styleId))
         self.makeUpdateInsert(_sqlInsert)
         
     def getEntity(self,entityTableId):
@@ -81,11 +80,13 @@ def pyCadEntDb(PyCadBaseDb):
                             pycad_style_id
                 FROM pycadent
                 WHERE pycad_id=%s"""%str(entityTableId)
-        _dbEntRow=self.makeSelect(_sqlCheck).fetchone()
-        if _dbEntRow is not None:
-            _style=_dbEntRow[3]
-            _dumpObj=cPickle.loads(_dbEntRow[2])
-            _outObj=PyCadEnt(_dbEntRow[1],_dumpObj,_style,_dbEntRow[0])
+        _rows=self.makeSelect(_sqlGet)
+        if _rows is not None:
+            _dbEntRow=_rows.fetchone()
+            if _dbEntRow is not None:
+                _style=str(_dbEntRow[3])
+                _dumpObj=cPickle.loads(str(_dbEntRow[2]))
+                _outObj=PyCadEnt(_dbEntRow[1],_dumpObj,_style,_dbEntRow[0])
         return _outObj
     
     def getEntitys(self,entityId):
@@ -102,11 +103,12 @@ def pyCadEntDb(PyCadBaseDb):
                             pycad_style_id
                 FROM pycadent
                 WHERE pycad_entity_id=%s ORDER BY pycad_id"""%str(entityId)
-        _dbEntRow=self.makeSelect(_sqlCheck)
-        for _row in _dbEntRow: 
-            _style=_row[4]
-            _dumpObj=cPickle.loads(_row[3])
-            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+        _dbEntRow=self.makeSelect(_sqlGet)
+        if _dbEntRow is not None:
+            for _row in _dbEntRow: 
+                _style=str(_row[4])
+                _dumpObj=cPickle.loads(str(_row[3]))
+                _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
         return _outObj
 
     def getEntitysFromStyle(self,styleId):
@@ -127,6 +129,38 @@ def pyCadEntDb(PyCadBaseDb):
             _dumpObj=cPickle.loads(_row[3])
             _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
         return _outObj
-
+    
+    def getNewEntId(self):
+        """
+            get the last id entity 
+        """
+        _outObj=0
+        _sqlSelect="""select max(pycad_entity_id) from pycadent"""
+        _rows=self.makeSelect(_sqlSelect)
+        if _rows is not None:
+            _dbEntRow=_rows.fetchone()
+            if _dbEntRow is not None:
+                if _dbEntRow[0] is not None:
+                    _outObj=int(_dbEntRow[0])
+        return _outObj
+    
 def test():
-    dbEnt=pyCadEntDb(None)
+    print "*"*10+" Start Test"
+    dbEnt=PyCadEntDb(None)
+    print "pyCadEntDb Created"
+    style=PyCadStyle(1)
+    print "PyCadStyle Created"
+    ent=PyCadEnt('POINT',{'a':10},style,1)
+    print "PyCadEnt Created"
+    dbEnt.saveEntity(ent)
+    print "PyCadEnt Saved"
+    obj=dbEnt.getEntity(1)
+    print "getEntity [%s]"%str(obj)
+    for e in dbEnt.getEntitys(1):
+        print "Entity %s"%str(e)
+    obj=dbEnt.getEntitysFromStyle
+    for e in dbEnt.getEntitys(1):
+        print "Entity Style %s"%str(e)
+    _newId=dbEnt.getNewEntId()
+    print "New id %i"%(_newId)
+

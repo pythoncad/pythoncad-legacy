@@ -21,7 +21,6 @@
 # This  module provide access to the undo part of the pythoncad database
 #
 
-import logging
 from  pycadbasedb import PyCadBaseDb
 
 class PyCadUndoDb(PyCadBaseDb):
@@ -34,14 +33,10 @@ class PyCadUndoDb(PyCadBaseDb):
         if dbConnection is None:
             self.createConnection()
         else:
-            self.setConnection(dbConnection)
-        self.__logger=logging.getLogger('PyCadUndoDb')
-        self.__logger.debug('__init__')
-       
+            self.setConnection(dbConnection)     
         _sqlCheck="""select * from sqlite_master where name like 'pycadundo'"""
         _table=self.makeSelect(_sqlCheck).fetchone()
         if _table is None:
-            self.__logger.info("create undo table")
             _sqlCreation="""CREATE TABLE "pycadundo" (
                                 "pycad_id" INTEGER PRIMARY KEY,
                                 "pycad_ent_id" INTEGER ,

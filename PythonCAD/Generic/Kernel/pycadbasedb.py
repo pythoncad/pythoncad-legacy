@@ -24,14 +24,12 @@
 import os
 import sys
 import sqlite3 as sql
-import logging
 
 class PyCadBaseDb(object):
     """
         this class provide base db operation
     """
     def __init__(self):
-        self.__logger=logging.getLogger('PyCadBaseDb')
         self.__dbConnection=None
     def createConnection(self,dbPath=None):
         """
@@ -40,7 +38,7 @@ class PyCadBaseDb(object):
         if dbPath is None:
             dbPath='pythoncad.pdr' 
         if not os.path.exists(dbPath):
-            self.__logger.error('Unable lo get the db %s'%str(dbPath))
+            raise IOError , 'Unable lo get the db %s'%str(dbPath)
             sys.exit()
         self.__dbConnection = sql.connect(dbPath)
         
@@ -52,7 +50,11 @@ class PyCadBaseDb(object):
             # Todo fire a warning
             self.__dbConnection.close()
         self.__dbConnection=dbConnection
-        
+    def getConnection(self):
+        """
+            Get The active connection
+        """
+        return self.__dbConnection
     def makeSelect(self,statment):
         """
             perform a select operation
@@ -61,12 +63,12 @@ class PyCadBaseDb(object):
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
         except sql.Error, _e:
-            self.__logger.error("Sql Phrase: %s"%str(statment))       
-            self.__logger.error("Sql Error: %s"%str( _e.args[0] ))
+            msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
+            print msg
             return None
         except :
             for s in sys.exc_info():
-                self.__logger.error("Generic Error: %s"%str(s))
+                print "Generic Error: %s"%str(s)
             return None
         return _rows
     
@@ -79,12 +81,12 @@ class PyCadBaseDb(object):
             _rows = _cursor.execute(statment)
             self.__dbConnection.commit()
         except sql.Error, _e:
-            self.__logger.error("Sql Phrase: %s"%str(statment))       
-            self.__logger.error("Sql Error: %s"%str( _e.args[0] ))
+            msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
+            raise KeyError,msg
         except :
             for s in sys.exc_info():
-                self.__logger.error("Generic Error: %s"%str(s))
-
+                print "Generic Error: %s"%str(s)
+            raise KeyError
     def close(self):
         """
             close the database connection

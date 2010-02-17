@@ -24,6 +24,7 @@
 from pycadstyle import PyCadStyle
 from pycadobject import PyCadObject
 
+PY_CAD_ENT=['POINT','SEGMENT']
 
 class PyCadEnt(PyCadObject):
     """
@@ -34,13 +35,13 @@ class PyCadEnt(PyCadObject):
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported' 
         self.__entType=entType
-        if not (PyCadStyle is None or isinstance(style,PyCadStyle) ):          
-            raise TypeError,'style not supported' 
+        #if not (PyCadStyle is None or isinstance(style,PyCadStyle) ):          
+        #    raise TypeError,'style not supported' 
         self.__style=style        
         if not isinstance(constructionPoints,dict):
             raise TypeError,'type error in dictionary'
         self.__PointDic=constructionPoints
-        
+
     def getConstructionPoint(self):
         """
             return the base entity array
@@ -52,19 +53,23 @@ class PyCadEnt(PyCadObject):
             Get the entity type 
         """
         return self.__entType
+    
     eType=property(getEntityType,None,None,"Get the etity type read only attributes")
+
     def getStyle(self):
         """
             get the object style
         """
         return self.__style
+    
     def setStyle(self,style):
         """
             set/update the entity style
         """
-        if not isinstance(style,PyCadStyle):
-            raise TypeError,'Type error in style'
-        self.__style=style        
+        #if not isinstance(style,PyCadStyle):
+        #    raise TypeError,'Type error in style'
+        self.__style=style   
+        
     style=property(getStyle,setStyle,None,"Get/Set the entity style")
 
 
