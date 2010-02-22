@@ -31,6 +31,7 @@ class PyCadBaseDb(object):
     """
     def __init__(self):
         self.__dbConnection=None
+        self.__commit=True
     def createConnection(self,dbPath=None):
         """
             create the connection with the database
@@ -50,11 +51,13 @@ class PyCadBaseDb(object):
             # Todo fire a warning
             self.__dbConnection.close()
         self.__dbConnection=dbConnection
+        
     def getConnection(self):
         """
             Get The active connection
         """
         return self.__dbConnection
+    
     def makeSelect(self,statment):
         """
             perform a select operation
@@ -72,6 +75,18 @@ class PyCadBaseDb(object):
             return None
         return _rows
     
+    def fetchOneRow(self,sqlSelect):
+        """
+            get the first row of the select
+        """
+        _rows=self.makeSelect(sqlSelect)
+        if _rows is None:
+            raise TypeError, "No row fatched in undo search "
+        _row=_rows.fetchone()
+        if _row is None or _row[0] is None:
+            return None
+        return _row[0]
+    
     def makeUpdateInsert(self,statment):
         """
             make an update Inster operation
@@ -79,7 +94,9 @@ class PyCadBaseDb(object):
         try:
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
-            self.__dbConnection.commit()
+            if self.__commit:
+                print "Perform Commit"
+                self.performCommit()                
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
             raise KeyError,msg
@@ -87,8 +104,27 @@ class PyCadBaseDb(object):
             for s in sys.exc_info():
                 print "Generic Error: %s"%str(s)
             raise KeyError
+
     def close(self):
         """
             close the database connection
         """
         self.__dbConnection.close()
+
+    def suspendCommit(self):
+        """
+            suspend the commit in the update\insert
+        """
+        self.__commit=False
+
+    def reactiveCommit(self):
+        """
+            reactive the commit in the update\insert
+        """
+        self.__commit=True
+
+    def performCommit(self):
+        """
+            perform a commit 
+        """
+        self.__dbConnection.commit()

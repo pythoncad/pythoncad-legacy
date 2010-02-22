@@ -23,11 +23,10 @@
 
 import cPickle
 
-
-from pycadbasedb import PyCadBaseDb
 from pycadent       import PyCadEnt
 from pycadstyle     import PyCadStyle
- 
+from pycadbasedb    import PyCadBaseDb
+
 class PyCadEntDb(PyCadBaseDb):
     """
         this class provide the besic operation for the entity
@@ -44,15 +43,19 @@ class PyCadEntDb(PyCadBaseDb):
         if _table is None:
             _sqlCreation="""CREATE TABLE pycadent(
                     pycad_id INTEGER PRIMARY KEY,
-                    pycad_entity_id NUMERIC,
+                    pycad_entity_id INTEGER,
                     pycad_object_type TEXT,
                     pycad_object_definition TEXT,
                     pycad_style_id INTEGER,
                     pycad_security_id INTEGER,
+                    pycad_undo_id INTEGER,
+                    pycad_date NUMERIC,
+                    pycad_visible INTEGER,
+                    pycad_undo_visible INTEGER,
                     pycad_locked INTEGER)"""
             self.makeUpdateInsert(_sqlCreation)
             
-    def saveEntity(self,entityObj):
+    def saveEntity(self,entityObj,undoId):
         """
             this method save the entity in the db
             entityObj = object that we whant to store
@@ -65,8 +68,15 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
-                    pycad_style_id) VALUES
-                    (%s,"%s","%s",%s)"""%(str(_entityId),str(_entityType),str(_entityDump),str(_styleId))
+                    pycad_style_id,
+                    pycad_undo_id,
+                    pycad_undo_visible) VALUES
+                    (%s,"%s","%s",%s,%s,1)"""%(
+                    str(_entityId),
+                    str(_entityType),
+                    str(_entityDump),
+                    str(_styleId),
+                    str(undoId))
         self.makeUpdateInsert(_sqlInsert)
         
     def getEntity(self,entityTableId):
@@ -143,7 +153,26 @@ class PyCadEntDb(PyCadBaseDb):
                 if _dbEntRow[0] is not None:
                     _outObj=int(_dbEntRow[0])
         return _outObj
-    
+
+    def markUndoVisibility(self,undoId,visible):
+        """
+            set as undo visible all the entity with undoId
+        """
+        _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
+                    WHERE pycad_undo_id=%s"""%(str(visible),str(undoId))
+        self.makeUpdateInsert(_sqlInsert)
+
+    def delete(self,entityObj):
+        """
+            delete the entity from db
+        """
+        _entityId=entityObj.getId()
+        if len(self.getEntitys(_entityId)) <=0:
+            raise EntDb, "The entity with id %s dose not exsist"%str(_entityId)
+        _sqlDelete="""DELETE FROM pycadent 
+            WHERE pycad_entity_id='%s'"""%str(_entityId)
+        self.makeUpdateInsert(_sqlInsert)
+        
 def test():
     print "*"*10+" Start Test"
     dbEnt=PyCadEntDb(None)
@@ -152,7 +181,7 @@ def test():
     print "PyCadStyle Created"
     ent=PyCadEnt('POINT',{'a':10},style,1)
     print "PyCadEnt Created"
-    dbEnt.saveEntity(ent)
+    dbEnt.saveEntity(ent,1)
     print "PyCadEnt Saved"
     obj=dbEnt.getEntity(1)
     print "getEntity [%s]"%str(obj)
@@ -164,3 +193,6 @@ def test():
     _newId=dbEnt.getNewEntId()
     print "New id %i"%(_newId)
 
+    #to be tested 
+    #markUndoVisibility
+    #delete

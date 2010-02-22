@@ -33,7 +33,7 @@ from pycadentdb     import PyCadEntDb
 from pycadent       import PyCadEnt 
 from pycadbasedb    import PyCadBaseDb
 from pycadstyle     import PyCadStyle
-
+from pycaddbexception import EmptyDbSelect
 from Entity.point import *
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
@@ -47,12 +47,9 @@ level = LEVELS.get('PyCad_Error', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
- 
-   
-
 class PyCadDbKernel(PyCadBaseDb):
     """
-        this class provide basic operation on the pycad db database
+        This class provide basic operation on the pycad db database
         dbPath: is the path the database if None look in the some directory.
     """
     def __init__(self,dbPath=None):
@@ -63,7 +60,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('__init__')
         PyCadBaseDb.__init__(self)
         self.createConnection(dbPath)
-        #inizialize extentionObject
+        # inizialize extentionObject
         self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
         self.__pyCadEntDb=PyCadEntDb(self.getConnection())
         # set the default style
@@ -73,17 +70,24 @@ class PyCadDbKernel(PyCadBaseDb):
         self.saveEntityEvent=PyCadkernelEvent()
         self.deleteEntityEvent=PyCadkernelEvent()
         self.__logger.debug('Done inizialization')
-        self.__undoActive=True
-    def suspendUndo(self):
+        self.__bulkCommit=False
+        self.__entId=self.__pyCadEntDb.getNewEntId()
+        self.__bulkUndoIndex=-1 #undo index are alweys positive so we do not breke incase missing entity id
+
+    def startMassiveCreation(self):
         """
             suspend the undo for write operation
         """
-        self.__undoActive=False
-    def activeUndo(self):
+        self.__bulkCommit=True
+        self.__bulkUndoIndex=self.__pyCadUndoDb.getNewUndo()
+
+    def stopMassiveCreation(self):
         """
             Reactive the undo trace 
         """
-        self.__undoActive=True
+        self.__bulkCommit=False
+        self.__bulkUndoIndex=-1
+
     def getEntity(self,entId):
         """
             get the entity from a given id
@@ -95,36 +99,33 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the entity into the database
         """
-        if isinstance(entity,Point):
-            self.savePoint(entity)
-        else:
-            raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
-
-
+        try:
+            self.__pyCadUndoDb.suspendCommit()
+            self.__pyCadEntDb.suspendCommit()
+            if isinstance(entity,Point):
+                self.savePoint(entity)
+            else:
+                raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
+            if not self.__bulkCommit:
+                self.__pyCadUndoDb.reactiveCommit()
+                self.__pyCadEntDb.reactiveCommit()
+                self.performCommit()
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
+         
     def savePoint(self,point):
         """
             save the point in to the dartabase
         """
-        startTime=time.clock()
-        _newId=self.__pyCadEntDb.getNewEntId()
-        endTime=time.clock()-startTime
-        print "Get New id in : %ss"%(str(endTime))
-        _newId+=1
+        self.__entId+=1
         _points={}
         _points['POINT']=point
-        startTime=time.clock()
-        _newDbEnt=PyCadEnt('POINT',_points,self.getActiveStyle(),_newId)
-        endTime=time.clock()-startTime
-        print "Create PyCadEnt in : %ss"%(str(endTime))
-        startTime=time.clock()
-        self.__pyCadEntDb.saveEntity(_newDbEnt)
-        endTime=time.clock()-startTime
-        print "Save PyCadEnt in : %ss"%(str(endTime))
-        if self.__undoActive:
-            startTime=time.clock()
-            self.__pyCadUndoDb.getNextUndo(_newId)
-            endTime=time.clock()-startTime
-            print "getNextUndo  in : %ss"%(str(endTime))            
+        _newDbEnt=PyCadEnt('POINT',_points,self.getActiveStyle(),self.__entId)
+        if self.__bulkUndoIndex>=0:
+            self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
+        else:
+            self.__pyCadEntDb.saveEntity(_newDbEnt,self.__pyCadUndoDb.getNewUndo())
         
     def getActiveStyle(self):
         """
@@ -163,7 +164,56 @@ class PyCadDbKernel(PyCadBaseDb):
         pass
         
     activeStyleId=property(getActiveStyle,setActiveStyle)
- 
+
+    def unDo(self):
+        """
+            perform an undo operation
+        """
+        try:
+            _newUndo=self.__pyCadUndoDb.dbUndo()
+            self.setUndoVisible(_newUndo)
+            self.setUndoHide(self.__pyCadUndoDb.getActiveUndoId())
+        except UndoDb:
+            print "Unable to perform undo : no elemnt to undo"
+            # manage with a new raise or somthing else
+        
+        
+    def reDo(self):
+        """
+            perform a redo operation
+        """
+        try:
+            _activeRedo=self.__pyCadUndoDb.dbRedo()
+            self.setUndoVisible(_newUndo)
+        except UndoDb:
+            print "Unable to perform redo : no element to redo"
+
+    def setUndoVisible(self,undoId):
+        """
+            mark as undo visible all the entity with undoId
+        """
+        self.__pyCadEntDb.markUndoVisibility(undoId,1)
+        #toto : perform an event call for refresh
+        
+    def setUndoHide(self,undoId):
+        """
+            mark as  undo hide all the entity with undoId
+        """
+        self.__pyCadEntDb.markUndoVisibility(undoId,0)
+        #toto : perform an event call for refresh
+        
+    def clearUnDoHistory(self):
+        """
+            perform a clear history operation
+        """
+        self.__pyCadUndoDb.clearUndoTable()
+
+    def deleteEntity(self,entity):
+        """
+            delete the entity from the database
+        """
+        pass
+
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel
@@ -193,22 +243,29 @@ class PyCadkernelEvent(object):
     __isub__ = unhandle
     __call__ = fire
     __len__  = getHandlerCount
-
-
-      
-   
+  
 def test():
     logging.debug( "Create db kernel")
     kr=PyCadDbKernel()
     logging.debug("Create a point")
     startTime=time.clock()
     nEnt=1
-    #kr.suspendUndo()
+    #kr.startMassiveCreation()
     for i in range(nEnt):
         basePoint=Point(10,i)
         kr.saveEntity(basePoint)
+    #kr.performCommit()
     endTime=time.clock()-startTime
     print "Create n: %s entity in : %ss"%(str(nEnt ),str(endTime))
-
-
+    kr.unDo()  
+    kr.reDo()
+    
 test()
+
+"""
+    to be tested :
+    deleteEntity
+    setUndoHide
+    setUndoVisible
+    saveEntity
+"""
