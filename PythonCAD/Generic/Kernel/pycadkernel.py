@@ -30,7 +30,7 @@ import time
 
 from pycadundodb    import PyCadUndoDb
 from pycadentdb     import PyCadEntDb
-from pycadent       import PyCadEnt 
+from pycadent       import PyCadEnt
 from pycadbasedb    import PyCadBaseDb
 from pycadstyle     import PyCadStyle
 from pycaddbexception import EmptyDbSelect
@@ -42,8 +42,8 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Error': logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
 
-#set the debug level 
-level = LEVELS.get('PyCad_Error', logging.NOTSET) 
+#set the debug level
+level = LEVELS.get('PyCad_Error', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
@@ -83,7 +83,7 @@ class PyCadDbKernel(PyCadBaseDb):
 
     def stopMassiveCreation(self):
         """
-            Reactive the undo trace 
+            Reactive the undo trace
         """
         self.__bulkCommit=False
         self.__bulkUndoIndex=-1
@@ -121,12 +121,14 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__entId+=1
         _points={}
         _points['POINT']=point
+
         _newDbEnt=PyCadEnt('POINT',_points,self.getActiveStyle(),self.__entId)
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__pyCadUndoDb.getNewUndo())
         
+
     def getActiveStyle(self):
         """
             Get the current style
@@ -134,7 +136,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('getActiveStyle')
         #return the id of the active style
         if self.__activeStyleObj==None:
-            self.setActiveStyle(0) # in this case get the first style 
+            self.setActiveStyle(0) # in this case get the first style
         return self.__activeStyleObj
 
     def setActiveStyle(self,id,name=None):
@@ -147,10 +149,10 @@ class PyCadDbKernel(PyCadBaseDb):
         # get from db the object style pickled
         # set in a global variable self.__activeStyleObj=_newStyle
         pass
-        
+
     def getStyle(self,id,name=None):
         """
-            get the style object 
+            get the style object
         """
         #get the style object of the give id
         pass
@@ -162,8 +164,9 @@ class PyCadDbKernel(PyCadBaseDb):
         # Make a query at the style Table and return an array of (stylesName,id)
         # this method is used for populate the style form ..
         pass
-        
+
     activeStyleId=property(getActiveStyle,setActiveStyle)
+
 
     def unDo(self):
         """
@@ -214,6 +217,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         pass
 
+
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel
@@ -243,7 +247,7 @@ class PyCadkernelEvent(object):
     __isub__ = unhandle
     __call__ = fire
     __len__  = getHandlerCount
-  
+
 def test():
     logging.debug( "Create db kernel")
     kr=PyCadDbKernel()
@@ -257,6 +261,7 @@ def test():
     #kr.performCommit()
     endTime=time.clock()-startTime
     print "Create n: %s entity in : %ss"%(str(nEnt ),str(endTime))
+
     kr.unDo()  
     kr.reDo()
     
@@ -269,3 +274,4 @@ test()
     setUndoVisible
     saveEntity
 """
+
