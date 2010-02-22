@@ -33,7 +33,8 @@ from pycadentdb     import PyCadEntDb
 from pycadent       import PyCadEnt
 from pycadbasedb    import PyCadBaseDb
 from pycadstyle     import PyCadStyle
-from pycaddbexception import EmptyDbSelect
+from pycaddbexception import *
+
 from Entity.point import *
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
@@ -187,7 +188,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         try:
             _activeRedo=self.__pyCadUndoDb.dbRedo()
-            self.setUndoVisible(_newUndo)
+            self.setUndoVisible(_activeRedo)
         except UndoDb:
             print "Unable to perform redo : no element to redo"
 
@@ -196,6 +197,7 @@ class PyCadDbKernel(PyCadBaseDb):
             mark as undo visible all the entity with undoId
         """
         self.__pyCadEntDb.markUndoVisibility(undoId,1)
+        self.__pyCadEntDb.performCommit()
         #toto : perform an event call for refresh
         
     def setUndoHide(self,undoId):
@@ -203,6 +205,7 @@ class PyCadDbKernel(PyCadBaseDb):
             mark as  undo hide all the entity with undoId
         """
         self.__pyCadEntDb.markUndoVisibility(undoId,0)
+        self.__pyCadEntDb.performCommit()
         #toto : perform an event call for refresh
         
     def clearUnDoHistory(self):
@@ -249,29 +252,39 @@ class PyCadkernelEvent(object):
     __len__  = getHandlerCount
 
 def test():
-    logging.debug( "Create db kernel")
+    print "Create pycad object"
     kr=PyCadDbKernel()
-    logging.debug("Create a point")
+    #startTime=time.clock()
+    #print "Create a single point"
+    #basePoint=Point(10,1)
+    #kr.saveEntity(basePoint)
+    #endTime=time.clock()-startTime
+    #print "Time for saving  a single point   %ss"%str(endTime)
+    print "start massive creation of point"
+    nEnt=100000
     startTime=time.clock()
-    nEnt=1
-    #kr.startMassiveCreation()
+    kr.startMassiveCreation()
     for i in range(nEnt):
         basePoint=Point(10,i)
         kr.saveEntity(basePoint)
-    #kr.performCommit()
+    kr.performCommit()
     endTime=time.clock()-startTime
     print "Create n: %s entity in : %ss"%(str(nEnt ),str(endTime))
-
-    kr.unDo()  
-    kr.reDo()
+    #print "Perform Undo"
+    #kr.unDo()  
+    #print "perform Undo"
+    #kr.unDo()  
+    #print "Perform Redo"
+    #kr.reDo()
     
-#test()
+test()
 
 """
-    to be tested :
+TODO:
+    IMPROVE COMMIT SISTEM ...
+
+TO BE TESTED:
     deleteEntity
-    setUndoHide
-    setUndoVisible
-    saveEntity
+    
 """
 

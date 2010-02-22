@@ -160,8 +160,7 @@ class PyCadEntDb(PyCadBaseDb):
         """
         _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
                     WHERE pycad_undo_id=%s"""%(str(visible),str(undoId))
-        self.makeUpdateInsert(_sqlInsert)
-
+        self.makeUpdateInsert(_sqlVisible)
     def delete(self,entityObj):
         """
             delete the entity from db

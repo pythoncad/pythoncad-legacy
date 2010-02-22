@@ -89,7 +89,6 @@ class PyCadUndoDb(PyCadBaseDb):
         """
             perform the redo operation
         """
-        print "active undo",self.__activeUndo
         _id=self.__activeUndo+1
         while _id<self.__lastUndo:
             if self.undoIdExsist(_id):
