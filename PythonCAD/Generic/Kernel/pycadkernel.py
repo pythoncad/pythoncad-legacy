@@ -265,7 +265,7 @@ def test():
     kr.unDo()  
     kr.reDo()
     
-test()
+#test()
 
 """
     to be tested :

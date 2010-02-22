@@ -147,12 +147,11 @@ class PyCadUndoDb(PyCadBaseDb):
                     (pycad_incremental_id) VALUES (%s)"""%str(undoId)
         self.makeUpdateInsert(_sqlDelete)  
  
-   def getMaxUndoId(self):
+    def getMaxUndoId(self):      
         """
             return the undo id
         """
         return self.__lastUndo
-    
     def getActiveUndoId(self):
         """
             return the active undo id

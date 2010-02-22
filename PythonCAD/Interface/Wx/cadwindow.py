@@ -1,8 +1,8 @@
 import wx
 import os
 
-from Interface.Wx.document import Document
-from Interface.Wx.viewport import ViewPort
+from PythonCAD.Interface.Wx.document import Document
+from PythonCAD.Interface.Wx.viewport import ViewPort
 
 
 class CadWindow(wx.Frame):

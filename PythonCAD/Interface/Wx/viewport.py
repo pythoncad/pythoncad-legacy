@@ -4,7 +4,7 @@ import wx
 import colorsys
 from math import cos, sin, radians
 
-from Interface.Wx.displaylist import DisplayList
+from PythonCAD.Interface.Wx.displaylist import DisplayList
 
 
 class ViewPort(wx.Panel):
