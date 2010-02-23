@@ -8,3 +8,7 @@ class DisplayList(object):
 
     def Execute(self, dc):
         pass
+
+    def Clear(self):
+        pass
+    

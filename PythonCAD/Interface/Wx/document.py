@@ -1,5 +1,5 @@
 
-from PythonCAD.Generic.Kernel.pycadkernel import PyCadDbKernel
+from Generic.Kernel.pycadkernel import PyCadDbKernel
 
 
 class Document(object):
@@ -20,4 +20,6 @@ class Document(object):
 
         # open a new kernel
         self.__cadkernel = PyCadDbKernel(filename)
+        # draw all items
+        self.__cadwindow.Viewport.ZoomAll()
         

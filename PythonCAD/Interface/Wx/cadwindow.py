@@ -1,22 +1,20 @@
 import wx
 import os
 
-from PythonCAD.Interface.Wx.document import Document
-from PythonCAD.Interface.Wx.viewport import ViewPort
+from Interface.Wx.document import Document
+from Interface.Wx.viewport import ViewPort
 
 
 class CadWindow(wx.Frame):
 
     def __init__(self, parent, title):
-        self.dirname=''
+        # standard file open location
+        self.__dirname = ''
 
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(-1, -1))
-        # standard file open location
-        #paths = wx.StandardPaths()
-        self.__dirname = None #wx.StandardPaths.standGetDocumentsDir()
-        # create ducument
+        # create document
         self.__document = Document(self)
         # create viewport
         self.__viewport = ViewPort(self)
@@ -26,11 +24,11 @@ class CadWindow(wx.Frame):
         filemenu= wx.Menu()
         menuOpen = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
         menuAbout= filemenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
-        menuExit = filemenu.Append(wx.ID_EXIT,"E&xit"," Terminate the program")
+        menuExit = filemenu.Append(wx.ID_EXIT, "E&xit"," Terminate the program")
 
         # Creating the menubar.
         menuBar = wx.MenuBar()
-        menuBar.Append(filemenu,"&File") # Adding the "filemenu" to the MenuBar
+        menuBar.Append(filemenu, "&File") # Adding the "filemenu" to the MenuBar
         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
 
         # Events.

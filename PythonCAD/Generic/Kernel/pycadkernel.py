@@ -277,7 +277,7 @@ def test():
     #print "Perform Redo"
     #kr.reDo()
     
-test()
+#GGR test()
 
 """
 TODO:

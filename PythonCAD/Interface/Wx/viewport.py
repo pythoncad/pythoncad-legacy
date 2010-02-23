@@ -4,7 +4,7 @@ import wx
 import colorsys
 from math import cos, sin, radians
 
-from PythonCAD.Interface.Wx.displaylist import DisplayList
+from Interface.Wx.displaylist import DisplayList
 
 
 class ViewPort(wx.Panel):
@@ -28,7 +28,12 @@ class ViewPort(wx.Panel):
 
 
     def ZoomAll(self):
-        pass
+        # clear current displaylist
+        self.__displaylist.Clear()
+        # build new displaylist
+        
+        # draw the displaylist
+        self.Refresh()
 
 
     def ZoomIn(self):
