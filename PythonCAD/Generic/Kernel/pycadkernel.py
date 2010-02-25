@@ -296,5 +296,3 @@ TODO:
     go on with the segment storage
 """
 
-
-
