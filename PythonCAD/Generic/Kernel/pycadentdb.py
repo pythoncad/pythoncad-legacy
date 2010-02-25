@@ -23,9 +23,9 @@
 
 import cPickle
 
-from pycadent       import PyCadEnt
-from pycadstyle     import PyCadStyle
-from pycadbasedb    import PyCadBaseDb
+from pycadent               import PyCadEnt
+from Entity.pycadstyle      import PyCadStyle
+from pycadbasedb            import PyCadBaseDb
 
 class PyCadEntDb(PyCadBaseDb):
     """
@@ -49,10 +49,15 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_style_id INTEGER,
                     pycad_security_id INTEGER,
                     pycad_undo_id INTEGER,
+                    pycad_entity_state TEXT,
                     pycad_date NUMERIC,
                     pycad_visible INTEGER,
                     pycad_undo_visible INTEGER,
-                    pycad_locked INTEGER)"""
+                    pycad_locked INTEGER,
+                    pycad_bbox_xmin REAL,
+                    pycad_bbox_ymin REAL,
+                    pycad_bbox_xmax REAL,
+                    pycad_bbox_ymax REAL)"""
             self.makeUpdateInsert(_sqlCreation)
             
     def saveEntity(self,entityObj,undoId):
@@ -64,19 +69,28 @@ class PyCadEntDb(PyCadBaseDb):
         _entityDump=cPickle.dumps(entityObj.getConstructionPoint())
         _entityType=entityObj.getEntityType()
         _styleId=entityObj.getStyle().getId()
+        _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _sqlInsert="""INSERT INTO pycadent (
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
                     pycad_style_id,
                     pycad_undo_id,
-                    pycad_undo_visible) VALUES
-                    (%s,"%s","%s",%s,%s,1)"""%(
+                    pycad_undo_visible,
+                    pycad_bbox_xmin,
+                    pycad_bbox_ymin,
+                    pycad_bbox_xmax,
+                    pycad_bbox_ymax) VALUES
+                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s)"""%(
                     str(_entityId),
                     str(_entityType),
                     str(_entityDump),
                     str(_styleId),
-                    str(undoId))
+                    str(undoId),
+                    str(_xMin),
+                    str(_yMin),
+                    str(_xMax),
+                    str(_yMax))
         self.makeUpdateInsert(_sqlInsert)
         
     def getEntity(self,entityTableId):
@@ -161,6 +175,29 @@ class PyCadEntDb(PyCadBaseDb):
         _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
                     WHERE pycad_undo_id=%s"""%(str(visible),str(undoId))
         self.makeUpdateInsert(_sqlVisible)
+
+    def markEntVisibility(self,entId,visible):
+        """
+            mark the visibility of the entity
+        """
+        _tableId="""SELECT MAX(pycad_id) FROM pycadent 
+                    WHERE pycad_entity_id=%s"""%str(entId)
+        _entId=self.fetchOneRow(_tableId)
+        if _entId is None:
+            raise EmptyDbSelect, "Unable to find the entity with id %s"%str(entId)
+        # Update the entity state
+        _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
+                    WHERE pycad_id=%s"""%(str(visible),str(_entId))
+        self.makeUpdateInsert(_sqlVisible) 
+             
+    def hideAllEntityIstance(self,entId,visible):
+        """
+            hide all the row with entId
+        """
+        _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
+                    WHERE pycad_entity_id=%s"""%(str(visible),str(_entId))
+        self.makeUpdateInsert(_sqlVisible)      
+        
     def delete(self,entityObj):
         """
             delete the entity from db
@@ -172,6 +209,22 @@ class PyCadEntDb(PyCadBaseDb):
             WHERE pycad_entity_id='%s'"""%str(_entityId)
         self.makeUpdateInsert(_sqlInsert)
         
+        
+""" TODO:
+    pycad_entity_state
+    it's the new way to mark the entity ..
+    
+    state could be ..
+    ACTIVE:
+        is when the entity are create or after a redoUndo
+        means ready to be plotted on the screen and that can recive
+        event(modification, delete, )
+    
+    DELETE:
+        is when an entity is delete from the user ...
+        in this case the entity is marked as deleted .
+        en undoId is request 
+"""
 def test():
     print "*"*10+" Start Test"
     dbEnt=PyCadEntDb(None)

@@ -21,8 +21,8 @@
 # This module provide basic DB class for storing entity in pythoncad
 #
 
-from pycadstyle import PyCadStyle
-from pycadobject import PyCadObject
+from Entity.pycadstyle  import PyCadStyle
+from Entity.pycadobject import PyCadObject
 
 PY_CAD_ENT=['POINT','SEGMENT']
 
@@ -40,8 +40,21 @@ class PyCadEnt(PyCadObject):
         self.__style=style        
         if not isinstance(constructionPoints,dict):
             raise TypeError,'type error in dictionary'
+        isFirst=True
+        #for p in constructionPoints:
+        #    _x,_y=p.getCoords()
+        #    if isFirst:
+                #todo finire qui la creazione del bbox
+        #        pass 
+        self.__bBox=(0,0,0,0)               
         self.__PointDic=constructionPoints
-
+    
+    def getBBox(self):
+        """
+            get the bounding Box Of the entity
+        """
+        return self.__bBox
+    
     def getConstructionPoint(self):
         """
             return the base entity array

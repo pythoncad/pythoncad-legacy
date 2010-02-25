@@ -28,21 +28,8 @@ import math
 #from PythonCAD.Generic import util
 
 class Point(object):
-    """A 2-D point Class.
-
-A Point has the following attributes:
-
-x: x-coordinate
-y: y-coordinate
-
-A Point object has the following methods:
-
-{get/set}x(): Get/Set the x-coordinate of the Point.
-{get/set}y(): Get/Set the y-coordinate of the Point.
-{get/set}Coords(): Get/Set both the x and y coordinates of the Point.
-move(): Move a Point.
-clone(): Return an identical copy of a Point.
-inRegion(): Returns True if the point is in some area.
+    """
+        A 2-D point Class.
     """
     __messages = {
         'moved' : True,

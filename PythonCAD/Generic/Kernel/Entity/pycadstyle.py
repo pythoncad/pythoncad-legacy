@@ -26,7 +26,7 @@ from pycadobject   import PyCadObject
 class PyCadStyle(PyCadObject):
         """
             this class rappresent the style in pythoncad
-            objID iss the object that rappresent the id in the db
+            objID is the object that rappresent the id in the db
         """
         def __init__(self,objId):
             PyCadObject.__init__(self,objId)  
