@@ -28,14 +28,17 @@ import cPickle
 import logging
 import time
 
-from pycadundodb    import PyCadUndoDb
-from pycadentdb     import PyCadEntDb
-from pycadent       import PyCadEnt
-from pycadbasedb    import PyCadBaseDb
-from pycadstyle     import PyCadStyle
-from pycaddbexception import *
+from pycadundodb        import PyCadUndoDb
+from pycadentdb         import PyCadEntDb
+from pycadent           import PyCadEnt
+from pycadbasedb        import PyCadBaseDb
+from pycadrelation      import PyCadRelDb
+from pycaddbexception   import *
 
-from Entity.point import *
+from Entity.point       import Point
+from Entity.segment     import Segment
+
+from Entity.pycadstyle  import PyCadStyle
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,
@@ -64,17 +67,27 @@ class PyCadDbKernel(PyCadBaseDb):
         # inizialize extentionObject
         self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
         self.__pyCadEntDb=PyCadEntDb(self.getConnection())
+        self.__pyCadRelDb=PyCadRelDb(self.getConnection())
         # set the default style
         self.__activeStyleObj=PyCadStyle(0)
         # set the events
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadkernelEvent()
         self.deleteEntityEvent=PyCadkernelEvent()
+        self.showEnt=PyCadkernelEvent()
+        self.hideEnt=PyCadkernelEvent()
+        # Some inizialization parameter
         self.__logger.debug('Done inizialization')
         self.__bulkCommit=False
         self.__entId=self.__pyCadEntDb.getNewEntId()
         self.__bulkUndoIndex=-1 #undo index are alweys positive so we do not breke incase missing entity id
 
+    def getActiveLayer(self):
+        """
+            get the current layer
+        """
+        
+    
     def startMassiveCreation(self):
         """
             suspend the undo for write operation
@@ -103,8 +116,11 @@ class PyCadDbKernel(PyCadBaseDb):
         try:
             self.__pyCadUndoDb.suspendCommit()
             self.__pyCadEntDb.suspendCommit()
+            print "saveEntity EntType ",type(entity)
             if isinstance(entity,Point):
                 self.savePoint(entity)
+            if isinstance(entity,Segment):
+                self.saveSegment(entity)
             else:
                 raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
             if not self.__bulkCommit:
@@ -117,19 +133,37 @@ class PyCadDbKernel(PyCadBaseDb):
          
     def savePoint(self,point):
         """
-            save the point in to the dartabase
+            save the point in to the db
         """
         self.__entId+=1
         _points={}
         _points['POINT']=point
+        self.saveDbEnt('POINT',_points)
 
-        _newDbEnt=PyCadEnt('POINT',_points,self.getActiveStyle(),self.__entId)
+    def saveSegment(self,segment):
+        
+        """
+            seve the segment into the db
+        """
+        self.__entId+=1
+        _points={}
+        p1,p2=segment.getEndpoints()
+        _points['POINT_1']=p1
+        _points['POINT_2']=p2
+        self.saveDbEnt('SEGMENT',_points)
+        
+    def saveDbEnt(self,entType,points):
+        """
+            save the DbEnt to db
+        """
+        _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__pyCadUndoDb.getNewUndo())
+        self.saveEntityEvent(self,_newDbEnt)
+        self.showEnt(self,_newDbEnt)
         
-
     def getActiveStyle(self):
         """
             Get the current style
@@ -167,7 +201,6 @@ class PyCadDbKernel(PyCadBaseDb):
         pass
 
     activeStyleId=property(getActiveStyle,setActiveStyle)
-
 
     def unDo(self):
         """
@@ -214,11 +247,16 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__pyCadUndoDb.clearUndoTable()
 
-    def deleteEntity(self,entity):
+    def deleteEntity(self,entityID):
         """
             delete the entity from the database
         """
-        pass
+        #entitys=self.__pyCadEntDb.getEntitys(entityId)
+        
+        # Fire event after all the operatoin are ok
+        self.deleteEntityEvent(entity)
+        self.hideEnt(entity)
+        
 
 
 class PyCadkernelEvent(object):
@@ -229,7 +267,7 @@ class PyCadkernelEvent(object):
         self.handlers = set()
 
     def handle(self, handler):
-        self.handler.add(handler)
+        self.handlers.add(handler)
         return self
 
     def unhandle(self, handler):
@@ -251,40 +289,12 @@ class PyCadkernelEvent(object):
     __call__ = fire
     __len__  = getHandlerCount
 
-def test():
-    print "Create pycad object"
-    kr=PyCadDbKernel()
-    #startTime=time.clock()
-    #print "Create a single point"
-    #basePoint=Point(10,1)
-    #kr.saveEntity(basePoint)
-    #endTime=time.clock()-startTime
-    #print "Time for saving  a single point   %ss"%str(endTime)
-    print "start massive creation of point"
-    nEnt=100000
-    startTime=time.clock()
-    kr.startMassiveCreation()
-    for i in range(nEnt):
-        basePoint=Point(10,i)
-        kr.saveEntity(basePoint)
-    kr.performCommit()
-    endTime=time.clock()-startTime
-    print "Create n: %s entity in : %ss"%(str(nEnt ),str(endTime))
-    #print "Perform Undo"
-    #kr.unDo()  
-    #print "perform Undo"
-    #kr.unDo()  
-    #print "Perform Redo"
-    #kr.reDo()
-    
-test()
 
 """
 TODO:
-    IMPROVE COMMIT SISTEM ...
-
-TO BE TESTED:
-    deleteEntity
-    
+    IMPROVE COMMIT SySTEM ...
+    go on with the segment storage
 """
+
+
 
