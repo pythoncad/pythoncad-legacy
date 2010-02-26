@@ -62,7 +62,7 @@ class Segment(object):
         _st = st
         #if _st is None:
         #    _st = self.getDefaultStyle()
-        super(Segment, self).__init__(_st, lt, col, th, **kw)
+        #super(Segment, self).__init__(_st, lt, col, th, **kw)
         self.__p1 = _p1
         self.__p2 = _p2     
 

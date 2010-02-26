@@ -86,7 +86,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             get the current layer
         """
-        
+        pass
     
     def startMassiveCreation(self):
         """
@@ -116,13 +116,16 @@ class PyCadDbKernel(PyCadBaseDb):
         try:
             self.__pyCadUndoDb.suspendCommit()
             self.__pyCadEntDb.suspendCommit()
-            print "saveEntity EntType ",type(entity)
+            #print "saveEntity EntType ",type(entity)
+            #print "type are equal",type(entity)==type(Point(10,10))
             if isinstance(entity,Point):
+            #if type(entity)==type(Point(10,10)):
                 self.savePoint(entity)
             if isinstance(entity,Segment):
                 self.saveSegment(entity)
             else:
-                raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
+                print "nofound"
+                #raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
             if not self.__bulkCommit:
                 self.__pyCadUndoDb.reactiveCommit()
                 self.__pyCadEntDb.reactiveCommit()
