@@ -23,7 +23,7 @@
 
 import cPickle
 
-from pycadent               import PyCadEnt
+from pycadent               import *
 from Entity.pycadstyle      import PyCadStyle
 from pycadbasedb            import PyCadBaseDb
 
@@ -66,7 +66,7 @@ class PyCadEntDb(PyCadBaseDb):
             entityObj = object that we whant to store
         """
         _entityId=entityObj.getId()
-        _entityDump=cPickle.dumps(entityObj.getConstructionPoint())
+        _entityDump=cPickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _styleId=entityObj.getStyle().getId()
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
@@ -153,6 +153,29 @@ class PyCadEntDb(PyCadBaseDb):
             _dumpObj=cPickle.loads(_row[3])
             _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
         return _outObj
+    
+    def getEntityFromType(self,entityType):
+        """
+            get all the entity from a given type 
+        """
+        
+        if not entityType in PY_CAD_ENT:
+            raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)
+        _outObj=[]
+        _sqlGet="""SELECT pycad_id,
+                          pycad_entity_id,
+                          pycad_object_type,
+                          pycad_object_definition,
+                          pycad_style_id
+                    FROM pycadent
+                    WHERE pycad_object_type LIKE "%s"
+                    """%str(entityType)
+        _dbEntRow=self.makeSelect(_sqlGet)
+        for _row in _dbEntRow: 
+            _style=_row[4]
+            _dumpObj=cPickle.loads(str(_row[3]))
+            _outObj.append(PyCadEnt(_row[2],_dumpObj,_style,_row[1]))
+        return _outObj            
     
     def getNewEntId(self):
         """
@@ -248,3 +271,4 @@ def test():
     #to be tested 
     #markUndoVisibility
     #delete
+    #getEntityFromType

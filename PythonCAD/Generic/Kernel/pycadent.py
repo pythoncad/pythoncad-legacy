@@ -24,7 +24,7 @@
 from Entity.pycadstyle  import PyCadStyle
 from Entity.pycadobject import PyCadObject
 
-PY_CAD_ENT=['POINT','SEGMENT']
+PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER']
 
 class PyCadEnt(PyCadObject):
     """
@@ -40,6 +40,7 @@ class PyCadEnt(PyCadObject):
         self.__style=style        
         if not isinstance(constructionPoints,dict):
             raise TypeError,'type error in dictionary'
+        self.__PointDic=constructionPoints
         isFirst=True
         #for p in constructionPoints:
         #    _x,_y=p.getCoords()
@@ -47,7 +48,7 @@ class PyCadEnt(PyCadObject):
                 #todo finire qui la creazione del bbox
         #        pass 
         self.__bBox=(0,0,0,0)               
-        self.__PointDic=constructionPoints
+        
     
     def getBBox(self):
         """
@@ -55,7 +56,7 @@ class PyCadEnt(PyCadObject):
         """
         return self.__bBox
     
-    def getConstructionPoint(self):
+    def getConstructionElements(self):
         """
             return the base entity array
         """      

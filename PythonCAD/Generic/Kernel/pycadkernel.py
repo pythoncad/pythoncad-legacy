@@ -34,6 +34,7 @@ from pycadent           import PyCadEnt
 from pycadbasedb        import PyCadBaseDb
 from pycadrelation      import PyCadRelDb
 from pycaddbexception   import *
+from pycadsettings      import PyCadSettings
 
 from Entity.point       import Point
 from Entity.segment     import Segment
@@ -80,13 +81,52 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('Done inizialization')
         self.__bulkCommit=False
         self.__entId=self.__pyCadEntDb.getNewEntId()
-        self.__bulkUndoIndex=-1 #undo index are alweys positive so we do not breke incase missing entity id
-
-    def getActiveLayer(self):
+        self.__bulkUndoIndex=-1     #undo index are alweys positive so we do not breke in case missing entity id
+        self.__settings=self.getDbSettingsObject()
+        print "set",self.__settings
+        self.__activeLayer=self.__settings.layerName
+        
+    def getLayer(self,layerName):
         """
-            get the current layer
+            get the layer object from the layerName
         """
-        pass
+        _settingsObjs=self.getEntityFromType('LAYER')
+        if len(_settingsObjs)<=0:
+            _settingsObjs=Layer('MAIN_LAYER',None,self.__activeStyleObj.getId())
+            self.saveEntity(_settingsObjs)
+        else:
+            for sto in _settingsObjs:
+                _setts=sto.getConstructionElements()
+                for i in _setts:
+                    if _setts[i].layerName==self.__settings.layer:
+                        _settingsObjs=_setts[i]
+                        break
+                else: # this is tha case in witch the layer name is not in the db (error case of lost data)
+                    for i in _setts:
+                        if _setts[i].layerName=='MAIN_LAYER':
+                            _settingsObjs=_setts[i]
+                        break
+                    else:# in case the main layer is not in the db (error case of lost data)
+                        _settingsObjs=Layer('MAIN_LAYER',None,self.__activeStyleObj.getId())
+                        self.saveEntity(_settingsObjs)    
+        return _settingsObjs
+    
+    def getDbSettingsObject(self):
+        """
+            get the pythoncad settings object
+        """
+        _settingsObjs=self.getEntityFromType('SETTINGS')
+        if len(_settingsObjs)<=0:
+            _settingsObjs=PyCadSettings('MAIN_SETTING')
+            self.saveEntity(_settingsObjs)
+        else:
+            for sto in _settingsObjs:
+                _setts=sto.getConstructionElements()
+                for i in _setts:
+                    if _setts[i].name=='MAIN_SETTING':
+                        _settingsObjs=_setts[i]
+                        break
+        return _settingsObjs
     
     def startMassiveCreation(self):
         """
@@ -108,7 +148,13 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('getEntity')
         return self.__pyCadEntDb.getEntity(entId)
-
+    
+    def getEntityFromType(self,entityType):
+        """
+            get all the entity from a specifie type
+        """
+        return self.__pyCadEntDb.getEntityFromType(entityType)
+    
     def saveEntity(self,entity):
         """
             save the entity into the database
@@ -123,6 +169,10 @@ class PyCadDbKernel(PyCadBaseDb):
                 self.savePoint(entity)
             if isinstance(entity,Segment):
                 self.saveSegment(entity)
+            if isinstance(entity,PyCadSettings):
+                self.saveSettings(entity)
+            if isinstance(entity,Layer):
+                self.saveLayer(entity)
             else:
                 print "nofound"
                 #raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
@@ -133,7 +183,8 @@ class PyCadDbKernel(PyCadBaseDb):
         except:
             print "Unexpected error:", sys.exc_info()[0]
             raise
-         
+
+        
     def savePoint(self,point):
         """
             save the point in to the db
@@ -154,7 +205,25 @@ class PyCadDbKernel(PyCadBaseDb):
         _points['POINT_1']=p1
         _points['POINT_2']=p2
         self.saveDbEnt('SEGMENT',_points)
-        
+    
+    def saveSettings(self,settingsObj):
+        """
+            save the settings object
+        """
+        self.__entId+=1
+        _points={}
+        _points['SETTINGS']=settingsObj
+        self.saveDbEnt('SETTINGS',_points)
+    
+    def saveSettings(self,layerObj):
+        """
+            save the layer object
+        """
+        self.__entId+=1
+        _points={}
+        _points['LAYER']=layerObj
+        self.saveDbEnt('LAYER',_points)            
+    
     def saveDbEnt(self,entType,points):
         """
             save the DbEnt to db

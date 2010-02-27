@@ -71,9 +71,9 @@ def test():
     print "Add creation event"
     #kr.saveEntityEvent+=printId
     #testSinglePoint(kr)
-    testMultiPoints(kr,1)
+    #testMultiPoints(kr,1)
     #testSingleSegment(kr)
-    testMultiSegments(kr,1)
+    #testMultiSegments(kr,1)
     #testMultiSegments(kr,10)
     #testMultiSegments(kr,100)
     #testMultiSegments(kr,1000)
