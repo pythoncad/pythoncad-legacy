@@ -91,6 +91,7 @@ class PyCadBaseDb(object):
         """
             make an update Inster operation
         """
+        #print "qui1 : sql ",statment
         try:
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
@@ -127,4 +128,7 @@ class PyCadBaseDb(object):
         """
             perform a commit 
         """
-        self.__dbConnection.commit()
+        try:
+            self.__dbConnection.commit()
+        except:
+            print "Error on commit"

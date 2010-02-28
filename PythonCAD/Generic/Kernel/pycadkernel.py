@@ -28,18 +28,18 @@ import cPickle
 import logging
 import time
 
+from pycaddbexception   import *
 from pycadundodb        import PyCadUndoDb
 from pycadentdb         import PyCadEntDb
 from pycadent           import PyCadEnt
 from pycadbasedb        import PyCadBaseDb
 from pycadrelation      import PyCadRelDb
-from pycaddbexception   import *
 from pycadsettings      import PyCadSettings
 
 from Entity.point       import Point
 from Entity.segment     import Segment
-
 from Entity.pycadstyle  import PyCadStyle
+from Entity.layer       import Layer
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,
@@ -47,8 +47,10 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Error': logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
 
+SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings)
+
 #set the debug level
-level = LEVELS.get('PyCad_Error', logging.NOTSET)
+level = LEVELS.get('PyCad_Debug', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
@@ -69,8 +71,6 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
         self.__pyCadEntDb=PyCadEntDb(self.getConnection())
         self.__pyCadRelDb=PyCadRelDb(self.getConnection())
-        # set the default style
-        self.__activeStyleObj=PyCadStyle(0)
         # set the events
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadkernelEvent()
@@ -78,18 +78,21 @@ class PyCadDbKernel(PyCadBaseDb):
         self.showEnt=PyCadkernelEvent()
         self.hideEnt=PyCadkernelEvent()
         # Some inizialization parameter
-        self.__logger.debug('Done inizialization')
+        #   set the default style
+        self.__logger.debug('Set Style')        
+        self.__activeStyleObj=PyCadStyle(0)
         self.__bulkCommit=False
         self.__entId=self.__pyCadEntDb.getNewEntId()
         self.__bulkUndoIndex=-1     #undo index are alweys positive so we do not breke in case missing entity id
         self.__settings=self.getDbSettingsObject()
-        print "set",self.__settings
-        self.__activeLayer=self.__settings.layerName
-        
+        self.__activeLayer=self.getLayer(self.__settings.layerName)
+        self.__logger.debug('Done inizialization')
+                
     def getLayer(self,layerName):
         """
             get the layer object from the layerName
         """
+        self.__logger.debug('getLayer')
         _settingsObjs=self.getEntityFromType('LAYER')
         if len(_settingsObjs)<=0:
             _settingsObjs=Layer('MAIN_LAYER',None,self.__activeStyleObj.getId())
@@ -98,12 +101,12 @@ class PyCadDbKernel(PyCadBaseDb):
             for sto in _settingsObjs:
                 _setts=sto.getConstructionElements()
                 for i in _setts:
-                    if _setts[i].layerName==self.__settings.layer:
+                    if _setts[i].name==self.__settings.layerName:
                         _settingsObjs=_setts[i]
                         break
                 else: # this is tha case in witch the layer name is not in the db (error case of lost data)
                     for i in _setts:
-                        if _setts[i].layerName=='MAIN_LAYER':
+                        if _setts[i].name=='MAIN_LAYER':
                             _settingsObjs=_setts[i]
                         break
                     else:# in case the main layer is not in the db (error case of lost data)
@@ -115,6 +118,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             get the pythoncad settings object
         """
+        self.__logger.debug('getDbSettingsObject')
         _settingsObjs=self.getEntityFromType('SETTINGS')
         if len(_settingsObjs)<=0:
             _settingsObjs=PyCadSettings('MAIN_SETTING')
@@ -132,6 +136,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             suspend the undo for write operation
         """
+        self.__logger.debug('startMassiveCreation')
         self.__bulkCommit=True
         self.__bulkUndoIndex=self.__pyCadUndoDb.getNewUndo()
 
@@ -139,6 +144,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             Reactive the undo trace
         """
+        self.__logger.debug('stopMassiveCreation')
         self.__bulkCommit=False
         self.__bulkUndoIndex=-1
 
@@ -153,19 +159,22 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             get all the entity from a specifie type
         """
+        self.__logger.debug('getEntityFromType')
         return self.__pyCadEntDb.getEntityFromType(entityType)
     
     def saveEntity(self,entity):
         """
             save the entity into the database
         """
+        self.__logger.debug('saveEntity')            
+        if not isinstance(entity,SUPPORTED_ENTITYS):
+            msg="SaveEntity : Type %s not supported from pythoncad kernel"%type(entity)
+            self.__logger.warning(msg)
+            raise TypeError ,msg
         try:
             self.__pyCadUndoDb.suspendCommit()
             self.__pyCadEntDb.suspendCommit()
-            #print "saveEntity EntType ",type(entity)
-            #print "type are equal",type(entity)==type(Point(10,10))
             if isinstance(entity,Point):
-            #if type(entity)==type(Point(10,10)):
                 self.savePoint(entity)
             if isinstance(entity,Segment):
                 self.saveSegment(entity)
@@ -173,9 +182,6 @@ class PyCadDbKernel(PyCadBaseDb):
                 self.saveSettings(entity)
             if isinstance(entity,Layer):
                 self.saveLayer(entity)
-            else:
-                print "nofound"
-                #raise TypeError ,"Type %s not supported from pythoncad kernel"%type(entity)
             if not self.__bulkCommit:
                 self.__pyCadUndoDb.reactiveCommit()
                 self.__pyCadEntDb.reactiveCommit()
@@ -189,6 +195,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the point in to the db
         """
+        self.__logger.debug('savePoint')
         self.__entId+=1
         _points={}
         _points['POINT']=point
@@ -199,6 +206,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             seve the segment into the db
         """
+        self.__logger.debug('saveSegment')
         self.__entId+=1
         _points={}
         p1,p2=segment.getEndpoints()
@@ -210,15 +218,17 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the settings object
         """
+        self.__logger.debug('saveSettings')
         self.__entId+=1
         _points={}
         _points['SETTINGS']=settingsObj
         self.saveDbEnt('SETTINGS',_points)
     
-    def saveSettings(self,layerObj):
+    def saveLayer(self,layerObj):
         """
             save the layer object
         """
+        self.__logger.debug('saveLayer')
         self.__entId+=1
         _points={}
         _points['LAYER']=layerObj
@@ -228,6 +238,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the DbEnt to db
         """
+        self.__logger.debug('saveDbEnt')
         _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
@@ -241,7 +252,6 @@ class PyCadDbKernel(PyCadBaseDb):
             Get the current style
         """
         self.__logger.debug('getActiveStyle')
-        #return the id of the active style
         if self.__activeStyleObj==None:
             self.setActiveStyle(0) # in this case get the first style
         return self.__activeStyleObj
@@ -261,6 +271,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             get the style object
         """
+        self.__logger.debug('getStyle')
         #get the style object of the give id
         pass
     def getStyleList(self):
@@ -278,6 +289,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             perform an undo operation
         """
+        self.__logger.debug('unDo')
         try:
             _newUndo=self.__pyCadUndoDb.dbUndo()
             self.setUndoVisible(_newUndo)
@@ -291,6 +303,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             perform a redo operation
         """
+        self.__logger.debug('reDo')
         try:
             _activeRedo=self.__pyCadUndoDb.dbRedo()
             self.setUndoVisible(_activeRedo)
@@ -301,6 +314,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             mark as undo visible all the entity with undoId
         """
+        self.__logger.debug('setUndoVisible')
         self.__pyCadEntDb.markUndoVisibility(undoId,1)
         self.__pyCadEntDb.performCommit()
         #toto : perform an event call for refresh
@@ -309,6 +323,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             mark as  undo hide all the entity with undoId
         """
+        self.__logger.debug('setUndoHide')
         self.__pyCadEntDb.markUndoVisibility(undoId,0)
         self.__pyCadEntDb.performCommit()
         #toto : perform an event call for refresh
@@ -317,12 +332,14 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             perform a clear history operation
         """
+        self.__logger.debug('clearUnDoHistory')
         self.__pyCadUndoDb.clearUndoTable()
 
     def deleteEntity(self,entityID):
         """
             delete the entity from the database
         """
+        self.__logger.debug('deleteEntity')
         #entitys=self.__pyCadEntDb.getEntitys(entityId)
         
         # Fire event after all the operatoin are ok

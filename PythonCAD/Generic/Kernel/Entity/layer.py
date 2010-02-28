@@ -51,7 +51,7 @@ class Layer(object):
         """
             set the layer name
         """
-        if len(name)==0:
+        if len(layerName)==0:
             raise ValueError,"You mast provide a name for the layer"
         self.__name=layerName
     
@@ -62,7 +62,7 @@ class Layer(object):
             get the parent layer object
         """
         return self.__parentLayerObj
-    def setParent(slef,layerObj):
+    def setParent(self,layerObj):
         """
             set the parent layer object
         """

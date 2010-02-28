@@ -35,7 +35,7 @@ class PyCadEnt(PyCadObject):
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported' 
         self.__entType=entType
-        #if not (PyCadStyle is None or isinstance(style,PyCadStyle) ):          
+        #if not (PyCadStyle is None or isinstance(style,PyCadStyle)):          
         #    raise TypeError,'style not supported' 
         self.__style=style        
         if not isinstance(constructionPoints,dict):

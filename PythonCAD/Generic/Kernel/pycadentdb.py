@@ -92,6 +92,7 @@ class PyCadEntDb(PyCadBaseDb):
                     str(_xMax),
                     str(_yMax))
         self.makeUpdateInsert(_sqlInsert)
+
         
     def getEntity(self,entityTableId):
         """

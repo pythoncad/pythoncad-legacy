@@ -12,7 +12,7 @@ def printId(kernel,obj):
     """
         print the id of the obj
     """
-    print "PrintId Event objId: %s"%str(obj.getId())
+    print "Save Entity: %s"%str(type(obj))
     
 def testSinglePoint(kernel):
     """
@@ -68,7 +68,7 @@ def testSingleSegment(kernel):
 def test():
     print "Create pycad object"
     kr=PyCadDbKernel()
-    print "Add creation event"
+    #print "Add creation event"
     #kr.saveEntityEvent+=printId
     #testSinglePoint(kr)
     #testMultiPoints(kr,1)
