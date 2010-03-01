@@ -14,10 +14,10 @@ class CadWindow(wx.Frame):
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(-1, -1))
-        # create document
-        self.__document = Document(self)
         # create viewport
         self.__viewport = ViewPort(self)
+        # create document
+        self.__document = Document(self, self.__viewport)
         # A Statusbar in the bottom of the window
         self.CreateStatusBar()
         # Setting up the menu.

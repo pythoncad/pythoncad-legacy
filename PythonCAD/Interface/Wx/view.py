@@ -30,10 +30,10 @@ class View(object):
 
         
     def Set(self, rect):
-        self.__x_min = rect[0]
-        self.__y_min = rect[1]
-        self.__x_max = rect[2]
-        self.__y_max = rect[3]
+        self.__x_min = rect.Left
+        self.__y_min = rect.Bottom
+        self.__x_max = rect.Right
+        self.__y_max = rect.Top
         
 
     def __GetXMin(self):

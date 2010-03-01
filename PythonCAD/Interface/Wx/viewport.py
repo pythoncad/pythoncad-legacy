@@ -5,6 +5,7 @@ import colorsys
 from math import cos, sin, radians
 
 from Interface.Wx.displaylist import DisplayList
+from Interface.Wx.view import View
 
 
 class ViewPort(wx.Panel):
@@ -13,25 +14,37 @@ class ViewPort(wx.Panel):
         wx.Panel.__init__(self, parent, -1)
         # parent
         self.__cadwindow = parent
+		# document
+		self.__document = None
         # adjust view on resize event
         self.Bind(wx.EVT_SIZE, self.OnResize)
         # draw on paint event
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         # displaylist
         self.__displaylist = DisplayList()
-        # visible view
-        self.__view = View()
+        # visible view on screen
+        self.__screen_view = View()
+		# world view
+		self.__world_view = View()
 
     def __GetView(self):
         return self.__view
     View = property(__GetView, None, None, "Get the view area")
 
     def __GetDocument(self):
-        return self.__cadwindow.Document;
+        return self.__dDocument;
 
+	def __SetDocument(self, document):
+    	self.__dDocument = document;
+
+	Document = property(__GetDocument, __SetDocument, None, "Get/Set the document used by the view")
     
+
     def OnResize(self, event):
-        event.GetSize()
+		# set the new size
+        self.__view.Set(event.GetClientRect())
+		# map new screen size to world
+				
         
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
