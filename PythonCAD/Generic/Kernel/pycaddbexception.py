@@ -32,6 +32,16 @@ class EmptyDbSelect(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+class EntityMissing(Exception):
+    """
+        This exception is used for null return of
+        entity search
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)    
     
 class UndoDb(Exception):
     """
@@ -44,7 +54,7 @@ class UndoDb(Exception):
     
 class EntDb(Exception):
     """
-        This exception is used UndoDb class to manage is errors
+        Generic error on entity db creatioin
     """
     def __init__(self, value):
         self.value = value

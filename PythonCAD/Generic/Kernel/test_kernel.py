@@ -30,7 +30,6 @@ def testMultiPoints(kernel,nPoint)    :
     """
         test the point operatoin
     """
-    print "start massive creation of point"
     startTime=time.clock()
     kernel.startMassiveCreation()
     for i in range(nPoint):
@@ -44,7 +43,6 @@ def testMultiSegments(kernel,nSegments):
     """
         create a single segment
     """    
-    print "start massive creation of Segments"
     startTime=time.clock()
     kernel.startMassiveCreation()
     for i in range(nSegments):
@@ -64,6 +62,16 @@ def testSingleSegment(kernel):
     _p2=Point(10,20)
     _s=Segment(_p1,_p2)
     kernel.saveEntity(_s)
+
+def testGetLayerEnt(kernel):
+    """
+        get layer dictionary of all the id child
+    """
+    startTime=time.clock()
+    ids=kernel.getLayerChild('ROOT')
+    nids=len(ids)
+    endTime=time.clock()-startTime
+    print "Get n: %s layer entity in : %ss"%(str(nids ),str(endTime))
     
 def test():
     print "Create pycad object"
@@ -72,6 +80,11 @@ def test():
     #kr.saveEntityEvent+=printId
     #testSinglePoint(kr)
     #testMultiPoints(kr,1)
+    #testMultiPoints(kr,10)
+    #testMultiPoints(kr,100)
+    #testMultiPoints(kr,1000)
+    #testMultiPoints(kr,10000)
+    #testMultiPoints(kr,100000)
     #testSingleSegment(kr)
     #testMultiSegments(kr,1)
     #testMultiSegments(kr,10)
@@ -79,7 +92,7 @@ def test():
     #testMultiSegments(kr,1000)
     #testMultiSegments(kr,10000)
     #testMultiSegments(kr,100000)
-    
+    testGetLayerEnt(kr)
     #print "Perform Undo"
     #kr.unDo()  
     #print "perform Undo"

@@ -50,7 +50,7 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
 SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings)
 
 #set the debug level
-level = LEVELS.get('PyCad_Debug', logging.NOTSET)
+level = LEVELS.get('PyCad_Warning', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
@@ -83,37 +83,65 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__activeStyleObj=PyCadStyle(0)
         self.__bulkCommit=False
         self.__entId=self.__pyCadEntDb.getNewEntId()
-        self.__bulkUndoIndex=-1     #undo index are alweys positive so we do not breke in case missing entity id
+        self.__bulkUndoIndex=-1     # undo index are alweys positive so we do not breke in case missing entity id
         self.__settings=self.getDbSettingsObject()
-        self.__activeLayer=self.getLayer(self.__settings.layerName)
+        self.__logger.debug('Search / Create Main Layer')
+        def createMainLayer():
+            try:
+                self.__activeLayer=self.getEntLayer(self.__settings.layerName)
+            except EntityMissing:
+                try:
+                    self.__activeLayer=self.getEntLayer("ROOT")
+                except EntityMissing:                
+                    _settingsObjs=Layer("ROOT",None,self.__activeStyleObj.getId())
+                    self.__activeLayer=self.saveEntity(_settingsObjs)
+                    self.__settings.layerName="ROOT"
+                    
+        createMainLayer()
         self.__logger.debug('Done inizialization')
-                
+
+    def getLayerChild(self,layerName):
+        """
+            get all the entity of a layer 
+        """            
+        self.__logger.debug('getLayerChild')        
+        _layerId=self.getEntLayer(layerName).getId()
+        _childIds=self.__pyCadRelDb.getChildrenIds(_layerId)
+        return _childIds
+
     def getLayer(self,layerName):
         """
             get the layer object from the layerName
+            if not exsist create it
         """
         self.__logger.debug('getLayer')
+        pyCadEntLayer=self.getEntLayer(layerName)
+        _setts=pyCadEntLayer.getConstructionElements()
+        for i in _setts:
+            if _setts[i].name==self.__settings.layerName:
+                _settingsObjs=_setts[i]
+                break
+        else:
+            raise EntityMissing,"Layer %s not in the db"%str(layerName)                  
+        return _settingsObjs
+
+    def getEntLayer(self,layerName):
+        """
+            get the pycadent of type layer
+        """
+        self.__logger.debug('getEntLayer')
         _settingsObjs=self.getEntityFromType('LAYER')
         if len(_settingsObjs)<=0:
-            _settingsObjs=Layer('MAIN_LAYER',None,self.__activeStyleObj.getId())
-            self.saveEntity(_settingsObjs)
+            raise EntityMissing,"No Layer object in the db"
         else:
             for sto in _settingsObjs:
                 _setts=sto.getConstructionElements()
                 for i in _setts:
                     if _setts[i].name==self.__settings.layerName:
-                        _settingsObjs=_setts[i]
-                        break
-                else: # this is tha case in witch the layer name is not in the db (error case of lost data)
-                    for i in _setts:
-                        if _setts[i].name=='MAIN_LAYER':
-                            _settingsObjs=_setts[i]
-                        break
-                    else:# in case the main layer is not in the db (error case of lost data)
-                        _settingsObjs=Layer('MAIN_LAYER',None,self.__activeStyleObj.getId())
-                        self.saveEntity(_settingsObjs)    
-        return _settingsObjs
-    
+                        return sto
+            else:
+                raise EntityMissing,"Layer name %s missing"%str(layerName)
+            
     def getDbSettingsObject(self):
         """
             get the pythoncad settings object
@@ -166,30 +194,33 @@ class PyCadDbKernel(PyCadBaseDb):
         """
             save the entity into the database
         """
-        self.__logger.debug('saveEntity')            
+        self.__logger.debug('saveEntity') 
         if not isinstance(entity,SUPPORTED_ENTITYS):
             msg="SaveEntity : Type %s not supported from pythoncad kernel"%type(entity)
             self.__logger.warning(msg)
             raise TypeError ,msg
         try:
+            _obj=None
             self.__pyCadUndoDb.suspendCommit()
             self.__pyCadEntDb.suspendCommit()
+            self.__pyCadRelDb.suspendCommit()
             if isinstance(entity,Point):
-                self.savePoint(entity)
+                _obj=self.savePoint(entity)
             if isinstance(entity,Segment):
-                self.saveSegment(entity)
+                _obj=self.saveSegment(entity)
             if isinstance(entity,PyCadSettings):
-                self.saveSettings(entity)
+                _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
-                self.saveLayer(entity)
+                _obj=self.saveLayer(entity)
             if not self.__bulkCommit:
                 self.__pyCadUndoDb.reactiveCommit()
                 self.__pyCadEntDb.reactiveCommit()
+                self.__pyCadRelDb.reactiveCommit()
                 self.performCommit()
+            return _obj
         except:
             print "Unexpected error:", sys.exc_info()[0]
             raise
-
         
     def savePoint(self,point):
         """
@@ -199,7 +230,10 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__entId+=1
         _points={}
         _points['POINT']=point
-        self.saveDbEnt('POINT',_points)
+        _obj=self.saveDbEnt('POINT',_points)
+        self.__pyCadRelDb.saveRelation(self.__activeLayer,_obj)
+        return _obj
+        
 
     def saveSegment(self,segment):
         
@@ -212,7 +246,9 @@ class PyCadDbKernel(PyCadBaseDb):
         p1,p2=segment.getEndpoints()
         _points['POINT_1']=p1
         _points['POINT_2']=p2
-        self.saveDbEnt('SEGMENT',_points)
+        _obj=self.saveDbEnt('SEGMENT',_points)
+        self.__pyCadRelDb.saveRelation(self.__activeLayer,_obj)
+        return _obj
     
     def saveSettings(self,settingsObj):
         """
@@ -222,7 +258,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__entId+=1
         _points={}
         _points['SETTINGS']=settingsObj
-        self.saveDbEnt('SETTINGS',_points)
+        return self.saveDbEnt('SETTINGS',_points)
     
     def saveLayer(self,layerObj):
         """
@@ -232,7 +268,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__entId+=1
         _points={}
         _points['LAYER']=layerObj
-        self.saveDbEnt('LAYER',_points)            
+        return self.saveDbEnt('LAYER',_points)            
     
     def saveDbEnt(self,entType,points):
         """
@@ -246,6 +282,7 @@ class PyCadDbKernel(PyCadBaseDb):
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__pyCadUndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
         self.showEnt(self,_newDbEnt)
+        return _newDbEnt
         
     def getActiveStyle(self):
         """

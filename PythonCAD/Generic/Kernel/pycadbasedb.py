@@ -96,7 +96,6 @@ class PyCadBaseDb(object):
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
             if self.__commit:
-                print "Perform Commit"
                 self.performCommit()                
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )

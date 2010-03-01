@@ -31,7 +31,7 @@ class PyCadSettings(object):
             the name of the settings schema
         """
         self.__name=name
-        self.__activeLayer="ROOT" # the 0 means the main layer  
+        self.__activeLayer="ROOT"
         
     def getName(self):
         """
