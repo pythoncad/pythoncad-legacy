@@ -36,20 +36,18 @@ class PyCadUndoDb(PyCadBaseDb):
         else:
             self.setConnection(dbConnection)     
         _sqlCheck="""select * from sqlite_master where name like 'pycadundo'"""
-        _table=self.makeSelect(_sqlCheck).fetchone()
-        if _table is None:
+        _pycadundoTableRow=self.makeSelect(_sqlCheck).fetchone()
+        if _pycadundoTableRow is None:
             _sqlCreation="""CREATE TABLE "pycadundo" (
                                 "pycad_id" INTEGER PRIMARY KEY,
                                 "pycad_incremental_id" INTEGER
                                 )
                                 """
             self.makeUpdateInsert(_sqlCreation)
-        _undoId=self.getLastUndoIndex()
-        if _undoId is None:
             self.__lastUndo=0
         else:
-            self.__lastUndo=_undoId
-        self.__activeUndo=_undoId
+            self.__lastUndo=self.getLastUndoIndex()
+        self.__activeUndo=self.__lastUndo
         
     def getLastUndoIndex(self):
         """

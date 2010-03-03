@@ -116,32 +116,30 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('getLayer')
         pyCadEntLayer=self.getEntLayer(layerName)
-        _setts=pyCadEntLayer.getConstructionElements()
-        for i in _setts:
-            if _setts[i].name==self.__settings.layerName:
-                _settingsObjs=_setts[i]
-                break
+        _layersEnts=pyCadEntLayer.getConstructionElements()
+        for key in _layersEnts:
+            if _layersEnts[key].name==self.__settings.layerName:
+                return _layersEnts[key]
         else:
             raise EntityMissing,"Layer %s not in the db"%str(layerName)                  
-        return _settingsObjs
 
     def getEntLayer(self,layerName):
         """
             get the pycadent of type layer
         """
         self.__logger.debug('getEntLayer')
-        _settingsObjs=self.getEntityFromType('LAYER')
-        if len(_settingsObjs)<=0:
-            raise EntityMissing,"No Layer object in the db"
-        else:
-            for sto in _settingsObjs:
-                _setts=sto.getConstructionElements()
-                for i in _setts:
-                    if _setts[i].name==self.__settings.layerName:
-                        return sto
+        _layersEnts=self.getEntityFromType('LAYER')
+        for layersEnt in _layersEnts:
+            unpickleLayers=layersEnt.getConstructionElements()
+            for key in unpickleLayers:
+                if unpickleLayers[key].name==self.__settings.layerName:
+                    return layersEnt
             else:
                 raise EntityMissing,"Layer name %s missing"%str(layerName)
-            
+        else:
+            raise EntityMissing,"Layer name %s missing"%str(layerName)
+
+        
     def getDbSettingsObject(self):
         """
             get the pythoncad settings object
@@ -370,14 +368,19 @@ class PyCadDbKernel(PyCadBaseDb):
             perform a clear history operation
         """
         self.__logger.debug('clearUnDoHistory')
-        self.__pyCadUndoDb.clearUndoTable()
+        #:TODO
+        #self.__pyCadUndoDb.clearUndoTable()
+        #compact all the entity 
+        #self.__pyCadEntDb.compactByUndo()
+        
 
     def deleteEntity(self,entityID):
         """
             delete the entity from the database
         """
         self.__logger.debug('deleteEntity')
-        #entitys=self.__pyCadEntDb.getEntitys(entityId)
+        entitys=self.__pyCadEntDb.getEntitys(entityId)
+        
         
         # Fire event after all the operatoin are ok
         self.deleteEntityEvent(entity)

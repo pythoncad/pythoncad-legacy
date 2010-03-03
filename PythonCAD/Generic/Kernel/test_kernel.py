@@ -79,14 +79,16 @@ def test():
     #print "Add creation event"
     #kr.saveEntityEvent+=printId
     #testSinglePoint(kr)
-    #testMultiPoints(kr,1)
+    print "Points:"
+    testMultiPoints(kr,1)
     #testMultiPoints(kr,10)
     #testMultiPoints(kr,100)
     #testMultiPoints(kr,1000)
     #testMultiPoints(kr,10000)
     #testMultiPoints(kr,100000)
-    #testSingleSegment(kr)
-    #testMultiSegments(kr,1)
+    print "Segments:"
+    testSingleSegment(kr)
+    testMultiSegments(kr,1)
     #testMultiSegments(kr,10)
     #testMultiSegments(kr,100)
     #testMultiSegments(kr,1000)
@@ -99,5 +101,19 @@ def test():
     #kr.unDo()  
     #print "Perform Redo"
     #kr.reDo()
-    
+
+
 test()
+def deleteTable(tableName):
+    """
+    delete the table name 
+    """
+    import sqlite3 as sql
+    dbPath='pythoncad.pdr' 
+    dbConnection = sql.connect(dbPath)
+    statment="drop table pycadrel"
+    _cursor = dbConnection.cursor()
+    _rows = _cursor.execute(statment)
+    dbConnection.commit()
+    dbConnection.close()
+

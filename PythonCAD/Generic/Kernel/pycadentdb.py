@@ -117,7 +117,7 @@ class PyCadEntDb(PyCadBaseDb):
     def getEntitys(self,entityId):
         """
             get all the entity with the entity id
-            remarcs:
+            remarks:
             this method return all the history of the entity
         """
         _outObj={}
@@ -127,13 +127,17 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_object_definition,
                             pycad_style_id
                 FROM pycadent
-                WHERE pycad_entity_id=%s ORDER BY pycad_id"""%str(entityId)
+                WHERE pycad_entity_id=%s ORDER BY  pycad_id DESC"""%str(entityId)
         _dbEntRow=self.makeSelect(_sqlGet)
         if _dbEntRow is not None:
-            for _row in _dbEntRow: 
-                _style=str(_row[4])
-                _dumpObj=cPickle.loads(str(_row[3]))
-                _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _row=_dbEntRow.fetchone()
+            _style=str(_row[4])
+            _dumpObj=cPickle.loads(str(_row[3]))
+            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
+            #for _row in _dbEntRow: 
+            #    _style=str(_row[4])
+            #    _dumpObj=cPickle.loads(str(_row[3]))
+            #    _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
         return _outObj
 
     def getEntitysFromStyle(self,styleId):

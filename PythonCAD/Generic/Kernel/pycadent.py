@@ -23,6 +23,7 @@
 
 from Entity.pycadstyle  import PyCadStyle
 from Entity.pycadobject import PyCadObject
+from Entity.point       import Point
 
 PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER']
 
@@ -30,7 +31,7 @@ class PyCadEnt(PyCadObject):
     """
         basic PythonCad entity structure
     """
-    def __init__(self,entType,constructionPoints,style,objId):
+    def __init__(self,entType,constructionElements,style,objId):
         PyCadObject.__init__(self,objId)
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported' 
@@ -38,17 +39,24 @@ class PyCadEnt(PyCadObject):
         #if not (PyCadStyle is None or isinstance(style,PyCadStyle)):          
         #    raise TypeError,'style not supported' 
         self.__style=style        
-        if not isinstance(constructionPoints,dict):
+        if not isinstance(constructionElements,dict):
             raise TypeError,'type error in dictionary'
-        self.__PointDic=constructionPoints
-        isFirst=True
-        #for p in constructionPoints:
-        #    _x,_y=p.getCoords()
-        #    if isFirst:
-                #todo finire qui la creazione del bbox
-        #        pass 
-        self.__bBox=(0,0,0,0)               
-        
+        self._constructionElements=constructionElements
+        _xList=[]
+        _yList=[]
+        for key in constructionElements:
+            if isinstance(constructionElements[key],Point):
+                x,y=constructionElements[key].getCoords()
+                _xList.append(x)
+                _yList.append(y)
+        _xList.sort()
+        _yList.sort()
+        if len(_xList)>0:
+            if len(_xList)==1:
+                _yList=_xList
+            self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])               
+        else:
+            self.__bBox=(0,0,0,0)               
     
     def getBBox(self):
         """
@@ -60,7 +68,7 @@ class PyCadEnt(PyCadObject):
         """
             return the base entity array
         """      
-        return self.__PointDic
+        return self._constructionElements
     
     def getEntityType(self):
         """

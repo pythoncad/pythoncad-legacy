@@ -1,0 +1,342 @@
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.192669240889s
+Create n: 10 entity in : 0.192708602967s
+Create n: 100 entity in : 0.207776577425s
+Create n: 1000 entity in : 0.530273074414s
+Create n: 10000 entity in : 2.41335700763s
+Create n: 100000 entity in : 20.8602226952s
+Segments:
+Create n: 1 entity in : 0.298260581232s
+Create n: 10 entity in : 0.200354686547s
+Create n: 100 entity in : 0.249579959568s
+Create n: 1000 entity in : 0.599696655293s
+Create n: 10000 entity in : 2.80115262432s
+Create n: 100000 entity in : 26.3285308746s
+Get n: 666675 layer entity in : 1.23441743055s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.279333839621s
+Create n: 10 entity in : 0.246202094319s
+Create n: 100 entity in : 0.447120685414s
+Create n: 1000 entity in : 0.62218566493s
+Create n: 10000 entity in : 2.72878843953s
+Create n: 100000 entity in : 21.6164465029s
+Segments:
+Create n: 1 entity in : 0.243863473489s
+Create n: 10 entity in : 0.492440983624s
+Create n: 100 entity in : 0.280331582719s
+Create n: 1000 entity in : 0.628381769368s
+Create n: 10000 entity in : 2.78392615332s
+Create n: 100000 entity in : 25.4928748222s
+Get n: 888898 layer entity in : 1.6603305131s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.450494700025s
+Create n: 10 entity in : 0.185451005979s
+Create n: 100 entity in : 0.273406851996s
+Create n: 1000 entity in : 0.488717844498s
+Create n: 10000 entity in : 2.37557240804s
+Create n: 100000 entity in : 21.1989556214s
+Segments:
+Create n: 1 entity in : 0.208064519579s
+Create n: 10 entity in : 0.169684354644s
+Create n: 100 entity in : 0.253639387749s
+Create n: 1000 entity in : 0.553319143019s
+Create n: 10000 entity in : 2.72840166433s
+Create n: 100000 entity in : 24.7076257608s
+Get n: 1111121 layer entity in : 2.13655645998s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.279377480185s
+Create n: 10 entity in : 0.209535463307s
+Create n: 100 entity in : 0.209033168968s
+Create n: 1000 entity in : 0.532778984073s
+Create n: 10000 entity in : 2.40260859334s
+Create n: 100000 entity in : 21.1210756116s
+Segments:
+Create n: 1 entity in : 0.210076264025s
+Create n: 10 entity in : 0.233007669187s
+Create n: 100 entity in : 0.242462696944s
+Create n: 1000 entity in : 0.571522820378s
+Create n: 10000 entity in : 2.74653517451s
+Create n: 100000 entity in : 24.8821041598s
+Get n: 1333344 layer entity in : 2.46068776674s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.239785219968s
+Create n: 10 entity in : 0.240275962392s
+Create n: 100 entity in : 0.281970243125s
+Create n: 1000 entity in : 0.548656876063s
+Create n: 10000 entity in : 2.39818677734s
+Create n: 100000 entity in : 20.9591793863s
+Segments:
+Create n: 1 entity in : 0.204501395856s
+Create n: 10 entity in : 0.210409130291s
+Create n: 100 entity in : 0.277545004332s
+Create n: 1000 entity in : 0.554476473671s
+Create n: 10000 entity in : 2.79202019446s
+Create n: 100000 entity in : 24.9954502572s
+Get n: 1555567 layer entity in : 2.90044688794s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.26269095421s
+Create n: 10 entity in : 0.244099218107s
+Create n: 100 entity in : 0.279424543539s
+Create n: 1000 entity in : 0.518326256003s
+Create n: 10000 entity in : 2.39611385053s
+Create n: 100000 entity in : 21.0241995486s
+Segments:
+Create n: 1 entity in : 0.218018846734s
+Create n: 10 entity in : 0.202349744895s
+Create n: 100 entity in : 0.246871249639s
+Create n: 1000 entity in : 0.576129039159s
+Create n: 10000 entity in : 2.8008210416s
+Create n: 100000 entity in : 24.8376536779s
+Get n: 1777790 layer entity in : 3.27311420351s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.223846573467s
+Create n: 10 entity in : 0.205215903135s
+Create n: 100 entity in : 0.24833449209s
+Create n: 1000 entity in : 0.554439678686s
+Create n: 10000 entity in : 2.37010963622s
+Create n: 100000 entity in : 21.0136111497s
+Segments:
+Create n: 1 entity in : 0.289441764448s
+Create n: 10 entity in : 0.226090211892s
+Create n: 100 entity in : 0.246292798237s
+Create n: 1000 entity in : 0.641980939342s
+Create n: 10000 entity in : 2.76342450075s
+Create n: 100000 entity in : 24.8285118354s
+Get n: 2000013 layer entity in : 3.7283310693s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.182107796472s
+Create n: 10 entity in : 0.183036655935s
+Create n: 100 entity in : 0.247723096341s
+Create n: 1000 entity in : 0.476471959868s
+Create n: 10000 entity in : 2.40386432919s
+Create n: 100000 entity in : 21.3713730733s
+Segments:
+Create n: 1 entity in : 0.212878672813s
+Create n: 10 entity in : 0.240423998032s
+Create n: 100 entity in : 0.244321271566s
+Create n: 1000 entity in : 0.56108716347s
+Create n: 10000 entity in : 2.80028665861s
+Create n: 100000 entity in : 25.3594476474s
+Get n: 2222236 layer entity in : 4.13251500144s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.237105175899s
+Create n: 10 entity in : 0.18337593993s
+Create n: 100 entity in : 0.220728412361s
+Create n: 1000 entity in : 0.489357906109s
+Create n: 10000 entity in : 2.33240376079s
+Create n: 100000 entity in : 21.090554171s
+Segments:
+Create n: 1 entity in : 0.218461242259s
+Create n: 10 entity in : 0.252387930389s
+Create n: 100 entity in : 0.359155426726s
+Create n: 1000 entity in : 0.557891989603s
+Create n: 10000 entity in : 2.75719416842s
+Create n: 100000 entity in : 24.9691628071s
+Get n: 2444459 layer entity in : 4.47978607567s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.240731621226s
+Create n: 10 entity in : 0.204398712175s
+Create n: 100 entity in : 0.216152998684s
+Create n: 1000 entity in : 0.49869869827s
+Create n: 10000 entity in : 2.39271117006s
+Create n: 100000 entity in : 21.6946743537s
+Segments:
+Create n: 1 entity in : 0.232759944808s
+Create n: 10 entity in : 0.22832657689s
+Create n: 100 entity in : 0.231927779145s
+Create n: 1000 entity in : 0.59957856906s
+Create n: 10000 entity in : 2.87577285514s
+Create n: 100000 entity in : 25.8633780792s
+Get n: 2666682 layer entity in : 4.94194649752s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.259097881079s
+Create n: 10 entity in : 0.203743248013s
+Create n: 100 entity in : 0.251351253062s
+Create n: 1000 entity in : 0.486231615878s
+Create n: 10000 entity in : 2.5059584345s
+Create n: 100000 entity in : 21.7976485437s
+Segments:
+Create n: 1 entity in : 0.213234642907s
+Create n: 10 entity in : 0.52344204255s
+Create n: 100 entity in : 0.36498272561s
+Create n: 1000 entity in : 0.823013552107s
+Create n: 10000 entity in : 2.81859986523s
+Create n: 100000 entity in : 25.7585675627s
+Get n: 2888905 layer entity in : 5.40599672696s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.254709009423s
+Create n: 10 entity in : 0.184156335904s
+Create n: 100 entity in : 0.269308917436s
+Create n: 1000 entity in : 0.512979003327s
+Create n: 10000 entity in : 2.43272700046s
+Create n: 100000 entity in : 21.6635389503s
+Segments:
+Create n: 1 entity in : 0.65594848702s
+Create n: 10 entity in : 0.455967312362s
+Create n: 100 entity in : 0.270639954648s
+Create n: 1000 entity in : 0.626207870276s
+Create n: 10000 entity in : 3.04023317753s
+Create n: 100000 entity in : 24.9484643442s
+Get n: 3111128 layer entity in : 5.67133520874s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.311641120536s
+Create n: 10 entity in : 0.191131124921s
+Create n: 100 entity in : 0.264911488806s
+Create n: 1000 entity in : 0.523494240087s
+Create n: 10000 entity in : 2.44398498251s
+Create n: 100000 entity in : 21.450548609s
+Segments:
+Create n: 1 entity in : 0.2141857505s
+Create n: 10 entity in : 0.215932656619s
+Create n: 100 entity in : 0.234047341455s
+Create n: 1000 entity in : 0.521939438021s
+Create n: 10000 entity in : 2.80282893541s
+Create n: 100000 entity in : 25.1577349691s
+Get n: 3333351 layer entity in : 6.23260805853s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.259936036624s
+Create n: 10 entity in : 0.203766351841s
+Create n: 100 entity in : 0.249342503556s
+Create n: 1000 entity in : 0.543463221059s
+Create n: 10000 entity in : 2.45585521601s
+Create n: 100000 entity in : 21.682748072s
+Segments:
+Create n: 1 entity in : 0.18765742157s
+Create n: 10 entity in : 0.220454161363s
+Create n: 100 entity in : 0.244384165321s
+Create n: 1000 entity in : 0.546895423089s
+Create n: 10000 entity in : 2.76847397076s
+Create n: 100000 entity in : 24.9582774813s
+Get n: 3555574 layer entity in : 6.69837096619s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.259156068499s
+Create n: 10 entity in : 0.200110384957s
+Create n: 100 entity in : 0.303241167599s
+Create n: 1000 entity in : 0.559650447637s
+Create n: 10000 entity in : 2.37919371918s
+Create n: 100000 entity in : 21.035202105s
+Segments:
+Create n: 1 entity in : 0.235618401771s
+Create n: 10 entity in : 0.259450000535s
+Create n: 100 entity in : 0.322424618412s
+Create n: 1000 entity in : 0.655466729418s
+Create n: 10000 entity in : 2.86765571018s
+Create n: 100000 entity in : 25.1232110043s
+Get n: 3777797 layer entity in : 6.99834978768s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.525088404231s
+Create n: 10 entity in : 0.266245093111s
+Create n: 100 entity in : 0.270776010525s
+Create n: 1000 entity in : 0.558326683852s
+Create n: 10000 entity in : 2.63744916623s
+Create n: 100000 entity in : 21.3347907285s
+Segments:
+Create n: 1 entity in : 0.184878544459s
+Create n: 10 entity in : 0.299009744253s
+Create n: 100 entity in : 0.249581243114s
+Create n: 1000 entity in : 0.566911039565s
+Create n: 10000 entity in : 2.86355649207s
+Create n: 100000 entity in : 26.0194872234s
+Get n: 4000020 layer entity in : 7.33902471896s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.180827245403s
+Create n: 10 entity in : 0.234103389631s
+Create n: 100 entity in : 0.30485544063s
+Create n: 1000 entity in : 0.521038388722s
+Create n: 10000 entity in : 2.37867987293s
+Create n: 100000 entity in : 20.9244911275s
+Segments:
+Create n: 1 entity in : 0.193940379288s
+Create n: 10 entity in : 0.229651196372s
+Create n: 100 entity in : 0.271389973366s
+Create n: 1000 entity in : 0.564474869239s
+Create n: 10000 entity in : 2.74011188243s
+Create n: 100000 entity in : 25.3123368025s
+Get n: 4222243 layer entity in : 8.29958049438s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.438841385802s
+Create n: 10 entity in : 0.243019328064s
+Create n: 100 entity in : 0.278972735344s
+Create n: 1000 entity in : 0.51671241082s
+Create n: 10000 entity in : 2.78041993347s
+Create n: 100000 entity in : 20.7843899413s
+Segments:
+Create n: 1 entity in : 0.216061866918s
+Create n: 10 entity in : 0.228555475928s
+Create n: 100 entity in : 0.254670930892s
+Create n: 1000 entity in : 0.590979238643s
+Create n: 10000 entity in : 2.72712196896s
+Create n: 100000 entity in : 25.4379210833s
+Get n: 4444466 layer entity in : 8.05094608037s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.458025264464s
+Create n: 10 entity in : 0.198103346846s
+Create n: 100 entity in : 0.256728455145s
+Create n: 1000 entity in : 0.532927019713s
+Create n: 10000 entity in : 2.37210041608s
+Create n: 100000 entity in : 20.8181211026s
+Segments:
+Create n: 1 entity in : 0.19730754832s
+Create n: 10 entity in : 0.231624434437s
+Create n: 100 entity in : 0.292385363297s
+Create n: 1000 entity in : 0.580890567006s
+Create n: 10000 entity in : 2.70419313089s
+Create n: 100000 entity in : 24.431766908s
+Get n: 4666689 layer entity in : 8.51022665283s
+
+Create pycad object
+Points:
+Create n: 1 entity in : 0.266752949482s
+Create n: 10 entity in : 0.234509418019s
+Create n: 100 entity in : 0.304314639912s
+Create n: 1000 entity in : 0.496553465039s
+Create n: 10000 entity in : 2.36063150464s
+Create n: 100000 entity in : 20.4707541902s
+Segments:
+Create n: 1 entity in : 0.216650158839s
+Create n: 10 entity in : 0.223914601406s
+Create n: 100 entity in : 0.295246815202s
+Create n: 1000 entity in : 0.494107026345s
+Create n: 10000 entity in : 2.74090468601s
+Create n: 100000 entity in : 24.6029371811s
+Get n: 4888912 layer entity in : 9.19867110203s
+
+Space on disk 1.19 GB
