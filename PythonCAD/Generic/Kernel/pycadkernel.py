@@ -47,7 +47,7 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Error': logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
 
-SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings)
+SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings, PyCadEnt)
 
 #set the debug level
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
@@ -210,6 +210,8 @@ class PyCadDbKernel(PyCadBaseDb):
                 _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
                 _obj=self.saveLayer(entity)
+            if isinstance(entity,PyCadEnt):
+                _obj=self.savePyCadEnt(entity)
             if not self.__bulkCommit:
                 self.__pyCadUndoDb.reactiveCommit()
                 self.__pyCadEntDb.reactiveCommit()
@@ -267,13 +269,27 @@ class PyCadDbKernel(PyCadBaseDb):
         _points={}
         _points['LAYER']=layerObj
         return self.saveDbEnt('LAYER',_points)            
+
+    def savePyCadEnt(self, pyCadEnt):
+        """
+            save the entity in the database 
+            if this entity have an id mark pycad_visible = 0
+            and then save the entity
+        """
+        #HIDE ALL THE ISTANCE OF THE MODIFIE ENTITY
+        self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId())
+        self.saveDbEnt(pyCadEnt=pyCadEnt)
     
-    def saveDbEnt(self,entType,points):
+    def saveDbEnt(self,entType=None,points=None, pyCadEnt=None):
         """
             save the DbEnt to db
         """
         self.__logger.debug('saveDbEnt')
-        _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
+        if pyCadEnt==None:
+            _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
+        else:
+            _newDbEnt=pyCadEnt
+            
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
@@ -369,6 +385,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('clearUnDoHistory')
         #:TODO
+        
         #self.__pyCadUndoDb.clearUndoTable()
         #compact all the entity 
         #self.__pyCadEntDb.compactByUndo()

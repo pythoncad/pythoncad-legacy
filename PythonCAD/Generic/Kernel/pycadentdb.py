@@ -237,7 +237,13 @@ class PyCadEntDb(PyCadBaseDb):
             WHERE pycad_entity_id='%s'"""%str(_entityId)
         self.makeUpdateInsert(_sqlInsert)
         
-        
+    def compactByUndoId(self, undoId): 
+        """
+            from the undo id delete all the row that have some entity_id
+        """
+        _sql="""SELECT pycad_id,pycad_entity_id FROM pycadent where pycad_undo_id = %s ORDER BY pycad_id DESC"""%str(undoId)
+        pass
+
 """ TODO:
     pycad_entity_state
     it's the new way to mark the entity ..

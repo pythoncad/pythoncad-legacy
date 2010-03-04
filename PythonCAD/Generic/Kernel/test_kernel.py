@@ -103,7 +103,7 @@ def test():
     #kr.reDo()
 
 
-test()
+#test()
 def deleteTable(tableName):
     """
     delete the table name 
@@ -117,3 +117,75 @@ def deleteTable(tableName):
     dbConnection.commit()
     dbConnection.close()
 
+def testPointDb(nLoop):
+    """
+    Test point creation 
+    """
+    import sqlite3 as sql
+    import cPickle 
+    
+    dbConnection = sql.connect(":memory:")
+    cursor=dbConnection.cursor()
+    _sqlCreation="""CREATE TABLE pycadent(
+                    pycad_id INTEGER PRIMARY KEY,
+                    pycad_entity_id INTEGER,
+                    pycad_object_type TEXT,
+                    pycad_object_definition TEXT,
+                    pycad_style_id INTEGER,
+                    pycad_security_id INTEGER,
+                    pycad_undo_id INTEGER,
+                    pycad_entity_state TEXT,
+                    pycad_date NUMERIC,
+                    pycad_visible INTEGER,
+                    pycad_undo_visible INTEGER,
+                    pycad_locked INTEGER,
+                    pycad_bbox_xmin REAL,
+                    pycad_bbox_ymin REAL,
+                    pycad_bbox_xmax REAL,
+                    pycad_bbox_ymax REAL)"""
+    cursor.execute(_sqlCreation)
+    dic=[(x, y) for x in range(20) for y in range(1)]
+    dbConnection.commit()
+    startTime=time.clock()
+    for i in range(nLoop):
+        dumpDic=cPickle.dumps(dic)
+        sql="""insert into pycadent (pycad_entity_id,pycad_object_definition) values(1,"%s")"""%str(dumpDic)
+        cursor.execute(sql)
+    dbConnection.commit()
+    endTime=time.clock()-startTime
+    everage=endTime/nLoop
+    print "End time for nLoop %s in %s everage %s "%(str(nLoop), str(endTime), str(everage))
+    
+
+
+def testPointDb1(nLoop):
+    """
+    Test point creation 
+    """
+    import sqlite3 as sql
+    import cPickle 
+    
+    dbConnection = sql.connect(":memory:")
+    cursor=dbConnection.cursor()
+    _sqlCreation="""CREATE TABLE pycadent(
+                    pycad_X REAL,
+                    pycad_Y REAL)"""
+    cursor.execute(_sqlCreation)
+    dbConnection.commit()    
+    dic=[(x,y) for x in range(20) for y in range(1)]
+    startTime=time.clock()
+    for i in range(nLoop):
+        for x,y in dic:
+            _sql="""INSERT INTO pycadent (pycad_X,pycad_Y) 
+                VALUES (%s,%s)"""%(str(x),str(y))
+            cursor.execute(_sql)
+    dbConnection.commit()   
+    endTime=time.clock()-startTime
+    everage=endTime/nLoop
+    print "End time for nLoop %s in %s everage %s "%(str(nLoop), str(endTime), str(everage))
+
+def TestcPickleSql():
+    for i in [10,100, 1000, 1000, 10000, 100000]:
+        print "print Test with %s entitys"%str(i)
+        testPointDb(i)
+        testPointDb1(i)
