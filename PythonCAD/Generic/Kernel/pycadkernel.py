@@ -277,7 +277,7 @@ class PyCadDbKernel(PyCadBaseDb):
             and then save the entity
         """
         #HIDE ALL THE ISTANCE OF THE MODIFIE ENTITY
-        self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId())
+        self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId(), 0)
         self.saveDbEnt(pyCadEnt=pyCadEnt)
     
     def saveDbEnt(self,entType=None,points=None, pyCadEnt=None):
@@ -439,6 +439,6 @@ class PyCadkernelEvent(object):
 """
 TODO:
     IMPROVE COMMIT SySTEM ...
-    go on with the segment storage
+    
 """
 

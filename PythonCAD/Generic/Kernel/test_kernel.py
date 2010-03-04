@@ -72,13 +72,8 @@ def testGetLayerEnt(kernel):
     nids=len(ids)
     endTime=time.clock()-startTime
     print "Get n: %s layer entity in : %ss"%(str(nids ),str(endTime))
-    
-def test():
-    print "Create pycad object"
-    kr=PyCadDbKernel()
-    #print "Add creation event"
-    #kr.saveEntityEvent+=printId
-    #testSinglePoint(kr)
+
+def testPerformanceInCreation(kr):
     print "Points:"
     testMultiPoints(kr,1)
     #testMultiPoints(kr,10)
@@ -87,7 +82,6 @@ def test():
     #testMultiPoints(kr,10000)
     #testMultiPoints(kr,100000)
     print "Segments:"
-    testSingleSegment(kr)
     testMultiSegments(kr,1)
     #testMultiSegments(kr,10)
     #testMultiSegments(kr,100)
@@ -95,6 +89,36 @@ def test():
     #testMultiSegments(kr,10000)
     #testMultiSegments(kr,100000)
     testGetLayerEnt(kr)
+
+def createSegment(kernel):
+    """
+        create a single segment
+    """    
+    _p1=Point(10,10)
+    _p2=Point(10,20)
+    _s=Segment(_p1,_p2)
+    return kernel.saveEntity(_s)
+
+def CreateModifieEntity(kr):
+    """
+        test for create and modifie an entity
+    """
+    ent=createSegment(kr)
+    celement={'POINT_1':Point(100,100), 'POINT_2':Point(200,200)}
+    ent.setConstructionElement(celement)
+    kr.saveEntity(ent)
+    
+
+def test():
+    print "Create pycad object"
+    kr=PyCadDbKernel()
+    CreateModifieEntity(kr)
+    
+    
+    #print "Add creation event"
+    #kr.saveEntityEvent+=printId
+    #testSinglePoint(kr)
+
     #print "Perform Undo"
     #kr.unDo()  
     #print "perform Undo"
@@ -103,7 +127,7 @@ def test():
     #kr.reDo()
 
 
-#test()
+test()
 def deleteTable(tableName):
     """
     delete the table name 

@@ -223,7 +223,7 @@ class PyCadEntDb(PyCadBaseDb):
             hide all the row with entId
         """
         _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
-                    WHERE pycad_entity_id=%s"""%(str(visible),str(_entId))
+                    WHERE pycad_entity_id=%s"""%(str(visible),str(entId))
         self.makeUpdateInsert(_sqlVisible)      
         
     def delete(self,entityObj):

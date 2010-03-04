@@ -41,6 +41,24 @@ class PyCadEnt(PyCadObject):
         self.__style=style        
         if not isinstance(constructionElements,dict):
             raise TypeError,'type error in dictionary'
+        self.setConstructionElement(constructionElements)
+    
+    def getBBox(self):
+        """
+            get the bounding Box Of the entity
+        """
+        return self.__bBox
+    
+    def getConstructionElements(self):
+        """
+            return the base entity array
+        """      
+        return self._constructionElements
+        
+    def setConstructionElement(self, constructionElements):
+        """
+            set the construction elements for the object
+        """
         self._constructionElements=constructionElements
         _xList=[]
         _yList=[]
@@ -56,20 +74,8 @@ class PyCadEnt(PyCadObject):
                 _yList=_xList
             self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])               
         else:
-            self.__bBox=(0,0,0,0)               
-    
-    def getBBox(self):
-        """
-            get the bounding Box Of the entity
-        """
-        return self.__bBox
-    
-    def getConstructionElements(self):
-        """
-            return the base entity array
-        """      
-        return self._constructionElements
-    
+            self.__bBox=(0,0,0,0)  
+            
     def getEntityType(self):
         """
             Get the entity type 
