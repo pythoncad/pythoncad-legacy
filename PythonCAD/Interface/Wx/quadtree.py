@@ -24,9 +24,9 @@ from __future__ import generators
 
 import math
 
-from Interface.Wx.basetree import BaseTree
+from Interface.Wx.basetree import Basetree
 
-#from PythonCAD.Generic import tolerance
+from Generic import tolerance
 #from PythonCAD.Generic import util
 #from PythonCAD.Generic import baseobject
 #from PythonCAD.Generic import quadtree
@@ -37,6 +37,7 @@ from Interface.Wx.basetree import BaseTree
 #
 
 class Quadtree(Basetree):
+    
     def __init__(self):
         super(Quadtree, self).__init__()
 

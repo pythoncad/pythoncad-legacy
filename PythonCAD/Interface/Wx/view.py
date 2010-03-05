@@ -20,21 +20,21 @@ class View(object):
         self.__scale_y = 1.0
         # vertical exaggeration (not used)
         self.__vertical_exaggeration = 1.0
-    
-    
+
+
     def Set(self, x_min, y_min, x_max, y_max):
         self.__x_min = x_min
         self.__y_min = y_min
         self.__x_max = x_max
         self.__y_max = y_max
 
-        
+
     def Set(self, rect):
         self.__x_min = rect.Left
         self.__y_min = rect.Bottom
         self.__x_max = rect.Right
         self.__y_max = rect.Top
-        
+
 
     def __GetXMin(self):
         return self.__x_min
@@ -44,7 +44,7 @@ class View(object):
     def __GetXMax(self):
         return self.__x_max
     XMax = property(__GetXMax, None, None, "Gets maximum X value")
-    
+
 
     def __GetYMin(self):
         return self.__y_min
@@ -55,7 +55,7 @@ class View(object):
         return self.__y_max
     YMax = property(__GetYMax, None, None, "Gets maximum Y value")
 
-    
+
     def __GetWidth(self):
         return self.__x_max - self.__x_min
     Width = property(__GetWidth, None, None, "Gets the width")
@@ -64,29 +64,29 @@ class View(object):
     def __GetHeight(self):
         return self.__y_max - self.__y_min
     Height = property(__GetHeight, None, None, "Gets the height")
-    
-    
+
+
     def __GetTransX(self):
         return self.__trans_x
     TransX = property(__GetTransX, None, None, "Gets the X transformation")
-    
+
 
     def __GetTransY(self):
         return self.__trans_x
     TransY = property(__GetTransY, None, None, "Gets the Y transformation")
 
-    
+
     def __GetScaleX(self):
         return self.__scale_x
     ScaleX = property(__GetScaleX, None, None, "Gets the X scale")
 
-    
+
     def __GetScaleY(self):
         return self.__scale_y
     ScaleY = property(__GetScaleY, None, None, "Gets the Y scale")
 
 
-    
+
     def MapToView(self, view):
         # calculate scale factors
         scale_x = 1.0 * self.Width / view.Width
@@ -96,4 +96,3 @@ class View(object):
         # calculate translation
         self.__trans_x = view.XMin    
         self.__trans_y = view.YMin    
-    
