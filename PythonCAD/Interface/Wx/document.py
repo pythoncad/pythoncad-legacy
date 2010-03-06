@@ -47,8 +47,10 @@ class Document(object):
         # first get all layers from the database
         layers = self.__cadkernel.getEntityFromType('LAYER')
         # traverse each layer in the list
-        for layer in layser:
-            layer_ent = layer[0]
+        for layer in layers:
+            #layer_ent = layer[0]
+            # for Gerwin here there is somthing wrong
+            pass
 
 
     def GetDrawingExtents(self):
