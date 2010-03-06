@@ -14,8 +14,8 @@ class ViewPort(wx.Panel):
         wx.Panel.__init__(self, parent, -1)
         # parent
         self.__cadwindow = parent
-		# document
-		self.__document = None
+        # document
+        self.__document = None
         # adjust view on resize event
         self.Bind(wx.EVT_SIZE, self.OnResize)
         # draw on paint event
@@ -24,8 +24,8 @@ class ViewPort(wx.Panel):
         self.__displaylist = DisplayList()
         # visible view on screen
         self.__screen_view = View()
-		# world view
-		self.__world_view = View()
+        # world view
+        self.__world_view = View()
 
     def __GetView(self):
         return self.__view
@@ -34,18 +34,19 @@ class ViewPort(wx.Panel):
     def __GetDocument(self):
         return self.__dDocument;
 
-	def __SetDocument(self, document):
-    	self.__dDocument = document;
+    def __SetDocument(self, document):
+        self.__dDocument = document;
 
-	Document = property(__GetDocument, __SetDocument, None, "Get/Set the document used by the view")
-    
+        Document = property(__GetDocument, __SetDocument, None, "Get/Set the document used by the view")
+
 
     def OnResize(self, event):
-		# set the new size
-        self.__view.Set(event.GetClientRect())
-		# map new screen size to world
-				
-        
+        pass
+        # set the new size
+#        self.__screen_view.Set(event.GetClientRect())
+        # map new screen size to world
+
+
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
         # black background
@@ -57,8 +58,8 @@ class ViewPort(wx.Panel):
 
     def BuildDisplayList(self):
         pass
-    
-        
+
+
     def ZoomAll(self):
         # clear current displaylist
         self.__displaylist.Clear()
