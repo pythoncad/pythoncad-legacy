@@ -50,7 +50,7 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
 SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings, PyCadEnt)
 
 #set the debug level
-level = LEVELS.get('PyCad_Warning', logging.NOTSET)
+level = LEVELS.get('PyCad_Debug', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
@@ -375,20 +375,27 @@ class PyCadDbKernel(PyCadBaseDb):
         #self.__pyCadEntDb.compactByUndo()
         
 
-    def deleteEntity(self,entityID):
+    def deleteEntity(self,entityId):
         """
-            delete the entity from the database
+            Delete the entity from the database
         """
         self.__logger.debug('deleteEntity')
-        entitys=self.__pyCadEntDb.getEntitys(entityId)
+        entitys=self.__pyCadEntDb.getEntityEntityId(entityId)
         #self.
+        pass
+        # ToDo this will produce some plroblem need to fix it ..
+        # the save entity will create a new record in the db ..
+        # so it's wrong  ....
+        # find a another way
+        # May be we need to provide an update method..
         for ent in entitys:
             ent.state='DELETE'
             self.saveEntity(ent)
         
         # Fire event after all the operatoin are ok
-        self.deleteEntityEvent(entity)
-        self.hideEnt(entity)
+        #self.deleteEntityEvent(entity)
+        #self.hideEnt(entity)
+        
         
 
 

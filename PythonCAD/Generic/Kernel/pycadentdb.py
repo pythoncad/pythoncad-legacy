@@ -69,7 +69,7 @@ class PyCadEntDb(PyCadBaseDb):
         _entityId=entityObj.getId()
         _entityDump=cPickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
-        _styleId=entityObj.getStyle().getId()
+        _styleId=entityObj.style.getId()
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=entityObj.index
         _revisionState=entityObj.state
@@ -131,7 +131,7 @@ class PyCadEntDb(PyCadBaseDb):
             remarks:
             this method return all the history of the entity
         """
-        _outObj={}
+        _outObj=[]
         _sqlGet="""SELECT   pycad_id,
                             pycad_entity_id,
                             pycad_object_type,
@@ -146,10 +146,11 @@ class PyCadEntDb(PyCadBaseDb):
             _row=_dbEntRow.fetchone()
             _style=str(_row[4])
             _dumpObj=cPickle.loads(str(_row[3]))
-            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
-            _outObj.state=_row[5]
-            _outObj.index=_row[6]
-            _outObj.updateBBox()
+            _entObj=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
+            _entObj.state=_row[5]
+            _entObj.index=_row[6]
+            _entObj.updateBBox()
+            _outObj.append(_entObj)
         return _outObj
 
     def getEntitysFromStyle(self,styleId):
@@ -269,7 +270,7 @@ class PyCadEntDb(PyCadBaseDb):
             delete the entity from db
         """
         _entityId=entityObj.getId()
-        if len(self.getEntitys(_entityId)) <=0:
+        if len(self.getEntityEntityId(_entityId)) <=0:
             raise EntDb, "The entity with id %s dose not exsist"%str(_entityId)
         _sqlDelete="""DELETE FROM pycadent 
             WHERE pycad_entity_id='%s'"""%str(_entityId)
@@ -308,10 +309,10 @@ def test():
     print "PyCadEnt Saved"
     obj=dbEnt.getEntity(1)
     print "getEntity [%s]"%str(obj)
-    for e in dbEnt.getEntitys(1):
+    for e in dbEnt.getEntityEntityId(1):
         print "Entity %s"%str(e)
     obj=dbEnt.getEntitysFromStyle
-    for e in dbEnt.getEntitys(1):
+    for e in dbEnt.getEntityEntityId(1):
         print "Entity Style %s"%str(e)
     _newId=dbEnt.getNewEntId()
     print "New id %i"%(_newId)

@@ -235,14 +235,14 @@ class ioKernel(object):
         self.__command['GetSegments']=self.getSegments
         self.__command['UnDo']=self.unDo
         self.__command['ReDo']=self.reDo
-        self.__command['Delete']=self.delete
+        #self.__command['Delete']=self.delete
         
     def mainLoop(self):
         """
             mainLoop operation
         """
         while 1:
-            imputstr=raw_input("Insert a command (h for Help)>> :")
+            imputstr=raw_input("Insert a command (H for Help)>> :")
             if self.__command.has_key(imputstr):
                 self.__command[imputstr]()
             else:
@@ -255,8 +255,7 @@ class ioKernel(object):
         print "PyCadIOInterface Help"
         for s in self.__command:
             print "command :" , s
-        print "*"*10
-    
+        print "*"*10   
     def newSegment(self):
         """
             create a new segment
