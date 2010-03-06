@@ -50,6 +50,7 @@ class PyCadRelDb(PyCadBaseDb):
     def saveRelation(self,parentEntObj,childEntObj):
         """
             This method save the Relation in the db
+            TODO  : THE RELATION MAST BE UNIVOC ...
         """
         _parentEntityId=parentEntObj.getId()
         _childEntityId=childEntObj.getId()
@@ -125,7 +126,6 @@ def test():
     _pcr.deleteFromParent(_e1)
 
 """
-    TOBE TESTED:
-    deleteFromChild
-    deleteRelation
+    TODO TEST deleteFromChild
+    TODO TEST deleteRelation
 """

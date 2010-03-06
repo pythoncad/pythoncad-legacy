@@ -20,7 +20,6 @@
 #
 # This module provide basic operation for the entity in the pythoncad database
 #
-
 import cPickle
 
 from pycadent               import *
@@ -50,7 +49,7 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_security_id INTEGER,
                     pycad_undo_id INTEGER,
                     pycad_entity_state TEXT,
-                    pycad_date NUMERIC,
+                    pycad_index NUMERIC,
                     pycad_visible INTEGER,
                     pycad_undo_visible INTEGER,
                     pycad_locked INTEGER,
@@ -65,11 +64,15 @@ class PyCadEntDb(PyCadBaseDb):
             this method save the entity in the db
             entityObj = object that we whant to store
         """
+        #I'm Updating an entity so i need to clear all the undo visibility
+        self.markUndoVisibilityFromEntId(entityObj.getId(), 0) 
         _entityId=entityObj.getId()
         _entityDump=cPickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _styleId=entityObj.getStyle().getId()
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
+        _revisionIndex=entityObj.index
+        _revisionState=entityObj.state
         _sqlInsert="""INSERT INTO pycadent (
                     pycad_entity_id,
                     pycad_object_type,
@@ -80,8 +83,10 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_bbox_xmin,
                     pycad_bbox_ymin,
                     pycad_bbox_xmax,
-                    pycad_bbox_ymax) VALUES
-                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s)"""%(
+                    pycad_bbox_ymax,
+                    pycad_entity_state,
+                    pycad_index) VALUES
+                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s,"%s",%s)"""%(
                     str(_entityId),
                     str(_entityType),
                     str(_entityDump),
@@ -90,11 +95,12 @@ class PyCadEntDb(PyCadBaseDb):
                     str(_xMin),
                     str(_yMin),
                     str(_xMax),
-                    str(_yMax))
+                    str(_yMax), 
+                    str(_revisionState),
+                    str(_revisionIndex))
         self.makeUpdateInsert(_sqlInsert)
-
         
-    def getEntity(self,entityTableId):
+    def getEntityFromTableId(self,entityTableId):
         """
             Get the entity object from the database Univoc id
         """
@@ -102,7 +108,9 @@ class PyCadEntDb(PyCadBaseDb):
         _sqlGet="""SELECT   pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id
+                            pycad_style_id,
+                            pycad_entity_state,
+                            pycad_index
                 FROM pycadent
                 WHERE pycad_id=%s"""%str(entityTableId)
         _rows=self.makeSelect(_sqlGet)
@@ -112,9 +120,12 @@ class PyCadEntDb(PyCadBaseDb):
                 _style=str(_dbEntRow[3])
                 _dumpObj=cPickle.loads(str(_dbEntRow[2]))
                 _outObj=PyCadEnt(_dbEntRow[1],_dumpObj,_style,_dbEntRow[0])
+                _outObj.state=_dbEntRow[4]
+                _outObj.index=_dbEntRow[5]
+                _outObj.updateBBox()
         return _outObj
     
-    def getEntitys(self,entityId):
+    def getEntityEntityId(self,entityId):
         """
             get all the entity with the entity id
             remarks:
@@ -125,7 +136,9 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id
+                            pycad_style_id,
+                            pycad_entity_state,
+                            pycad_index
                 FROM pycadent
                 WHERE pycad_entity_id=%s ORDER BY  pycad_id DESC"""%str(entityId)
         _dbEntRow=self.makeSelect(_sqlGet)
@@ -134,29 +147,34 @@ class PyCadEntDb(PyCadBaseDb):
             _style=str(_row[4])
             _dumpObj=cPickle.loads(str(_row[3]))
             _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
-            #for _row in _dbEntRow: 
-            #    _style=str(_row[4])
-            #    _dumpObj=cPickle.loads(str(_row[3]))
-            #    _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _outObj.state=_row[5]
+            _outObj.index=_row[6]
+            _outObj.updateBBox()
         return _outObj
 
     def getEntitysFromStyle(self,styleId):
         """
             return all the entity that match the styleId
         """
-        _outObj={}
+        _outObj=[]
         _sqlGet="""SELECT   pycad_id,
                             pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id
+                            pycad_style_id,
+                            pycad_entity_state,
+                            pycad_index
                 FROM pycadent
-                WHERE pycad_style_id=%s ORDER BY pycad_id"""%str(styleId)
+                WHERE pycad_style_id=%s and pycad_undo_visible=1 ORDER BY pycad_id"""%str(styleId)
         _dbEntRow=self.makeSelect(_sqlCheck)
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=cPickle.loads(_row[3])
-            _outObj[_row[0]]=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt.state=_row[5]
+            _objEnt.index=_row[6]
+            _objEnt.updateBBox()            
+            _outObj.append(_objEnt)
         return _outObj
     
     def getEntityFromType(self,entityType):
@@ -171,15 +189,23 @@ class PyCadEntDb(PyCadBaseDb):
                           pycad_entity_id,
                           pycad_object_type,
                           pycad_object_definition,
-                          pycad_style_id
+                          pycad_style_id,
+                          pycad_entity_state,
+                          pycad_index
                     FROM pycadent
                     WHERE pycad_object_type LIKE "%s"
+                    AND pycad_undo_visible=1
+                    ORDER BY pycad_id DESC
                     """%str(entityType)
         _dbEntRow=self.makeSelect(_sqlGet)
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=cPickle.loads(str(_row[3]))
-            _outObj.append(PyCadEnt(_row[2],_dumpObj,_style,_row[1]))
+            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt.state=_row[5]
+            _objEnt.index=_row[6]
+            _objEnt.updateBBox()            
+            _outObj.append(_objEnt)
         return _outObj            
     
     def getNewEntId(self):
@@ -203,6 +229,18 @@ class PyCadEntDb(PyCadBaseDb):
         _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
                     WHERE pycad_undo_id=%s"""%(str(visible),str(undoId))
         self.makeUpdateInsert(_sqlVisible)
+    
+    def markUndoVisibilityFromEntId(self, entityId, visible):
+        """
+            set the undo visibility to for all the entity
+        """
+        _sqlVisible="""UPDATE pycadent SET pycad_undo_visible=%s
+                    WHERE pycad_entity_id=%s"""%(str(visible),str(entityId))
+        try:
+            self.makeUpdateInsert(_sqlVisible)
+        except:
+            # may be the update culd fail in case we create the first entity
+            return
 
     def markEntVisibility(self,entId,visible):
         """
@@ -242,23 +280,22 @@ class PyCadEntDb(PyCadBaseDb):
             from the undo id delete all the row that have some entity_id
         """
         _sql="""SELECT pycad_id,pycad_entity_id FROM pycadent where pycad_undo_id = %s ORDER BY pycad_id DESC"""%str(undoId)
+        #todo : finire il compat del database
         pass
+    
+    def release(self):
+        """
+            relese the current drawing 
+            1) 
+        """
+        
+        #pycad_entity_state TEXT,
+        #pycad_date NUMERIC,
 
-""" TODO:
-    pycad_entity_state
-    it's the new way to mark the entity ..
-    
-    state could be ..
-    ACTIVE:
-        is when the entity are create or after a redoUndo
-        means ready to be plotted on the screen and that can recive
-        event(modification, delete, )
-    
-    DELETE:
-        is when an entity is delete from the user ...
-        in this case the entity is marked as deleted .
-        en undoId is request 
 """
+    todo : update the get entity to fill the bbox and the entity state and revision
+"""
+
 def test():
     print "*"*10+" Start Test"
     dbEnt=PyCadEntDb(None)

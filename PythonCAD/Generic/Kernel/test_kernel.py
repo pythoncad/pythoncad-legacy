@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import sys
 from pycadkernel import *
 
 """
@@ -109,25 +109,9 @@ def CreateModifieEntity(kr):
     kr.saveEntity(ent)
     
 
-def test():
-    print "Create pycad object"
-    kr=PyCadDbKernel()
-    CreateModifieEntity(kr)
-    
-    
-    #print "Add creation event"
-    #kr.saveEntityEvent+=printId
-    #testSinglePoint(kr)
-
-    #print "Perform Undo"
-    #kr.unDo()  
-    #print "perform Undo"
-    #kr.unDo()  
-    #print "Perform Redo"
-    #kr.reDo()
 
 
-test()
+
 def deleteTable(tableName):
     """
     delete the table name 
@@ -210,6 +194,129 @@ def testPointDb1(nLoop):
 
 def TestcPickleSql():
     for i in [10,100, 1000, 1000, 10000, 100000]:
-        print "print Test with %s entitys"%str(i)
+        print ">>print Test with %s entitys"%str(i)
         testPointDb(i)
         testPointDb1(i)
+
+def getAllSegment(kr):
+    """
+        get all the segments
+    """
+    print ">>Looking for segment"
+    ent=kr.getEntityFromType('SEGMENT')
+    for e in ent:
+        print "e >>>>", e.eType
+
+
+
+
+        
+def test():
+    print ">>Create pycad object"
+    kr=PyCadDbKernel()
+    #CreateModifieEntity(kr)
+    #print "Add creation event"
+    #kr.saveEntityEvent+=printId
+    redo(kr)
+    getAllSegment(kr)
+
+
+class ioKernel(object):
+    """
+        This class provide a simple interface for using 
+        PythonCad Kernel
+    """
+    def __init__(self):
+        self.__kr=PyCadDbKernel()
+        self.__command={}
+        self.__command['H']=self.help
+        self.__command['Esc']=self.endApplication
+        self.__command['NewSegment']=self.newSegment
+        self.__command['GetSegments']=self.getSegments
+        self.__command['UnDo']=self.unDo
+        self.__command['ReDo']=self.reDo
+        self.__command['Delete']=self.delete
+        
+    def mainLoop(self):
+        """
+            mainLoop operation
+        """
+        while 1:
+            imputstr=raw_input("Insert a command (h for Help)>> :")
+            if self.__command.has_key(imputstr):
+                self.__command[imputstr]()
+            else:
+                print "Wrong Command !!"
+    def help(self):
+        """
+            print the help
+        """
+        print "*"*10
+        print "PyCadIOInterface Help"
+        for s in self.__command:
+            print "command :" , s
+        print "*"*10
+    
+    def newSegment(self):
+        """
+            create a new segment
+        """
+        try:
+            val=(raw_input("-->Get First Point (x,y) :"))
+            p1=Point(val[0], val[1])
+            val=(raw_input("-->Get Second Point (x,y) :"))
+            p2=Point(val[0], val[1])
+            _s=Segment(p1,p2)
+            self.__kr.saveEntity(_s)
+        except:
+            print "---->Error on point creation !!"
+    
+    def getSegments(self):
+        """
+            return a list of all the segments
+        """
+        print "--<< Looking for segment"
+        ent=self.__kr.getEntityFromType('SEGMENT')
+        for e in ent:
+            print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
+    def reDo(self):
+        """
+            perform the redo command
+        """
+        try:
+            print "-->>Perform Redo"
+            self.__kr.reDo()  
+        except UndoDb:
+            print "----<<Err>>No more redo to performe"
+    def unDo(self):
+        """
+            perform the undo command
+        """
+        try:
+            print "-->>Perform unDo"
+            self.__kr.unDo()  
+        except UndoDb:
+            print "----<<Err>>No more unDo to performe"
+    def delete(self):
+        """
+            Delete the entity
+        """
+        try:
+            val=(raw_input("-->Write entityId :"))
+            self.__kr.deleteEntity(val)
+        except:
+            print "----<<Err>>Enable to delete the entity"
+
+    def endApplication(self):
+        """
+            close the application
+        """
+        sys.exit(0)
+"""
+    
+"""
+if __name__=='__main__':
+    io=ioKernel()
+    io.mainLoop()
+    print "bye"
+#test()

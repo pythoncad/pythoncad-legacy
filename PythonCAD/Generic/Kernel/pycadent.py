@@ -49,6 +49,26 @@ class PyCadEnt(PyCadObject):
         """
         return self.__bBox
     
+    def updateBBox(self):
+        """
+            update the bounding box from the construction elements
+        """
+        _xList=[]
+        _yList=[]
+        for key in self._constructionElements:
+            if isinstance(self._constructionElements[key],Point):
+                x,y=self._constructionElements[key].getCoords()
+                _xList.append(x)
+                _yList.append(y)
+        _xList.sort()
+        _yList.sort()
+        if len(_xList)>0:
+            if len(_xList)==1:
+                _yList=_xList
+            self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])               
+        else:
+            self.__bBox=(0,0,0,0) 
+            
     def getConstructionElements(self):
         """
             return the base entity array
@@ -60,21 +80,7 @@ class PyCadEnt(PyCadObject):
             set the construction elements for the object
         """
         self._constructionElements=constructionElements
-        _xList=[]
-        _yList=[]
-        for key in constructionElements:
-            if isinstance(constructionElements[key],Point):
-                x,y=constructionElements[key].getCoords()
-                _xList.append(x)
-                _yList.append(y)
-        _xList.sort()
-        _yList.sort()
-        if len(_xList)>0:
-            if len(_xList)==1:
-                _yList=_xList
-            self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])               
-        else:
-            self.__bBox=(0,0,0,0)  
+        self.updateBBox()
             
     def getEntityType(self):
         """

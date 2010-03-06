@@ -138,7 +138,6 @@ class PyCadDbKernel(PyCadBaseDb):
                 raise EntityMissing,"Layer name %s missing"%str(layerName)
         else:
             raise EntityMissing,"Layer name %s missing"%str(layerName)
-
         
     def getDbSettingsObject(self):
         """
@@ -234,7 +233,6 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__pyCadRelDb.saveRelation(self.__activeLayer,_obj)
         return _obj
         
-
     def saveSegment(self,segment):
         
         """
@@ -276,8 +274,12 @@ class PyCadDbKernel(PyCadBaseDb):
             if this entity have an id mark pycad_visible = 0
             and then save the entity
         """
-        #HIDE ALL THE ISTANCE OF THE MODIFIE ENTITY
-        self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId(), 0)
+        #this is wrong 
+        """
+        todo: I do not need hide the entity ..
+        i jast need to create a new record with the updatable value
+        """
+        #self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId(), 0)
         self.saveDbEnt(pyCadEnt=pyCadEnt)
     
     def saveDbEnt(self,entType=None,points=None, pyCadEnt=None):
@@ -288,8 +290,7 @@ class PyCadDbKernel(PyCadBaseDb):
         if pyCadEnt==None:
             _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
         else:
-            _newDbEnt=pyCadEnt
-            
+            _newDbEnt=pyCadEnt          
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
@@ -323,8 +324,9 @@ class PyCadDbKernel(PyCadBaseDb):
             get the style object
         """
         self.__logger.debug('getStyle')
-        #get the style object of the give id
+        #todo get the style object of the give id
         pass
+        
     def getStyleList(self):
         """
             get all the style from the db
@@ -342,12 +344,11 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('unDo')
         try:
+            self.__pyCadEntDb.markUndoVisibility(self.__pyCadUndoDb.getActiveUndoId(),0)
             _newUndo=self.__pyCadUndoDb.dbUndo()
-            self.setUndoVisible(_newUndo)
-            self.setUndoHide(self.__pyCadUndoDb.getActiveUndoId())
+            self.__pyCadEntDb.performCommit()
         except UndoDb:
-            print "Unable to perform undo : no elemnt to undo"
-            # manage with a new raise or somthing else
+            raise
         
         
     def reDo(self):
@@ -357,27 +358,10 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('reDo')
         try:
             _activeRedo=self.__pyCadUndoDb.dbRedo()
-            self.setUndoVisible(_activeRedo)
+            self.__pyCadEntDb.markUndoVisibility(_activeRedo, 1)
+            self.__pyCadEntDb.performCommit()
         except UndoDb:
-            print "Unable to perform redo : no element to redo"
-
-    def setUndoVisible(self,undoId):
-        """
-            mark as undo visible all the entity with undoId
-        """
-        self.__logger.debug('setUndoVisible')
-        self.__pyCadEntDb.markUndoVisibility(undoId,1)
-        self.__pyCadEntDb.performCommit()
-        #toto : perform an event call for refresh
-        
-    def setUndoHide(self,undoId):
-        """
-            mark as  undo hide all the entity with undoId
-        """
-        self.__logger.debug('setUndoHide')
-        self.__pyCadEntDb.markUndoVisibility(undoId,0)
-        self.__pyCadEntDb.performCommit()
-        #toto : perform an event call for refresh
+            raise
         
     def clearUnDoHistory(self):
         """
@@ -397,7 +381,10 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('deleteEntity')
         entitys=self.__pyCadEntDb.getEntitys(entityId)
-        
+        #self.
+        for ent in entitys:
+            ent.state='DELETE'
+            self.saveEntity(ent)
         
         # Fire event after all the operatoin are ok
         self.deleteEntityEvent(entity)

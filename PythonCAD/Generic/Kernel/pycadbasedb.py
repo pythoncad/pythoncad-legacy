@@ -68,11 +68,11 @@ class PyCadBaseDb(object):
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
             print msg
-            return None
+            return []
         except :
             for s in sys.exc_info():
                 print "Generic Error: %s"%str(s)
-            return None
+            return []
         return _rows
     
     def fetchOneRow(self,sqlSelect):
@@ -80,8 +80,6 @@ class PyCadBaseDb(object):
             get the first row of the select
         """
         _rows=self.makeSelect(sqlSelect)
-        if _rows is None:
-            raise TypeError, "No row fatched in undo search "
         _row=_rows.fetchone()
         if _row is None or _row[0] is None:
             return None
@@ -99,7 +97,7 @@ class PyCadBaseDb(object):
                 self.performCommit()                
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
-            raise KeyError,msg
+            raise sql.Error,msg
         except :
             for s in sys.exc_info():
                 print "Generic Error: %s"%str(s)
