@@ -36,7 +36,6 @@ class PyCadEntDb(PyCadBaseDb):
             self.createConnection()
         else:
             self.setConnection(dbConnection)
-
         _sqlCheck="""select * from sqlite_master where name like 'pycadent'"""
         _table=self.makeSelect(_sqlCheck).fetchone()
         if _table is None:
@@ -58,7 +57,28 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_bbox_xmax REAL,
                     pycad_bbox_ymax REAL)"""
             self.makeUpdateInsert(_sqlCreation)
-            
+        self.__revisionIndex=self.getRevisionIndex()
+    
+    def getRevisionIndex(self):
+        """
+            get the revision index from the database
+        """
+        _sql="""SELECT max(pycad_index) From pycadent"""
+        index=self.fetchOneRow(_sql)
+        if index is None: return 0
+        return index
+    def increaseRevisionIndex(self):
+        """
+            increase the relesed index
+        """
+        self.__revisionIndex+=1
+
+    def decreseRevisionIndex(self):
+        """
+            decrese the revision index
+        """
+        self.__revisionIndex-=1
+
     def saveEntity(self,entityObj,undoId):
         """
             this method save the entity in the db
@@ -69,7 +89,7 @@ class PyCadEntDb(PyCadBaseDb):
         _entityType=entityObj.getEntityType()
         _styleId=entityObj.style
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
-        _revisionIndex=entityObj.index
+        _revisionIndex=self.__revisionIndex
         _revisionState=entityObj.state
         _sqlInsert="""INSERT INTO pycadent (
                     pycad_entity_id,
@@ -177,15 +197,16 @@ class PyCadEntDb(PyCadBaseDb):
             _objEnt.updateBBox()            
             _outObj.append(_objEnt)
         return _outObj
-    
-    def getEntityFromType(self,entityType):
-        """
-            get all the entity from a given type 
-        """
         
-        if not entityType in PY_CAD_ENT:
-            raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)
-        _outObj=[]
+    def __getEntityFromType(self,entityType):
+        """
+            inner select return a record of all the entitys
+        """
+        if entityType=='ALL':
+            entityType="%"
+        else:
+            if not entityType in PY_CAD_ENT:
+                raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)
         _sqlGet="""SELECT pycad_id,
                     pycad_entity_id,
                     pycad_object_type,
@@ -202,7 +223,14 @@ class PyCadEntDb(PyCadBaseDb):
                     AND pycad_entity_state NOT LIKE "DELETE"
                     AND pycad_object_type LIKE '%s'
                     """%str(entityType)
-        _dbEntRow=self.makeSelect(_sqlGet)
+        return self.makeSelect(_sqlGet)
+        
+    def getEntityFromType(self,entityType):
+        """
+            get all the entity from a given type 
+        """
+        _outObj=[]
+        _dbEntRow=self.__getEntityFromType(entityType)
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=cPickle.loads(str(_row[3]))
@@ -269,37 +297,26 @@ class PyCadEntDb(PyCadBaseDb):
                     WHERE pycad_entity_id=%s"""%(str(visible),str(entId))
         self.makeUpdateInsert(_sqlVisible)      
         
-    def delete(self,entityObj):
+    def delete(self,tableId):
         """
             delete the entity from db
         """
-        _entityId=entityObj.getId()
-        if len(self.getEntityEntityId(_entityId)) <=0:
-            raise EntDb, "The entity with id %s dose not exsist"%str(_entityId)
         _sqlDelete="""DELETE FROM pycadent 
-            WHERE pycad_entity_id='%s'"""%str(_entityId)
-        self.makeUpdateInsert(_sqlInsert)
+                        WHERE pycad_id=%s"""%str(tableId)
+        self.makeUpdateInsert(_sqlDelete)
         
-    def compactByUndoId(self, undoId): 
+    def clearEnt(self):
         """
-            from the undo id delete all the row that have some entity_id
+            perform the clear of all the entity that are not in the release state
         """
-        _sql="""SELECT pycad_id,pycad_entity_id FROM pycadent where pycad_undo_id = %s ORDER BY pycad_id DESC"""%str(undoId)
-        #todo : finire il compat del database
-        pass
-    
-    def release(self):
-        """
-            relese the current drawing 
-            1) 
-        """
-        
-        #pycad_entity_state TEXT,
-        #pycad_date NUMERIC,
-
-"""
-    todo : update the get entity to fill the bbox and the entity state and revision
-"""
+        _sql="""
+                SELECT pycad_id 
+                FROM pycadent
+                WHERE pycad_entity_state NOT LIKE "RELEASED"
+            """
+        _rows=self.makeSelect(_sql)   
+        for _row in _rows: 
+            self.delete(_row[0])
 
 def test():
     print "*"*10+" Start Test"

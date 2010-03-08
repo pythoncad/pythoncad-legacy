@@ -374,8 +374,32 @@ class PyCadDbKernel(PyCadBaseDb):
         #self.__pyCadUndoDb.clearUndoTable()
         #compact all the entity 
         #self.__pyCadEntDb.compactByUndo()
-        
-
+    
+    def release(self):
+        """
+            release the current drawing
+        """
+        try:
+            # For Best Performance
+            self.startMassiveCreation()
+            # Clear the undo table    
+            self.__pyCadUndoDb.clearUndoTable() 
+            # Relese all the entity
+            goodEntity=self.__pyCadEntDb.getEntityFromType('ALL')
+            for entity in goodEntity: 
+                entity.relese()
+                self.saveEntity(entity)
+            # Clear the old entity
+            self.__pyCadEntDb.clearEnt()
+            # Increse the revision index
+            self.__pyCadEntDb.increaseRevisionIndex()
+            # Commit all the change
+            self.performCommit()
+        except:
+            self.__pyCadEntDb.decreseRevisionIndex()
+            print "Unable to perform the release operation"
+        finally:
+            self.stopMassiveCreation()
     def deleteEntity(self,entityId):
         """
             Delete the entity from the database

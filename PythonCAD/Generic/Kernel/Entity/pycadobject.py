@@ -20,7 +20,7 @@
 #
 # This module provide basic pythoncadObject
 #
-OBJECT_STATE=['MODIFIE','RELESED', 'DELETE']
+OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
 
 class PyCadObject(object):
     """
@@ -86,3 +86,10 @@ class PyCadObject(object):
             mark the entity to delete
         """
         self.__state='DELETE'
+    
+    def relese(self):
+        """
+            mark the entity as released
+        """
+        self.__state='RELEASED'
+

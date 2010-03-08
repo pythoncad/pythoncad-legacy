@@ -237,6 +237,7 @@ class ioKernel(object):
         self.__command['UnDo']=self.unDo
         self.__command['ReDo']=self.reDo
         self.__command['Delete']=self.delete
+        self.__command['Relese']=self.release
         
     def mainLoop(self):
         """
@@ -325,6 +326,12 @@ class ioKernel(object):
             close the application
         """
         sys.exit(0)
+        
+    def release(self):
+        """
+            release the current drawing
+        """
+        self.__kr.release()
 """
     
 """
