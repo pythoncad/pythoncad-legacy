@@ -81,4 +81,8 @@ class PyCadObject(object):
             self.__index=index
     index=property(getIndex, setIndex, "Get The new index of the current entity")
     
-    
+    def delete(self):
+        """
+            mark the entity to delete
+        """
+        self.__state='DELETE'

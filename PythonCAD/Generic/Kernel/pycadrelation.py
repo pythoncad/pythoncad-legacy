@@ -106,10 +106,6 @@ class PyCadRelDb(PyCadBaseDb):
             WHERE pycad_parent_id='%s' and pycad_child_id='%s'and """%(str(_parentId),str(_childId))
         self.makeUpdateInsert(_sqlDelete)
 
-        
-""" TODO:
-
-"""
 def test():
     from pycadent       import PyCadEnt
     from pycadstyle import PyCadStyle

@@ -178,7 +178,7 @@ class PyCadDbKernel(PyCadBaseDb):
             get the entity from a given id
         """
         self.__logger.debug('getEntity')
-        return self.__pyCadEntDb.getEntity(entId)
+        return self.__pyCadEntDb.getEntityEntityId(entId)
     
     def getEntityFromType(self,entityType):
         """
@@ -288,7 +288,7 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('saveDbEnt')
         if pyCadEnt==None:
-            _newDbEnt=PyCadEnt(entType,points,self.getActiveStyle(),self.__entId)
+            _newDbEnt=PyCadEnt(entType,points,self.__activeStyleObj.getId(),self.__entId)
         else:
             _newDbEnt=pyCadEnt          
         if self.__bulkUndoIndex>=0:
@@ -313,6 +313,7 @@ class PyCadDbKernel(PyCadBaseDb):
             set the current style
         """
         self.__logger.debug('setActiveStyle')
+        #ToDO: set active style
         # check if the style id is in the db
         # if not create the style in the db with default settings
         # get from db the object style pickled
@@ -380,24 +381,11 @@ class PyCadDbKernel(PyCadBaseDb):
             Delete the entity from the database
         """
         self.__logger.debug('deleteEntity')
-        entitys=self.__pyCadEntDb.getEntityEntityId(entityId)
-        #self.
-        pass
-        # ToDo this will produce some plroblem need to fix it ..
-        # the save entity will create a new record in the db ..
-        # so it's wrong  ....
-        # find a another way
-        # May be we need to provide an update method..
-        for ent in entitys:
-            ent.state='DELETE'
-            self.saveEntity(ent)
-        
-        # Fire event after all the operatoin are ok
-        #self.deleteEntityEvent(entity)
-        #self.hideEnt(entity)
-        
-        
-
+        entity=self.__pyCadEntDb.getEntityEntityId(entityId)
+        entity.delete()
+        self.saveEntity(entity)
+        self.deleteEntityEvent(entity)
+        self.hideEnt(entity)
 
 class PyCadkernelEvent(object):
     """
@@ -428,11 +416,4 @@ class PyCadkernelEvent(object):
     __isub__ = unhandle
     __call__ = fire
     __len__  = getHandlerCount
-
-
-"""
-TODO:
-    IMPROVE COMMIT SySTEM ...
-    
-"""
 

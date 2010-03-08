@@ -64,12 +64,10 @@ class PyCadEntDb(PyCadBaseDb):
             this method save the entity in the db
             entityObj = object that we whant to store
         """
-        #I'm Updating an entity so i need to clear all the undo visibility
-        self.markUndoVisibilityFromEntId(entityObj.getId(), 0) 
         _entityId=entityObj.getId()
         _entityDump=cPickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
-        _styleId=entityObj.style.getId()
+        _styleId=entityObj.style
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=entityObj.index
         _revisionState=entityObj.state
@@ -128,10 +126,8 @@ class PyCadEntDb(PyCadBaseDb):
     def getEntityEntityId(self,entityId):
         """
             get all the entity with the entity id
-            remarks:
-            this method return all the history of the entity
         """
-        _outObj=[]
+        _outObj=None
         _sqlGet="""SELECT   pycad_id,
                             pycad_entity_id,
                             pycad_object_type,
@@ -150,8 +146,7 @@ class PyCadEntDb(PyCadBaseDb):
             _entObj.state=_row[5]
             _entObj.index=_row[6]
             _entObj.updateBBox()
-            _outObj.append(_entObj)
-        return _outObj
+        return _entObj
 
     def getEntitysFromStyle(self,styleId):
         """
@@ -165,8 +160,13 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_style_id,
                             pycad_entity_state,
                             pycad_index
-                FROM pycadent
-                WHERE pycad_style_id=%s and pycad_undo_visible=1 ORDER BY pycad_id"""%str(styleId)
+                    FROM pycadent
+                    WHERE PyCad_Id IN (
+                        SELECT max(PyCad_Id) 
+                        FROM pycadent  
+                        WHERE pycad_undo_visible=1 
+                        GROUP BY pycad_entity_id ORDER BY PyCad_Id)
+                    AND pycad_style_id=%s"""%str(styleId)
         _dbEntRow=self.makeSelect(_sqlCheck)
         for _row in _dbEntRow: 
             _style=_row[4]
@@ -187,16 +187,20 @@ class PyCadEntDb(PyCadBaseDb):
             raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)
         _outObj=[]
         _sqlGet="""SELECT pycad_id,
-                          pycad_entity_id,
-                          pycad_object_type,
-                          pycad_object_definition,
-                          pycad_style_id,
-                          pycad_entity_state,
-                          pycad_index
+                    pycad_entity_id,
+                    pycad_object_type,
+                    pycad_object_definition,
+                    pycad_style_id,
+                    pycad_entity_state,
+                    pycad_index
                     FROM pycadent
-                    WHERE pycad_object_type LIKE "%s"
-                    AND pycad_undo_visible=1
-                    ORDER BY pycad_id DESC
+                    WHERE PyCad_Id IN (
+                        SELECT max(PyCad_Id) 
+                        FROM pycadent  
+                        WHERE pycad_undo_visible=1 
+                        GROUP BY pycad_entity_id ORDER BY PyCad_Id)
+                    AND pycad_entity_state NOT LIKE "DELETE"
+                    AND pycad_object_type LIKE '%s'
                     """%str(entityType)
         _dbEntRow=self.makeSelect(_sqlGet)
         for _row in _dbEntRow: 
@@ -307,7 +311,7 @@ def test():
     print "PyCadEnt Created"
     dbEnt.saveEntity(ent,1)
     print "PyCadEnt Saved"
-    obj=dbEnt.getEntity(1)
+    obj=dbEnt.getEntityEntityId(1)
     print "getEntity [%s]"%str(obj)
     for e in dbEnt.getEntityEntityId(1):
         print "Entity %s"%str(e)

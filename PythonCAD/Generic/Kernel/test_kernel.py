@@ -233,9 +233,10 @@ class ioKernel(object):
         self.__command['Esc']=self.endApplication
         self.__command['NewSegment']=self.newSegment
         self.__command['GetSegments']=self.getSegments
+        self.__command['GetFromType']=self.getEntityFromType
         self.__command['UnDo']=self.unDo
         self.__command['ReDo']=self.reDo
-        #self.__command['Delete']=self.delete
+        self.__command['Delete']=self.delete
         
     def mainLoop(self):
         """
@@ -278,6 +279,19 @@ class ioKernel(object):
         ent=self.__kr.getEntityFromType('SEGMENT')
         for e in ent:
             print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
+
+    def getEntityFromType(self):
+        """
+            get all the entity from the database
+        """
+        entType=raw_input("-->Insert the type you are looking for :")
+        try:
+            ent=self.__kr.getEntityFromType(entType)
+            for e in ent:
+                print "----<< Entity id : %s "%str(e.getId())
+        except:
+            print "----<<Err>>On Retryving entity type %s "%entType
+            
     def reDo(self):
         """
             perform the redo command

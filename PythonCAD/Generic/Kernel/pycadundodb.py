@@ -87,8 +87,9 @@ class PyCadUndoDb(PyCadBaseDb):
                 _id-=1
         if _id>0:
             _sqlInsert="""INSERT INTO pycadundo 
-                        (pycad_incremental_id) VALUES (%s)"""%str(self.__activeUndo)
+                        (pycad_incremental_id) VALUES (%s)"""%str(_id)
             self.makeUpdateInsert(_sqlInsert)
+            self.__activeUndo=_id
             return self.__activeUndo
         else:
             raise UndoDb,"The undo are finished Unable to perform the undo"
@@ -108,7 +109,8 @@ class PyCadUndoDb(PyCadBaseDb):
             _sqlInsert="""INSERT INTO pycadundo 
                         (pycad_incremental_id) VALUES (%s)"""%str(_id)
             self.makeUpdateInsert(_sqlInsert)
-            return _id
+            self.__activeUndo=_id
+            return self.__activeUndo
         else:
             raise UndoDb,"The undo are finished Unable to perform the redo"
 
