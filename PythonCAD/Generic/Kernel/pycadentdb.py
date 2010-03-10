@@ -20,11 +20,14 @@
 #
 # This module provide basic operation for the entity in the pythoncad database
 #
-import cPickle
 
-from pycadent               import *
-from Entity.pycadstyle      import PyCadStyle
-from pycadbasedb            import PyCadBaseDb
+import cPickle as pickle
+
+from Generic.Kernel.pycadent               import *
+from Generic.Kernel.Entity.pycadstyle      import PyCadStyle
+from Generic.Kernel.pycadbasedb            import PyCadBaseDb
+from Generic.Kernel.pycadsettings          import PyCadSettings
+
 
 class PyCadEntDb(PyCadBaseDb):
     """
@@ -85,7 +88,7 @@ class PyCadEntDb(PyCadBaseDb):
             entityObj = object that we whant to store
         """
         _entityId=entityObj.getId()
-        _entityDump=cPickle.dumps(entityObj.getConstructionElements())
+        _entityDump=pickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _entityVisible=entityObj.visible
         _styleId=entityObj.style
@@ -140,7 +143,7 @@ class PyCadEntDb(PyCadBaseDb):
             _row=_rows.fetchone()
             if _row is not None:
                 _style=str(_row[3])
-                _dumpObj=cPickle.loads(str(_row[2]))
+                _dumpObj=pickle.loads(str(_row[2]))
                 _outObj=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
                 _outObj.state=_row[4]
                 _outObj.index=_row[5]
@@ -167,7 +170,7 @@ class PyCadEntDb(PyCadBaseDb):
         if _dbEntRow is not None:
             _row=_dbEntRow.fetchone()
             _style=str(_row[4])
-            _dumpObj=cPickle.loads(str(_row[3]))
+            _dumpObj=pickle.loads(str(_row[3]))
             _entObj=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
             _entObj.state=_row[5]
             _entObj.index=_row[6]
@@ -198,7 +201,7 @@ class PyCadEntDb(PyCadBaseDb):
         _dbEntRow=self.makeSelect(_sqlCheck)
         for _row in _dbEntRow: 
             _style=_row[4]
-            _dumpObj=cPickle.loads(_row[3])
+            _dumpObj=pickle.loads(_row[3])
             _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
@@ -268,7 +271,7 @@ class PyCadEntDb(PyCadBaseDb):
         _dbEntRow=self.getMultiFilteredEntity(entityType=entityType)
         for _row in _dbEntRow: 
             _style=_row[4]
-            _dumpObj=cPickle.loads(str(_row[3]))
+            _dumpObj=pickle.loads(str(_row[3]))
             _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
@@ -353,7 +356,7 @@ class PyCadEntDb(PyCadBaseDb):
         """    
         #toto : test update function
         _entityId=entityObj.getId()
-        _entityDump=cPickle.dumps(entityObj.getConstructionElements())
+        _entityDump=pickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _entityVisible=entityObj.visible
         _styleId=entityObj.style

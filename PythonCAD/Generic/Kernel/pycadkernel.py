@@ -24,22 +24,22 @@
 
 import os
 import sys
-import cPickle
+import cPickle as pickle
 import logging
 import time
 
-from pycaddbexception   import *
-from pycadundodb        import PyCadUndoDb
-from pycadentdb         import PyCadEntDb
-from pycadent           import PyCadEnt
-from pycadbasedb        import PyCadBaseDb
-from pycadrelation      import PyCadRelDb
-from pycadsettings      import PyCadSettings
+from Generic.Kernel.pycaddbexception   import *
+from Generic.Kernel.pycadundodb        import PyCadUndoDb
+from Generic.Kernel.pycadentdb         import PyCadEntDb
+from Generic.Kernel.pycadent           import PyCadEnt
+from Generic.Kernel.pycadbasedb        import PyCadBaseDb
+from Generic.Kernel.pycadrelation      import PyCadRelDb
+from Generic.Kernel.pycadsettings      import PyCadSettings
 
-from Entity.point       import Point
-from Entity.segment     import Segment
-from Entity.pycadstyle  import PyCadStyle
-from Entity.layer       import Layer
+from Generic.Kernel.Entity.point       import Point
+from Generic.Kernel.Entity.segment     import Segment
+from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
+from Generic.Kernel.Entity.layer       import Layer
 
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,

@@ -21,9 +21,11 @@
 # This  module provide access to the undo part of the pythoncad database
 #
 
-from pycadbasedb            import PyCadBaseDb
-from pycaddbexception       import UndoDb
 import sys
+
+from Generic.Kernel.pycadbasedb            import PyCadBaseDb
+from Generic.Kernel.pycaddbexception       import UndoDb
+
 
 class PyCadUndoDb(PyCadBaseDb):
     """

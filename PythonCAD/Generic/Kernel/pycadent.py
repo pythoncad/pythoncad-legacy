@@ -21,9 +21,9 @@
 # This module provide basic DB class for storing entity in pythoncad
 #
 
-from Entity.pycadstyle  import PyCadStyle
-from Entity.pycadobject import PyCadObject
-from Entity.point       import Point
+from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
+from Generic.Kernel.Entity.pycadobject import PyCadObject
+from Generic.Kernel.Entity.point       import Point
 
 PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER']
 
