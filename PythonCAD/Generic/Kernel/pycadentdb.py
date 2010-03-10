@@ -87,6 +87,7 @@ class PyCadEntDb(PyCadBaseDb):
         _entityId=entityObj.getId()
         _entityDump=cPickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
+        _entityVisible=entityObj.visible
         _styleId=entityObj.style
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=self.__revisionIndex
@@ -103,8 +104,9 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_bbox_xmax,
                     pycad_bbox_ymax,
                     pycad_entity_state,
-                    pycad_index) VALUES
-                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s,"%s",%s)"""%(
+                    pycad_index,
+                    pycad_visible) VALUES
+                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s,"%s",%s,%s)"""%(
                     str(_entityId),
                     str(_entityType),
                     str(_entityDump),
@@ -115,7 +117,8 @@ class PyCadEntDb(PyCadBaseDb):
                     str(_xMax),
                     str(_yMax), 
                     str(_revisionState),
-                    str(_revisionIndex))
+                    str(_revisionIndex), 
+                    str(_entityVisible))
         self.makeUpdateInsert(_sqlInsert)
         
     def getEntityFromTableId(self,entityTableId):
@@ -128,18 +131,20 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_object_definition,
                             pycad_style_id,
                             pycad_entity_state,
-                            pycad_index
+                            pycad_index,
+                            pycad_visible
                 FROM pycadent
                 WHERE pycad_id=%s"""%str(entityTableId)
         _rows=self.makeSelect(_sqlGet)
         if _rows is not None:
-            _dbEntRow=_rows.fetchone()
-            if _dbEntRow is not None:
-                _style=str(_dbEntRow[3])
-                _dumpObj=cPickle.loads(str(_dbEntRow[2]))
-                _outObj=PyCadEnt(_dbEntRow[1],_dumpObj,_style,_dbEntRow[0])
-                _outObj.state=_dbEntRow[4]
-                _outObj.index=_dbEntRow[5]
+            _row=_rows.fetchone()
+            if _row is not None:
+                _style=str(_row[3])
+                _dumpObj=cPickle.loads(str(_row[2]))
+                _outObj=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+                _outObj.state=_row[4]
+                _outObj.index=_row[5]
+                _outObj.visible=_row[6]
                 _outObj.updateBBox()
         return _outObj
     
@@ -154,7 +159,8 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_object_definition,
                             pycad_style_id,
                             pycad_entity_state,
-                            pycad_index
+                            pycad_index,
+                            pycad_visible
                 FROM pycadent
                 WHERE pycad_entity_id=%s ORDER BY  pycad_id DESC"""%str(entityId)
         _dbEntRow=self.makeSelect(_sqlGet)
@@ -165,6 +171,7 @@ class PyCadEntDb(PyCadBaseDb):
             _entObj=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
             _entObj.state=_row[5]
             _entObj.index=_row[6]
+            _entObj.visible=_row[7]
             _entObj.updateBBox()
         return _entObj
 
@@ -179,7 +186,8 @@ class PyCadEntDb(PyCadBaseDb):
                             pycad_object_definition,
                             pycad_style_id,
                             pycad_entity_state,
-                            pycad_index
+                            pycad_index,
+                            pycad_visible
                     FROM pycadent
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
@@ -194,26 +202,24 @@ class PyCadEntDb(PyCadBaseDb):
             _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
+            _objEnt.visible=_dbEntRow[7]
             _objEnt.updateBBox()            
             _outObj.append(_objEnt)
         return _outObj
-        
-    def __getEntityFromType(self,entityType):
+    
+    def _getEntInVersion(self, versionIndex):
         """
-            inner select return a record of all the entitys
+            get entity in version
         """
-        if entityType=='ALL':
-            entityType="%"
-        else:
-            if not entityType in PY_CAD_ENT:
-                raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)
+        #TODO: to be tested
         _sqlGet="""SELECT pycad_id,
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
                     pycad_style_id,
                     pycad_entity_state,
-                    pycad_index
+                    pycad_index,
+                    pycad_visible
                     FROM pycadent
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
@@ -221,22 +227,52 @@ class PyCadEntDb(PyCadBaseDb):
                         WHERE pycad_undo_visible=1 
                         GROUP BY pycad_entity_id ORDER BY PyCad_Id)
                     AND pycad_entity_state NOT LIKE "DELETE"
-                    AND pycad_object_type LIKE '%s'
-                    """%str(entityType)
+                    AND pycad_index = %s
+                    """%str(versionIndex)
         return self.makeSelect(_sqlGet)
+        
+    def getMultiFilteredEntity(self, visible=1, entityType='ALL'):
+        """
+            get all visible entity
+        """  
+        if entityType=='ALL':
+            entityType="%"
+        else:
+            if not entityType in PY_CAD_ENT:
+                raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)  
+        _sqlGet="""SELECT pycad_id,
+                    pycad_entity_id,
+                    pycad_object_type,
+                    pycad_object_definition,
+                    pycad_style_id,
+                    pycad_entity_state,
+                    pycad_index,
+                    pycad_visible
+                    FROM pycadent
+                    WHERE PyCad_Id IN (
+                        SELECT max(PyCad_Id) 
+                        FROM pycadent  
+                        WHERE pycad_undo_visible=1 
+                        GROUP BY pycad_entity_id ORDER BY PyCad_Id)
+                    AND pycad_entity_state NOT LIKE "DELETE"
+                    AND pycad_visible =%s
+                    AND pycad_object_type like '%s'
+                    """%(str(visible), str(entityType))
+        return self.makeSelect(_sqlGet)   
         
     def getEntityFromType(self,entityType):
         """
             get all the entity from a given type 
         """
         _outObj=[]
-        _dbEntRow=self.__getEntityFromType(entityType)
+        _dbEntRow=self.getMultiFilteredEntity(entityType=entityType)
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=cPickle.loads(str(_row[3]))
             _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
+            _objEnt.visible=_row[7]
             _objEnt.updateBBox()            
             _outObj.append(_objEnt)
         return _outObj            
@@ -304,6 +340,56 @@ class PyCadEntDb(PyCadBaseDb):
         _sqlDelete="""DELETE FROM pycadent 
                         WHERE pycad_id=%s"""%str(tableId)
         self.makeUpdateInsert(_sqlDelete)
+    
+    def uptateEntity(self, entityObj):
+        """
+            Update an exsisting entity in the database 
+            *************************Attention*********************************
+            Remarks : using this function you will loose the undo history.
+            Remarks : with this function you will force to update all the value
+            so you can update value on released entity .
+            Remarks : use this function only internaly at the kernel .
+            *******************************************************************
+        """    
+        #toto : test update function
+        _entityId=entityObj.getId()
+        _entityDump=cPickle.dumps(entityObj.getConstructionElements())
+        _entityType=entityObj.getEntityType()
+        _entityVisible=entityObj.visible
+        _styleId=entityObj.style
+        _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
+        _revisionIndex=entityObj.index
+        _revisionState=entityObj.state
+        _sqlInsert="""UPDATE pycadent set (
+                    pycad_object_type="%s",
+                    pycad_object_definition="%s",
+                    pycad_style_id=%s,
+                    pycad_bbox_xmin=%s,
+                    pycad_bbox_ymin=%s,
+                    pycad_bbox_xmax=%s,
+                    pycad_bbox_ymax=%s,
+                    pycad_entity_state="%s",
+                    pycad_index=%s,
+                    pycad_visible=%s) 
+                    WHERE PyCad_Id IN (
+                        SELECT max(PyCad_Id) 
+                        FROM pycadent  
+                        WHERE pycad_undo_visible=1 
+                        GROUP BY pycad_entity_id ORDER BY PyCad_Id) 
+                    AND pycad_entity_id=%s
+                    """%(
+                    str(_entityType),
+                    str(_entityDump),
+                    str(_styleId),
+                    str(_xMin),
+                    str(_yMin),
+                    str(_xMax),
+                    str(_yMax), 
+                    str(_revisionState),
+                    str(_revisionIndex), 
+                    str(_entityVisible), 
+                    str(_entityId))
+        self.makeUpdateInsert(_sqlInsert)
         
     def clearEnt(self):
         """

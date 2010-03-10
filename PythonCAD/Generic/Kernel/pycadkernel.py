@@ -351,7 +351,6 @@ class PyCadDbKernel(PyCadBaseDb):
         except UndoDb:
             raise
         
-        
     def reDo(self):
         """
             perform a redo operation
@@ -400,6 +399,7 @@ class PyCadDbKernel(PyCadBaseDb):
             print "Unable to perform the release operation"
         finally:
             self.stopMassiveCreation()
+            
     def deleteEntity(self,entityId):
         """
             Delete the entity from the database
@@ -409,8 +409,39 @@ class PyCadDbKernel(PyCadBaseDb):
         entity.delete()
         self.saveEntity(entity)
         self.deleteEntityEvent(entity)
-        self.hideEnt(entity)
-
+        #self.hideEnt(entity)
+    
+    def hideEntity(self, entity=None, entityId=None):
+        """
+            Hide an entity
+        """
+        #TODO : test hide function
+        self._hide(entity, entityId, 1)
+        #TODO : FIRE A SHOW EVENT
+    
+    def unHideEntity(self, entity=None, entityId=None):
+        """
+            Unhide an entity
+        """
+        #TODO: unhide an entity
+        self._hide(entity, entityId, 0)
+        #TODO : FIRE AN HIDE EVENT
+        
+    def _hide(self,entity=None, entityId=None,  visible=0):    
+        """
+            make the hide/unhide of an entity
+        """
+        if entity is None and entityId is None:
+            raise EntityMissing, "All function attribut are null"
+        activeEnt=None
+        if entity != None:
+            activeEnt=self.__pyCadEntDb.getEntityEntityId(entity.getId())
+        if activeEnt == None and entityId is not None:
+            activeEnt=self.__pyCadEntDb.getEntityEntityId(entityId)
+        if activeEnt.visible!=visible:
+            activeEnt.visible=visible
+            self.__pyCadEntDb.uptateEntity(activeEnt)
+            
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel

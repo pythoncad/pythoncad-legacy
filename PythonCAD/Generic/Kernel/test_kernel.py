@@ -4,7 +4,6 @@ from pycadkernel import *
 
 """
 TO BE TESTED:
-    deleteEntity
     test events
 """
 
@@ -238,7 +237,8 @@ class ioKernel(object):
         self.__command['ReDo']=self.reDo
         self.__command['Delete']=self.delete
         self.__command['Relese']=self.release
-        
+        self.__command['Hide']=self.hideEntity
+        self.__command['UnHide']=self.unHideEntity
     def mainLoop(self):
         """
             mainLoop operation
@@ -321,6 +321,26 @@ class ioKernel(object):
         except:
             print "----<<Err>>Enable to delete the entity"
 
+    def hideEntity(self):
+        """
+            hide an entity
+        """
+        entId=raw_input("-->Insert the id to hide :")
+        try:
+            self.__kr.hideEntity(entityId=entId)
+        except:
+            print "----<<Err>>On Hide the id : %s "%entId
+
+    def unHideEntity(self):
+        """
+            unhide an entity
+        """
+        entId=raw_input("-->Insert the id to Unhide :")
+        try:
+            self.__kr.unHideEntity(entityId=entId)
+        except:
+            print "----<<Err>>On unHide the id : %s "%entId
+        
     def endApplication(self):
         """
             close the application
@@ -332,11 +352,11 @@ class ioKernel(object):
             release the current drawing
         """
         self.__kr.release()
-"""
-    
-"""
+
 if __name__=='__main__':
+    #test()
     io=ioKernel()
     io.mainLoop()
     print "bye"
-#test()
+
+

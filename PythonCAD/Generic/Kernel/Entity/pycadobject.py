@@ -31,7 +31,19 @@ class PyCadObject(object):
         self.__entityId=objId
         self.__state="MODIFIE"
         self.__index=0
-        
+        self.__visible=1
+    def setVisible(self, visible):
+        """
+            set the visible value
+        """
+        self.__visible=visible
+    def getVisible(self):
+        """
+            get the visible value
+        """
+        return self.__visible
+    visible=property(getVisible, setVisible, None,"Set/Get the entity visibiolity")
+
     def getId(self):
         """
             get the entity id
