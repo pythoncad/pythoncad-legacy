@@ -28,6 +28,7 @@ import cPickle as pickle
 import logging
 import time
 
+from pycadextformat import * 
 from Generic.Kernel.pycaddbexception   import *
 from Generic.Kernel.pycadundodb        import PyCadUndoDb
 from Generic.Kernel.pycadentdb         import PyCadEntDb
@@ -50,7 +51,7 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
 SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings, PyCadEnt)
 
 #set the debug level
-level = LEVELS.get('PyCad_Debug', logging.NOTSET)
+level = LEVELS.get('PyCad_Warning', logging.NOTSET)
 logging.basicConfig(level=level)
 #
 
@@ -77,6 +78,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.deleteEntityEvent=PyCadkernelEvent()
         self.showEnt=PyCadkernelEvent()
         self.hideEnt=PyCadkernelEvent()
+        self.handledError=PyCadkernelEvent()
         # Some inizialization parameter
         #   set the default style
         self.__logger.debug('Set Style')        
@@ -441,6 +443,22 @@ class PyCadDbKernel(PyCadBaseDb):
         if activeEnt.visible!=visible:
             activeEnt.visible=visible
             self.__pyCadEntDb.uptateEntity(activeEnt)
+    
+    def importExternalFormat(self, fileName):
+        """
+            This method allow you to import a file from an external format
+        """ 
+        try:
+            extFormat=ExtFormat(self)
+            extFormat.openFile(fileName)
+        except DxfReport:
+            self.__logger.error('DxfReport')
+            _err={'object':extFormat, 'error':DxfReport} 
+            self.handledError(self,_err)#todo : test it not sure it works
+        except DxfUnsupportedFormat:
+            self.__logger.error('DxfUnsupportedFormat')
+            _err={'object':extFormat, 'error':DxfUnsupportedFormat}
+            self.handledError(self,_err)#todo : test it not sure it works
             
 class PyCadkernelEvent(object):
     """
@@ -472,3 +490,7 @@ class PyCadkernelEvent(object):
     __call__ = fire
     __len__  = getHandlerCount
 
+"""
+TODO: create a layer structure
+
+"""

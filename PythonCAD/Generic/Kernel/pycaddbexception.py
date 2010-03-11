@@ -60,3 +60,21 @@ class EntDb(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+class DxfReport(Exception):
+    """
+        error to say that the report of dxf is ready to be visualized
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class DxfUnsupportedFormat(Exception):
+    """
+        Unsupported format 
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)

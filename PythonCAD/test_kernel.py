@@ -48,10 +48,6 @@ except ImportError, e:
 
 from Generic.Kernel.pycadkernel import *
 
-"""
-TO BE TESTED:
-    test events
-"""
 
 def printId(kernel,obj):
     """
@@ -292,6 +288,19 @@ class ioKernel(object):
         self.__command['Relese']=self.release
         self.__command['Hide']=self.hideEntity
         self.__command['UnHide']=self.unHideEntity
+        self.__command['Import']=self.importExt
+        self.__kr.handledError=self.printError
+        
+    def printError(self, **args):
+        """
+            print the error/warning caming from the kernel
+        """    
+        if args.has_key('error'):
+            if args['error']=='DxfReport':
+                print "dxfReport" #todo : improve this sistem
+            elif args['error']=='DxfUnsupportedFormat':
+                print "DxfUnsupportedFormat" #todo : improve this sistem
+                
     def mainLoop(self):
         """
             mainLoop operation
@@ -316,9 +325,9 @@ class ioKernel(object):
             create a new segment
         """
         try:
-            val=(raw_input("-->Get First Point (x,y) :"))
+            val=(raw_input("-->Get First Point x,y :"))
             p1=Point(val[0], val[1])
-            val=(raw_input("-->Get Second Point (x,y) :"))
+            val=(raw_input("-->Get Second Point x,y :"))
             p2=Point(val[0], val[1])
             _s=Segment(p1,p2)
             self.__kr.saveEntity(_s)
@@ -405,7 +414,17 @@ class ioKernel(object):
             release the current drawing
         """
         self.__kr.release()
-
+    
+    def importExt(self):
+        """
+            import an external file into pythoncad
+        """
+        fileName=raw_input("-->insert The file name to import :")
+        try:
+            self.__kr.importExternalFormat(fileName)
+        except:
+            print "----<<Err>> importExt the  : %s we get en error "%fileName
+            
 if __name__=='__main__':
     #test()
     io=ioKernel()
