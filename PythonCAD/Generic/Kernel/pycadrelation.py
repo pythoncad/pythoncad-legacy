@@ -21,10 +21,12 @@
 # This module provide basic operation for the Relation in the pythoncad database
 #
 
-import cPickle
+import cPickle as pickle
 
-from pycadent       import PyCadEnt
-from pycadbasedb    import PyCadBaseDb
+from Generic.Kernel.pycadent       import PyCadEnt
+from Generic.Kernel.pycadbasedb    import PyCadBaseDb
+from Generic.Kernel.pycadsettings      import PyCadSettings
+
 
 class PyCadRelDb(PyCadBaseDb):
     """
