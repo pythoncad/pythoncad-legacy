@@ -1,7 +1,7 @@
 
 from Generic.Kernel.pycadkernel import PyCadDbKernel
-from Generic.Kernel.pycadsettings import PyCadSettings
-from Interface.Wx.quadtree import Quadtree
+#from Generic.Kernel.pycadsettings import PyCadSettings
+#from Interface.Wx.quadtree import Quadtree
 
 
 class Document(object):
@@ -23,7 +23,7 @@ class Document(object):
         viewport.Document = self
 
 
-    def __GetKernel():
+    def __GetKernel(self):
         return self.__cadkernel
 
     Kernel = property(__GetKernel, None, None, "Gets the kernel")
@@ -33,11 +33,39 @@ class Document(object):
         # todo: check filename
 
         # open a new kernel
+        print "before open"
         self.__cadkernel = PyCadDbKernel(filename)
+        print "after open"
+        # create a spatial index
+        self.__RebuildIndex()
         # create the displaylayers
-        self.__CreateDisplayLayers()
+        #self.__CreateDisplayLayers()
         # draw all items
         self.__viewport.ZoomAll()
+
+
+    def __RebuildIndex(self):
+        """
+        Rebuilds the spatial index for all entities in the database
+        """
+        # index object
+        index = self.__cadkernel.getSpIndex()
+        
+        if index is not None:
+            print "index constructed"
+            # remove current content
+            index.RemoveAll()
+            # get all entities from the database
+            layers = self.__cadkernel.getEntityFromType('LAYER')
+            # traverse each layer in the list
+            for layer in layers:
+                layer_ent = layer[0]
+                # for Gerwin here there is somthing wrong
+
+            print "index rebuild"
+        else:
+            print "error rebuilding index"
+
 
 
     def __CreateDisplayLayers(self):

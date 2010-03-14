@@ -42,6 +42,10 @@ from Generic.Kernel.Entity.segment     import Segment
 from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
 from Generic.Kernel.Entity.layer       import Layer
 
+# spatial index
+from Generic.Kernel.pycadindex import PyCadIndex
+
+
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,
           'PyCad_Warning': logging.WARNING,
@@ -101,6 +105,19 @@ class PyCadDbKernel(PyCadBaseDb):
                     
         createMainLayer()
         self.__logger.debug('Done inizialization')
+
+
+    def getSpIndex(self):
+        """
+        returns a new constructed spatial index object
+        """
+        try:
+            index = PyCadIndex(self.getConnection())
+            return index
+        except:
+            self.__logger.debug('Unable to create indexobject')
+        return None
+
 
     def getLayerChild(self,layerName):
         """
