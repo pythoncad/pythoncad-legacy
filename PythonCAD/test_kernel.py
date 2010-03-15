@@ -8,12 +8,8 @@ pysqlite_path = None
 
 # OSX specific path
 if sys.platform == 'darwin':
-    if platform.machine() == 'x86_64':
-        # amd64
-        pysqlite_path = os.path.join(os.getcwd(), 'darwin', 'lib64')
-    else:
-        # x86
-        pysqlite_path = os.path.join(os.getcwd(), 'darwin', 'lib32')
+	# universal binary
+    pysqlite_path = os.path.join(os.getcwd(), 'macosx')
 # linux specific path
 elif sys.platform == 'linux2':
     if platform.machine() == 'x86_64':
