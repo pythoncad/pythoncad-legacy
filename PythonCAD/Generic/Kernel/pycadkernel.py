@@ -108,8 +108,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__LayerStructure=None
         self._populateLayerStructure()
         self.__logger.debug('Done inizialization')
-
-   def getSpIndex(self):
+    def getSpIndex(self):
         """
         returns a new constructed spatial index object
         """
@@ -489,12 +488,13 @@ class PyCadDbKernel(PyCadBaseDb):
         if _mainEntLayer:
             self.__LayerStructure=PyCadLayerTree(_mainEntLayer)
             mappedDix={}
-            for ent in self.getEntityFromType():
+            for ent in self.getEntityFromType('LAYER'):
                 mappedDix[ent.getId()]=ent
             for entId in mappedDix:
                 idCildren=self.__pyCadRelDb.getChildrenIds(entId)
-                for idChild in idCildren:
-                    self.__LayerStructure.insert(mappedDix[idChild].mappedDix[entId])
+                intersection=filter(lambda x:x in idCildren,mappedDix.keys())
+                for idChild in intersection:
+                    self.__LayerStructure.insert(mappedDix[idChild], mappedDix[entId])
         else:
             raise StructuralError, "Miss ROOT Layer "
     
