@@ -29,9 +29,9 @@ class Layer(object):
     """
     def __init__(self,layerName,parentLayerObj,styleObj):
         """
-            name            = name of the layer
-            parentLayerObj  = parent layer object
-            styleObj        = styleObject
+            name         = name of the layer
+            parentLayerObj   = parent layer object
+            styleObj       = styleObject
         """
         self.__name=None
         self.__parentLayerObj=None

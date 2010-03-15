@@ -21,22 +21,23 @@
 #
 # This  module all the interface needed to talk with pythoncad database
 #
-
+#**************************************************System Import
 import os
 import sys
 import cPickle as pickle
 import logging
 import time
-
+#***************************************************Kernel Import
 from pycadextformat import * 
-from Generic.Kernel.pycaddbexception   import *
-from Generic.Kernel.pycadundodb        import PyCadUndoDb
-from Generic.Kernel.pycadentdb         import PyCadEntDb
-from Generic.Kernel.pycadent           import PyCadEnt
-from Generic.Kernel.pycadbasedb        import PyCadBaseDb
-from Generic.Kernel.pycadrelation      import PyCadRelDb
-from Generic.Kernel.pycadsettings      import PyCadSettings
-
+from Generic.Kernel.pycaddbexception    import *
+from Generic.Kernel.pycadundodb           import PyCadUndoDb
+from Generic.Kernel.pycadentdb             import PyCadEntDb
+from Generic.Kernel.pycadent                import PyCadEnt
+from Generic.Kernel.pycadbasedb           import PyCadBaseDb
+from Generic.Kernel.pycadrelation          import PyCadRelDb
+from Generic.Kernel.pycadsettings         import PyCadSettings
+from Generic.Kernel.pycadlayertree        import PyCadLayerTree
+#****************************************************Entity Import
 from Generic.Kernel.Entity.point       import Point
 from Generic.Kernel.Entity.segment     import Segment
 from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
@@ -90,56 +91,18 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('Search / Create Main Layer')
         def createMainLayer():
             try:
-                self.__activeLayer=self.getEntLayer(self.__settings.layerName)
+                self.__activeLayer=self.getEntLayerDb(self.__settings.layerName)
             except EntityMissing:
                 try:
-                    self.__activeLayer=self.getEntLayer("ROOT")
+                    self.__activeLayer=self.getEntLayerDb("ROOT")
                 except EntityMissing:                
                     _settingsObjs=Layer("ROOT",None,self.__activeStyleObj.getId())
                     self.__activeLayer=self.saveEntity(_settingsObjs)
                     self.__settings.layerName="ROOT"
-                    
         createMainLayer()
+        self.__LayerStructure=None
+        self._populateLayerStructure()
         self.__logger.debug('Done inizialization')
-
-    def getLayerChild(self,layerName):
-        """
-            get all the entity of a layer 
-        """            
-        self.__logger.debug('getLayerChild')        
-        _layerId=self.getEntLayer(layerName).getId()
-        _childIds=self.__pyCadRelDb.getChildrenIds(_layerId)
-        return _childIds
-
-    def getLayer(self,layerName):
-        """
-            get the layer object from the layerName
-            if not exsist create it
-        """
-        self.__logger.debug('getLayer')
-        pyCadEntLayer=self.getEntLayer(layerName)
-        _layersEnts=pyCadEntLayer.getConstructionElements()
-        for key in _layersEnts:
-            if _layersEnts[key].name==self.__settings.layerName:
-                return _layersEnts[key]
-        else:
-            raise EntityMissing,"Layer %s not in the db"%str(layerName)                  
-
-    def getEntLayer(self,layerName):
-        """
-            get the pycadent of type layer
-        """
-        self.__logger.debug('getEntLayer')
-        _layersEnts=self.getEntityFromType('LAYER')
-        for layersEnt in _layersEnts:
-            unpickleLayers=layersEnt.getConstructionElements()
-            for key in unpickleLayers:
-                if unpickleLayers[key].name==self.__settings.layerName:
-                    return layersEnt
-            else:
-                raise EntityMissing,"Layer name %s missing"%str(layerName)
-        else:
-            raise EntityMissing,"Layer name %s missing"%str(layerName)
         
     def getDbSettingsObject(self):
         """
@@ -459,7 +422,72 @@ class PyCadDbKernel(PyCadBaseDb):
             self.__logger.error('DxfUnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledError(self,_err)#todo : test it not sure it works
-            
+    #************************************************************************
+    #*************************layer managment********************************
+    #************************************************************************
+    def getLayerChild(self,layerName):
+        """
+            get all the child is of a layer 
+        """            
+        self.__logger.debug('getLayerChild')        
+        _layerId=self.getEntLayerDb(layerName).getId()
+        _childIds=self.__pyCadRelDb.getChildrenIds(_layerId)
+        return _childIds
+
+    def getLayer(self,layerName):
+        """
+            get the layer object from the layerName
+            if not exsist create it
+        """
+        self.__logger.debug('getLayer')
+        pyCadEntLayer=self.getEntLayerDb(layerName)
+        _layersEnts=pyCadEntLayer.getConstructionElements()
+        for key in _layersEnts:
+            if _layersEnts[key].name==self.__settings.layerName:
+                return _layersEnts[key]
+        else:
+            raise EntityMissing,"Layer %s not in the db"%str(layerName)                  
+
+    def getEntLayerDb(self,layerName):
+        """
+            get the pycadent of type layer
+        """
+        self.__logger.debug('getEntLayerDb')
+        _layersEnts=self.getEntityFromType('LAYER')
+        for layersEnt in _layersEnts:
+            unpickleLayers=layersEnt.getConstructionElements()
+            for key in unpickleLayers:
+                if unpickleLayers[key].name==self.__settings.layerName:
+                    return layersEnt
+            else:
+                raise EntityMissing,"Layer name %s missing"%str(layerName)
+        else:
+            raise EntityMissing,"Layer name %s missing"%str(layerName)
+
+    def _populateLayerStructure(self):
+        """
+             populate layer tree 
+        """
+        self.__logger.debug('_populateLayerStructure')
+        _mainEntLayer=self.getEntLayerDb('ROOT')
+        if _mainEntLayer:
+            self.__LayerStructure=PyCadLayerTree(_mainEntLayer)
+            mappedDix={}
+            for ent in self.getEntityFromType():
+                mappedDix[ent.getId()]=ent
+            for entId in mappedDix:
+                idCildren=self.__pyCadRelDb.getChildrenIds(entId)
+                for idChild in idCildren:
+                    self.__LayerStructure.insert(mappedDix[idChild].mappedDix[entId])
+        else:
+            raise StructuralError, "Miss ROOT Layer "
+    
+    def getTreeLayer(self):
+        """
+            retrive the layer from the tree
+        """
+        
+        
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel
