@@ -80,6 +80,22 @@ class PyCadIndex(object):
         self.__connetion.commit()
         cur.close()
 
+    def __CheckMBR(self, mbr):
+        """
+        Check the MBR: min_x < max_x and min_y < max_y
+        TODO: what if min_x == max_x or min_y == max_y
+        """
+        # check min_x < max_x
+        if mbr[0] > mbr[2]:
+            temp = mbr[0]
+            mbr[0] = mbr[2]
+            mbr[2] = temp
+        # check min_y < max_y
+        if mbr[1] > mbr[3]:
+            temp = mbr[1]
+            mbr[1] = mbr[3]
+            mbr[3] = temp
+        return mbr
 
     def Insert(self, id, mbr):
         """
@@ -88,7 +104,10 @@ class PyCadIndex(object):
         cur = self.__connetion.cursor()
         
         try:
-            t = (id, mbr[0], mbr[1], mbr[2], mbr[3],)
+            # check bounding rectangle
+            mbr = self.__CheckMBR(mbr)
+            # parameter template
+            t = (id, mbr[0], mbr[2], mbr[1], mbr[3],)
             cur.execute('INSERT INTO sp_index VALUES (?,?,?,?,?)', t)
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
@@ -126,6 +145,20 @@ class PyCadIndex(object):
         """
         Get the extents from all index entities
         """
-        pass
-       
-       
+        cur = self.__connetion.cursor()
+        
+        try:
+            # select candidates from the index
+            cur.execute('SELECT min(min_x), min(min_y), max(max_x), max(max_y) FROM sp_index')
+            # add the candidates to the list
+            row = cur.fetchone()
+            # is there any result
+            if row is not None:
+                return row
+            
+        except sql.Error, e:
+            print "Sqlite error:", e.args[0]
+
+        cur.close()
+        return (0.0, 0.0, 0.0, 0.0)
+

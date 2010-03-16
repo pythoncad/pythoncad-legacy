@@ -4,7 +4,7 @@ import wx
 import colorsys
 from math import cos, sin, radians
 
-from Interface.Wx.displaylist import DisplayList
+from Interface.Wx.displaylayer import DisplayLayer
 from Interface.Wx.view import View
 
 
@@ -20,8 +20,8 @@ class ViewPort(wx.Panel):
         self.Bind(wx.EVT_SIZE, self.OnResize)
         # draw on paint event
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        # displaylist
-        self.__displaylist = DisplayList()
+        # display layers
+        self.__display_layers = {}
         # visible view on screen
         self.__screen_view = View()
         # world view
@@ -39,6 +39,16 @@ class ViewPort(wx.Panel):
 
         Document = property(__GetDocument, __SetDocument, None, "Get/Set the document used by the view")
 
+
+    def GetDisplayLayer(self, layer_name):
+        """
+        Get the display layer corresponding to this layer name
+        """
+        # is the layer already in the table
+        if not self.__display_layers.has_key(layer_name):
+            self.__display_layers[layer_name] = DisplayLayer()
+        return self.__display_layers[layer_name]
+    
 
     def OnResize(self, event):
         pass

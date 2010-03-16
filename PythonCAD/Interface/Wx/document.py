@@ -56,34 +56,45 @@ class Document(object):
             # remove current content
             index.RemoveAll()
             # get all entities from the database
-            layers = self.__cadkernel.getEntityFromType('LAYER')
+            entities = self.__cadkernel.getEntityFromType('SEGMENT')
             # traverse each layer in the list
-            for layer in layers:
-                layer_ent = layer[0]
-                # for Gerwin here there is somthing wrong
+            for entity in entities:
+                # add entity to index
+                index.Insert(entity.getId(), entity.getBBox())
+                # add entity to display
+                self.__AddEntityToDisplay(entity)
 
             print "index rebuild"
         else:
             print "error rebuilding index"
 
 
-
-    def __CreateDisplayLayers(self):
+    def __AddEntityToDisplay(self, entity):
         """
-        Creates an display layer list from the database
+        Add an entity do the viewport displaylist
         """
-        # first get all layers from the database
-        layers = self.__cadkernel.getEntityFromType('LAYER')
-        # traverse each layer in the list
-        for layer in layers:
-            #layer_ent = layer[0]
-            # for Gerwin here there is somthing wrong
-            pass
+        # for now create a single layer
+        dummy_layer = 'standard'
+        # TODO: real layer creation
+        display_layer = self.__viewport.GetDisplayLayer(dummy_layer)
+        
+        if display_layer is not None:
+            # add entity to display layer
+            display_layer.AddEntity(entity)
 
 
     def GetDrawingExtents(self):
-        pass
-
+        """
+        Gets the min_x, min_y, max_x, max_y for all entities
+        """
+        # index object
+        index = self.__cadkernel.getSpIndex()
+        
+        if index is not None:
+            # get the extents from the index
+            return index.GetExtents()
+        # error        
+        return None
 
 
 
