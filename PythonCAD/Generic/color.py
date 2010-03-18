@@ -102,7 +102,7 @@ Color() => A default color with r = g = b = 255.
             _b = 255
         else:
             raise SyntaxError, "Invalid call to Color()."
-        self.__color = (_r << 16) | (_g << 8) | _b
+        self._color = (_r << 16) | (_g << 8) | _b
 
     def __eq__(self, obj):
         """Compare two Color objects for equivalence.
@@ -131,7 +131,7 @@ all values are equal, return 0.
         """
         if not isinstance(obj, Color):
             raise TypeError, "Invalid object for color comparison: " + `obj`
-        _val = self.__color
+        _val = self._color
         _objval = hash(obj)
         return cmp(_val, _objval)
 
@@ -141,24 +141,24 @@ all values are equal, return 0.
 Providing this method means that Color objects can be used
 as keys in dictionaries.
         """
-        return self.__color
+        return self._color
         
     def __repr__(self):
-        _val = self.__color
+        _val = self._color
         _r = (_val & 0xff0000) >> 16
         _g = (_val & 0xff00) >> 8
         _b = (_val & 0xff)
         return "Color(%d,%d,%d)" % (_r, _g, _b)
     
     def __str__(self):
-        return "#%06x" % self.__color
+        return "#%06x" % self._color
 
     def getColors(self):
         """Return a three-item tuple with the values comprising this color.
 
 getColors()        
         """
-        _val = self.__color
+        _val = self._color
         _r = (_val & 0xff0000) >> 16
         _g = (_val & 0xff00) >> 8
         _b = (_val & 0xff)
@@ -169,7 +169,7 @@ getColors()
 
 getRed()        
         """
-        return (self.__color & 0xff0000) >> 16
+        return (self._color & 0xff0000) >> 16
 
     r = property(getRed, None, None, "Red value of the color.")
 
@@ -178,7 +178,7 @@ getRed()
 
 getGreen()        
         """
-        return (self.__color & 0xff00) >> 8
+        return (self._color & 0xff00) >> 8
 
     g = property(getGreen, None, None, "Green value of the color.")
 
@@ -187,7 +187,7 @@ getGreen()
 
 getBlue()        
         """
-        return (self.__color & 0xff)
+        return (self._color & 0xff)
 
     b = property(getBlue, None, None, "Blue value of the color.")
 
@@ -196,7 +196,7 @@ getBlue()
 
 clone()
         """
-        _val = self.__color
+        _val = self._color
         return Color(_val)
 
 #

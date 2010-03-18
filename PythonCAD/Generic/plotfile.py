@@ -48,7 +48,7 @@ class Plot(object):
         self.__bounds = None
         self.__landscape = False
         self.__invert = False
-        self.__color = False
+        self._color = False
         self.__units = None
         self.__data = {}
 
@@ -80,7 +80,7 @@ class Plot(object):
 
     def setColorMode(self, flag):
         util.test_boolean(flag)
-        self.__color = flag
+        self._color = flag
 
     def setUnits(self):
         self.__units = self.__image.getUnits()
@@ -94,7 +94,7 @@ class Plot(object):
         if not isinstance(obj, GraphicObject):
             raise TypeError, "Invalid GraphicObject: " + `obj`
         _col = None
-        if self.__color:
+        if self._color:
             _c = obj.getColor()
             if self.__invert and _c == Plot.__white:
                 _col = (0, 0, 0) # black
@@ -235,7 +235,7 @@ class Plot(object):
                 _font = "%s-%s%s" % (_family, _style, _weight)
         _tbdata['font'] = _font
         _col = None
-        if self.__color:
+        if self._color:
             _c = tblock.getColor()
             if self.__invert and _c == Plot.__white:
                 _col = (0, 0, 0) # black
@@ -270,7 +270,7 @@ class Plot(object):
 
     def _getDimGraphicData(self, dim):
         _col = None
-        if self.__color:
+        if self._color:
             _c = dim.getColor()
             if self.__invert and _c == Plot.__white:
                 _col = (0, 0, 0) # black

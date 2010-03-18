@@ -3,6 +3,8 @@ import wx
 import types
 
 from Generic.Kernel.Entity.segment import Segment
+from Generic.Kernel.pycadent import PyCadEnt
+
 from Interface.Wx.displayobject import DisplayObject
 
 # draw methods
@@ -20,27 +22,27 @@ class LayerDisplay(object):
         # the display list for this layer, list of DisplayObjects
         self.__displaylist = {}
         # layer entity properties
-        self.__id = 0
-        self.__visible = True
-        self.__color = wx.Colour(255, 0, 0, wx.ALPHA_OPAQUE)
+        self._id = 0
+        self._visible = True
+        self._color = wx.Colour(255, 0, 0, wx.ALPHA_OPAQUE)
         #self.__linestyle = wx.Solid
-        self.__linewidth = 1
+        self._linewidth = 1
         # initialize draw methods
-        self.__InitDrawMethods()
+        self._InitDrawMethods()
        
        
-    def __GetDisplayList(self):
+    def _GetDisplayList(self):
         return self.__displaylist
     
-    DisplayList = property(__GetDisplayList, None, None, "gets the display list")
+    DisplayList = property(_GetDisplayList, None, None, "gets the display list")
 
 
-    def __InitDrawMethods(self):
+    def _InitDrawMethods(self):
         """
         Add draw methods to the entity classes
         """
         # segment draw
-        _class = Segment
+        _class = PyCadEnt
         _class.Draw = types.MethodType(DrawSegment, None, _class)
         _class.Erase = types.MethodType(EraseSegment, None, _class)
        
@@ -58,43 +60,45 @@ class LayerDisplay(object):
         Add an entity to the display
         """
         if entity is not None:
-            id = entity.getId()
-            mbr = entity.getBBox()
+            entity.Draw(self)
+        
             
-            
-            
-    
     
     def RemoveEntity(self, entity):
         """
         Removes an entity from the display
         """
         if entity is not None:
-            id = entity.getId()
-            # is the entity in the list
-            if self.__displaylist.haskey(id):
-                del(self.__displaylist, id)
+            entity_class = entity.getConstructionElements()
+            entity_class.Erase(entity.Id, self)
                 
     
-    def Display(self):
+    def Display(self, view):
         """
-        Shows the displaylist if the layer is visible
+        Shows the display list if the layer is visible
         """
-        if self.__visible:
-            self.__displaylist.Execute()
+        # is the layer visible
+        if self._visible:
+            # set layer display properties
+            view.dc.SetPen(wx.Pen(self._color, 1))
+            # display all objects
+            for id, display_object in self.__displaylist.items():
+                # display an object
+                display_object.Display(view)
+
         
-    def GetBBox(self):
-        """
-        Gets the bounding box for all entities on this layer
-        """
-        pass
+#    def GetBBox(self):
+#        """
+#        Gets the bounding box for all entities on this layer
+#        """
+#        pass
     
     
-    def __AddSegment(self, id, segment):
-        list_object = DisplayObject()
-        # create a display object in world coordinates
-        list_object.init_from_segment(segment)
-        # add display object to the list
-        self.__displaylist[id] = list_object
+#    def __AddSegment(self, id, segment):
+#        list_object = DisplayObject()
+#        # create a display object in world coordinates
+#        list_object.init_from_segment(segment)
+#        # add display object to the list
+#        self.__displaylist[id] = list_object
         
             

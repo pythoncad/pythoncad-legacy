@@ -259,7 +259,7 @@ alignment: LEFT
         self.__family = _family
         self.__style = _style
         self.__weight = _weight
-        self.__color = _color
+        self._color = _color
         self.__size = _size
         self.__angle = _angle
         self.__alignment = _align
@@ -273,7 +273,7 @@ alignment: LEFT
                 self.__family == obj.getFamily() and
                 self.__style == obj.getStyle() and
                 self.__weight == obj.getWeight() and
-                self.__color == obj.getColor() and
+                self._color == obj.getColor() and
                 abs(self.__size - obj.getSize()) < 1e-10 and
                 abs(self.__angle - obj.getAngle()) < 1e-10 and
                 self.__alignment == obj.getAlignment())
@@ -287,7 +287,7 @@ alignment: LEFT
                 self.__family != obj.getFamily() or
                 self.__style != obj.getStyle() or
                 self.__weight != obj.getWeight() or
-                self.__color != obj.getColor() or
+                self._color != obj.getColor() or
                 abs(self.__size - obj.getSize()) > 1e-10 or
                 abs(self.__angle - obj.getAngle()) > 1e-10 or
                 self.__alignment != obj.getAlignment())
@@ -295,7 +295,7 @@ alignment: LEFT
     def finish(self):
         """Finalization for TextStyle instances.
         """
-        self.__color = None
+        self._color = None
 
 
     def getValues(self):
@@ -304,7 +304,7 @@ alignment: LEFT
         _vals['family'] = self.__family
         _vals['style'] = self.__style
         _vals['weight'] = self.__weight
-        _vals['color'] = self.__color.getColors()
+        _vals['color'] = self._color.getColors()
         _vals['size'] = self.__size
         _vals['angle'] = self.__angle
         _vals['align'] = self.__alignment
@@ -512,7 +512,7 @@ This classmethod returns a list of values.
 
 getColor()
         """
-        return self.__color
+        return self._color
 
     color = property(getColor, None, None, "Text color")
 
@@ -760,7 +760,7 @@ TextBlock(x, y, text[, textstyle=None])
         self.__family = _family
         self.__style = _style
         self.__weight = _weight
-        self.__color = _color
+        self._color = _color
         self.__size = _size
         self.__angle = _angle
         self.__alignment = _align
@@ -786,8 +786,8 @@ TextBlock(x, y, text[, textstyle=None])
         """
             Finalization for TextBlock instances.
         """
-        if self.__color is not None:
-            self.__color = None
+        if self._color is not None:
+            self._color = None
         super(TextBlock, self).finish()
 
     def getValues(self):
@@ -808,8 +808,8 @@ This method extends the Entity::getValues() method.
             _data.setValue('style', self.__style)
         if self.__weight is not None:
             _data.setValue('weight', self.__weight)
-        if self.__color is not None:
-            _data.setValue('color', self.__color.getColors())
+        if self._color is not None:
+            _data.setValue('color', self._color.getColors())
         if self.__size is not None:
             _data.setValue('size', self.__size)
         if self.__angle is not None:
@@ -901,8 +901,8 @@ attributes set the the values in the TextStyle.
                 _opts['style'] = self.__style
             if self.__weight is not None:
                 _opts['weight'] = self.__weight
-            if self.__color is not None:
-                _opts['color'] = self.__color
+            if self._color is not None:
+                _opts['color'] = self._color
             if self.__size is not None:
                 _opts['size'] = self.__size
             if self.__angle is not None:
@@ -1065,7 +1065,7 @@ to that defined in the TextStyle.
 
 getColor()
         """
-        _color = self.__color
+        _color = self._color
         if _color is None:
             _color = self.__tstyle.getColor()
         return _color
@@ -1086,10 +1086,10 @@ that defined in the TextStyle.
             if not isinstance(_col, color.Color):
                 raise TypeError, "Invalid color type: " + `type(_col)`
         _c = self.getColor()
-        if ((_col is None and self.__color is not None) or
+        if ((_col is None and self._color is not None) or
             (_col is not None and _col != _c)): 
             self.startChange('font_color_changed')
-            self.__color = _col
+            self._color = _col
             self.endChange('font_color_changed')
             self.sendMessage('font_color_changed', _c)
             self.modified()

@@ -20,18 +20,27 @@
 # code for adding graphical methods to drawing entities
 #
 
+from Interface.Wx.displayobject import DisplayObject
+from Interface.Wx.displaypoint import DisplayPoint
 
 
 
 #----------------------------------------------------------------------------------------------------
-def DrawSegment(self, display):
+def DrawSegment(self, layer_display):
+    # create a display object
+    display_object = DisplayObject(self.Id)
     # list with points
-    points = []
+    points = display_object.Points
+    # get the geometry
+    geometry = self.getConstructionElements()
     # add begin- and end point to the list
-    points.append(self.p1)
-    points.append(self.p2)
-    # store the list
-    display.DisplayList[id] = points
+    pt = DisplayPoint(geometry['POINT_1'])
+    points.append(pt)
+    pt = DisplayPoint(geometry['POINT_2'])
+    points.append(pt)
+    # store the display object
+    layer_display.DisplayList[self.Id] = display_object
+
 
 #----------------------------------------------------------------------------------------------------
 def EraseSegment(self, display):
@@ -39,18 +48,20 @@ def EraseSegment(self, display):
     #self.draw(viewport, viewport.gimage.getOption('BACKGROUND_COLOR'))
     pass
 
+
 #----------------------------------------------------------------------------------------------------
 def _sample_segment(self, display):
     # display properties
-    lineweight = None
-    linestyle = None
-    # get begin and endpoint
-    p1 = self.getFirstPoint().point
-    p2 = self.getCurrentPoint()
-    # add points to list
-    points = []
-    points.append(p1)
-    points.append(p2)
+#    lineweight = None
+#    linestyle = None
+#    # get begin and endpoint
+#    p1 = self.getFirstPoint().point
+#    p2 = self.getCurrentPoint()
+#    # add points to list
+#    points = []
+#    points.append(p1)
+#    points.append(p2)
     # do the actual draw of the linestring
     #viewport.draw_linestring(color, lineweight, linestyle, points)
+    pass
 

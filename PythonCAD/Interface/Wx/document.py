@@ -12,19 +12,19 @@ class Document(object):
     """
     def __init__(self, parent, viewport):
         # list of display layers
-        self.__display_layers = {}
+        self._layers_display = {}
         # reference to the cad window
-        self.__cadwindow = parent
+        self._cadwindow = parent
         # cad kernel is created on file open
-        self.__cadkernel = None
+        self._cadkernel = None
         # viewport reference
-        self.__viewport = viewport
+        self._viewport = viewport
         # make the document known to the view
         viewport.Document = self
 
 
     def __GetKernel(self):
-        return self.__cadkernel
+        return self._cadkernel
 
     Kernel = property(__GetKernel, None, None, "Gets the kernel")
 
@@ -34,61 +34,57 @@ class Document(object):
 
         # open a new kernel
         print "before open"
-        self.__cadkernel = PyCadDbKernel(filename)
+        self._cadkernel = PyCadDbKernel(filename)
         print "after open"
         # create a spatial index
-        self.__RebuildIndex()
-        # create the displaylayers
-        #self.__CreateDisplayLayers()
+        self.RebuildIndex()
+        # regenerate drawing
+        self.Regen()
         # draw all items
-        self.__viewport.ZoomAll()
+        self._viewport.ZoomAll()
 
 
-    def __RebuildIndex(self):
+    def RebuildIndex(self):
         """
         Rebuilds the spatial index for all entities in the database
         """
         # index object
-        index = self.__cadkernel.getSpIndex()
+        index = self._cadkernel.getSpIndex()
         
         if index is not None:
             print "index constructed"
             # remove current content
             index.RemoveAll()
             # get all entities from the database
-            entities = self.__cadkernel.getEntityFromType('SEGMENT')
+            entities = self._cadkernel.getEntityFromType('SEGMENT')
             # traverse each layer in the list
             for entity in entities:
                 # add entity to index
-                index.Insert(entity.getId(), entity.getBBox())
-                # add entity to display
-                self.__AddEntityToDisplay(entity)
+                index.Insert(entity.Id, entity.getBBox())
 
             print "index rebuild"
         else:
             print "error rebuilding index"
 
 
-    def __AddEntityToDisplay(self, entity):
+    def Regen(self):
         """
-        Add an entity do the viewport displaylist
+        Rebuild display lists and redraw the viewport
         """
-        # for now create a single layer
-        dummy_layer = 'standard'
-        # TODO: real layer creation
-        display_layer = self.__viewport.GetDisplayLayer(dummy_layer)
+        # get all entities from the database
+        entities = self._cadkernel.getEntityFromType('SEGMENT')
+        # traverse each layer in the list
+        for entity in entities:
+            # add entity to view port
+            self._viewport.AddEntity(entity)
         
-        if display_layer is not None:
-            # add entity to display layer
-            display_layer.AddEntity(entity)
-
-
+ 
     def GetDrawingExtents(self):
         """
         Gets the min_x, min_y, max_x, max_y for all entities
         """
         # index object
-        index = self.__cadkernel.getSpIndex()
+        index = self._cadkernel.getSpIndex()
         
         if index is not None:
             # get the extents from the index

@@ -89,12 +89,12 @@ The aliases may be removed at some point.
         super(Entity, self).__init__()
         self.__locked = False
         self.__modified = False
-        self.__visible = True
+        self._visible = True
         self.__parent = None
         self.__children = None
         self.__log = None
         self.__undoing = 0 # 1 => undo, -1 => redo
-        self.__id = _id
+        self._id = _id
         if _parent is not None:
             Entity.setParent(self, _parent)
 
@@ -116,7 +116,7 @@ getValues()
 This method returns an EntityData instance.
         """
         _data = EntityData()
-        _data.setValue('id', self.__id)
+        _data.setValue('id', self._id)
         _pid = None
         if self.__parent is not None:
             _pid = self.__parent.getID()
@@ -130,7 +130,7 @@ This method returns an EntityData instance.
 
 getID()
         """
-        return self.__id
+        return self._id
 
     id = property(getID, None, None, "Entity ID")
 
@@ -236,14 +236,14 @@ isVisible()
 
 This method returns a boolean.
         """
-        return self.__visible is True
+        return self._visible is True
 
     def getVisibility(self):
         """Return the visibility flag of an entity.
 
 getVisibility()        
         """
-        return self.__visible
+        return self._visible
     
     def setVisibility(self, vis):
         """Set the visibility of the entity.
@@ -253,10 +253,10 @@ setVisibility(vis)
 Argument 'vis' must be either True or False.
         """
         util.test_boolean(vis)
-        _v = self.__visible
+        _v = self._visible
         if _v is not vis:
             self.startChange('visibility_changed')
-            self.__visible = vis
+            self._visible = vis
             self.endChange('visibility_changed')
             self.sendMessage('visibility_changed', _v)
             self.modified()

@@ -86,7 +86,7 @@ t: A positive float value - defaults to 1.0
             raise ValueError, "Invalid line thickness: %g" % _t
         self.__name = _n
         self.__linetype = _lt
-        self.__color = _c
+        self._color = _c
         self.__thickness = _t
 
     def __eq__(self, obj):
@@ -104,7 +104,7 @@ comparison returns False.
             return True
         return (self.__name == obj.getName() and
                 self.__linetype == obj.getLinetype() and
-                self.__color == obj.getColor() and
+                self._color == obj.getColor() and
                 abs(self.__thickness - obj.getThickness()) < 1e-10)
 
     def __ne__(self, obj):
@@ -123,7 +123,7 @@ comparison returns True.
 
 Defining this method allows Styles to be stored in dictionaries.
         """
-        _val = hash(self.__color)
+        _val = hash(self._color)
         _val = _val ^ hash(self.__linetype)
         _val = _val ^ hash(long(self.__thickness * 1e10))
         return _val
@@ -151,7 +151,7 @@ getLinetype()
 
 getColor()
         """
-        return self.__color
+        return self._color
 
     color = property(getColor, None, None, "Style Color")
     
@@ -167,7 +167,7 @@ getThickness()
     def getStyleValues(self):
         _n = self.__name
         _l = self.__linetype.getName(), self.__linetype.getList()
-        _c = self.__color.getColors()
+        _c = self._color.getColors()
         _t = self.thickness
         return _n, _l, _c, _t
     
@@ -178,7 +178,7 @@ clone()
         """
         _name = self.__name[:]
         _linetype = self.__linetype.clone()
-        _color = self.__color.clone()
+        _color = self._color.clone()
         _thickness = self.__thickness
         return Style(_name, _linetype, _color, _thickness)
 #

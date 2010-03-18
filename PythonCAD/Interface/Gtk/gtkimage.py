@@ -225,8 +225,8 @@ class GTKImage(object):
         #self.__disp_height = None
         #self.__units_per_pixel = 1.0
 
-        self.__viewport = IViewport(self)
-        pane.pack2(self.__viewport, True, False)
+        self._viewport = IViewport(self)
+        pane.pack2(self._viewport, True, False)
 
         lower_hbox = gtk.HBox(False, 2)
         main_vbox.pack_start(lower_hbox, False, False)
@@ -314,7 +314,7 @@ class GTKImage(object):
             _image.setLog(None)
         _image.finish()
         self.__window.destroy()
-        self.__viewport = None
+        self._viewport = None
         self.__window = None
         self.__entry = None
         self.__accel = None
@@ -432,14 +432,14 @@ class GTKImage(object):
         #
         # set the focus back to the DisplayArea widget
         #
-        self.__viewport.grab_focus()
+        self._viewport.grab_focus()
 
         return False
 
     #------------------------------------------------------------------
     def __exposeEvent(self, widget, event, data=None):
         #print "GtkImage.__exposeEvent()"
-        self.__viewport.refresh(event.area)
+        self._viewport.refresh(event.area)
         return True
 
     #------------------------------------------------------------------
@@ -458,7 +458,7 @@ class GTKImage(object):
 #        _gc.set_exposures(True)
 #        self.setGC(_gc)
         # zoom fit
-        self.__viewport.zoom_tool.zoom_fit()
+        self._viewport.zoom_tool.zoom_fit()
 
     #------------------------------------------------------------------
     def __configureEvent(self, widget, event, data=None):
@@ -467,7 +467,7 @@ class GTKImage(object):
         _disp_width, _disp_height = self.getSize()
         if _disp_width != _width or _disp_height != _height:
             self.setSize(_width, _height)
-            self.__viewport.zoom_tool.zoom_fit()
+            self._viewport.zoom_tool.zoom_fit()
         return True
     
     #------------------------------------------------------------------
@@ -635,8 +635,8 @@ class GTKImage(object):
         if _opt == 'BACKGROUND_COLOR':
             _bc = self.__image.getOption('BACKGROUND_COLOR')
             _col = gtk.gdk.color_parse(str(_bc))
-            self.__viewport.modify_fg(gtk.STATE_NORMAL, _col)
-            self.__viewport.modify_bg(gtk.STATE_NORMAL, _col)
+            self._viewport.modify_fg(gtk.STATE_NORMAL, _col)
+            self._viewport.modify_bg(gtk.STATE_NORMAL, _col)
             self.redraw()
 
         elif (_opt == 'HIGHLIGHT_POINTS' or
@@ -709,7 +709,7 @@ getEntry()
         """
         Return the gtk.DrawingArea in the GTKImage.
         """
-        return self.__viewport
+        return self._viewport
 
     viewport = property(__get_viewport, None, None, "DrawingArea for a GTKImage.")
 
@@ -1064,8 +1064,8 @@ allocated color.
             # _r = int(round(65535.0 * (c.r/255.0)))
             # _g = int(round(65535.0 * (c.g/255.0)))
             # _b = int(round(65535.0 * (c.b/255.0)))
-            # _color = self.__viewport.get_colormap().alloc_color(_r, _g, _b)
-            _color = self.__viewport.get_colormap().alloc_color(str(c))
+            # _color = self._viewport.get_colormap().alloc_color(_r, _g, _b)
+            _color = self._viewport.get_colormap().alloc_color(str(c))
                 
             globals.gtkcolors[c] = _color
         return _color
@@ -1076,7 +1076,7 @@ allocated color.
 
 fitImage()
         """
-        self.__viewport.zoom_tool.zoom_fit()
+        self._viewport.zoom_tool.zoom_fit()
 
 ##---------------------------------------------------------------------------------------------------
 #    def refresh(self):
@@ -1085,7 +1085,7 @@ fitImage()
 #            If entities in the drawing have been added, removed, or
 #            modified, use the redraw() method.
 #        """
-#        _da = self.__viewport
+#        _da = self._viewport
 #        if (_da.flags() & gtk.MAPPED):
 #            # print "refreshing ..."
 #            _gc = _da.get_style().fg_gc[gtk.STATE_NORMAL]
@@ -1095,12 +1095,12 @@ fitImage()
 #---------------------------------------------------------------------------------------------------
     def redraw(self):
         print "Debug : GtkImage.redraw"
-        self.__viewport.regenerate()
+        self._viewport.regenerate()
 
 #        """
 #            This method draws all the objects visible in the window.
 #        """
-#        _da = self.__viewport
+#        _da = self._viewport
 #        if (_da.flags() & gtk.MAPPED):
 #            if _debug:
 #                print "Redrawing image"

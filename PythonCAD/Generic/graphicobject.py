@@ -108,7 +108,7 @@ thickness: A positive float that overrides the value in the Style
             if abs(_t - _st.getThickness()) < 1e-10:
                 _t = None
         self.__style = _st
-        self.__color = _col
+        self._color = _col
         self.__linetype = _lt
         self.__thickness = _t
 
@@ -132,7 +132,7 @@ thickness: A positive float that overrides the value in the Style
     
     def finish(self):
         self.__style = None
-        self.__color = None
+        self._color = None
         self.__linetype = None
         self.__thickness = None
         super(GraphicObject, self).finish()
@@ -167,8 +167,8 @@ style.
         _cs = self.getStyle()
         if _cs != _s:
             _col = None
-            if self.__color is not None:
-                _col = self.__color
+            if self._color is not None:
+                _col = self._color
             _lt = None
             if self.__linetype is not None:
                 _lt = self.__linetype
@@ -177,7 +177,7 @@ style.
                 _t = self.__thickness
             self.startChange('style_changed')
             self.__style = _s
-            self.__color = None
+            self._color = None
             self.__linetype = None
             self.__thickness = None
             self.endChange('style_changed')
@@ -191,7 +191,7 @@ style.
 
 getColor()
         """
-        _color = self.__color
+        _color = self._color
         if _color is None:
             _color = self.__style.getColor()
         return _color
@@ -212,10 +212,10 @@ restores the color value defined in the Style.
             if not isinstance(_c, color.Color):
                 _c = color.Color(c)
         _oc = self.getColor()
-        if ((_c is None and self.__color is not None) or
+        if ((_c is None and self._color is not None) or
             (_c is not None and _c != _oc)):
             self.startChange('color_changed')
-            self.__color = _c
+            self._color = _c
             self.endChange('color_changed')
             self.sendMessage('color_changed', _oc)
             self.modified()
@@ -302,8 +302,8 @@ restores the linetype value defined in the Style.
             _name = self.__linetype.getName()
             _dash = self.__linetype.getList()
             _l = (_name, _dash)
-        if self.__color is not None:
-            _c = self.__color.getColors()
+        if self._color is not None:
+            _c = self._color.getColors()
         if self.__thickness is not None:
             _t = self.__thickness
         return _s, _l, _c, _t
@@ -317,8 +317,8 @@ This method extends the Subpart::getValues() method.
         """
         _data = super(GraphicObject, self).getValues()
         _data.setValue('style', self.__style.getStyleValues())
-        if self.__color is not None:
-            _data.setValue('color', self.__color.getColors())
+        if self._color is not None:
+            _data.setValue('color', self._color.getColors())
         if self.__linetype is not None:
             _lt = self.__linetype
             _data.setValue('linetype', (_lt.getName(), _lt.getList()))

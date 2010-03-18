@@ -1322,7 +1322,7 @@ of the optional argument is not used.
         self.__dmoffset = _dmoffset
         self.__eptype = _eptype
         self.__epsize = _epsize
-        self.__color = _color
+        self._color = _color
         self.__thickness = _thickness
         self.__scale = _scale
         self.__dimloc = (_x, _y)
@@ -1376,8 +1376,8 @@ This method extends the Entity::getValues() method.
             _data.setValue('eptype', self.__eptype)
         if self.__epsize is not None:
             _data.setValue('epsize', self.__epsize)
-        if self.__color is not None:
-            _data.setValue('color', self.__color.getColors())
+        if self._color is not None:
+            _data.setValue('color', self._color.getColors())
         if self.__ddm is not None:
             _data.setValue('dualmode', self.__ddm)
         if self.__poffset is not None:
@@ -1999,7 +1999,7 @@ If the argument 'offset' is supplied, it should be a positive float value.
 
 getColor()
         """
-        _col = self.__color
+        _col = self._color
         if _col is None:
             _col = self.__dimstyle.getValue('DIM_COLOR')
         return _col
@@ -2020,10 +2020,10 @@ in the DimStyle.
             if not isinstance(_c, color.Color):
                 raise TypeError, "Invalid color type: " + `type(_c)`
         _oc = self.getColor()
-        if ((_c is None and self.__color is not None) or
+        if ((_c is None and self._color is not None) or
             (_c is not None and _c != _oc)):
             self.startChange('color_changed')
-            self.__color = _c
+            self._color = _c
             self.endChange('color_changed')
             self.sendMessage('color_changed', _oc)
             self.modified()
