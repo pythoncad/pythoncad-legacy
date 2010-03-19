@@ -3,14 +3,15 @@ import os
 
 from Interface.Wx.document import Document
 from Interface.Wx.viewport import ViewPort
-
+#Custom menu id 
+wx.ID_IMPORT=6000
 
 class CadWindow(wx.Frame):
 
     def __init__(self, parent, title):
         # standard file open location
         self.__dirname = ''
-
+        
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
         wx.Frame.__init__(self, parent, title=title, size=(-1, -1))
@@ -24,10 +25,8 @@ class CadWindow(wx.Frame):
         filemenu = wx.Menu()
         file_open = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
         self.Bind(wx.EVT_MENU, self.OnOpen, id=wx.ID_OPEN)
-        
-        file_import= filemenu.Append(wx.ID_SAVE, "I&mport"," Import an external format")
-        self.Bind(wx.EVT_MENU, self.OnImport, id=wx.ID_SAVE)
-        
+        file_import= filemenu.Append(wx.ID_IMPORT, "I&mport"," Import an external format")
+        self.Bind(wx.EVT_MENU, self.OnImport, id=wx.ID_IMPORT)
         file_about= filemenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         file_exit = filemenu.Append(wx.ID_EXIT, "E&xit"," Terminate the program")
@@ -35,6 +34,13 @@ class CadWindow(wx.Frame):
         filemenu.AppendSeparator()
         file_rebuild_index = filemenu.Append(-1, "Rebuild &Index"," Rebuild the spatial index")
         self.Bind(wx.EVT_MENU, self.OnRebuildIndex, file_rebuild_index)
+        # Set up the edit menu
+        editmenu= wx.Menu()
+        edit_undo = editmenu.Append(wx.ID_UNDO, "&Undo", " Perform Undo")
+        self.Bind(wx.EVT_MENU, self.OnUndo, id=wx.ID_UNDO)
+        edit_redu = editmenu.Append(wx.ID_REDO, "&Redo", " Perform Redo")
+        self.Bind(wx.EVT_MENU, self.OnRedo,  id=wx.ID_REDO)
+
         # Set up the view menu
         viewmenu = wx.Menu()
         view_clear = viewmenu.Append(-1, "&Clear viewport", " Erase the viewport")
@@ -51,6 +57,7 @@ class CadWindow(wx.Frame):
         # Creating the menubar.
         menuBar = wx.MenuBar()
         menuBar.Append(filemenu, "&File") # Adding the "filemenu" to the MenuBar
+        menuBar.Append(editmenu, "&Edit") # Adding the "filemenu" to the MenuBar
         menuBar.Append(viewmenu, "&View") # Adding the "filemenu" to the MenuBar
         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
 
@@ -108,7 +115,20 @@ class CadWindow(wx.Frame):
             self._document.Import(os.path.join(_dirname, _filename))
         dlg.Destroy()
         
+    def OnUndo(self, e):
+        """
+            perform undo operation
+        """
+        self._document.undo()
+        self._viewport.Redraw()
 
+    def OnRedo(self, e):
+        """
+            perform redo operation
+        """     
+        self._document.redo()
+        self._viewport.Redraw()
+  
     def OnRebuildIndex(self,e):
         """
         Rebuild the spatial index in the database

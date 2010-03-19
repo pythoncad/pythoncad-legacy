@@ -56,6 +56,7 @@ class Document(object):
         self.Regen()
         # draw all items
         self._viewport.ZoomAll()
+        
     def RebuildIndex(self):
         """
         Rebuilds the spatial index for all entities in the database
@@ -78,7 +79,29 @@ class Document(object):
         else:
             print "error rebuilding index"
 
+    def undo(self):
+        """
+            perform the undo command
+        """
+        try:
+            print "-->>Perform unDo"
+            self._cadkernel.unDo()  
+            self.Regen() 
+        except UndoDb:
+            print "----<<Err>>No more unDo to performe"
+            
+    def redo(self):
+        """
+            perform the redo command
+        """
+        try:
+            print "-->>Perform Redo"
+            self._cadkernel.reDo() 
+            self.Regen() 
+        except UndoDb:
+            print "----<<Err>>No more redo to performe"
 
+        
     def Regen(self):
         """
         Rebuild display lists and redraw the viewport
