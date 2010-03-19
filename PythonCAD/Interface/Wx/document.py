@@ -43,7 +43,19 @@ class Document(object):
         # draw all items
         self._viewport.ZoomAll()
 
-
+    def Import(self, fileName):
+        """
+            import a specifie file
+        """
+        if not self._cadkernel:
+            raise TypeError, "open a file before import a file"
+        self._cadkernel.importExternalFormat(fileName)
+        # Rebuild index
+        self.RebuildIndex()
+        # regenerate drawing
+        self.Regen()
+        # draw all items
+        self._viewport.ZoomAll()
     def RebuildIndex(self):
         """
         Rebuilds the spatial index for all entities in the database

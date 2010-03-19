@@ -162,7 +162,7 @@ class PyCadDbKernel(PyCadBaseDb):
     
     def getEntityFromType(self,entityType):
         """
-            get all the entity from a specifie type
+             get all the entity from a specifie type
         """
         self.__logger.debug('getEntityFromType')
         return self.__pyCadEntDb.getEntityFromType(entityType)

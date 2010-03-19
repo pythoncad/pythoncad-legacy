@@ -104,6 +104,9 @@ class ViewPort(wx.Panel):
         # get the extents from the database
         extents = self._document.GetDrawingExtents()
         # update the view on the world
+        for ext in extents: #Matteo Boscolo
+            if not ext:     #en empty drawing cause an error here 
+                return 0
         self._world_view.X = extents[0]
         self._world_view.Y = extents[1]
         self._world_view.Width = extents[2] - extents[0]

@@ -24,6 +24,10 @@ class CadWindow(wx.Frame):
         filemenu = wx.Menu()
         file_open = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
         self.Bind(wx.EVT_MENU, self.OnOpen, id=wx.ID_OPEN)
+        
+        file_import= filemenu.Append(wx.ID_SAVE, "I&mport"," Import an external format")
+        self.Bind(wx.EVT_MENU, self.OnImport, id=wx.ID_SAVE)
+        
         file_about= filemenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         file_exit = filemenu.Append(wx.ID_EXIT, "E&xit"," Terminate the program")
@@ -91,7 +95,19 @@ class CadWindow(wx.Frame):
             self.__dirname = dlg.GetDirectory()
             self._document.Open(os.path.join(self.__dirname, self.__filename))
         dlg.Destroy()
-
+    
+    def OnImport(self, e):
+        """
+            on import call back
+        """
+        dlg = wx.FileDialog(self, "Choose a drawing file", self.__dirname, "", "*.dxf", wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            
+            _filename = dlg.GetFilename()
+            _dirname = dlg.GetDirectory()
+            self._document.Import(os.path.join(_dirname, _filename))
+        dlg.Destroy()
+        
 
     def OnRebuildIndex(self,e):
         """
