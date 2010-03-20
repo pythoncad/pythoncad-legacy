@@ -28,20 +28,20 @@ import cPickle as pickle
 import logging
 import time
 #***************************************************Kernel Import
-from pycadextformat import * 
+from pycadextformat import *
 from Generic.Kernel.pycaddbexception    import *
 from Generic.Kernel.pycadundodb           import PyCadUndoDb
 from Generic.Kernel.pycadentdb             import PyCadEntDb
 from Generic.Kernel.pycadent                import PyCadEnt
 from Generic.Kernel.pycadbasedb           import PyCadBaseDb
 from Generic.Kernel.pycadrelation          import PyCadRelDb
-from Generic.Kernel.pycadsettings         import PyCadSettings
+from Generic.Kernel.pycadsettings          import PyCadSettings
 from Generic.Kernel.pycadlayertree        import PyCadLayerTree
+from Generic.Kernel.pycadlayer              import Layer
 #****************************************************Entity Import
 from Generic.Kernel.Entity.point       import Point
 from Generic.Kernel.Entity.segment     import Segment
 from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
-from Generic.Kernel.Entity.layer       import Layer
 
 # spatial index
 from Generic.Kernel.pycadindex import PyCadIndex
@@ -72,11 +72,6 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger=logging.getLogger('PyCadDbKernel')
         self.__logger.debug('__init__')
         PyCadBaseDb.__init__(self)
-        self.createConnection(dbPath)
-        # inizialize extentionObject
-        self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
-        self.__pyCadEntDb=PyCadEntDb(self.getConnection())
-        self.__pyCadRelDb=PyCadRelDb(self.getConnection())
         # set the events
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadkernelEvent()
@@ -84,30 +79,32 @@ class PyCadDbKernel(PyCadBaseDb):
         self.showEnt=PyCadkernelEvent()
         self.hideEnt=PyCadkernelEvent()
         self.handledError=PyCadkernelEvent()
+        #create Connection
+        self.createConnection(dbPath)
+        # inizialize extentionObject
+        self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
+        self.__pyCadEntDb=PyCadEntDb(self.getConnection())
+        self.__pyCadRelDb=PyCadRelDb(self.getConnection())
+
         # Some inizialization parameter
         #   set the default style
-        self.__logger.debug('Set Style')        
+        self.__logger.debug('Set Style')
         self.__activeStyleObj=PyCadStyle(0)
         self.__bulkCommit=False
-        self.__entId=self.__pyCadEntDb.getNewEntId()
         self.__bulkUndoIndex=-1     # undo index are alweys positive so we do not breke in case missing entity id
+        self.__entId=self.__pyCadEntDb.getNewEntId()
         self.__settings=self.getDbSettingsObject()
-        self.__logger.debug('Search / Create Main Layer')
-        def createMainLayer():
-            try:
-                self.__activeLayer=self.getEntLayerDb(self.__settings.layerName)
-            except EntityMissing:
-                try:
-                    self.__activeLayer=self.getEntLayerDb("ROOT")
-                except EntityMissing:                
-                    _settingsObjs=Layer("ROOT",None,self.__activeStyleObj.getId())
-                    self.__activeLayer=self.saveEntity(_settingsObjs)
-                    self.__settings.layerName="ROOT"
-                    
-        createMainLayer()
-        self.__LayerStructure=None
-        self._populateLayerStructure()
+        #************************
+        #Inizialize Layer structure
+        #************************
+        self.__logger.debug('Inizialize layer structure')
+        try:
+            self.__pyCadLayerTree=PyCadLayerTree(self)
+        except StructuralError:
+            raise StructuralError, 'Unable to create PycadLayerTree structure'
+
         self.__logger.debug('Done inizialization')
+
     def getSpIndex(self):
         """
         returns a new constructed spatial index object
@@ -136,7 +133,7 @@ class PyCadDbKernel(PyCadBaseDb):
                         _settingsObjs=_setts[i]
                         break
         return _settingsObjs
-    
+
     def startMassiveCreation(self):
         """
             suspend the undo for write operation
@@ -159,28 +156,29 @@ class PyCadDbKernel(PyCadBaseDb):
         """
         self.__logger.debug('getEntity')
         return self.__pyCadEntDb.getEntityEntityId(entId)
-    
+
     def getEntityFromType(self,entityType):
         """
-             get all the entity from a specifie type
+            get all the entity from a specifie type
         """
         self.__logger.debug('getEntityFromType')
         return self.__pyCadEntDb.getEntityFromType(entityType)
-    
+
     def saveEntity(self,entity):
         """
             save the entity into the database
         """
-        self.__logger.debug('saveEntity') 
+        self.__logger.debug('saveEntity')
         if not isinstance(entity,SUPPORTED_ENTITYS):
             msg="SaveEntity : Type %s not supported from pythoncad kernel"%type(entity)
             self.__logger.warning(msg)
             raise TypeError ,msg
         try:
             _obj=None
-            self.__pyCadUndoDb.suspendCommit()
-            self.__pyCadEntDb.suspendCommit()
-            self.__pyCadRelDb.suspendCommit()
+            #self.__pyCadUndoDb.suspendCommit()
+            #self.__pyCadEntDb.suspendCommit()
+            #self.__pyCadRelDb.suspendCommit()
+            PyCadBaseDb.commit=False
             if isinstance(entity,Point):
                 _obj=self.savePoint(entity)
             if isinstance(entity,Segment):
@@ -192,15 +190,16 @@ class PyCadDbKernel(PyCadBaseDb):
             if isinstance(entity,PyCadEnt):
                 _obj=self.savePyCadEnt(entity)
             if not self.__bulkCommit:
-                self.__pyCadUndoDb.reactiveCommit()
-                self.__pyCadEntDb.reactiveCommit()
-                self.__pyCadRelDb.reactiveCommit()
+                #self.__pyCadUndoDb.reactiveCommit()
+                #self.__pyCadEntDb.reactiveCommit()
+                #self.__pyCadRelDb.reactiveCommit()
+                PyCadBaseDb.commit=True
                 self.performCommit()
             return _obj
         except:
             print "Unexpected error:", sys.exc_info()[0]
             raise
-        
+
     def savePoint(self,point):
         """
             save the point in to the db
@@ -210,11 +209,11 @@ class PyCadDbKernel(PyCadBaseDb):
         _points={}
         _points['POINT']=point
         _obj=self.saveDbEnt('POINT',_points)
-        self.__pyCadRelDb.saveRelation(self.__activeLayer,_obj)
+        self.__pyCadRelDb.saveRelation(self.__pyCadLayerTree.getActiveLater(),_obj)
         return _obj
-        
+
     def saveSegment(self,segment):
-        
+
         """
             seve the segment into the db
         """
@@ -225,9 +224,9 @@ class PyCadDbKernel(PyCadBaseDb):
         _points['POINT_1']=p1
         _points['POINT_2']=p2
         _obj=self.saveDbEnt('SEGMENT',_points)
-        self.__pyCadRelDb.saveRelation(self.__activeLayer,_obj)
+        self.__pyCadRelDb.saveRelation(self.__pyCadLayerTree.getActiveLater(),_obj)
         return _obj
-    
+
     def saveSettings(self,settingsObj):
         """
             save the settings object
@@ -237,7 +236,7 @@ class PyCadDbKernel(PyCadBaseDb):
         _points={}
         _points['SETTINGS']=settingsObj
         return self.saveDbEnt('SETTINGS',_points)
-    
+
     def saveLayer(self,layerObj):
         """
             save the layer object
@@ -246,22 +245,16 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__entId+=1
         _points={}
         _points['LAYER']=layerObj
-        return self.saveDbEnt('LAYER',_points)            
+        return self.saveDbEnt('LAYER',_points)
 
     def savePyCadEnt(self, pyCadEnt):
         """
-            save the entity in the database 
+            save the entity in the database
             if this entity have an id mark pycad_visible = 0
             and then save the entity
         """
-        #this is wrong 
-        """
-        todo: I do not need hide the entity ..
-        i jast need to create a new record with the updatable value
-        """
-        #self.__pyCadEntDb.hideAllEntityIstance(pyCadEnt.getId(), 0)
         self.saveDbEnt(pyCadEnt=pyCadEnt)
-    
+
     def saveDbEnt(self,entType=None,points=None, pyCadEnt=None):
         """
             save the DbEnt to db
@@ -270,7 +263,7 @@ class PyCadDbKernel(PyCadBaseDb):
         if pyCadEnt==None:
             _newDbEnt=PyCadEnt(entType,points,self.__activeStyleObj.getId(),self.__entId)
         else:
-            _newDbEnt=pyCadEnt          
+            _newDbEnt=pyCadEnt
         if self.__bulkUndoIndex>=0:
             self.__pyCadEntDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
@@ -278,7 +271,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.saveEntityEvent(self,_newDbEnt)
         self.showEnt(self,_newDbEnt)
         return _newDbEnt
-        
+
     def getActiveStyle(self):
         """
             Get the current style
@@ -307,7 +300,7 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('getStyle')
         #todo get the style object of the give id
         pass
-        
+
     def getStyleList(self):
         """
             get all the style from the db
@@ -330,7 +323,7 @@ class PyCadDbKernel(PyCadBaseDb):
             self.__pyCadEntDb.performCommit()
         except UndoDb:
             raise
-        
+
     def reDo(self):
         """
             perform a redo operation
@@ -342,18 +335,18 @@ class PyCadDbKernel(PyCadBaseDb):
             self.__pyCadEntDb.performCommit()
         except UndoDb:
             raise
-        
+
     def clearUnDoHistory(self):
         """
             perform a clear history operation
         """
         self.__logger.debug('clearUnDoHistory')
         #:TODO
-        
+
         #self.__pyCadUndoDb.clearUndoTable()
-        #compact all the entity 
+        #compact all the entity
         #self.__pyCadEntDb.compactByUndo()
-    
+
     def release(self):
         """
             release the current drawing
@@ -361,11 +354,11 @@ class PyCadDbKernel(PyCadBaseDb):
         try:
             # For Best Performance
             self.startMassiveCreation()
-            # Clear the undo table    
-            self.__pyCadUndoDb.clearUndoTable() 
+            # Clear the undo table
+            self.__pyCadUndoDb.clearUndoTable()
             # Relese all the entity
             goodEntity=self.__pyCadEntDb.getEntityFromType('ALL')
-            for entity in goodEntity: 
+            for entity in goodEntity:
                 entity.relese()
                 self.saveEntity(entity)
             # Clear the old entity
@@ -379,7 +372,7 @@ class PyCadDbKernel(PyCadBaseDb):
             print "Unable to perform the release operation"
         finally:
             self.stopMassiveCreation()
-            
+
     def deleteEntity(self,entityId):
         """
             Delete the entity from the database
@@ -389,25 +382,22 @@ class PyCadDbKernel(PyCadBaseDb):
         entity.delete()
         self.saveEntity(entity)
         self.deleteEntityEvent(entity)
-        #self.hideEnt(entity)
-    
+
     def hideEntity(self, entity=None, entityId=None):
         """
             Hide an entity
         """
-        #TODO : test hide function
-        self._hide(entity, entityId, 1)
-        #TODO : FIRE A SHOW EVENT
-    
+        self._hide(entity, entityId, 0)
+        self.hideEnt(self, entity) # Event
+
     def unHideEntity(self, entity=None, entityId=None):
         """
             Unhide an entity
         """
-        #TODO: unhide an entity
-        self._hide(entity, entityId, 0)
-        #TODO : FIRE AN HIDE EVENT
-        
-    def _hide(self,entity=None, entityId=None,  visible=0):    
+        self._hide(entity, entityId, 1)
+        self.showEnt(self, entity) #Event
+
+    def _hide(self,entity=None, entityId=None,  visible=0):
         """
             make the hide/unhide of an entity
         """
@@ -421,89 +411,40 @@ class PyCadDbKernel(PyCadBaseDb):
         if activeEnt.visible!=visible:
             activeEnt.visible=visible
             self.__pyCadEntDb.uptateEntity(activeEnt)
-    
+
     def importExternalFormat(self, fileName):
         """
             This method allow you to import a file from an external format
-        """ 
+        """
         try:
             extFormat=ExtFormat(self)
             extFormat.openFile(fileName)
         except DxfReport:
             self.__logger.error('DxfReport')
-            _err={'object':extFormat, 'error':DxfReport} 
+            _err={'object':extFormat, 'error':DxfReport}
             self.handledError(self,_err)#todo : test it not sure it works
         except DxfUnsupportedFormat:
             self.__logger.error('DxfUnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledError(self,_err)#todo : test it not sure it works
-    #************************************************************************
-    #*************************layer managment********************************
-    #************************************************************************
-    def getLayerChild(self,layerName):
-        """
-            get all the child is of a layer 
-        """            
-        self.__logger.debug('getLayerChild')        
-        _layerId=self.getEntLayerDb(layerName).getId()
-        _childIds=self.__pyCadRelDb.getChildrenIds(_layerId)
-        return _childIds
-
-    def getLayer(self,layerName):
-        """
-            get the layer object from the layerName
-            if not exsist create it
-        """
-        self.__logger.debug('getLayer')
-        pyCadEntLayer=self.getEntLayerDb(layerName)
-        _layersEnts=pyCadEntLayer.getConstructionElements()
-        for key in _layersEnts:
-            if _layersEnts[key].name==self.__settings.layerName:
-                return _layersEnts[key]
-        else:
-            raise EntityMissing,"Layer %s not in the db"%str(layerName)                  
-
-    def getEntLayerDb(self,layerName):
-        """
-            get the pycadent of type layer
-        """
-        self.__logger.debug('getEntLayerDb')
-        _layersEnts=self.getEntityFromType('LAYER')
-        for layersEnt in _layersEnts:
-            unpickleLayers=layersEnt.getConstructionElements()
-            for key in unpickleLayers:
-                if unpickleLayers[key].name==self.__settings.layerName:
-                    return layersEnt
-            else:
-                raise EntityMissing,"Layer name %s missing"%str(layerName)
-        else:
-            raise EntityMissing,"Layer name %s missing"%str(layerName)
-
-    def _populateLayerStructure(self):
-        """
-             populate layer tree 
-        """
-        self.__logger.debug('_populateLayerStructure')
-        _mainEntLayer=self.getEntLayerDb('ROOT')
-        if _mainEntLayer:
-            self.__LayerStructure=PyCadLayerTree(_mainEntLayer)
-            mappedDix={}
-            for ent in self.getEntityFromType('LAYER'):
-                mappedDix[ent.getId()]=ent
-            for entId in mappedDix:
-                idCildren=self.__pyCadRelDb.getChildrenIds(entId)
-                intersection=filter(lambda x:x in idCildren,mappedDix.keys())
-                for idChild in intersection:
-                    self.__LayerStructure.insert(mappedDix[idChild], mappedDix[entId])
-        else:
-            raise StructuralError, "Miss ROOT Layer "
-    
     def getTreeLayer(self):
         """
             retrive the layer from the tree
         """
-        
-        
+        return self.__pyCadLayerTree
+
+    def getAllChildrenType(self, parentObject, childrenType):
+        """
+            Get all the entity children from an pyCadDb object
+        """
+        return self.__pyCadRelDb.getAllChildrenType(parentObject, childrenType)
+
+    def getRelatioObject(self):
+        """
+            getRelationObject
+        """
+        return self.__pyCadRelDb
+
 class PyCadkernelEvent(object):
     """
         this class fire the envent from the python kernel

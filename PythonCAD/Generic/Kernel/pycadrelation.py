@@ -23,9 +23,9 @@
 
 import cPickle as pickle
 
-from Generic.Kernel.pycadent       import PyCadEnt
-from Generic.Kernel.pycadbasedb    import PyCadBaseDb
-from Generic.Kernel.pycadsettings      import PyCadSettings
+from Generic.Kernel.pycadent           import PyCadEnt
+from Generic.Kernel.pycadbasedb     import PyCadBaseDb
+from Generic.Kernel.pycadsettings    import PyCadSettings
 
 
 class PyCadRelDb(PyCadBaseDb):
@@ -79,7 +79,43 @@ class PyCadRelDb(PyCadBaseDb):
             for _row in _dbEntRow: 
                 _outObj.append(_row[0])
         return _outObj
-     
+    
+    def getAllChildrenType(self, parent, childrenType):
+        """
+            get all the cildren entity of type childrenType
+        """
+        _outObj=[]
+        _sqlSelect="""SELECT pycad_entity_id,
+                            pycad_object_type,
+                            pycad_object_definition,
+                            pycad_style_id,
+                            pycad_entity_state,
+                            pycad_index,
+                            pycad_visible 
+                            FROM pycadent 
+                            WHERE pycad_entity_id IN
+                                (
+                                    SELECT pycad_child_id 
+                                    FROM pycadrel 
+                                    WHERE pycad_parent_id =%s
+                                )
+                            AND pycad_entity_state NOT LIKE "DELETE"
+                            AND pycad_object_type LIKE '%s'
+                            AND pycad_undo_visible=1
+                            """%(str(parent.getId()), str(childrenType))
+        _dbEntRow=self.makeSelect(_sqlSelect)
+        for _row in _dbEntRow: 
+            _style=_row[3]
+            _dumpObj=pickle.loads(str(_row[2]))
+            _objEnt=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+            _objEnt.state=_row[4]
+            _objEnt.index=_row[5]
+            _objEnt.visible=_row[6]
+            _objEnt.updateBBox()            
+            _outObj.append(_objEnt)
+        return _outObj        
+    
+    
     def deleteFromParent(self,entityObj):
         """
             Delete the entity from db
@@ -107,21 +143,17 @@ class PyCadRelDb(PyCadBaseDb):
         _sqlDelete="""DELETE FROM pycadrel 
             WHERE pycad_parent_id='%s' and pycad_child_id='%s'and """%(str(_parentId),str(_childId))
         self.makeUpdateInsert(_sqlDelete)
-
-def test():
-    from pycadent       import PyCadEnt
-    from pycadstyle import PyCadStyle
-    print "*"*10+" Start Test"
-    _pcr=PyCadRelDb()
-    _style=PyCadStyle(1)
-    _e1=PyCadEnt("POINT",{},_style,10)
-    for i in range(5):
-        _e2=PyCadEnt("POINT",{},_style,i)
-        _pcr.saveRelation(_e1,_e2)
-    for i in _pcr.getChildrenIds(10):
-        print "cildid %s "%str(i)
-    print "perform delete"
-    _pcr.deleteFromParent(_e1)
+    
+    def relationExsist(self, parentId, childId):
+        """
+            check if the given parent child id exsist or not
+        """
+        _sqlSelect="""SELECT COUNT(*) 
+                    FROM pycadrel 
+                    WHERE pycad_parent_id='%s' and pycad_child_id='%s' 
+                    """%(str(parentId),str(childId))
+        res=self.fetchOneRow(_sqlSelect)
+        return res
 
 """
     TODO TEST deleteFromChild

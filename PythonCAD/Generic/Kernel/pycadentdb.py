@@ -363,7 +363,7 @@ class PyCadEntDb(PyCadBaseDb):
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=entityObj.index
         _revisionState=entityObj.state
-        _sqlInsert="""UPDATE pycadent set (
+        _sqlInsert="""UPDATE pycadent set 
                     pycad_object_type="%s",
                     pycad_object_definition="%s",
                     pycad_style_id=%s,
@@ -373,7 +373,7 @@ class PyCadEntDb(PyCadBaseDb):
                     pycad_bbox_ymax=%s,
                     pycad_entity_state="%s",
                     pycad_index=%s,
-                    pycad_visible=%s) 
+                    pycad_visible=%s
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
                         FROM pycadent  

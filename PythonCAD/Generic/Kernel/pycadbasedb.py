@@ -32,9 +32,11 @@ class PyCadBaseDb(object):
     """
         this class provide base db operation
     """
+    commit=True
     def __init__(self):
         self.__dbConnection=None
-        self.__commit=True
+        #self.__commit=True
+        
     def createConnection(self,dbPath=None):
         """
             create the connection with the database
@@ -96,7 +98,8 @@ class PyCadBaseDb(object):
         try:
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
-            if self.__commit:
+            #if self.__commit:
+            if PyCadBaseDb.commit:
                 self.performCommit()                
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
@@ -116,13 +119,16 @@ class PyCadBaseDb(object):
         """
             suspend the commit in the update\insert
         """
-        self.__commit=False
-
+        #self.__commit=False
+        PyCadBaseDb.commit=False
+        
     def reactiveCommit(self):
         """
             reactive the commit in the update\insert
         """
-        self.__commit=True
+        #self.__commit=True
+        PyCadBaseDb.commit=True
+        
 
     def performCommit(self):
         """

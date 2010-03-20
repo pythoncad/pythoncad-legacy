@@ -28,7 +28,7 @@ from Interface.Wx.displaypoint import DisplayPoint
 #----------------------------------------------------------------------------------------------------
 def DrawSegment(self, layer_display):
     # create a display object
-    display_object = DisplayObject(self.Id)
+    display_object = DisplayObject(self.getId())
     # list with points
     points = display_object.Points
     # get the geometry
@@ -39,7 +39,7 @@ def DrawSegment(self, layer_display):
     pt = DisplayPoint(geometry['POINT_2'])
     points.append(pt)
     # store the display object
-    layer_display.DisplayList[self.Id] = display_object
+    layer_display.DisplayList[self.getId()] = display_object
 
 
 #----------------------------------------------------------------------------------------------------

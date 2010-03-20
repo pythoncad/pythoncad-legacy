@@ -285,6 +285,10 @@ class ioKernel(object):
         self.__command['Hide']=self.hideEntity
         self.__command['UnHide']=self.unHideEntity
         self.__command['Import']=self.importExt
+        self.__command['GetLayers']=self.getLayers
+        self.__command['AddLayer']=self.addLayer
+        self.__command['SetCurrentLayer']=self.setCurrentLayer
+        self.__command['GetCurrentLayer']=self.getCurrentLayerName
         self.__kr.handledError=self.printError
         
     def printError(self, **args):
@@ -410,7 +414,51 @@ class ioKernel(object):
             release the current drawing
         """
         self.__kr.release()
+    def getLayers(self):
+        """
+            get all layer
+        """
+        try:
+            print ">>** Layer Tree ****"
+            layersTree=self.__kr.getTreeLayer().getLayerTree()
+            printTree(layersTree, 1)
+            print "<<** Layer Tree ****"
+        except:
+            print "----<<Err>>On getLayers "
+    def addLayer(self):
+        """
+            add a new layer
+        """
+        layerName=raw_input("-->Insert LayerName :")
+        try:
+            activeLayer=self.__kr.getTreeLayer().getActiveLater()
+            newLayer=Layer(layerName)
+            dbLayer=self.__kr.saveEntity(newLayer)
+            self.__kr.getTreeLayer().insert(dbLayer,activeLayer)
+            
+        except:
+            print "----<<Err>>Unable to create the layer : %s "%layerName
     
+    def setCurrentLayer(self):
+        """
+            set the current layer
+        """
+        LayerName=raw_input("-->Layer Name :")
+        try:
+            self.__kr.getTreeLayer().setActiveLayer(LayerName)
+        except:
+            print "----<<Err>>Unable to create the layer : %s "%LayerName
+    def getCurrentLayerName(self):
+        """
+            get the current layer name
+        """
+        try:
+            activeLayer=self.__kr.getTreeLayer().getActiveLater()
+            ce=self.__kr.getTreeLayer()._getLayerConstructionElement(activeLayer)
+            print "Layer Name", ce.name
+        except:
+            print "----<<Err>>unable to get the current layer name "
+
     def importExt(self):
         """
             import an external file into pythoncad
@@ -420,7 +468,17 @@ class ioKernel(object):
             self.__kr.importExternalFormat(fileName)
         except:
             print "----<<Err>> importExt the  : %s we get en error "%fileName
-            
+
+def printTree(cls, indent):
+    """
+        print the tree structure
+    """  
+    if cls:
+        for l in cls:
+            parent, childs=cls[l]
+            print '.'*indent + 'Layer Id: %s Name : %s'%(str(l) , str(parent.name))
+            printTree(childs, indent+1)
+
 if __name__=='__main__':
     #test()
     io=ioKernel()

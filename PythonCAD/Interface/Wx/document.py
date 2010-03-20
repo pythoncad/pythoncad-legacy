@@ -73,7 +73,7 @@ class Document(object):
             # traverse each layer in the list
             for entity in entities:
                 # add entity to index
-                index.Insert(entity.Id, entity.getBBox())
+                index.Insert(entity.getId(), entity.getBBox())
 
             print "index rebuild"
         else:

@@ -21,26 +21,20 @@
 # classes that describe the layer 
 #
 
-from pycadstyle import PyCadStyle
+from Entity.pycadstyle import PyCadStyle
 
 class Layer(object):
     """
         this class manage a single layer
     """
-    def __init__(self,layerName,parentLayerObj,styleObj):
+    def __init__(self, layerName=None):
         """
-            name         = name of the layer
-            parentLayerObj   = parent layer object
-            styleObj       = styleObject
+            name            = name of the layer
+            parentLayerObj  = parent layer object
+            styleObj        = styleObject
         """
-        self.__name=None
-        self.__parentLayerObj=None
-        self.__styleObj=None
-
         self.name=layerName
-        self.parent=parentLayerObj
-        self.style=styleObj
-        
+
     def getName(self):
         """
             get the layer name
@@ -57,30 +51,6 @@ class Layer(object):
     
     name=property(getName,setName,None,"Get/Set The layer name")
 
-    def getParent(self):
-        """
-            get the parent layer object
-        """
-        return self.__parentLayerObj
-    def setParent(self,layerObj):
-        """
-            set the parent layer object
-        """
-        if isinstance(layerObj,Layer):
-            raise ValueError,"You mast provide a valid Layer Object get %s Insted"%type(layerObj)
-        self.__parentLayerObj=layerObj
-    parent=property(getParent,setParent,None,"Get/Set The parent layer object")
+  
     
-    def getStyle(self):
-        """
-            get the layer style
-        """
-        return self.__styleObj
-    def setStyle(self,styleObj):
-        """
-            set the style object
-        """
-        if isinstance(styleObj,PyCadStyle):
-            raise ValueError,"You mast provide a valid PyCadStyle Object get %s Insted"%type(styleObj)
-        self.__styleObj=styleObj  
-    style=property(getStyle,setStyle,None,"Get/Set The style layer object")
+ 

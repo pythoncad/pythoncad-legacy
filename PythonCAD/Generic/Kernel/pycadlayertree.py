@@ -21,88 +21,115 @@
 #
 # This  module all the interface to store the layer
 #
-from Entity.layer import Layer
+#TODO : REPAIR THE LOGGER FOR THIS CLASS
 
+from pycadlayer import Layer
+from Generic.Kernel.pycaddbexception    import *
+
+MAIN_LAYER="MAIN"
 class PyCadLayerTree(object):
     """
         this class rappresent the layer tree strucrute
     """
-    def __init__(self, mainLayer):
-        layerId=mainLayer.getId()
-        layerName=self._getLayerName(mainLayer)
-        layer={'id':layerId,'name':layerName,'child':{}}
-        self.__index={layerId:layer}
-        self.mainLayer=layer
+    def __init__(self,kernel):
+        self.__kr=kernel
+        try:
+            self.__mainLayer=self.getEntLayerDb(MAIN_LAYER)
+        except EntityMissing:
+            mainLayer=Layer(MAIN_LAYER)
+            self.__mainLayer=self.__kr.saveEntity(mainLayer)
+        except:
+            raise StructuralError, "Unable to inizialize PyCadLayerTree"
+        self.__activeLayer=self.__mainLayer
     
+    def setActiveLayer(self, layerName):    
+        """
+            set the active layer
+        """
+        activeLayer=self.getEntLayerDb(layerName)
+        if activeLayer:
+            self.__activeLayer=activeLayer
+        else:
+            raise EntityMissing, "Unable to find the layer %s"%str(layerName)
+    
+    def getActiveLater(self):
+        """
+            get the active layer
+        """
+        return self.__activeLayer
+        
     def insert(self, layer, parentLayer):
         """
-            Insert a new object in the class
+            Insert a new object in the class and set it as active
         """
-        layerId=layer.getId()
-        layerName=self._getLayerName(layer)
-        newLayer={'id':layerId,'name':layerName,'child':{}}
-        self.__index[layerId]=newLayer
-        parentId=parentLayer.getId()
-        parentLayer=self.__index[parentId]
-        parentChilds=parentLayer['child']
-        parentChilds[layerId]=newLayer
-    
-    def _getLayerName(self, pyCadEnt):
+        parentEntDb=self.__kr.getEntity(parentLayer.getId())
+        if not parentEntDb:
+            raise  EntityMissing, "Unable to find the root layer %s id %s "%(str(parentLayer), str(parentLayer.getId()))
+        childEndDb=self.__kr.getEntity(layer.getId())
+        if not childEndDb:
+            childEndDb=self.__kr.saveEntity(layer)
+        if not self.__kr.getRelatioObject().relationExsist(parentEntDb.getId(),childEndDb.getId() ):
+            self.__kr.getRelatioObject().saveRelation(parentEntDb, childEndDb)
+        self.__activeLayer=childEndDb
+        
+    def _getLayerConstructionElement(self, pyCadEnt):
         """
-            Retrive the layer name from the given pycadent
+            Retrive the ConstructionElement in the pyCadEnt
         """
         unpickleLayers=pyCadEnt.getConstructionElements()
         for key in unpickleLayers:
-            return unpickleLayers[key].name
+            return unpickleLayers[key]
         return None
         
-    def getLayerChildren(self, layerId=None, layerName=None):
+    def getLayerChildrenLayer(self,layer):
         """
             get the layer children
         """
-        objDic={}
-        if layerId:
-            objDic=self.__index[layerId]
-        if layerName:
-            keyFound=[keyId for keyId in self.__index if self.__index[keyId]['name']==layerName]
-            if len(keyFound):
-                objDic=self.__index[keyFound[0]]
-        if objDic:
-            return Layer(objDic['id'],objDic['name'])
-        return None   
-    
-    def __repr__(self): 
-        return '(%s @@ %s)'%(`self.__index`, `self.mainLayer`)
+        return self.__kr.getAllChildrenType(layer, 'LAYER')
 
-def testLayerClass():
-    la=Layer(1, 'Main')
-    lt=LayerTree(la)
-    la1=Layer(2, 'Layer_1')
-    la2=Layer(3, 'Layer_2')
-    la3=Layer(4, 'Layer_3')
-    la4=Layer(5, 'Layer_4')
-    lt.insert(la1, la)
-    lt.insert(la2,  la)
-    
-    lr2= lt.getLayerChildren(layerName='Layer_2')
-    lt.insert(la3,lr2)
-    lt.insert(la4,lr2)
+    #************************************************************************
+    #*************************layer managment********************************
+    #************************************************************************
+    def getLayerChildIds(self,layer, entityType):
+        """
+            get all the child id of a layer 
+        """            
+        #manage in a better way the logger  self.__kr.__logger.debug('getLayerChild')   
+        _layerId=self.__kr.getEntLayerDb(layerName).getId()
+        _childIds=self.__kr.__pyCadRelDb.getChildrenIds(_layerId)
+        return _childIds
 
-    print "lt", str(lt)
-    print "cildren", lt.getLayerChildren(1).getName()
-    print "cildren", lt.getLayerChildren(layerName='Layer_4').getName()
-    
-    
+    def getEntLayerDb(self,layerName):
+        """
+            get the pycadent of type layer
+        """
+        #to do manage logger self.__logger.debug('getEntLayerDb')
+        _layersEnts=self.__kr.getEntityFromType('LAYER')
+        #TODO : Optimaze this loop with the build in type [...] if possible
+        for layersEnt in _layersEnts:
+            unpickleLayers=layersEnt.getConstructionElements()
+            for key in unpickleLayers:
+                if unpickleLayers[key].name==layerName:
+                    return layersEnt
+        else:
+            raise EntityMissing,"Layer name %s missing"%str(layerName)
 
-
-class Layer(object):
-    def __init__(self, idl, name):
-        self.idl=idl
-        self.name=name
-    def getId(self):
-        return self.idl
-    def getName(self):
-        return self.name
-        
-if __name__=='__main__':    
-    testLayerClass()
+    def getLayerTree(self):
+        """
+            create a dictionary with all the layer nested
+        """
+        rootDbEnt=self.getEntLayerDb(MAIN_LAYER)
+        def createNode(layer):
+            tree={}
+            childs={}
+            c=self._getLayerConstructionElement(layer)
+            id=layer.getId()
+            layers=self.getLayerChildrenLayer(layer)
+            for l in layers:
+                ca=self._getLayerConstructionElement(l)
+                childs[l.getId()]=(ca, createNode(l))
+            if childs:
+                tree[id]=(c, childs)
+            return tree
+            
+        return createNode(rootDbEnt)
