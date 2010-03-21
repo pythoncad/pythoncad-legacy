@@ -5,6 +5,7 @@ __author__="gertwin"
 __date__="$Mar 11, 2010 9:44:52 PM$"
 
 from pysqlite2 import dbapi2 as sql
+from Generic.Kernel.pycadtransaction import Transaction
 
 
 class PyCadIndex(object):
@@ -15,6 +16,8 @@ class PyCadIndex(object):
     def __init__(self, connection):
         # connection to the database
         self.__connetion = connection
+        # cursor
+        self._cursor = None
         # name of index table
         self.__index_tablename = "sp_index"
         # check if the index exists
@@ -48,37 +51,43 @@ class PyCadIndex(object):
                 print "Sqlite error:", e.args[0]
 
         cur.close()
+        
+
+    def GetTransaction(self):
+        """
+        returns a new constructed spatial index object
+        """
+        try:
+            transaction = Transaction(self.__connetion)
+            return transaction
+        except:
+            self.__logger.debug('Unable to create transaction object')
+        return None        
 
 
-    def RemoveAll(self):
+    def RemoveAll(self, transaction):
         """
         Remove all entities from the index
         """
-        cur = self.__connetion.cursor()
-
         try:
-            cur.execute('DELETE FROM sp_index')
+            transaction.Cursor.execute('DELETE FROM sp_index')
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
-
-        self.__connetion.commit()
-        cur.close()
+        return
 
 
-    def Remove(self, id):
+    def Remove(self, transaction, id):
         """
         Remove a single entity from the index
         """
-        cur = self.__connetion.cursor()
         t = (id,)
 
         try:
-            cur.execute('DELETE FROM sp_index WHERE id=?', t)
+            transaction.Cursor.execute('DELETE FROM sp_index WHERE id=?', t)
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
-
-        self.__connetion.commit()
-        cur.close()
+        return
+    
 
     def __CheckMBR(self, mbr):
         """
@@ -97,26 +106,22 @@ class PyCadIndex(object):
             mbr[3] = temp
         return mbr
 
-    def Insert(self, id, mbr):
+    
+    def Insert(self, transaction, id, mbr):
         """
         Insert an entity in the index based on its bounding rectangle
         """
-        cur = self.__connetion.cursor()
-
         try:
             # check bounding rectangle
             mbr = self.__CheckMBR(mbr)
             # parameter template
             t = (id, mbr[0], mbr[2], mbr[1], mbr[3],)
-            cur.execute('INSERT INTO sp_index VALUES (?,?,?,?,?)', t)
+            transaction.Cursor.execute('INSERT INTO sp_index VALUES (?,?,?,?,?)', t)
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
+        return
 
-        self.__connetion.commit()
-        cur.close()
-
-
-    def GetInside(self, boundary):
+    def GetInside(self, transaction, boundary):
         """
         Get all the entities that are inside the boundary
         This is simple first approach, refinement is needed
@@ -124,34 +129,29 @@ class PyCadIndex(object):
         """
         # result is a list of entity ids
         result = []
-        cur = self.__connetion.cursor()
 
         try:
             t = (boundary[0], boundary[1], boundary[2], boundary[3],)
             # select candidates from the index
-            cur.execute('SELECT id FROM sp_index WHERE minX<=? AND maxX>=? AND minY<=? AND maxY>=?', t)
+            transaction.Cursor.execute('SELECT id FROM sp_index WHERE minX<=? AND maxX>=? AND minY<=? AND maxY>=?', t)
             # add the candidates to the list
-            for row in cur:
+            for row in transaction.Cursor:
                 result.append(row.id)
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
-
-        cur.close()
         # return result
         return result
 
 
-    def GetExtents(self):
+    def GetExtents(self, transaction):
         """
         Get the extents from all index entities
         """
-        cur = self.__connetion.cursor()
-
         try:
             # select candidates from the index
-            cur.execute('SELECT min(min_x), min(min_y), max(max_x), max(max_y) FROM sp_index')
+            transaction.Cursor.execute('SELECT min(min_x), min(min_y), max(max_x), max(max_y) FROM sp_index')
             # add the candidates to the list
-            row = cur.fetchone()
+            row = transaction.Cursor.fetchone()
             # is there any result
             if row is not None:
                 return row
@@ -159,6 +159,5 @@ class PyCadIndex(object):
         except sql.Error, e:
             print "Sqlite error:", e.args[0]
 
-        cur.close()
         return (0.0, 0.0, 0.0, 0.0)
 
