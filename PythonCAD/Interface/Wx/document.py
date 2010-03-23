@@ -42,6 +42,7 @@ class Document(object):
         self.Regen()
         # draw all items
         self._viewport.ZoomAll()
+        
 
     def Import(self, fileName):
         """
@@ -57,6 +58,7 @@ class Document(object):
         # draw all items
         self._viewport.ZoomAll()
         
+        
     def RebuildIndex(self):
         """
         Rebuilds the spatial index for all entities in the database
@@ -66,18 +68,22 @@ class Document(object):
         
         if index is not None:
             print "index constructed"
+            # get transaction object
+            transaction = index.GetTransaction()
             # remove current content
-            index.RemoveAll()
+            index.RemoveAll(transaction)
             # get all entities from the database
             entities = self._cadkernel.getEntityFromType('SEGMENT')
             # traverse each layer in the list
             for entity in entities:
                 # add entity to index
-                index.Insert(entity.getId(), entity.getBBox())
+                index.Insert(transaction, entity.getId(), entity.getBBox())
+            transaction.Close(True)
 
             print "index rebuild"
         else:
             print "error rebuilding index"
+            
 
     def undo(self):
         """
@@ -122,8 +128,10 @@ class Document(object):
         index = self._cadkernel.getSpIndex()
         
         if index is not None:
+            # get transaction object
+            transaction = index.GetTransaction()
             # get the extents from the index
-            return index.GetExtents()
+            return index.GetExtents(transaction)
         # error        
         return None
 
