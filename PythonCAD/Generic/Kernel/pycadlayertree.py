@@ -133,3 +133,7 @@ class PyCadLayerTree(object):
             return tree
             
         return createNode(rootDbEnt)
+
+#Todo : make the delete layer command
+#Todo : Modifie the set current layer he mast use the id insted the name (id is univoc)
+

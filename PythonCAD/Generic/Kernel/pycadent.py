@@ -25,7 +25,7 @@ from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
 from Generic.Kernel.Entity.pycadobject import PyCadObject
 from Generic.Kernel.Entity.point       import Point
 
-PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER']
+PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC']
 
 class PyCadEnt(PyCadObject):
     """
@@ -34,21 +34,21 @@ class PyCadEnt(PyCadObject):
     def __init__(self,entType,constructionElements,style,objId):
         PyCadObject.__init__(self,objId)
         if not entType in PY_CAD_ENT:
-            raise TypeError,'entType not supported' 
+            raise TypeError,'entType not supported'
         self.__entType=entType
-        #if not (PyCadStyle is None or isinstance(style,PyCadStyle)):          
-        #    raise TypeError,'style not supported' 
-        self.__style=style        
+        #if not (PyCadStyle is None or isinstance(style,PyCadStyle)):
+        #    raise TypeError,'style not supported'
+        self.__style=style
         if not isinstance(constructionElements,dict):
             raise TypeError,'type error in dictionary'
         self.setConstructionElement(constructionElements)
-    
+
     def getBBox(self):
         """
             get the bounding Box Of the entity
         """
         return self.__bBox
-    
+
     def updateBBox(self):
         """
             update the bounding box from the construction elements
@@ -65,29 +65,29 @@ class PyCadEnt(PyCadObject):
         if len(_xList)>0:
             if len(_xList)==1:
                 _yList=_xList
-            self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])               
+            self.__bBox=(_xList[0],_yList[0],_xList[-1],_yList[-1])
         else:
-            self.__bBox=(0,0,0,0) 
-            
+            self.__bBox=(0,0,0,0)
+
     def getConstructionElements(self):
         """
             return the base entity array
-        """      
+        """
         return self._constructionElements
-        
+
     def setConstructionElement(self, constructionElements):
         """
             set the construction elements for the object
         """
         self._constructionElements=constructionElements
         self.updateBBox()
-            
+
     def getEntityType(self):
         """
-            Get the entity type 
+            Get the entity type
         """
         return self.__entType
-    
+
     eType=property(getEntityType,None,None,"Get the etity type read only attributes")
 
     def getStyle(self):
@@ -95,15 +95,15 @@ class PyCadEnt(PyCadObject):
             get the object style
         """
         return self.__style
-    
+
     def setStyle(self,style):
         """
             set/update the entity style
         """
         #if not isinstance(style,PyCadStyle):
         #    raise TypeError,'Type error in style'
-        self.__style=style   
-        
+        self.__style=style
+
     style=property(getStyle,setStyle,None,"Get/Set the entity style")
 
 

@@ -29,19 +29,20 @@ import logging
 import time
 #***************************************************Kernel Import
 from pycadextformat import *
-from Generic.Kernel.pycaddbexception    import *
-from Generic.Kernel.pycadundodb           import PyCadUndoDb
-from Generic.Kernel.pycadentdb             import PyCadEntDb
+from Generic.Kernel.pycaddbexception        import *
+from Generic.Kernel.pycadundodb             import PyCadUndoDb
+from Generic.Kernel.pycadentdb              import PyCadEntDb
 from Generic.Kernel.pycadent                import PyCadEnt
-from Generic.Kernel.pycadbasedb           import PyCadBaseDb
-from Generic.Kernel.pycadrelation          import PyCadRelDb
-from Generic.Kernel.pycadsettings          import PyCadSettings
-from Generic.Kernel.pycadlayertree        import PyCadLayerTree
+from Generic.Kernel.pycadbasedb             import PyCadBaseDb
+from Generic.Kernel.pycadrelation           import PyCadRelDb
+from Generic.Kernel.pycadsettings           import PyCadSettings
+from Generic.Kernel.pycadlayertree          import PyCadLayerTree
 from Generic.Kernel.pycadlayer              import Layer
 #****************************************************Entity Import
-from Generic.Kernel.Entity.point       import Point
-from Generic.Kernel.Entity.segment     import Segment
-from Generic.Kernel.Entity.pycadstyle  import PyCadStyle
+from Generic.Kernel.Entity.point        import Point
+from Generic.Kernel.Entity.segment      import Segment
+from Generic.Kernel.Entity.arc          import Arc
+from Generic.Kernel.Entity.pycadstyle   import PyCadStyle
 
 # spatial index
 from Generic.Kernel.pycadindex import PyCadIndex
@@ -53,7 +54,12 @@ LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Error': logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
 
-SUPPORTED_ENTITYS=(Point,Segment,PyCadStyle,Layer,PyCadSettings, PyCadEnt)
+DRAWIN_ENTITY={ Point:'POINT',
+                Segment:'SEGMENT',
+                Arc:'ARC'}
+KERNEL_ENTITY=(PyCadStyle,PyCadEnt,PyCadSettings,Layer)
+
+SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
 
 #set the debug level
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
@@ -179,10 +185,8 @@ class PyCadDbKernel(PyCadBaseDb):
             #self.__pyCadEntDb.suspendCommit()
             #self.__pyCadRelDb.suspendCommit()
             PyCadBaseDb.commit=False
-            if isinstance(entity,Point):
-                _obj=self.savePoint(entity)
-            if isinstance(entity,Segment):
-                _obj=self.saveSegment(entity)
+            if isinstance(entity,DRAWIN_ENTITY.keys()):
+                _obj=self.saveDrwEnt(entity,DRAWIN_ENTITY[entity])
             if isinstance(entity,PyCadSettings):
                 _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
@@ -200,30 +204,19 @@ class PyCadDbKernel(PyCadBaseDb):
             print "Unexpected error:", sys.exc_info()[0]
             raise
 
-    def savePoint(self,point):
+    def saveDrwEnt(self,ent,entityType):
         """
-            save the point in to the db
+            Save a PythonCad drawing entity
         """
-        self.__logger.debug('savePoint')
+        self.__logger.debug('saveArc')
         self.__entId+=1
-        _points={}
-        _points['POINT']=point
-        _obj=self.saveDbEnt('POINT',_points)
-        self.__pyCadRelDb.saveRelation(self.__pyCadLayerTree.getActiveLater(),_obj)
-        return _obj
-
-    def saveSegment(self,segment):
-
-        """
-            seve the segment into the db
-        """
-        self.__logger.debug('saveSegment')
-        self.__entId+=1
-        _points={}
-        p1,p2=segment.getEndpoints()
-        _points['POINT_1']=p1
-        _points['POINT_2']=p2
-        _obj=self.saveDbEnt('SEGMENT',_points)
+        _cElements={}
+        i=0
+        for _p in segment.getConstructionElements():
+            _key='%s_%s'%(str(DRAWIN_ENTITY[_p]),str(i))
+            _cElements[_key]=_p
+            i+=1
+        _obj=self.saveDbEnt(entityType,_cElements)
         self.__pyCadRelDb.saveRelation(self.__pyCadLayerTree.getActiveLater(),_obj)
         return _obj
 
