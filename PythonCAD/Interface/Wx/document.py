@@ -37,7 +37,7 @@ class Document(object):
         self._cadkernel = PyCadDbKernel(filename)
         print "after open"
         # create a spatial index
-        self.RebuildIndex()
+        #self.RebuildIndex()
         # regenerate drawing
         self.Regen()
         # draw all items

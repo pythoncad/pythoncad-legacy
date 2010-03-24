@@ -12,8 +12,6 @@ class ViewPort(wx.Panel):
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent, -1)
-        # draw state TODO
-        self._draw_state = 1
         # parent
         self._cadwindow = parent
         # document
@@ -28,6 +26,8 @@ class ViewPort(wx.Panel):
         self._display_view = View()
         # world view
         self._world_view = View()
+        # draw buffer
+        self._draw_buffer = None
 
 #    def __GetView(self):
 #        return self.__view
@@ -75,27 +75,37 @@ class ViewPort(wx.Panel):
         rect = event.EventObject.GetRect().Inflate(5, 5)
         # set the new size of the display view
         self._display_view.Set(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight())
+        # create new draw buffer
+        self._draw_buffer = wx.EmptyBitmap(rect.GetWidth(), rect.GetHeight(), -1)
+        self._memory_dc = wx.MemoryDC()
+        self._memory_dc.SelectObject(self._draw_buffer)
+        # redraw
+        self.Redraw()
 
 
     def OnPaint(self, event):
-        dc = wx.PaintDC(self)
-        # black background
-        dc.Background = wx.Brush("black")
-        dc.Clear()
-        
-        if self._draw_state != 0:
-            self._display_view.dc = dc
-            # display the layers
-            for layer_name, layer_display in self._layers_display.items():
-                layer_display.Display(self._display_view)
-        # reset drawstate
-        self._draw_state = 1
+        #dc = wx.BufferedPaintDC(self, self._draw_buffer)
+        paintdc = wx.PaintDC(self)
+        paintdc.Blit(0, 0, self._display_view.Width, self._display_view.Height, self._memory_dc, 0, 0, wx.COPY, useMask=False)
+        event.Skip()
 
+        
     def Clear(self):
-        self._draw_state = 0
+        # clear buffer
+        self._memory_dc.SetBackground(wx.Brush("black"))
+        self._memory_dc.Clear()
         self.Refresh()
-            
+
+        
     def Redraw(self):
+        # clear buffer
+        self._memory_dc.SetBackground(wx.Brush("black"))
+        self._memory_dc.Clear()
+        # draw layers
+        self._display_view.dc = self._memory_dc
+        # display the layers
+        for layer_name, layer_display in self._layers_display.items():
+            layer_display.Display(self._display_view)
         # let wx call OnPaint
         self.Refresh()
 
@@ -116,7 +126,7 @@ class ViewPort(wx.Panel):
         # map the display on the world
         self._display_view.SetMapping(self._world_view)
         # draw the display
-        self.Refresh()
+        self.Redraw()
 
 
     def ZoomIn(self):
