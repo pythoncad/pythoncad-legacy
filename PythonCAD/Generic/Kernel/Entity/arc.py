@@ -26,7 +26,8 @@ from __future__ import generators
 import math
 
 from point import Point
-#from PythonCAD.Generic.pyGeoLib import Vector
+from pyGeoLib import Vector
+from util import *
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
@@ -65,13 +66,13 @@ class Arc(object):
         _cp = center
         if not isinstance(_cp, Point):
             _cp = Point(center)
-        #_r = util.get_float(radius)
+        _r = get_float(radius)
         _r = float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
         _st = st
-        _sa = util.make_c_angle(start_angle)
-        _ea = util.make_c_angle(end_angle)
+        _sa = make_c_angle(start_angle)
+        _ea = make_c_angle(end_angle)
         self.__radius = _r
         self.__sa = _sa
         self.__ea = _ea
@@ -88,7 +89,7 @@ class Arc(object):
             This function returns a tuple containing the Point objects
             that for inizializing the arc
         """
-        return self._cp, self._r,self._sa,self._ea
+        return self.__center, self.__radius,self.__sa,self.__ea
 
     def __eq__(self, obj):
         """
@@ -182,7 +183,7 @@ class Arc(object):
         """
         if self.isLocked():
             raise RuntimeError, "Setting radius not allowed - object locked."
-        _r = util.get_float(radius)
+        _r = get_float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
         _cr = self.__radius
@@ -211,7 +212,7 @@ class Arc(object):
         if self.isLocked():
             raise RuntimeError, "Setting start angle not allowed - object locked."
         _sa = self.__sa
-        _angle = util.make_c_angle(angle)
+        _angle = make_c_angle(angle)
         if abs(_sa - _angle) > 1e-10:
             self.startChange('start_angle_changed')
             self.__sa = _angle
@@ -238,7 +239,7 @@ class Arc(object):
         if self.isLocked():
             raise RuntimeError, "Setting end angle not allowed - object locked."
         _ea = self.__ea
-        _angle = util.make_c_angle(angle)
+        _angle = make_c_angle(angle)
         if abs(_ea - _angle) > 1e-10:
             self.startChange('end_angle_changed')
             self.__ea = _angle
@@ -272,7 +273,7 @@ class Arc(object):
             The argument angle should be a float value. This method returns
             True if the arc exists at that angle, otherwise the method returns False.
         """
-        _angle = math.fmod(util.get_float(angle), 360.0)
+        _angle = math.fmod(get_float(angle), 360.0)
         if _angle < 0.0:
             _angle = _angle + 360.0
         _sa = self.__sa
@@ -325,8 +326,8 @@ class Arc(object):
         """
         if self.isLocked():
             raise RuntimeError, "Setting radius not allowed - object locked."
-        _dx = util.get_float(dx)
-        _dy = util.get_float(dy)
+        _dx = get_float(dx)
+        _dy = get_float(dy)
         if abs(_dx) > 1e-10 or abs(_dy) > 1e-10:
             _x, _y = self.__center.getCoords()
             self.ignore('moved')
@@ -413,15 +414,15 @@ class Arc(object):
             through it.
         """
         #TODO : May be we need to delete this ...
-        _xmin = util.get_float(xmin)
-        _ymin = util.get_float(ymin)
-        _xmax = util.get_float(xmax)
+        _xmin = get_float(xmin)
+        _ymin = get_float(ymin)
+        _xmax = get_float(xmax)
         if _xmax < _xmin:
             raise ValueError, "Illegal values: xmax < xmin"
-        _ymax = util.get_float(ymax)
+        _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
-        util.test_boolean(fully)
+        test_boolean(fully)
         _xc, _yc = self.__center.getCoords()
         _r = self.__radius
         #
@@ -531,8 +532,8 @@ class Arc(object):
         _alen = len(args)
         if _alen < 2:
             raise ValueError, "Invalid argument count: %d" % _alen
-        _x = util.get_float(args[0])
-        _y = util.get_float(args[1])
+        _x = get_float(args[0])
+        _y = get_float(args[1])
         _cp = self.__center
         if p is not _cp:
             raise ValueError, "Point is not arc center: " + `p`

@@ -273,22 +273,32 @@ class ioKernel(object):
     def __init__(self):
         self.__kr=PyCadDbKernel()
         self.__command={}
+        #Basic Command
         self.__command['H']=self.help
         self.__command['Esc']=self.endApplication
+        self.__command['Import']=self.importExt
+        self.__command['SetCurrentLayer']=self.setCurrentLayer
+        #Creatio Command
         self.__command['NewSegment']=self.newSegment
+        self.__command['NewArc']=self.newArc
+        self.__command['AddLayer']=self.addLayer
+        #Delete Command
+        self.__command['Delete']=self.delete
+        self.__command['DeleteLayer']=self.deleteLayer
+        #Get Command
         self.__command['GetSegments']=self.getSegments
         self.__command['GetFromType']=self.getEntityFromType
+        self.__command['GetCurrentLayer']=self.getCurrentLayerName
+        self.__command['GetEntType']=self.getEntType
+        self.__command['GetLayers']=self.getLayers
+        #Edit Command
         self.__command['UnDo']=self.unDo
         self.__command['ReDo']=self.reDo
-        self.__command['Delete']=self.delete
+        #WorkFlow Command
         self.__command['Relese']=self.release
+        #View Command
         self.__command['Hide']=self.hideEntity
         self.__command['UnHide']=self.unHideEntity
-        self.__command['Import']=self.importExt
-        self.__command['GetLayers']=self.getLayers
-        self.__command['AddLayer']=self.addLayer
-        self.__command['SetCurrentLayer']=self.setCurrentLayer
-        self.__command['GetCurrentLayer']=self.getCurrentLayerName
         self.__kr.handledError=self.printError
         
     def printError(self, **args):
@@ -443,11 +453,12 @@ class ioKernel(object):
         """
             set the current layer
         """
-        LayerName=raw_input("-->Layer Name :")
+        LayerName=raw_input("-->Layer Id :")
         try:
             self.__kr.getTreeLayer().setActiveLayer(LayerName)
         except:
             print "----<<Err>>Unable to create the layer : %s "%LayerName
+            
     def getCurrentLayerName(self):
         """
             get the current layer name
@@ -468,7 +479,50 @@ class ioKernel(object):
             self.__kr.importExternalFormat(fileName)
         except:
             print "----<<Err>> importExt the  : %s we get en error "%fileName
-
+            
+    def deleteLayer(self):
+        """
+            Delete the layer
+        """
+        layerId=raw_input("-->insert The id layer to delete :")
+        try:
+            self.__kr.getTreeLayer().delete(layerId)
+        except:
+            print "----<<Err>> deleteLayer id : %s we get en error "%layerId
+    
+    def newArc(self):
+        """
+            Create a new arc
+        """ 
+        radius=raw_input("-->Insert the radius :")
+        val=raw_input("-->insert The center position x,y:")
+        xy=val.split(',')
+        if len(xy)==2:
+            center=Point(xy[0], xy[1])
+        else:
+            print "Errore valore incorretto inserire un valore 10,20 in questo formato"
+            return
+            
+        start_angle=raw_input("-->insert startAngle [Empty in case of circle]:")
+        if start_angle:
+            end_angle=raw_input("-->insert The end Angle :")
+        else:
+            start_angle=end_angle=0
+        arc=Arc(center, float(radius), float(start_angle), float(end_angle))
+        self.__kr.saveEntity(arc)
+    
+    def getEntType(self):
+        """
+            get all the entity from a specifie type
+        """
+        type=raw_input("-->Witch Type ? :")
+        if not type:
+            type="ALL"
+        ent=self.__kr.getEntityFromType(type)
+        for e in ent:
+            print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
+        print "********************************"
+        
 def printTree(cls, indent):
     """
         print the tree structure

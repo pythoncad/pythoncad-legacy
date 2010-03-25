@@ -32,7 +32,7 @@ import re # added to handle Mtext
 from pycadinitsetting   import cgcol
 from Entity.point       import Point
 from Entity.segment     import Segment
-
+from Entity.arc         import Arc
 
 #from PythonCAD.Generic.circle import Circle
 #from PythonCAD.Generic.arc import Arc
