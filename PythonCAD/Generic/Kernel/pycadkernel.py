@@ -91,7 +91,6 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__pyCadUndoDb=PyCadUndoDb(self.getConnection())
         self.__pyCadEntDb=PyCadEntDb(self.getConnection())
         self.__pyCadRelDb=PyCadRelDb(self.getConnection())
-
         # Some inizialization parameter
         #   set the default style
         self.__logger.debug('Set Style')
@@ -185,8 +184,8 @@ class PyCadDbKernel(PyCadBaseDb):
             #self.__pyCadEntDb.suspendCommit()
             #self.__pyCadRelDb.suspendCommit()
             PyCadBaseDb.commit=False
-            if isinstance(entity,DRAWIN_ENTITY.keys()):
-                _obj=self.saveDrwEnt(entity,DRAWIN_ENTITY[entity])
+            if isinstance(entity,tuple(DRAWIN_ENTITY.keys())):
+                _obj=self.saveDrwEnt(entity)
             if isinstance(entity,PyCadSettings):
                 _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
@@ -204,16 +203,20 @@ class PyCadDbKernel(PyCadBaseDb):
             print "Unexpected error:", sys.exc_info()[0]
             raise
 
-    def saveDrwEnt(self,ent,entityType):
+    def saveDrwEnt(self,ent):
         """
             Save a PythonCad drawing entity
         """
         self.__logger.debug('saveArc')
+        for t in DRAWIN_ENTITY :
+            if isinstance(ent, t):
+                entityType=DRAWIN_ENTITY[t]
+                break
         self.__entId+=1
         _cElements={}
         i=0
-        for _p in segment.getConstructionElements():
-            _key='%s_%s'%(str(DRAWIN_ENTITY[_p]),str(i))
+        for _p in ent.getConstructionElements():
+            _key='%s_%s'%(str(entityType),str(i))
             _cElements[_key]=_p
             i+=1
         _obj=self.saveDbEnt(entityType,_cElements)

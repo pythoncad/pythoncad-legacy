@@ -26,7 +26,7 @@ from __future__ import generators
 import math
 
 from point import Point
-from PythonCAD.Generic.pyGeoLib import Vector
+#from PythonCAD.Generic.pyGeoLib import Vector
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
@@ -76,13 +76,13 @@ class Arc(object):
         self.__sa = _sa
         self.__ea = _ea
         self.__center = _cp
-        _cp.connect('moved', self.__movePoint)
-        _cp.connect('change_pending', self.__pointChangePending)
-        _cp.connect('change_complete', self.__pointChangeComplete)
-        _cp.storeUser(self)
+        #_cp.connect('moved', self.__movePoint)
+        #_cp.connect('change_pending', self.__pointChangePending)
+        #_cp.connect('change_complete', self.__pointChangeComplete)
+        #_cp.storeUser(self)
         self.isLocked=False
 
-    def getEndpoints(self):
+    def getConstructionElements(self):
         """
             Get the endpoints of the Arc.
             This function returns a tuple containing the Point objects

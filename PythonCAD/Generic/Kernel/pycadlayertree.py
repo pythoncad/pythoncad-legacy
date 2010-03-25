@@ -41,23 +41,23 @@ class PyCadLayerTree(object):
         except:
             raise StructuralError, "Unable to inizialize PyCadLayerTree"
         self.__activeLayer=self.__mainLayer
-    
-    def setActiveLayer(self, layerName):    
+
+    def setActiveLayer(self, layerId):
         """
             set the active layer
         """
-        activeLayer=self.getEntLayerDb(layerName)
+        activeLayer=self.__kr.getEntity(layerId)
         if activeLayer:
             self.__activeLayer=activeLayer
         else:
             raise EntityMissing, "Unable to find the layer %s"%str(layerName)
-    
+
     def getActiveLater(self):
         """
             get the active layer
         """
         return self.__activeLayer
-        
+
     def insert(self, layer, parentLayer):
         """
             Insert a new object in the class and set it as active
@@ -71,7 +71,7 @@ class PyCadLayerTree(object):
         if not self.__kr.getRelatioObject().relationExsist(parentEntDb.getId(),childEndDb.getId() ):
             self.__kr.getRelatioObject().saveRelation(parentEntDb, childEndDb)
         self.__activeLayer=childEndDb
-        
+
     def _getLayerConstructionElement(self, pyCadEnt):
         """
             Retrive the ConstructionElement in the pyCadEnt
@@ -80,7 +80,7 @@ class PyCadLayerTree(object):
         for key in unpickleLayers:
             return unpickleLayers[key]
         return None
-        
+
     def getLayerChildrenLayer(self,layer):
         """
             get the layer children
@@ -90,18 +90,25 @@ class PyCadLayerTree(object):
     #************************************************************************
     #*************************layer managment********************************
     #************************************************************************
-    def getLayerChildIds(self,layer, entityType):
+    def getLayerChildIds(self,layer):
         """
-            get all the child id of a layer 
-        """            
-        #manage in a better way the logger  self.__kr.__logger.debug('getLayerChild')   
+            get all the child id of a layer
+        """
+        #manage in a better way the logger  self.__kr.__logger.debug('getLayerChild')
         _layerId=self.__kr.getEntLayerDb(layerName).getId()
         _childIds=self.__kr.__pyCadRelDb.getChildrenIds(_layerId)
         return _childIds
 
+    def getLayerChildren(self,layer,entityType=None):
+        """
+            get all dbEnt from layer of type entityType
+        """
+        _children=self.__kr.__pyCadRelDb.getAllChildrenType(layer,entityType)
+        return _children
+
     def getEntLayerDb(self,layerName):
         """
-            get the pycadent of type layer
+            get the pycadent  layer by giving a name
         """
         #to do manage logger self.__logger.debug('getEntLayerDb')
         _layersEnts=self.__kr.getEntityFromType('LAYER')
@@ -131,9 +138,35 @@ class PyCadLayerTree(object):
             if childs:
                 tree[id]=(c, childs)
             return tree
-            
+
         return createNode(rootDbEnt)
 
-#Todo : make the delete layer command
-#Todo : Modifie the set current layer he mast use the id insted the name (id is univoc)
+    def getParentLayer(self,layer):
+        """
+            get the parent layer
+            ToDo: to be tested
+        """
+        return self.__kr.getRelatioObject().getParentEnt(layer)
 
+    def delete(self,layerId):
+        """
+            delete the current layer an all the entity releted to it
+            todo: to be tested
+        """
+        self.__kr.startMassiveCreation()
+        def recursiveDelete(layerId):
+            deleteLayer=self.__kr.getEntity(layerId)
+            if deleteLayer is self.__activeLayer:
+                self.setActiveLayer(self.getParentLayer(deleteLayer).getId())
+            #delete all children layer
+            for layer in self.getLayerChildrenLayer(deleteLayer):
+                recursiveDelete(layer)
+            #delete all the children entity
+            for ent in self.getLayerChildren(deleteLayer):
+                self.__kr.deleteEntity(ent.getId())
+            recursiveDelete(layerId)
+        self.__kr.stopMassiveCreation()
+
+#***************************************************
+#Todo : Test delete layer command
+#***************************************************

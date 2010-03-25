@@ -34,10 +34,9 @@ def DrawSegment(self, layer_display):
     # get the geometry
     geometry = self.getConstructionElements()
     # add begin- and end point to the list
-    pt = DisplayPoint(geometry['POINT_1'])
-    points.append(pt)
-    pt = DisplayPoint(geometry['POINT_2'])
-    points.append(pt)
+    for pKey in geometry.keys():
+        pt = DisplayPoint(geometry[pKey])
+        points.append(pt)
     # store the display object
     layer_display.DisplayList[self.getId()] = display_object
 

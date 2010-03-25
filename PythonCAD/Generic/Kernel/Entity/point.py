@@ -36,6 +36,7 @@ class Point(object):
         }
     # member functions
 
+        
     def __init__(self, x, y=None, **kw):
         """
             Initialize a Point.
@@ -60,6 +61,14 @@ class Point(object):
             raise SyntaxError, "Invalid call to Point()."
         self.__x = _x
         self.__y = _y
+    
+    def getConstructionElements(self):
+        """
+            Get the endpoints of the Arc.
+            This function returns a tuple containing the Point objects
+            that for inizializing the arc
+        """
+        return self
 
     def __str__(self):
         return "(%g,%g)" % (self.__x, self.__y)
