@@ -36,8 +36,7 @@ class DisplayObject(object):
             # traverse trough all points
             for point in self._points:
                 # transformation world to view port
-                #pt2 = view.MapToView(point)
-                pt2 = point
+                pt2 = view.MapToView(point)
                 # draw line if two points are translated
                 if (pt1 is not None) and (pt2 is not None):
                     # draw in view port coordinates
