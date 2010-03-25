@@ -36,12 +36,13 @@ class Document(object):
         print "before open"
         self._cadkernel = PyCadDbKernel(filename)
         print "after open"
-        # create a spatial index
-        #self.RebuildIndex()
-        # regenerate drawing
-        self.Regen()
-        # draw all items
-        self._viewport.ZoomAll()
+        if self._cadkernel.getEntityFromType('SEGMENT'):
+            # create a spatial index
+            #self.RebuildIndex()
+            # regenerate drawing
+            self.Regen()
+            # draw all items
+            self._viewport.ZoomAll()
         
 
     def Import(self, fileName):

@@ -6,7 +6,7 @@ __date__="$Mar 11, 2010 9:44:52 PM$"
 
 from pysqlite2 import dbapi2 as sql
 from Generic.Kernel.pycadtransaction import Transaction
-
+from Generic.Kernel.pycaddbexception import *
 
 class PyCadIndex(object):
     """
@@ -39,17 +39,14 @@ class PyCadIndex(object):
             print "Sqlite error:", e.args[0]
             return
 
-        if cur.fetchone() is not None:
-            index_exists = True
-
-        if not index_exists:
+        if cur.fetchone() is None:
             try:
                 # create index
                 cur.execute('CREATE VIRTUAL TABLE sp_index USING rtree (id, min_x, max_x, min_y, max_y)')
                 self.__connetion.commit()
             except sql.Error, e:
-                print "Sqlite error:", e.args[0]
-
+                msg= "Unable to create the virtual table Error : Sqlite error:", e.args[0]
+                raise StructuralError, msg
         cur.close()
         
 
@@ -72,7 +69,8 @@ class PyCadIndex(object):
         try:
             transaction.Cursor.execute('DELETE FROM sp_index')
         except sql.Error, e:
-            print "Sqlite error:", e.args[0]
+            msg ="Unable to RemoveAll the index Sqlite error:", e.args[0]
+            raise StructuralError, msg
         return
 
 
@@ -85,7 +83,8 @@ class PyCadIndex(object):
         try:
             transaction.Cursor.execute('DELETE FROM sp_index WHERE id=?', t)
         except sql.Error, e:
-            print "Sqlite error:", e.args[0]
+            msg ="Unable to remove the index Sqlite error:", e.args[0]
+            raise StructuralError, msg
         return
     
 
@@ -118,7 +117,8 @@ class PyCadIndex(object):
             t = (id, mbr[0], mbr[2], mbr[1], mbr[3],)
             transaction.Cursor.execute('INSERT INTO sp_index VALUES (?,?,?,?,?)', t)
         except sql.Error, e:
-            print "Sqlite error:", e.args[0]
+            msg="Unable to insert the index Sqlite error:", e.args[0]
+            raise StructuralError, msg
         return
 
     def GetInside(self, transaction, boundary):
@@ -138,11 +138,10 @@ class PyCadIndex(object):
             for row in transaction.Cursor:
                 result.append(row.id)
         except sql.Error, e:
-            print "Sqlite error:", e.args[0]
-        # return result
-        return result
-
-
+            msg="Sqlite error:", e.args[0]
+            raise StructuralError, msg 
+        return result        
+        
     def GetExtents(self, transaction):
         """
         Get the extents from all index entities
@@ -155,9 +154,7 @@ class PyCadIndex(object):
             # is there any result
             if row is not None:
                 return row
-
         except sql.Error, e:
-            print "Sqlite error:", e.args[0]
-
-        return (0.0, 0.0, 0.0, 0.0)
+            msg="GetExtents Sqlite error:", e.args[0]
+            raise StructuralError,  msg
 

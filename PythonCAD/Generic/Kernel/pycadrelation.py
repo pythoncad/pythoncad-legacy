@@ -48,7 +48,7 @@ class PyCadRelDb(PyCadBaseDb):
                     "pycad_child_id" INTEGER
                     )"""
             self.makeUpdateInsert(_sqlCreation)
-            
+
     def saveRelation(self,parentEntObj,childEntObj):
         """
             This method save the Relation in the db
@@ -64,7 +64,7 @@ class PyCadRelDb(PyCadBaseDb):
                     str(_parentEntityId),
                     str(_childEntityId))
         self.makeUpdateInsert(_sqlInsert)
-        
+
     def getChildrenIds(self,entityParentId):
         """
             Get the children id of a relation
@@ -76,27 +76,31 @@ class PyCadRelDb(PyCadBaseDb):
         _rows=self.makeSelect(_sqlGet)
         _dbEntRow=self.makeSelect(_sqlGet)
         if _dbEntRow is not None:
-            for _row in _dbEntRow: 
+            for _row in _dbEntRow:
                 _outObj.append(_row[0])
         return _outObj
-    
-    def getAllChildrenType(self, parent, childrenType):
+
+    def getAllChildrenType(self, parent, childrenType=None):
         """
-            get all the cildren entity of type childrenType
+            get all the children entity of type childrenType
         """
         _outObj=[]
+        if not childrenType:
+            childrenType='%'
+        if childrenType=='ALL':
+            childrenType='%'
         _sqlSelect="""SELECT pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
                             pycad_style_id,
                             pycad_entity_state,
                             pycad_index,
-                            pycad_visible 
-                            FROM pycadent 
+                            pycad_visible
+                            FROM pycadent
                             WHERE pycad_entity_id IN
                                 (
-                                    SELECT pycad_child_id 
-                                    FROM pycadrel 
+                                    SELECT pycad_child_id
+                                    FROM pycadrel
                                     WHERE pycad_parent_id =%s
                                 )
                             AND pycad_entity_state NOT LIKE "DELETE"
@@ -104,33 +108,67 @@ class PyCadRelDb(PyCadBaseDb):
                             AND pycad_undo_visible=1
                             """%(str(parent.getId()), str(childrenType))
         _dbEntRow=self.makeSelect(_sqlSelect)
-        for _row in _dbEntRow: 
+        for _row in _dbEntRow:
             _style=_row[3]
             _dumpObj=pickle.loads(str(_row[2]))
             _objEnt=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
             _objEnt.state=_row[4]
             _objEnt.index=_row[5]
             _objEnt.visible=_row[6]
-            _objEnt.updateBBox()            
+            _objEnt.updateBBox()
             _outObj.append(_objEnt)
-        return _outObj        
-    
-    
+        return _outObj
+
+    def getParentEnt(self,entity):
+        """
+            get the parent entity
+            TODO: To be tested
+        """
+        _sqlSelect="""SELECT pycad_entity_id,
+                            pycad_object_type,
+                            pycad_object_definition,
+                            pycad_style_id,
+                            pycad_entity_state,
+                            pycad_index,
+                            pycad_visible
+                            FROM pycadent
+                            WHERE pycad_entity_id IN
+                                (
+                                    SELECT pycad_parent_id
+                                    FROM pycadrel
+                                    WHERE pycad_child_id =%s
+                                )
+                            AND pycad_entity_state NOT LIKE "DELETE"
+                            AND pycad_object_type LIKE '%s'
+                            AND pycad_undo_visible=1
+                            """%(str(parent.getId()))
+        _dbEntRow=self.makeSelect(_sqlSelect)
+        for _row in _dbEntRow:
+            _style=_row[3]
+            _dumpObj=pickle.loads(str(_row[2]))
+            _objEnt=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+            _objEnt.state=_row[4]
+            _objEnt.index=_row[5]
+            _objEnt.visible=_row[6]
+            _objEnt.updateBBox()
+            return _objEnt
+        return None
+
     def deleteFromParent(self,entityObj):
         """
             Delete the entity from db
         """
         _entityId=entityObj.getId()
-        _sqlDelete="""DELETE FROM pycadrel 
+        _sqlDelete="""DELETE FROM pycadrel
             WHERE pycad_parent_id='%s'"""%str(_entityId)
         self.makeUpdateInsert(_sqlDelete)
-        
+
     def deleteFromChild(self,entityObj):
         """
             Delete the entity from db
         """
         _entityId=entityObj.getId()
-        _sqlDelete="""DELETE FROM pycadrel 
+        _sqlDelete="""DELETE FROM pycadrel
             WHERE pycad_child_id='%s'"""%str(_entityId)
         self.makeUpdateInsert(_sqlDelete)
 
@@ -140,17 +178,17 @@ class PyCadRelDb(PyCadBaseDb):
         """
         _parentId=entityObjParent.getId()
         _childId=entityObjChild.getId()
-        _sqlDelete="""DELETE FROM pycadrel 
+        _sqlDelete="""DELETE FROM pycadrel
             WHERE pycad_parent_id='%s' and pycad_child_id='%s'and """%(str(_parentId),str(_childId))
         self.makeUpdateInsert(_sqlDelete)
-    
+
     def relationExsist(self, parentId, childId):
         """
             check if the given parent child id exsist or not
         """
-        _sqlSelect="""SELECT COUNT(*) 
-                    FROM pycadrel 
-                    WHERE pycad_parent_id='%s' and pycad_child_id='%s' 
+        _sqlSelect="""SELECT COUNT(*)
+                    FROM pycadrel
+                    WHERE pycad_parent_id='%s' and pycad_child_id='%s'
                     """%(str(parentId),str(childId))
         res=self.fetchOneRow(_sqlSelect)
         return res

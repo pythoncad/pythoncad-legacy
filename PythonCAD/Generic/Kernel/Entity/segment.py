@@ -65,7 +65,15 @@ class Segment(object):
         #super(Segment, self).__init__(_st, lt, col, th, **kw)
         self.__p1 = _p1
         self.__p2 = _p2     
-
+        
+    def getConstructionElements(self):
+        """
+            Get the endpoints of the Arc.
+            This function returns a tuple containing the Point objects
+            that for inizializing the arc
+        """
+        return self.__p1, self.__p2
+        
     def __str__(self):
         return "Segment: %s to %s" % (self.__p1, self.__p2)
 
