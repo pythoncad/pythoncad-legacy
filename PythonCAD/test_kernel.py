@@ -271,7 +271,10 @@ class ioKernel(object):
         PythonCad Kernel
     """
     def __init__(self):
+        startTime=time.clock()
         self.__kr=PyCadDbKernel()
+        endTime=time.clock()-startTime    
+        print "Inizialize kernel object in : %s"%str(endTime)
         self.__command={}
         #Basic Command
         self.__command['H']=self.help
@@ -359,9 +362,8 @@ class ioKernel(object):
         """
         entType=raw_input("-->Insert the type you are looking for :")
         try:
-            ent=self.__kr.getEntityFromType(entType)
-            for e in ent:
-                print "----<< Entity id : %s "%str(e.getId())
+            ents=self.__kr.getEntityFromType(entType)
+            printEntity(ents)
         except:
             print "----<<Err>>On Retryving entity type %s "%entType
             
@@ -518,11 +520,25 @@ class ioKernel(object):
         type=raw_input("-->Witch Type ? :")
         if not type:
             type="ALL"
-        ent=self.__kr.getEntityFromType(type)
-        for e in ent:
-            print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
+        startTime=time.clock()
+        ents=self.__kr.getEntityFromType(type)
+        endTime=time.clock()-startTime       
+        printEntity(ents)
+        print "Exec query get %s ent in %s s"%(str(len(ent)), str(endTime))
         print "********************************"
         
+def printEntity(ents):
+    """
+        print a query result
+    """
+    i=0
+    for e in ent:
+        print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
+        if i > 100:
+            print "There are more then 100 entitys in the select so i stop printing"
+            break
+        i+=1
+
 def printTree(cls, indent):
     """
         print the tree structure

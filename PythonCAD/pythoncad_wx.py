@@ -39,8 +39,7 @@ try:
     from pysqlite2 import dbapi2 as sqlite
     print "R*Tree sqlite extention loaded"
 except ImportError, e:
-    print "Unable to load R*Tree sqlite extention"
-
+    raise Exception('StructuralError', 'Unable to load the R*Tree extention module')
 
 from Interface.Wx.cadwindow import CadWindow
 
