@@ -234,15 +234,24 @@ class PyCadEntDb(PyCadBaseDb):
                     """%str(versionIndex)
         return self.makeSelect(_sqlGet)
         
-    def getMultiFilteredEntity(self, visible=1, entityType='ALL'):
+    def getMultiFilteredEntity(self, visible=1, entityType='ALL', entityTypeArray=None):
         """
             get all visible entity
         """  
-        if entityType=='ALL':
-            entityType="%"
+        if entityTypeArray:
+            isFirst=1
+            for t in entityTypeArray:
+                if isFirst:
+                    entityTypes="""AND pycad_object_type like '%s'"""%str(t)
+                else:
+                    entityTypes="""%s or pycad_object_type like '%s'"""(str(entityTypes), str(t))
         else:
-            if not entityType in PY_CAD_ENT:
-                raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)  
+            if entityType=='ALL':
+                entityTypes="""AND pycad_object_type like '%'"""
+            else:
+                entityTypes="""AND pycad_object_type like '%s'"""%str(entityType)
+                if not entityType in PY_CAD_ENT:
+                    raise TypeError,"Entity type %s not supported from the dbEnt"%str(entityType)  
         _sqlGet="""SELECT pycad_id,
                     pycad_entity_id,
                     pycad_object_type,
@@ -259,8 +268,8 @@ class PyCadEntDb(PyCadBaseDb):
                         GROUP BY pycad_entity_id ORDER BY PyCad_Id)
                     AND pycad_entity_state NOT LIKE "DELETE"
                     AND pycad_visible =%s
-                    AND pycad_object_type like '%s'
-                    """%(str(visible), str(entityType))
+                    %s
+                    """%(str(visible), str(entityTypes))
         return self.makeSelect(_sqlGet)   
         
     def getEntityFromType(self,entityType):
@@ -280,6 +289,42 @@ class PyCadEntDb(PyCadBaseDb):
             _outObj.append(_objEnt)
         return _outObj            
     
+    def getEntityFromTypeArray(self, typeArray):
+        """
+            get entitys from an array of type
+        """
+        _outObj=[]
+        _dbEntRow=self.getMultiFilteredEntity(entityTypeArray=typeArray)
+        for _row in _dbEntRow: 
+            _style=_row[4]
+            _dumpObj=pickle.loads(str(_row[3]))
+            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt.state=_row[5]
+            _objEnt.index=_row[6]
+            _objEnt.visible=_row[7]
+            _objEnt.updateBBox()            
+            _outObj.append(_objEnt)
+        return _outObj            
+    def haveDrwEntitys(self, drwEntArray):
+        """
+            check if there is some drawing entity in the db
+            drwArray mast be an erray of type entitys
+        """
+        isFirst=1
+        for ent in drwEntArray:
+            if isFirst:
+                whereCause="where pycad_object_type like '%s'"%str(ent)    
+                isFirst=0
+            else:
+                whereCause="%s or pycad_object_type like '%s'"%(str(whereCause), str(ent))
+        else:
+            try:
+                sqlSelect="""select count(*) from pycadent %s"""%str(whereCause)
+            except:
+                return 0
+            return self.fetchOneRow(sqlSelect)>0
+        return 0
+        
     def getNewEntId(self):
         """
             get the last id entity 

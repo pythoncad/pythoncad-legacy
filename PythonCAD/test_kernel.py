@@ -289,11 +289,10 @@ class ioKernel(object):
         self.__command['Delete']=self.delete
         self.__command['DeleteLayer']=self.deleteLayer
         #Get Command
-        self.__command['GetSegments']=self.getSegments
-        self.__command['GetFromType']=self.getEntityFromType
         self.__command['GetCurrentLayer']=self.getCurrentLayerName
         self.__command['GetEntType']=self.getEntType
         self.__command['GetLayers']=self.getLayers
+        self.__command['GetDrwEnt']=self.getDrawingEntity
         #Edit Command
         self.__command['UnDo']=self.unDo
         self.__command['ReDo']=self.reDo
@@ -330,9 +329,12 @@ class ioKernel(object):
         """
         print "*"*10
         print "PyCadIOInterface Help"
-        for s in self.__command:
+        kmd=self.__command.keys()
+        kmd.sort()
+        for s in kmd:
             print "command :" , s
         print "*"*10   
+        
     def newSegment(self):
         """
             create a new segment
@@ -346,27 +348,19 @@ class ioKernel(object):
             self.__kr.saveEntity(_s)
         except:
             print "---->Error on point creation !!"
-    
-    def getSegments(self):
-        """
-            return a list of all the segments
-        """
-        print "--<< Looking for segment"
-        ent=self.__kr.getEntityFromType('SEGMENT')
-        for e in ent:
-            print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
-
-    def getEntityFromType(self):
-        """
-            get all the entity from the database
-        """
-        entType=raw_input("-->Insert the type you are looking for :")
-        try:
-            ents=self.__kr.getEntityFromType(entType)
-            printEntity(ents)
-        except:
-            print "----<<Err>>On Retryving entity type %s "%entType
             
+    def getDrawingEntity(self):        
+        """
+            get all the drawing entity
+        """
+        print "--<< Looking for All entitys"
+        startTime=time.clock()
+        ents=self.__kr.getEntityFromType('SEGMENT')
+        endTime=time.clock()-startTime       
+        printEntity(ents)
+        print "Exec query get %s ent in %s s"%(str(len(ents)), str(endTime))
+        print "********************************"
+
     def reDo(self):
         """
             perform the redo command
@@ -532,7 +526,7 @@ def printEntity(ents):
         print a query result
     """
     i=0
-    for e in ent:
+    for e in ents:
         print "----<< Entity Type %s id %s "%(str(e.eType),str(e.getId()))
         if i > 100:
             print "There are more then 100 entitys in the select so i stop printing"

@@ -107,7 +107,6 @@ class PyCadIndex(object):
             mbr[3] = temp
         return mbr
 
-
     def Insert(self, transaction, id, mbr):
         """
         Insert an entity in the index based on its bounding rectangle

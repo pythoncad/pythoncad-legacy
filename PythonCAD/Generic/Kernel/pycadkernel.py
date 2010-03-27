@@ -169,6 +169,18 @@ class PyCadDbKernel(PyCadBaseDb):
         self.__logger.debug('getEntityFromType')
         return self.__pyCadEntDb.getEntityFromType(entityType)
 
+    def getAllDrawingEntity(self):
+        """
+            get all drawing entity from the db
+        """
+        return self.__pyCadEntDb.getEntityFromTypeArray([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
+    
+    def haveDrawingEntitys(self):
+        """
+            check if the drawing have some data in it
+        """
+        return self.__pyCadEntDb.haveDrwEntitys([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
+        
     def saveEntity(self,entity):
         """
             save the entity into the database

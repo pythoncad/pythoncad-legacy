@@ -36,7 +36,8 @@ class Document(object):
         print "before open"
         self._cadkernel = PyCadDbKernel(filename)
         print "after open"
-        if self._cadkernel.getEntityFromType('SEGMENT'):
+        #if self._cadkernel.getEntityFromType('SEGMENT'):
+        if self._cadkernel.haveDrawingEntitys():
             # create a spatial index
             #self.RebuildIndex()
             # regenerate drawing
