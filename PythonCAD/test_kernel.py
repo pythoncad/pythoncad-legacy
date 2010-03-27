@@ -144,11 +144,7 @@ def CreateModifieEntity(kr):
     celement={'POINT_1':Point(100,100), 'POINT_2':Point(200,200)}
     ent.setConstructionElement(celement)
     kr.saveEntity(ent)
-    
-
-
-
-
+ 
 def deleteTable(tableName):
     """
     delete the table name 
@@ -205,8 +201,6 @@ def testPointDb(nLoop):
     endTime=time.clock()-startTime
     everage=endTime/nLoop
     print "End time for nLoop %s in %s everage %s "%(str(nLoop), str(endTime), str(everage))
-    
-
 
 def testPointDb1(nLoop):
     """
@@ -250,11 +244,7 @@ def getAllSegment(kr):
     ent=kr.getEntityFromType('SEGMENT')
     for e in ent:
         print "e >>>>", e.eType
-
-
-
-
-        
+       
 def test():
     print ">>Create pycad object"
     kr=PyCadDbKernel()
@@ -355,7 +345,7 @@ class ioKernel(object):
         """
         print "--<< Looking for All entitys"
         startTime=time.clock()
-        ents=self.__kr.getEntityFromType('SEGMENT')
+        ents=self.__kr.getAllDrawingEntity()
         endTime=time.clock()-startTime       
         printEntity(ents)
         print "Exec query get %s ent in %s s"%(str(len(ents)), str(endTime))

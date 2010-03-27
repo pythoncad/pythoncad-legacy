@@ -243,8 +243,9 @@ class PyCadEntDb(PyCadBaseDb):
             for t in entityTypeArray:
                 if isFirst:
                     entityTypes="""AND pycad_object_type like '%s'"""%str(t)
+                    isFirst=0
                 else:
-                    entityTypes="""%s or pycad_object_type like '%s'"""(str(entityTypes), str(t))
+                    entityTypes="""%s or pycad_object_type like '%s'"""%(str(entityTypes), str(t))
         else:
             if entityType=='ALL':
                 entityTypes="""AND pycad_object_type like '%'"""
