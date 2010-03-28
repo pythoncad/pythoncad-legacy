@@ -27,6 +27,7 @@ import sys
 # sqlite + R*Tree module
 from pysqlite2 import dbapi2 as sql
 
+from pycaddbexception import *
 
 class PyCadBaseDb(object):
     """
@@ -35,19 +36,18 @@ class PyCadBaseDb(object):
     commit=True
     def __init__(self):
         self.__dbConnection=None
-        #self.__commit=True
-        
+
     def createConnection(self,dbPath=None):
         """
             create the connection with the database
         """
         if dbPath is None:
-            dbPath='pythoncad.pdr' 
+            dbPath='pythoncad.pdr'
         if not os.path.exists(dbPath):
             raise IOError , 'Unable lo get the db %s'%str(dbPath)
             sys.exit()
         self.__dbConnection = sql.connect(dbPath)
-        
+
     def setConnection(self,dbConnection):
         """
             set the connection with the database
@@ -56,13 +56,13 @@ class PyCadBaseDb(object):
             # Todo fire a warning
             self.__dbConnection.close()
         self.__dbConnection=dbConnection
-        
+
     def getConnection(self):
         """
             Get The active connection
         """
         return self.__dbConnection
-    
+
     def makeSelect(self,statment):
         """
             perform a select operation
@@ -72,24 +72,34 @@ class PyCadBaseDb(object):
             _rows = _cursor.execute(statment)
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
-            print msg
-            return []
+            raise StructuralError, msg
         except :
             for s in sys.exc_info():
                 print "Generic Error: %s"%str(s)
-            return []
+            raise StructuralError
+        #_cursor.close()
         return _rows
-    
+
     def fetchOneRow(self,sqlSelect):
         """
             get the first row of the select
         """
-        _rows=self.makeSelect(sqlSelect)
+        try:
+            _cursor = self.__dbConnection.cursor()
+            _rows = _cursor.execute(sqlSelect)
+        except sql.Error, _e:
+            msg="Sql Phrase: %s"%str(sqlSelect)+"\nSql Error: %s"%str( _e.args[0] )
+            raise StructuralError, msg
+        except :
+            for s in sys.exc_info():
+                print "Generic Error: %s"%str(s)
+            raise StructuralError
         _row=_rows.fetchone()
+        _cursor.close()
         if _row is None or _row[0] is None:
             return None
         return _row[0]
-    
+
     def makeUpdateInsert(self,statment):
         """
             make an update Inster operation
@@ -100,7 +110,8 @@ class PyCadBaseDb(object):
             _rows = _cursor.execute(statment)
             #if self.__commit:
             if PyCadBaseDb.commit:
-                self.performCommit()                
+                self.performCommit()
+                _cursor.close()
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
             raise sql.Error,msg
@@ -121,18 +132,18 @@ class PyCadBaseDb(object):
         """
         #self.__commit=False
         PyCadBaseDb.commit=False
-        
+
     def reactiveCommit(self):
         """
             reactive the commit in the update\insert
         """
         #self.__commit=True
         PyCadBaseDb.commit=True
-        
+
 
     def performCommit(self):
         """
-            perform a commit 
+            perform a commit
         """
         try:
             self.__dbConnection.commit()

@@ -8,6 +8,8 @@ from pysqlite2 import dbapi2 as sql
 from Generic.Kernel.pycadtransaction import Transaction
 from Generic.Kernel.pycaddbexception import *
 
+print "Pysql2 --" , sql.__file__
+
 class PyCadIndex(object):
     """
     Sqlite specific index.
@@ -48,7 +50,7 @@ class PyCadIndex(object):
                 msg= "Unable to create the virtual table Error : Sqlite error:", e.args[0]
                 raise StructuralError, msg
         cur.close()
-        
+
 
     def GetTransaction(self):
         """
@@ -59,7 +61,7 @@ class PyCadIndex(object):
             return transaction
         except:
             self.__logger.debug('Unable to create transaction object')
-        return None        
+        return None
 
 
     def RemoveAll(self, transaction):
@@ -86,7 +88,7 @@ class PyCadIndex(object):
             msg ="Unable to remove the index Sqlite error:", e.args[0]
             raise StructuralError, msg
         return
-    
+
 
     def __CheckMBR(self, mbr):
         """
@@ -105,7 +107,6 @@ class PyCadIndex(object):
             mbr[3] = temp
         return mbr
 
-    
     def Insert(self, transaction, id, mbr):
         """
         Insert an entity in the index based on its bounding rectangle
@@ -139,12 +140,12 @@ class PyCadIndex(object):
                 result.append(row.id)
         except sql.Error, e:
             msg="Sqlite error:", e.args[0]
-            raise StructuralError, msg 
-        return result        
-        
+            raise StructuralError, msg
+        return result
+
     def GetExtents(self, transaction):
         """
-        Get the extents from all index entities
+            Get the extents from all index entities
         """
         try:
             # select candidates from the index
@@ -156,5 +157,5 @@ class PyCadIndex(object):
                 return row
         except sql.Error, e:
             msg="GetExtents Sqlite error:", e.args[0]
-            raise StructuralError,  msg
+            raise StructuralError(msg)
 
