@@ -3,24 +3,29 @@ import os
 
 from Interface.Wx.document import Document
 from Interface.Wx.viewport import ViewPort
+from Interface.Wx.commandline import Commandline
+
+
 #Custom menu id 
 wx.ID_IMPORT=6000
 
 class CadWindow(wx.Frame):
 
-    def __init__(self, parent, title):
+    def __init__(self, *args, **kwargs):
         # standard file open location
         self.__dirname = ''
         
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
-        wx.Frame.__init__(self, parent, title=title, size=(-1, -1))
+        wx.Frame.__init__(self, *args, **kwargs)
+        # create controls
+        self._CreateControls()
         # create viewport
-        self._viewport = ViewPort(self)
+        #self._viewport = ViewPort(self)
         # create document
         self._document = Document(self, self._viewport)
         # A Statusbar in the bottom of the window
-        self.CreateStatusBar()
+        #self.CreateStatusBar()
         # Set up the file menu.
         filemenu = wx.Menu()
         file_open = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
@@ -62,14 +67,34 @@ class CadWindow(wx.Frame):
         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
 
 
-        # Use some sizers to see layout options
-        self.__sizer = wx.BoxSizer(wx.VERTICAL)
-        self.__sizer.Add(self._viewport, 1, wx.EXPAND)
-        #Layout sizers
-        self.SetSizer(self.__sizer)
-        self.SetAutoLayout(1)
-        self.__sizer.Fit(self)
+#        # Use some sizers to see layout options
+#        self.__sizer = wx.BoxSizer(wx.VERTICAL)
+#        self.__sizer.Add(self._viewport, 1, wx.EXPAND)
+#        #Layout sizers
+#        self.SetSizer(self.__sizer)
+#        self.SetAutoLayout(1)
+#        self.__sizer.Fit(self)
         self.Show()
+        
+        
+    def _CreateControls(self):
+        # viewport
+        self._viewport = ViewPort(self)
+        # commandline
+        self._commandline = Commandline(self)
+        # sizer
+        self._sizer = wx.BoxSizer(wx.VERTICAL)
+        self._sizer.Add(self._viewport, flag=wx.EXPAND)
+        self._sizer.Add(self._commandline, flag=wx.EXPAND)
+        # add sizer to panel
+        self.SetSizer(self._sizer)
+        self.SetAutoLayout(1)
+        self._sizer.Fit(self) 
+        self._sizer.SetSizeHints(self)
+        # A Statusbar in the bottom of the window
+        self.CreateStatusBar()
+              
+        
 
     def __GetDocument(self):
         return self._document

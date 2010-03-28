@@ -11,7 +11,7 @@ from Interface.Wx.view import View
 class ViewPort(wx.Panel):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent, -1)
+        wx.Panel.__init__(self, parent, id=-1)
         # parent
         self._cadwindow = parent
         # document
@@ -72,7 +72,7 @@ class ViewPort(wx.Panel):
 
     def OnResize(self, event):
         # new size + margin of 5 px
-        rect = event.EventObject.GetRect().Inflate(5, 5)
+        rect = event.EventObject.GetRect()
         # set the new size of the display view
         self._display_view.Set(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight())
         # create new draw buffer
@@ -84,7 +84,6 @@ class ViewPort(wx.Panel):
 
 
     def OnPaint(self, event):
-        #dc = wx.BufferedPaintDC(self, self._draw_buffer)
         paintdc = wx.PaintDC(self)
         paintdc.Blit(0, 0, self._display_view.Width, self._display_view.Height, self._memory_dc, 0, 0, wx.COPY, useMask=False)
         event.Skip()
