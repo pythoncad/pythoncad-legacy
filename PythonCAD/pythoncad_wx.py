@@ -44,5 +44,5 @@ except ImportError, e:
 from Interface.Wx.cadwindow import CadWindow
 
 app = wx.App(False)
-frame = CadWindow(None, title="PythonCAD Wx", size=(800,600))
+frame = CadWindow()
 app.MainLoop()

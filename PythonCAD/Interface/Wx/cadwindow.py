@@ -11,21 +11,14 @@ wx.ID_IMPORT=6000
 
 class CadWindow(wx.Frame):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         # standard file open location
         self.__dirname = ''
         
         # A "-1" in the size parameter instructs wxWidgets to use the default size.
         # In this case, we select 200px width and the default height.
-        wx.Frame.__init__(self, *args, **kwargs)
-        # create controls
-        self._CreateControls()
-        # create viewport
-        #self._viewport = ViewPort(self)
-        # create document
-        self._document = Document(self, self._viewport)
-        # A Statusbar in the bottom of the window
-        #self.CreateStatusBar()
+        wx.Frame.__init__(self, parent=None, title="PythonCAD Wx", size=(800,600))
+        
         # Set up the file menu.
         filemenu = wx.Menu()
         file_open = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
@@ -66,15 +59,23 @@ class CadWindow(wx.Frame):
         menuBar.Append(viewmenu, "&View") # Adding the "filemenu" to the MenuBar
         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
 
-
-#        # Use some sizers to see layout options
-#        self.__sizer = wx.BoxSizer(wx.VERTICAL)
-#        self.__sizer.Add(self._viewport, 1, wx.EXPAND)
-#        #Layout sizers
-#        self.SetSizer(self.__sizer)
-#        self.SetAutoLayout(1)
-#        self.__sizer.Fit(self)
+        # create controls
+        self._CreateControls()
+        # create viewport
+        #self._viewport = ViewPort(self)
+        # create document
+        self._document = Document(self, self._viewport)
+        # A Statusbar in the bottom of the window
+        #self.CreateStatusBar()
+        
+        self.Bind(wx.EVT_SIZE, self.OnResize)
+        
         self.Show()
+        
+        
+    def OnResize(self, event):
+        if self.GetAutoLayout():
+            self.Layout()
         
         
     def _CreateControls(self):
@@ -84,13 +85,15 @@ class CadWindow(wx.Frame):
         self._commandline = Commandline(self)
         # sizer
         self._sizer = wx.BoxSizer(wx.VERTICAL)
-        self._sizer.Add(self._viewport, flag=wx.EXPAND)
-        self._sizer.Add(self._commandline, flag=wx.EXPAND)
-        # add sizer to panel
+        self._sizer.Add(self._viewport, 1, flag=wx.EXPAND)
+        self._sizer.Add(self._commandline, 0, flag=wx.EXPAND)
+        # add sizer to frame
+        self.SetAutoLayout(True)
         self.SetSizer(self._sizer)
-        self.SetAutoLayout(1)
-        self._sizer.Fit(self) 
-        self._sizer.SetSizeHints(self)
+        self.Layout()
+        #self._sizer.Fit(self) 
+        #self._sizer.SetSizeHints(self)
+        self.Fit()
         # A Statusbar in the bottom of the window
         self.CreateStatusBar()
               

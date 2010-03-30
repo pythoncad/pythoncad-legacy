@@ -11,7 +11,7 @@ from Interface.Wx.view import View
 class ViewPort(wx.Panel):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent, id=-1)
+        wx.Panel.__init__(self, parent, id=-1, size=(200,200))
         # parent
         self._cadwindow = parent
         # document
