@@ -1,5 +1,6 @@
 
 from Generic.Kernel.pycadkernel import PyCadDbKernel
+from Interface.FunctionParser.functionhandler import FunctionHandler
 #from Generic.Kernel.pycadsettings import PyCadSettings
 #from Interface.Wx.quadtree import Quadtree
 
@@ -21,6 +22,11 @@ class Document(object):
         self._viewport = viewport
         # make the document known to the view
         viewport.Document = self
+        # function handler
+        self._function_handler = FunctionHandler()
+        # connect function handler to commandline
+        
+        
 
 
     def __GetKernel(self):
