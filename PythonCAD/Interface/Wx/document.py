@@ -71,26 +71,27 @@ class Document(object):
         """
         Rebuilds the spatial index for all entities in the database
         """
-        # index object
-        index = self._cadkernel.getSpIndex()
-        
-        if index is not None:
-            print "index constructed"
-            # get transaction object
-            transaction = index.GetTransaction()
-            # remove current content
-            index.RemoveAll(transaction)
-            # get all entities from the database
-            entities = self._cadkernel.getEntityFromType('SEGMENT')
-            # traverse each layer in the list
-            for entity in entities:
-                # add entity to index
-                index.Insert(transaction, entity.getId(), entity.getBBox())
-            transaction.Close(True)
-
-            print "index rebuild"
-        else:
-            print "error rebuilding index"
+        if self._cadkernel is not None:
+            # index object
+            index = self._cadkernel.getSpIndex()
+            
+            if index is not None:
+                print "index constructed"
+                # get transaction object
+                transaction = index.GetTransaction()
+                # remove current content
+                index.RemoveAll(transaction)
+                # get all entities from the database
+                entities = self._cadkernel.getEntityFromType('SEGMENT')
+                # traverse each layer in the list
+                for entity in entities:
+                    # add entity to index
+                    index.Insert(transaction, entity.getId(), entity.getBBox())
+                transaction.Close(True)
+    
+                print "index rebuild"
+            else:
+                print "error rebuilding index"
             
 
     def undo(self):
@@ -98,9 +99,10 @@ class Document(object):
             perform the undo command
         """
         try:
-            print "-->>Perform unDo"
-            self._cadkernel.unDo()  
-            self.Regen() 
+            if self._cadkernel is not None:            
+                print "-->>Perform unDo"
+                self._cadkernel.unDo()  
+                self.Regen() 
         except UndoDb:
             print "----<<Err>>No more unDo to performe"
             
@@ -109,9 +111,10 @@ class Document(object):
             perform the redo command
         """
         try:
-            print "-->>Perform Redo"
-            self._cadkernel.reDo() 
-            self.Regen() 
+            if self._cadkernel is not None:            
+                print "-->>Perform Redo"
+                self._cadkernel.reDo() 
+                self.Regen() 
         except UndoDb:
             print "----<<Err>>No more redo to performe"
 
@@ -120,28 +123,30 @@ class Document(object):
         """
         Rebuild display lists and redraw the viewport
         """
-        # get all entities from the database
-        entities = self._cadkernel.getEntityFromType('SEGMENT')
-        # traverse each layer in the list
-        for entity in entities:
-            # add entity to view port
-            self._viewport.AddEntity(entity)
+        if self._cadkernel is not None:
+            # get all entities from the database
+            entities = self._cadkernel.getEntityFromType('SEGMENT')
+            # traverse each layer in the list
+            for entity in entities:
+                # add entity to view port
+                self._viewport.AddEntity(entity)
         
  
     def GetDrawingExtents(self):
         """
         Gets the min_x, min_y, max_x, max_y for all entities
         """
-        # index object
-        index = self._cadkernel.getSpIndex()
-        
-        if index is not None:
-            # get transaction object
-            transaction = index.GetTransaction()
-            # get the extents from the index
-            return index.GetExtents(transaction)
-        # error        
-        return None
+        if self._cadkernel is not None:
+            # index object
+            index = self._cadkernel.getSpIndex()
+            
+            if index is not None:
+                # get transaction object
+                transaction = index.GetTransaction()
+                # get the extents from the index
+                return index.GetExtents(transaction)
+        # default        
+        return (0,0,1,1)
 
 
 
