@@ -53,10 +53,10 @@ class CadWindow(wx.Frame):
     
     
     def _CreateControls(self):
-        # viewport
-        self._viewport = ViewPort(self)
         # commandline
         self._commandline = Commandline(self)
+        # viewport
+        self._viewport = ViewPort(self)
         # sizer
         self._sizer = wx.BoxSizer(wx.VERTICAL)
         self._sizer.Add(self._viewport, 1, flag=wx.EXPAND)
@@ -84,26 +84,39 @@ class CadWindow(wx.Frame):
     Viewport = property(__GetViewport, None, None, "Gets the viewport")
     
     
+    def RegisterCommand(self, name, callback):
+        '''
+        Convenient function to register a command
+        '''
+        self._commandline.RegisterCommand(name, callback)
+    
     
     def _RegisterCommands(self):
         '''
         Register commands available for this object
         '''
-        self.Document.FunctionHandler.RegisterCommand("OPEN", self.OnOpen)
-        self.Document.FunctionHandler.RegisterCommand("QUIT", self.OnExit)
-        self.Document.FunctionHandler.RegisterCommand("IMPORT", self.OnImport)
-        self.Document.FunctionHandler.RegisterCommand("ABOUT", self.OnAbout)
-    
+        self.RegisterCommand("OPEN", self.OnOpen)
+        self.RegisterCommand("QUIT", self.OnQuit)
+        self.RegisterCommand("IMPORT", self.OnImport)
+        self.RegisterCommand("ABOUT", self.OnAbout)
 
 
-    def OnAbout(self,e):
+    def SendExpression(self, expression):
+        '''
+        Convenient function to start a command or evaluate an expression
+        '''
+        self._commandline.Evaluate(expression)
+        
+        
+
+    def OnAbout(self):
         # Create a message dialog box
         dlg = wx.MessageDialog(self, "PythonCAD a 2D CAD program.", "About PythonCAD", wx.OK)
         dlg.ShowModal() # Shows it
         dlg.Destroy() # finally destroy it when finished.
 
 
-    def OnExit(self,e):
+    def OnQuit(self):
         self.Close(True)  # Close the frame.
 
 
@@ -119,7 +132,7 @@ class CadWindow(wx.Frame):
         dlg.Destroy()
         
     
-    def OnImport(self, e):
+    def OnImport(self):
         """
             on import call back
         """
@@ -132,37 +145,16 @@ class CadWindow(wx.Frame):
         dlg.Destroy()
         
         
-    def OnUndo(self, e):
-        """
-            perform undo operation
-        """
-        self._document.undo()
-        self._viewport.Redraw()
-
-        
-    def OnRedo(self, e):
-        """
-            perform redo operation
-        """     
-        self._document.redo()
-        self._viewport.Redraw()
-  
-    def OnRebuildIndex(self,e):
-        """
-        Rebuild the spatial index in the database
-        """
-        self._document.RebuildIndex()
-        wx.MessageBox("Ready rebuilding spatial index")
         
         
-    def OnClear(self, e):
+    def OnClear(self):
         """
         Make the viewport empty
         """
         self._viewport.Clear()
         
         
-    def OnZoomAll(self,e):
+    def OnZoomAll(self):
         """
         Set up view translation and redraw all entities
         """
@@ -170,7 +162,7 @@ class CadWindow(wx.Frame):
         wx.MessageBox("Ready zoom to all entities")
 
 
-    def OnRedraw(self,e):
+    def OnRedraw(self):
         """
         redraw all entities
         """
@@ -178,7 +170,7 @@ class CadWindow(wx.Frame):
         wx.MessageBox("Ready redraw to all entities")
         
         
-    def OnRegen(self,e):
+    def OnRegen(self):
         """
         Rebuild the display list and redraw all entities
         """

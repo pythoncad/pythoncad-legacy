@@ -5,8 +5,10 @@ Created on Mar 25, 2010
 '''
 
 import wx
+from Interface.FunctionParser.functionhandler import FunctionHandler
 
-wx.ID_COMMAND_ENTRY=6000
+
+
 
 
 class Commandline(wx.Panel):
@@ -20,7 +22,7 @@ class Commandline(wx.Panel):
         '''
         wx.Panel.__init__(self, parent, id=-1)
         # function handler parses commandline expressions
-        self._function_handler = None
+        self._function_handler = FunctionHandler(self)
         # command label and entry
         self._label = wx.StaticText(self, -1, "Command: ") 
         self._entry = wx.TextCtrl(parent=self, id=-1, value="", style=wx.TE_PROCESS_ENTER, name="COMMAND_ENTRY")
@@ -35,24 +37,37 @@ class Commandline(wx.Panel):
         #sizer.SetSizeHints(self)
         
         
-    def SetFunctionHandler(self, function_handler):
-        '''
-        All expressions entered in the commandline are
-        handled by the function handler
-        '''
-        self._function_handler = function_handler
-
+    def _GetFunctionHandler(self):
+        return self._function_handler
+    
+    FunctionHandler = property(_GetFunctionHandler, None, None, "Get the function handler")
+    
         
     def OnCommand(self, event):
         '''
         Call the function handler with the expression from the commandline
         '''
         expression = self._entry.Value
-        result = self._function_handler.Evaluate(expression)
-        self._entry.Value = str(result)
+        self.Evaluate(expression)
+
+
+    def RegisterCommand(self, name, callback):
+        '''
+        Convenient function to register a command
+        '''
+        self._function_handler.RegisterCommand(name, callback)
         
         
-    
-        
+    def Evaluate(self, expression):
+        '''
+        Evaluate a expression / send a command
+        '''
+        # show it in the command line
+        self._entry.Value = expression
+        # check if it is a string
+        if type(expression) is str or type(expression) is unicode:
+            result = self._function_handler.Evaluate(expression)
+            # show the result in the command line
+            self._entry.Value = str(result)
         
         

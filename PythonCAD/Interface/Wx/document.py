@@ -1,6 +1,6 @@
 
 from Generic.Kernel.pycadkernel import PyCadDbKernel
-from Interface.FunctionParser.functionhandler import FunctionHandler
+
 #from Generic.Kernel.pycadsettings import PyCadSettings
 #from Interface.Wx.quadtree import Quadtree
 
@@ -22,10 +22,6 @@ class Document(object):
         self._viewport = viewport
         # make the document known to the view
         viewport.Document = self
-        # function handler
-        self._function_handler = FunctionHandler(self)
-        # connect function handler to commandline
-        self._cadwindow.Commandline.SetFunctionHandler(self._function_handler)
         # register document commands
         self._RegisterCommands()
 
@@ -35,48 +31,15 @@ class Document(object):
 
     Kernel = property(__GetKernel, None, None, "Gets the kernel")
 
-
-    def __GetFunctionHandler(self):
-        return self._function_handler
-
-    FunctionHandler = property(__GetFunctionHandler, None, None, "Gets the function handler")
-    
     
     def _RegisterCommands(self):
-        self._function_handler.RegisterCommand("REBUILD_INDEX", self.OnRebuildIndex)
+        self._cadwindow.RegisterCommand("REBUILD_IX", self.OnRebuildIndex)
+        self._cadwindow.RegisterCommand("REGEN", self.OnRegen)
+        self._cadwindow.RegisterCommand("UNDO", self.OnUndo)
+        self._cadwindow.RegisterCommand("REDO", self.OnRedo)
         
-    
-    def Open(self, filename):
-        # todo: check filename
-
-        # open a new kernel
-        print "before open"
-        self._cadkernel = PyCadDbKernel(filename)
-        print "after open"
-        #if self._cadkernel.getEntityFromType('SEGMENT'):
-        if self._cadkernel.haveDrawingEntitys():
-            # create a spatial index
-            #self.RebuildIndex()
-            # regenerate drawing
-            self.Regen()
-            # draw all items
-            self._viewport.ZoomAll()
         
-
-    def Import(self, fileName):
-        """
-            import a specifie file
-        """
-        if not self._cadkernel:
-            raise TypeError, "open a file before import a file"
-        self._cadkernel.importExternalFormat(fileName)
-        # Rebuild index
-        self.RebuildIndex()
-        # regenerate drawing
-        self.Regen()
-        # draw all items
-        self._viewport.ZoomAll()
-        
+#-------------------- Command handlers ----------------------#
         
     def OnRebuildIndex(self):
         """
@@ -105,7 +68,7 @@ class Document(object):
                 print "error rebuilding index"
             
 
-    def undo(self):
+    def OnUndo(self):
         """
             perform the undo command
         """
@@ -117,7 +80,8 @@ class Document(object):
         except UndoDb:
             print "----<<Err>>No more unDo to performe"
             
-    def redo(self):
+            
+    def OnRedo(self):
         """
             perform the redo command
         """
@@ -130,7 +94,7 @@ class Document(object):
             print "----<<Err>>No more redo to performe"
 
         
-    def Regen(self):
+    def OnRegen(self):
         """
         Rebuild display lists and redraw the viewport
         """
@@ -142,7 +106,43 @@ class Document(object):
                 # add entity to view port
                 self._viewport.AddEntity(entity)
         
- 
+
+        
+#-------------------- Command handlers ----------------------#
+
+    
+    def Open(self, filename):
+        # todo: check filename
+
+        # open a new kernel
+        print "before open"
+        self._cadkernel = PyCadDbKernel(filename)
+        print "after open"
+        #if self._cadkernel.getEntityFromType('SEGMENT'):
+        if self._cadkernel.haveDrawingEntitys():
+            # create a spatial index
+            #self._cadwindow.SendExpression("REBUILD_IX")
+            # build display list
+            self._cadwindow.SendExpression("REGEN")
+            # draw all items
+            self._cadwindow.SendExpression("ZOOMA")
+        
+
+    def Import(self, fileName):
+        """
+            import a specifie file
+        """
+        if not self._cadkernel:
+            raise TypeError, "open a file before import a file"
+        self._cadkernel.importExternalFormat(fileName)
+        # create a spatial index
+        self._cadwindow.SendExpression("REBUILD_IX")
+        # build display list
+        self._cadwindow.SendExpression("REGEN")
+        # draw all items
+        self._cadwindow.SendExpression("ZOOMA")
+        
+        
     def GetDrawingExtents(self):
         """
         Gets the min_x, min_y, max_x, max_y for all entities
