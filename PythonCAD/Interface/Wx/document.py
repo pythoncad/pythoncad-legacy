@@ -23,10 +23,11 @@ class Document(object):
         # make the document known to the view
         viewport.Document = self
         # function handler
-        self._function_handler = FunctionHandler()
+        self._function_handler = FunctionHandler(self)
         # connect function handler to commandline
-        
-        
+        self._cadwindow.Commandline.SetFunctionHandler(self._function_handler)
+        # register document commands
+        self._RegisterCommands()
 
 
     def __GetKernel(self):
@@ -35,6 +36,16 @@ class Document(object):
     Kernel = property(__GetKernel, None, None, "Gets the kernel")
 
 
+    def __GetFunctionHandler(self):
+        return self._function_handler
+
+    FunctionHandler = property(__GetFunctionHandler, None, None, "Gets the function handler")
+    
+    
+    def _RegisterCommands(self):
+        self._function_handler.RegisterCommand("REBUILD_INDEX", self.OnRebuildIndex)
+        
+    
     def Open(self, filename):
         # todo: check filename
 
@@ -67,7 +78,7 @@ class Document(object):
         self._viewport.ZoomAll()
         
         
-    def RebuildIndex(self):
+    def OnRebuildIndex(self):
         """
         Rebuilds the spatial index for all entities in the database
         """
