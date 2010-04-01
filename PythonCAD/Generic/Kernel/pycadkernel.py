@@ -174,13 +174,13 @@ class PyCadDbKernel(PyCadBaseDb):
             get all drawing entity from the db
         """
         return self.__pyCadEntDb.getEntityFromTypeArray([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-    
+
     def haveDrawingEntitys(self):
         """
             check if the drawing have some data in it
         """
         return self.__pyCadEntDb.haveDrwEntitys([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-        
+
     def saveEntity(self,entity):
         """
             save the entity into the database
@@ -483,7 +483,4 @@ class PyCadkernelEvent(object):
     __call__ = fire
     __len__  = getHandlerCount
 
-"""
-TODO: create a layer structure
 
-"""

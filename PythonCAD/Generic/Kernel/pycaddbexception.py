@@ -30,6 +30,15 @@ class StructuralError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+class PyCadWrongCommand(Exception):
+    """
+        Wrong command for the PyCadApplication
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)    
         
 class EmptyDbSelect(Exception):
     """
@@ -81,6 +90,27 @@ class DxfReport(Exception):
 class DxfUnsupportedFormat(Exception):
     """
         Unsupported format 
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+#********************************
+#       imput exception
+#********************************
+class excPoint(Exception):
+    """
+        when this exception is trown it means that the command need a point
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+        
+class excLenght(Exception):
+    """
+        when this exception is trown it means that the command need a lenght
     """
     def __init__(self, value):
         self.value = value

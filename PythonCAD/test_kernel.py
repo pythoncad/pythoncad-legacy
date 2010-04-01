@@ -43,7 +43,7 @@ except ImportError, e:
 
 
 from Generic.Kernel.pycadkernel import *
-
+from Generic.Kernel.pycadapplication import PyCadApplication
 
 def printId(kernel,obj):
     """
@@ -533,10 +533,70 @@ def printTree(cls, indent):
             print '.'*indent + 'Layer Id: %s Name : %s'%(str(l) , str(parent.name))
             printTree(childs, indent+1)
 
+class textApplication(object):
+    def __init__(self):
+        self.__command={}
+        #Basic Command
+        self.__command['Segment']=self.performCommand
+        self.__command['Esc']=self.endApplication
+        self.__pyCadApplication=PyCadApplication()
+
+    def mainLoop(self):
+        """
+            mainLoop operation
+        """
+        while 1:
+            imputstr=self.inputMsg("Insert a command (H for Help)")
+            if self.__command.has_key(imputstr):
+                self.__command[imputstr](imputstr)
+            else:
+                self.outputMsg("Wrong Command !!")
+
+    def endApplication(self,dummy):
+        """
+            close the application
+        """
+        self.outputMsg("Bye")
+        sys.exit(0)
+
+    def performCommand(self,name):
+        """
+            Perform a Command
+        """
+        try:
+            cmd_Key=str(name).upper()
+            cmd=self.__pyCadApplication.getCommand(cmd_Key)
+            for iv in cmd:
+                try:
+                    raise iv(None)
+                except excPoint:
+                    cObject[iv]=self.inputMsg("Insert A point")                    
+                except:
+                    print "Bad error !!"
+                    raise 
+                else:
+                    cmd.applyCommand()
+        except PyCadWrongCommand:
+            self.outputMsg("Wrong Command")
+
+    def outputMsg(self,msg):
+        """
+            print an output message
+        """
+        print """PythonCad>> %s"""%(str(msg))
+    def inputMsg(self,msg):
+        """
+            print and ask for a value
+        """
+        msg="""PythonCad<< %s :"""%(str(msg))
+        return raw_input(msg)
+
 if __name__=='__main__':
+    ta=textApplication()
+    ta.mainLoop()
     #test()
-    io=ioKernel()
-    io.mainLoop()
-    print "bye"
+    #io=ioKernel()
+    #io.mainLoop()
+    #print "bye"
 
 
