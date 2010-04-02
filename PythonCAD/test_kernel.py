@@ -42,8 +42,9 @@ except ImportError, e:
     print "Unable to load R*Tree sqlite extention"
 
 
-from Generic.Kernel.pycadkernel import *
-from Generic.Kernel.pycadapplication import PyCadApplication
+from Generic.Kernel.pycadkernel             import *
+from Generic.Kernel.pycadapplication        import PyCadApplication
+from Generic.Kernel.Entity.point            import Point
 
 def printId(kernel,obj):
     """
@@ -565,19 +566,33 @@ class textApplication(object):
         """
         try:
             cmd_Key=str(name).upper()
-            cmd=self.__pyCadApplication.getCommand(cmd_Key)
-            for iv in cmd:
+            cObject=self.__pyCadApplication.getCommand(cmd_Key)
+            for iv in cObject:
                 try:
                     raise iv(None)
-                except excPoint:
-                    cObject[iv]=self.inputMsg("Insert A point")                    
+                except ExcPoint:
+                    cObject[iv]=self.imputPoint()                    
+                except ExcLenght:
+                    cObject[iv]=self.inputMsg("Insert A Distance/Radius")            
+                except ExcAngle:
+                    cObject[iv]=self.inputMsg("Insert An angle")            
                 except:
                     print "Bad error !!"
                     raise 
-                else:
-                    cmd.applyCommand()
+            else:
+                cObject.applyCommand()
         except PyCadWrongCommand:
             self.outputMsg("Wrong Command")
+
+    def imputPoint(self):
+        """
+            ask at the user to imput a point 
+        """
+        value=self.inputMsg("Insert a point x,y")
+        coords=value.split(',')
+        x=float(coords[0])
+        y=float(coords[1])
+        return Point(x, y)
 
     def outputMsg(self,msg):
         """

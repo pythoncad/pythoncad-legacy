@@ -31,14 +31,7 @@ class StructuralError(Exception):
     def __str__(self):
         return repr(self.value)
 
-class PyCadWrongCommand(Exception):
-    """
-        Wrong command for the PyCadApplication
-    """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)    
+   
         
 class EmptyDbSelect(Exception):
     """
@@ -97,9 +90,29 @@ class DxfUnsupportedFormat(Exception):
         return repr(self.value)
 
 #********************************
+#       command exception
+#********************************
+class PyCadWrongCommand(Exception):
+    """
+        Wrong command for the PyCadApplication
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value) 
+
+class PyCadWrongImputData(Exception):
+    """
+        Wrong command for the PyCadApplication
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value) 
+#********************************
 #       imput exception
 #********************************
-class excPoint(Exception):
+class ExcPoint(Exception):
     """
         when this exception is trown it means that the command need a point
     """
@@ -108,9 +121,18 @@ class excPoint(Exception):
     def __str__(self):
         return repr(self.value)
         
-class excLenght(Exception):
+class ExcLenght(Exception):
     """
         when this exception is trown it means that the command need a lenght
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class ExcAngle(Exception):
+    """
+        when this exception is trown it means that the command need a deg angle
     """
     def __init__(self, value):
         self.value = value

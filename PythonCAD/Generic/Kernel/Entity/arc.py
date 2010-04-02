@@ -54,7 +54,7 @@ class Arc(object):
         'end_angle_changed' : True
         }
 
-    def __init__(self, center, radius, start_angle, end_angle,
+    def __init__(self, center, radius, start_angle=None, end_angle=None,
                  st=None, lt=None, col=None, th=None, **kw):
         """Initialize a Arc.
 
@@ -63,6 +63,8 @@ class Arc(object):
             The center should be a Point, or a two-entry tuple of floats,
             and the radius should be a float greater than 0.
         """
+        if start_angle ==None or end_angle==None:
+            start_angle=end_angle=0
         _cp = center
         if not isinstance(_cp, Point):
             _cp = Point(center)

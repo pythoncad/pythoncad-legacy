@@ -27,8 +27,7 @@ from Generic.Kernel.pycaddbexception    import *
 from Generic.Kernel.pycadkernel         import *
 from Generic.Kernel.pycadcommands       import *
 from Generic.Kernel.Entity.point        import Point
-from Generic.Kernel.Entity.segment      import Segment
-from Generic.Kernel.Entity.arc          import Arc
+
 
 
 
@@ -45,7 +44,9 @@ class PyCadApplication(object):
             Get a command of commandType
         """
         if self.__applicationCommand.has_key(commandType):
-            return self.__applicationCommand[commandType](self.kernel) #fixme : c'e' un errore qui ... controllare
+            cmd=self.__applicationCommand[commandType]
+            cmdIstance=cmd(self.kernel) #fixme : c'e' un errore qui ... controllare
+            return cmdIstance
         else:
             raise PyCadWrongCommand("")
 

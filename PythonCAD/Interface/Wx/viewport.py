@@ -11,7 +11,7 @@ from Interface.Wx.view import View
 class ViewPort(wx.Panel):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent, -1)
+        wx.Panel.__init__(self, parent, id=-1, size=(200,200))
         # parent
         self._cadwindow = parent
         # document
@@ -28,6 +28,9 @@ class ViewPort(wx.Panel):
         self._world_view = View()
         # draw buffer
         self._draw_buffer = None
+        # register view commands
+        self._RegisterCommands()
+        
 
 #    def __GetView(self):
 #        return self.__view
@@ -40,6 +43,14 @@ class ViewPort(wx.Panel):
         self._document = document;
 
     Document = property(_GetDocument, _SetDocument, None, "Get/Set the document used by the view")
+
+
+    def _RegisterCommands(self):
+        self._cadwindow.RegisterCommand("CLEAR", self.OnClear)
+        self._cadwindow.RegisterCommand("REDRAW", self.OnRedraw)
+        self._cadwindow.RegisterCommand("ZOOMA", self.OnZoomAll)
+        self._cadwindow.RegisterCommand("ZOOMI", self.OnZoomIn)
+        self._cadwindow.RegisterCommand("ZOOMO", self.OnZoomOut)
 
 
     def AddEntity(self, entity):
@@ -72,7 +83,7 @@ class ViewPort(wx.Panel):
 
     def OnResize(self, event):
         # new size + margin of 5 px
-        rect = event.EventObject.GetRect().Inflate(5, 5)
+        rect = event.EventObject.GetRect()
         # set the new size of the display view
         self._display_view.Set(rect.GetX(), rect.GetY(), rect.GetWidth(), rect.GetHeight())
         # create new draw buffer
@@ -80,24 +91,23 @@ class ViewPort(wx.Panel):
         self._memory_dc = wx.MemoryDC()
         self._memory_dc.SelectObject(self._draw_buffer)
         # redraw
-        self.Redraw()
+        self._cadwindow.SendExpression("REDRAW")
 
 
     def OnPaint(self, event):
-        #dc = wx.BufferedPaintDC(self, self._draw_buffer)
         paintdc = wx.PaintDC(self)
         paintdc.Blit(0, 0, self._display_view.Width, self._display_view.Height, self._memory_dc, 0, 0, wx.COPY, useMask=False)
         event.Skip()
 
         
-    def Clear(self):
+    def OnClear(self):
         # clear buffer
         self._memory_dc.SetBackground(wx.Brush("black"))
         self._memory_dc.Clear()
         self.Refresh()
 
         
-    def Redraw(self):
+    def OnRedraw(self):
         # clear buffer
         self._memory_dc.SetBackground(wx.Brush("black"))
         self._memory_dc.Clear()
@@ -110,7 +120,7 @@ class ViewPort(wx.Panel):
         self.Refresh()
 
 
-    def ZoomAll(self):
+    def OnZoomAll(self):
         # get the extents from the database
         extents = self._document.GetDrawingExtents()
         # update the view on the world
@@ -126,13 +136,13 @@ class ViewPort(wx.Panel):
         # map the display on the world
         self._display_view.SetMapping(self._world_view)
         # draw the display
-        self.Redraw()
+        self._cadwindow.SendExpression("REDRAW")
 
 
-    def ZoomIn(self):
+    def OnZoomIn(self):
         pass
 
 
-    def ZoomOut(self):
+    def OnZoomOut(self):
         pass
 
