@@ -35,6 +35,7 @@ class PyCadBaseCommand(object):
         """
         self.exception=[]
         self.value=[]
+        self.message=[]
         self.index=-1
         self.kernel=kernel
     def __iter__(self):
@@ -47,7 +48,8 @@ class PyCadBaseCommand(object):
         TotNIter=len(self.exception)
         if self.index>=TotNIter:
             raise StopIteration
-        return self.exception[self.index]
+        return (self.exception[self.index],self.message[self.index])
+        
     def __setitem__(self, key, value):
         """
             set the value of the command
@@ -67,7 +69,7 @@ class PyCadSegmentCommand(PyCadBaseCommand):
         PyCadBaseCommand.__init__(self, kernel)
         #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
         self.exception=[ExcPoint, ExcPoint]
-        print "arime"
+        self.message=["Give Me the first Point","Give Me The Second Point"]
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
@@ -81,11 +83,11 @@ class PyCadArcCommand(PyCadBaseCommand):
     def __init__(self, kernel):
         PyCadBaseCommand.__init__(self, kernel)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
-    
+        self.message=["Give Me the center Point", "Give Me the radius", "Give Me the first Angle (Could Be None)", "Give Me the second Angle (Could Be None)"]
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        arc=ARC(self.value[0], self.value[1], self.value[2], sele.value[3])
+        arc=Arc(self.value[0], self.value[1], self.value[2], self.value[3])
         self.kernel.saveEntity(arc)
         
         

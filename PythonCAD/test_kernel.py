@@ -539,6 +539,7 @@ class textApplication(object):
         self.__command={}
         #Basic Command
         self.__command['Segment']=self.performCommand
+        self.__command['Arc']=self.performCommand
         self.__command['Esc']=self.endApplication
         self.__pyCadApplication=PyCadApplication()
 
@@ -568,14 +569,13 @@ class textApplication(object):
             cmd_Key=str(name).upper()
             cObject=self.__pyCadApplication.getCommand(cmd_Key)
             for iv in cObject:
+                exception, message=iv
                 try:
-                    raise iv(None)
+                    raise exception(None)
                 except ExcPoint:
-                    cObject[iv]=self.imputPoint()                    
-                except ExcLenght:
-                    cObject[iv]=self.inputMsg("Insert A Distance/Radius")            
-                except ExcAngle:
-                    cObject[iv]=self.inputMsg("Insert An angle")            
+                    cObject[iv]=self.imputPoint(message)                    
+                except (ExcLenght, ExcAngle):
+                    cObject[iv]=self.inputFloat(message)
                 except:
                     print "Bad error !!"
                     raise 
@@ -584,11 +584,22 @@ class textApplication(object):
         except PyCadWrongCommand:
             self.outputMsg("Wrong Command")
 
-    def imputPoint(self):
+
+    def inputFloat(self, msg):
+        """
+            return a float number
+        """
+        value=self.inputMsg(msg)
+        if value:
+            return float(value)
+        return None
+        
+    def imputPoint(self, msg):
         """
             ask at the user to imput a point 
         """
-        value=self.inputMsg("Insert a point x,y")
+        msg=msg + " x,y "
+        value=self.inputMsg(msg)
         coords=value.split(',')
         x=float(coords[0])
         y=float(coords[1])
