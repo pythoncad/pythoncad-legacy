@@ -509,7 +509,7 @@ class ioKernel(object):
         ents=self.__kr.getEntityFromType(type)
         endTime=time.clock()-startTime       
         printEntity(ents)
-        print "Exec query get %s ent in %s s"%(str(len(ent)), str(endTime))
+        print "Exec query get %s ent in %s s"%(str(len(ents)), str(endTime))
         print "********************************"
         
 def printEntity(ents):

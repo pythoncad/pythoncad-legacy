@@ -29,8 +29,6 @@ from Generic.Kernel.pycadcommands       import *
 from Generic.Kernel.Entity.point        import Point
 
 
-
-
 class PyCadApplication(object):
     """
         this class provide the real pythoncad api interface ..
@@ -38,6 +36,7 @@ class PyCadApplication(object):
     def __init__(self):
         self.kernel=PyCadDbKernel()
         self.__applicationCommand=APPLICATION_COMMAND
+
 
     def getCommand(self,commandType):
         """

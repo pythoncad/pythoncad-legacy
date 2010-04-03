@@ -35,7 +35,7 @@ from Generic.Kernel.pycadentdb              import PyCadEntDb
 from Generic.Kernel.pycadent                import PyCadEnt
 from Generic.Kernel.pycadbasedb             import PyCadBaseDb
 from Generic.Kernel.pycadrelation           import PyCadRelDb
-from Generic.Kernel.pycadsettings           import PyCadSettings
+from Generic.Kernel.pycadsettings           import *
 from Generic.Kernel.pycadlayertree          import PyCadLayerTree
 from Generic.Kernel.pycadlayer              import Layer
 #****************************************************Entity Import
@@ -47,25 +47,23 @@ from Generic.Kernel.Entity.pycadstyle   import PyCadStyle
 # spatial index
 from Generic.Kernel.pycadindex import PyCadIndex
 
-
 LEVELS = {'PyCad_Debug': logging.DEBUG,
           'PyCad_Info': logging.INFO,
           'PyCad_Warning': logging.WARNING,
           'PyCad_Error': logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
-
-DRAWIN_ENTITY={ Point:'POINT',
-                Segment:'SEGMENT',
-                Arc:'ARC'}
-KERNEL_ENTITY=(PyCadStyle,PyCadEnt,PyCadSettings,Layer)
-
-SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
-
 #set the debug level
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
 logging.basicConfig(level=level)
 #
+DRAWIN_ENTITY={ Point:'POINT',
+                Segment:'SEGMENT',
+                Arc:'ARC'}
 
+KERNEL_ENTITY=(PyCadStyle,PyCadEnt,PyCadSettings,Layer)
+
+SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
+#
 class PyCadDbKernel(PyCadBaseDb):
     """
         This class provide basic operation on the pycad db database
@@ -435,6 +433,7 @@ class PyCadDbKernel(PyCadBaseDb):
             self.__logger.error('DxfUnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledError(self,_err)#todo : test it not sure it works
+
     def getTreeLayer(self):
         """
             retrive the layer from the tree

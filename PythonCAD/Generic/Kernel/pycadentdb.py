@@ -297,15 +297,33 @@ class PyCadEntDb(PyCadBaseDb):
         _outObj=[]
         _dbEntRow=self.getMultiFilteredEntity(entityTypeArray=typeArray)
         for _row in _dbEntRow: 
-            _style=_row[4]
-            _dumpObj=pickle.loads(str(_row[3]))
-            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
-            _objEnt.state=_row[5]
-            _objEnt.index=_row[6]
-            _objEnt.visible=_row[7]
-            _objEnt.updateBBox()            
+            _objEnt=convertRowToDbEnt(_row)            
             _outObj.append(_objEnt)
-        return _outObj            
+        return _outObj  
+        
+    def convertRowToDbEnt(self, row):
+        """
+            this function convert a single db row in a dbEnt Object
+            the row mast be a row from the pycadent table with the following column order
+            pycad_id,
+            pycad_entity_id,
+            pycad_object_type,
+            pycad_object_definition,
+            pycad_style_id,
+            pycad_entity_state,
+            pycad_index,
+            pycad_visible
+            FROM pycadent
+        """
+        _style=_row[4]
+        _dumpObj=pickle.loads(str(_row[3]))
+        _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+        _objEnt.state=_row[5]
+        _objEnt.index=_row[6]
+        _objEnt.visible=_row[7]
+        _objEnt.updateBBox()  
+        return _objEnt
+        
     def haveDrwEntitys(self, drwEntArray):
         """
             check if there is some drawing entity in the db
