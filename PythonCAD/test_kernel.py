@@ -569,7 +569,7 @@ class textApplication(object):
             cmd_Key=str(name).upper()
             cObject=self.__pyCadApplication.getCommand(cmd_Key)
             for iv in cObject:
-                exception, message=iv
+                exception,message=iv
                 try:
                     raise exception(None)
                 except ExcPoint:
