@@ -42,8 +42,9 @@ except ImportError, e:
     print "Unable to load R*Tree sqlite extention"
 
 
-from Generic.Kernel.pycadkernel import *
-
+from Generic.Kernel.pycadkernel             import *
+from Generic.Kernel.pycadapplication        import PyCadApplication
+from Generic.Kernel.Entity.point            import Point
 
 def printId(kernel,obj):
     """
@@ -508,7 +509,7 @@ class ioKernel(object):
         ents=self.__kr.getEntityFromType(type)
         endTime=time.clock()-startTime       
         printEntity(ents)
-        print "Exec query get %s ent in %s s"%(str(len(ent)), str(endTime))
+        print "Exec query get %s ent in %s s"%(str(len(ents)), str(endTime))
         print "********************************"
         
 def printEntity(ents):
@@ -533,10 +534,95 @@ def printTree(cls, indent):
             print '.'*indent + 'Layer Id: %s Name : %s'%(str(l) , str(parent.name))
             printTree(childs, indent+1)
 
+class textApplication(object):
+    def __init__(self):
+        self.__command={}
+        #Basic Command
+        self.__command['Segment']=self.performCommand
+        self.__command['Arc']=self.performCommand
+        self.__command['Esc']=self.endApplication
+        self.__pyCadApplication=PyCadApplication()
+
+    def mainLoop(self):
+        """
+            mainLoop operation
+        """
+        while 1:
+            imputstr=self.inputMsg("Insert a command (H for Help)")
+            if self.__command.has_key(imputstr):
+                self.__command[imputstr](imputstr)
+            else:
+                self.outputMsg("Wrong Command !!")
+
+    def endApplication(self,dummy):
+        """
+            close the application
+        """
+        self.outputMsg("Bye")
+        sys.exit(0)
+
+    def performCommand(self,name):
+        """
+            Perform a Command
+        """
+        try:
+            cmd_Key=str(name).upper()
+            cObject=self.__pyCadApplication.getCommand(cmd_Key)
+            for iv in cObject:
+                exception,message=iv
+                try:
+                    raise exception(None)
+                except ExcPoint:
+                    cObject[iv]=self.imputPoint(message)                    
+                except (ExcLenght, ExcAngle):
+                    cObject[iv]=self.inputFloat(message)
+                except:
+                    print "Bad error !!"
+                    raise 
+            else:
+                cObject.applyCommand()
+        except PyCadWrongCommand:
+            self.outputMsg("Wrong Command")
+
+
+    def inputFloat(self, msg):
+        """
+            return a float number
+        """
+        value=self.inputMsg(msg)
+        if value:
+            return float(value)
+        return None
+        
+    def imputPoint(self, msg):
+        """
+            ask at the user to imput a point 
+        """
+        msg=msg + " x,y "
+        value=self.inputMsg(msg)
+        coords=value.split(',')
+        x=float(coords[0])
+        y=float(coords[1])
+        return Point(x, y)
+
+    def outputMsg(self,msg):
+        """
+            print an output message
+        """
+        print """PythonCad>> %s"""%(str(msg))
+    def inputMsg(self,msg):
+        """
+            print and ask for a value
+        """
+        msg="""PythonCad<< %s :"""%(str(msg))
+        return raw_input(msg)
+
 if __name__=='__main__':
+    ta=textApplication()
+    ta.mainLoop()
     #test()
-    io=ioKernel()
-    io.mainLoop()
-    print "bye"
+    #io=ioKernel()
+    #io.mainLoop()
+    #print "bye"
 
 

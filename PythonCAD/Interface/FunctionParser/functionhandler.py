@@ -1,6 +1,5 @@
 
 
-
 class FunctionHandler(object):
 
     def __init__(self, document):
@@ -10,16 +9,16 @@ class FunctionHandler(object):
         self._value = None
         # command table
         self._command_table = {}
-        
-        
+
+
     def RegisterCommand(self, name, callback):
         if len(name) > 0:
             self._command_table[name] = callback
-            
-            
+
+
     def Evaluate(self, expression):
         result = None
-        # commands are allways defined in upper case 
+        # commands are allways defined in upper case
         command = expression.upper()
         # is it a command from the command table?
         if self._command_table.has_key(command):
@@ -32,6 +31,5 @@ class FunctionHandler(object):
             except:
                 self._value = "*error*"
         return self._value
-    
-    
-        
+
+

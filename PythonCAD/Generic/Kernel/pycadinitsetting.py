@@ -22,6 +22,7 @@
 # This  module provide all the global variable to be used from the kernel
 #
 
+
 cgcol = {
 '#000000':0, 0:'#000000',
 '#ff0000':1, 1:'#ff0000',

@@ -71,4 +71,3 @@ class Commandline(wx.Panel):
             self._entry.Value = str(result)
             self._entry.SelectAll()
         
-        
