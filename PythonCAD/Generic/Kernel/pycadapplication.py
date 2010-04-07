@@ -105,7 +105,7 @@ class PyCadApplication(object):
             raise IOError, "Unable to remove the file %s"%str(fileName)
         self.afterCloseDocumentEvent(self)
         
-    def getActiveDocuemnt(self):
+    def getActiveDocument(self):
         """
             get The active Document
         """
