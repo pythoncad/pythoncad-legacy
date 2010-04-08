@@ -543,6 +543,8 @@ class textApplication(object):
         self.__applicationCommand['Close']=self.closeFile
         self.__applicationCommand['Documents']=self.showDocuments
         self.__applicationCommand['SetActive']=self.setActiveDoc
+        self.__applicationCommand['GetActive']=self.getActiveDoc
+        self.__applicationCommand['GetEnts']=self.getEnts
         self.__applicationCommand['Esc']=self.endApplication
         # Document Commandf
         self.__command['Segment']=self.performCommand
@@ -561,7 +563,46 @@ class textApplication(object):
                 self.__applicationCommand[imputstr]()
             else:
                 self.outputMsg("Wrong Command !!")
-                
+
+    def getEnts(self):
+        """
+            get database entitys
+        """
+        try:
+            type=self.inputMsg("Witch Type ?")
+            if not type:
+                type="ALL"
+            startTime=time.clock()
+            activeDoc=self.__pyCadApplication.getActiveDocument()
+            ents=activeDoc.getEntityFromType(type)
+            endTime=time.clock()-startTime       
+            self.printEntity(ents)
+            self.outputMsg("Exec query get %s ent in %s s"%(str(len(ents)), str(endTime)))
+            self.outputMsg("********************************")
+        except:
+            self.outputMsg("Unable To Perform the getEnts")   
+            
+    def printEntity(self, ents):
+        """
+            print a query result
+        """
+        i=0
+        for e in ents:
+            self.outputMsg("Entity Type %s id %s "%(str(e.eType),str(e.getId())))
+            if i > 100:
+                self.outputMsg("There are more then 100 entitys in the select so i stop printing")
+                break
+            i+=1
+            
+    def getActiveDoc(self):            
+        """
+            print the active document
+        """ 
+        try:
+            doc=self.__pyCadApplication.getActiveDocument()
+            self.outputMsg("Active Document is %s"%str(doc.dbPath))
+        except:
+            self.outputMsg("Unable To Perform the getActiveDoc") 
     def setActiveDoc(self):
         """
             set the active docuement
@@ -574,9 +615,12 @@ class textApplication(object):
                 self.outputMsg("No such a document")
                 return
             for key in docs:
-                if i == lookIndex:
+                if i == int(lookIndex):
                     self.__pyCadApplication.setActiveDocument(docs[key])
+                    return
                 i+=1
+            else:
+                self.outputMsg("Document not found") 
         except:
             self.outputMsg("Unable To Perform the setActiveDoc") 
             
@@ -609,7 +653,7 @@ class textApplication(object):
             open a new document
         """
         try:
-            filePath=self.inputMsg("File Path :")
+            filePath=self.inputMsg("File Path")
             self.__pyCadApplication.openDocument(filePath)
         except IOError:
             self.outputMsg("Unable To open the file %s"%str(filePath))
@@ -669,12 +713,13 @@ class textApplication(object):
         """
             print an output message
         """
-        print """PythonCad>> %s"""%(str(msg))
+        print """<PythonCad> %s"""%(str(msg))
+        
     def inputMsg(self,msg):
         """
             print and ask for a value
         """
-        msg="""PythonCad<< %s :"""%(str(msg))
+        msg="""<PythonCad> %s >>>"""%(str(msg))
         return raw_input(msg)
 
 if __name__=='__main__':
