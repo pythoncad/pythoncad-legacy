@@ -47,7 +47,8 @@ class PyCadBaseDb(object):
             raise IOError , 'Unable lo get the db %s'%str(dbPath)
             sys.exit()
         self.__dbConnection = sql.connect(dbPath)
-
+        self.dbPath=dbPath
+        
     def setConnection(self,dbConnection):
         """
             set the connection with the database
