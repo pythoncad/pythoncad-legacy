@@ -23,11 +23,11 @@
 #
 #TODO : REPAIR THE LOGGER FOR THIS CLASS
 
-from pycadlayer import Layer
-from Generic.Kernel.pycaddbexception    import *
+from Generic.Kernel.layer               import Layer
+from Generic.Kernel.exception           import *
 
 MAIN_LAYER="MAIN"
-class PyCadLayerTree(object):
+class LayerTree(object):
     """
         this class rappresent the layer tree strucrute
     """
@@ -39,7 +39,7 @@ class PyCadLayerTree(object):
             mainLayer=Layer(MAIN_LAYER)
             self.__mainLayer=self.__kr.saveEntity(mainLayer)
         except:
-            raise StructuralError, "Unable to inizialize PyCadLayerTree"
+            raise StructuralError, "Unable to inizialize LayerTree"
         self.__activeLayer=self.__mainLayer
 
     def setActiveLayer(self, layerId):

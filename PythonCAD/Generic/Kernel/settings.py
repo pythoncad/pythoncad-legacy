@@ -22,7 +22,7 @@
 # This module provide all the basic operation for the pythoncad settings
 #
 
-class PyCadSettings(object):
+class Settings(object):
     """
         this class provide access at all the pythoncad settings
     """

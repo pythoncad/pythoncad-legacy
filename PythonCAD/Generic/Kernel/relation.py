@@ -23,17 +23,15 @@
 
 import cPickle as pickle
 
-from Generic.Kernel.pycadent           import PyCadEnt
-from Generic.Kernel.pycadbasedb     import PyCadBaseDb
-from Generic.Kernel.pycadsettings    import PyCadSettings
+from Generic.Kernel.entity          import Entity
+from Generic.Kernel.basedb          import BaseDb
 
-
-class PyCadRelDb(PyCadBaseDb):
+class RelationDb(BaseDb):
     """
         this class provide the besic operation for the relation
     """
     def __init__(self,dbConnection=None):
-        PyCadBaseDb.__init__(self)
+        BaseDb.__init__(self)
         if dbConnection is None:
             self.createConnection()
         else:
@@ -111,7 +109,7 @@ class PyCadRelDb(PyCadBaseDb):
         for _row in _dbEntRow:
             _style=_row[3]
             _dumpObj=pickle.loads(str(_row[2]))
-            _objEnt=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+            _objEnt=Entity(_row[1],_dumpObj,_style,_row[0])
             _objEnt.state=_row[4]
             _objEnt.index=_row[5]
             _objEnt.visible=_row[6]
@@ -146,7 +144,7 @@ class PyCadRelDb(PyCadBaseDb):
         for _row in _dbEntRow:
             _style=_row[3]
             _dumpObj=pickle.loads(str(_row[2]))
-            _objEnt=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+            _objEnt=Entity(_row[1],_dumpObj,_style,_row[0])
             _objEnt.state=_row[4]
             _objEnt.index=_row[5]
             _objEnt.visible=_row[6]

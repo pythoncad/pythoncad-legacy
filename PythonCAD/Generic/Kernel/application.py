@@ -23,26 +23,26 @@
 #
 #
 import sys
-from Generic.Kernel.pycaddbexception    import *
-from Generic.Kernel.pycadkernel         import *
-from Generic.Kernel.pycadcommands       import *
+from Generic.Kernel.exception           import *
+from Generic.Kernel.document            import *
+from Generic.Kernel.commands            import *
 from Generic.Kernel.Entity.point        import Point
 
 
-class PyCadApplication(object):
+class Application(object):
     """
         this class provide the real pythoncad api interface ..
     """
     def __init__(self, **args):
-        self.kernel=PyCadDbKernel()
+        self.kernel=Document()
         self.__applicationCommand=APPLICATION_COMMAND
         # Setting up Application Events
-        self.startUpEvent=PyCadkernelEvent()
-        self.beforeOpenDocumentEvent=PyCadkernelEvent()
-        self.afterOpenDocumentEvent=PyCadkernelEvent()
-        self.beforeCloseDocumentEvent=PyCadkernelEvent()
-        self.afterCloseDocumentEvent=PyCadkernelEvent()
-        self.activeteDocumentEvent=PyCadkernelEvent()
+        self.startUpEvent=PyCadEvent()
+        self.beforeOpenDocumentEvent=PyCadEvent()
+        self.afterOpenDocumentEvent=PyCadEvent()
+        self.beforeCloseDocumentEvent=PyCadEvent()
+        self.afterCloseDocumentEvent=PyCadEvent()
+        self.activeteDocumentEvent=PyCadEvent()
         
         # manage Document inizialization
         self.__Docuemnts={}
@@ -85,7 +85,7 @@ class PyCadApplication(object):
         """
         self.beforeOpenDocumentEvent(self, fileName)
         if not self.__Docuemnts.has_key(fileName):
-            self.__Docuemnts[fileName]=PyCadDbKernel(fileName)
+            self.__Docuemnts[fileName]=Document(fileName)
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
 

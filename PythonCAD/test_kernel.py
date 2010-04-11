@@ -42,9 +42,9 @@ except ImportError, e:
     print "Unable to load R*Tree sqlite extention"
 
 
-from Generic.Kernel.pycadkernel             import *
-from Generic.Kernel.pycadapplication        import PyCadApplication
-from Generic.Kernel.Entity.point            import Point
+from Generic.Kernel.document            import *
+from Generic.Kernel.application         import Application
+from Generic.Kernel.Entity.point        import Point
 
 def printId(kernel,obj):
     """
@@ -549,7 +549,7 @@ class textApplication(object):
         # Document Commandf
         self.__command['Segment']=self.performCommand
         self.__command['Arc']=self.performCommand
-        self.__pyCadApplication=PyCadApplication()
+        self.__pyCadApplication=Application()
 
     def mainLoop(self):
         """
@@ -559,7 +559,7 @@ class textApplication(object):
             imputstr=self.inputMsg("Insert a command (H for Help)")
             if self.__command.has_key(imputstr):
                 self.__command[imputstr](imputstr)
-            if self.__applicationCommand.has_key(imputstr):
+            elif self.__applicationCommand.has_key(imputstr):
                 self.__applicationCommand[imputstr]()
             else:
                 self.outputMsg("Wrong Command !!")

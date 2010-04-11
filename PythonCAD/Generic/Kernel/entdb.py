@@ -23,18 +23,16 @@
 
 import cPickle as pickle
 
-from Generic.Kernel.pycadent               import *
-from Generic.Kernel.Entity.pycadstyle      import PyCadStyle
-from Generic.Kernel.pycadbasedb            import PyCadBaseDb
-from Generic.Kernel.pycadsettings          import PyCadSettings
+from Generic.Kernel.entity              import *
+from Generic.Kernel.basedb              import BaseDb
 
 
-class PyCadEntDb(PyCadBaseDb):
+class EntDb(BaseDb):
     """
         this class provide the besic operation for the entity
     """
     def __init__(self,dbConnection):
-        PyCadBaseDb.__init__(self)
+        BaseDb.__init__(self)
         if dbConnection is None:
             self.createConnection()
         else:
@@ -144,7 +142,7 @@ class PyCadEntDb(PyCadBaseDb):
             if _row is not None:
                 _style=str(_row[3])
                 _dumpObj=pickle.loads(str(_row[2]))
-                _outObj=PyCadEnt(_row[1],_dumpObj,_style,_row[0])
+                _outObj=Entity(_row[1],_dumpObj,_style,_row[0])
                 _outObj.state=_row[4]
                 _outObj.index=_row[5]
                 _outObj.visible=_row[6]
@@ -171,7 +169,7 @@ class PyCadEntDb(PyCadBaseDb):
             _row=_dbEntRow.fetchone()
             _style=str(_row[4])
             _dumpObj=pickle.loads(str(_row[3]))
-            _entObj=PyCadEnt(_row[2],_dumpObj,_style,_row[1])       
+            _entObj=Entity(_row[2],_dumpObj,_style,_row[1])       
             _entObj.state=_row[5]
             _entObj.index=_row[6]
             _entObj.visible=_row[7]
@@ -202,7 +200,7 @@ class PyCadEntDb(PyCadBaseDb):
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=pickle.loads(_row[3])
-            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt=Entity(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
             _objEnt.visible=_dbEntRow[7]
@@ -282,7 +280,7 @@ class PyCadEntDb(PyCadBaseDb):
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=pickle.loads(str(_row[3]))
-            _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+            _objEnt=Entity(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
             _objEnt.visible=_row[7]
@@ -317,7 +315,7 @@ class PyCadEntDb(PyCadBaseDb):
         """
         _style=_row[4]
         _dumpObj=pickle.loads(str(_row[3]))
-        _objEnt=PyCadEnt(_row[2],_dumpObj,_style,_row[1])
+        _objEnt=Entity(_row[2],_dumpObj,_style,_row[1])
         _objEnt.state=_row[5]
         _objEnt.index=_row[6]
         _objEnt.visible=_row[7]
@@ -471,27 +469,3 @@ class PyCadEntDb(PyCadBaseDb):
         for _row in _rows: 
             self.delete(_row[0])
 
-def test():
-    print "*"*10+" Start Test"
-    dbEnt=PyCadEntDb(None)
-    print "pyCadEntDb Created"
-    style=PyCadStyle(1)
-    print "PyCadStyle Created"
-    ent=PyCadEnt('POINT',{'a':10},style,1)
-    print "PyCadEnt Created"
-    dbEnt.saveEntity(ent,1)
-    print "PyCadEnt Saved"
-    obj=dbEnt.getEntityEntityId(1)
-    print "getEntity [%s]"%str(obj)
-    for e in dbEnt.getEntityEntityId(1):
-        print "Entity %s"%str(e)
-    obj=dbEnt.getEntitysFromStyle
-    for e in dbEnt.getEntityEntityId(1):
-        print "Entity Style %s"%str(e)
-    _newId=dbEnt.getNewEntId()
-    print "New id %i"%(_newId)
-
-    #to be tested 
-    #markUndoVisibility
-    #delete
-    #getEntityFromType

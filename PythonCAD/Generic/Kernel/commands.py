@@ -21,11 +21,11 @@
 #This module provide basic command function
 #
 
-from Generic.Kernel.pycaddbexception    import *
+from Generic.Kernel.exception           import *
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
 
-class PyCadBaseCommand(object):
+class BaseCommand(object):
     """
         this class provide a base command 
     """
@@ -61,12 +61,12 @@ class PyCadBaseCommand(object):
         """
         pass
         
-class PyCadSegmentCommand(PyCadBaseCommand):
+class SegmentCommand(BaseCommand):
     """
         this class rappresent the segment command
     """
     def __init__(self, kernel):
-        PyCadBaseCommand.__init__(self, kernel)
+        BaseCommand.__init__(self, kernel)
         #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me The Second Point"]
@@ -76,12 +76,12 @@ class PyCadSegmentCommand(PyCadBaseCommand):
         seg=Segment(self.value[0], self.value[1])
         self.kernel.saveEntity(seg)
         
-class PyCadArcCommand(PyCadBaseCommand):
+class ArcCommand(BaseCommand):
     """
         this class rappresent the segment command
     """
     def __init__(self, kernel):
-        PyCadBaseCommand.__init__(self, kernel)
+        BaseCommand.__init__(self, kernel)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
         self.message=["Give Me the center Point", "Give Me the radius", "Give Me the first Angle (Could Be None)", "Give Me the second Angle (Could Be None)"]
     def applyCommand(self):
@@ -92,4 +92,4 @@ class PyCadArcCommand(PyCadBaseCommand):
         
         
 #Command list
-APPLICATION_COMMAND={'SEGMENT':PyCadSegmentCommand,'ARC':PyCadArcCommand}
+APPLICATION_COMMAND={'SEGMENT':SegmentCommand,'ARC':ArcCommand}
