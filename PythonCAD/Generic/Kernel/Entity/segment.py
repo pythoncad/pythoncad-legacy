@@ -1,5 +1,6 @@
 #
-# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas 2009 Matteo Boscolo
+# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas 
+# Copyright (c) 2009,2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -31,24 +32,11 @@ class Segment(object):
     """
         A class representing a line segment.
     """
-    __messages = {
-        'moved' : True,
-        'endpoint_changed' : True
-        }
-
-    __defstyle = None
-
-    def __init__(self, p1, p2, st=None, lt=None, col=None, th=None, **kw):
+    def __init__(self, p1, p2):
         """
             Initialize a Segment object.
-            Segment(p1, p2[, st, lt, col, th])
-                p1: Segment first endpoint - may be a Point or a two-item tuple of floats.
-                p2: Segment second endpoint - may be a Point or a two-item tuple of floats.
-            The following arguments are optional:
-                st: A Style object
-                lt: A Linetype object that overrides the linetype in the Style.
-                col: A Color object that overrides the color in the Style.
-                th: A float that overrides the line thickness in the Style.
+            p1: Segment first endpoint - may be a Point or a two-item tuple of floats.
+            p2: Segment second endpoint - may be a Point or a two-item tuple of floats.
         """
 
         _p1 = p1
@@ -60,17 +48,14 @@ class Segment(object):
         if _p1 is _p2:
             raise ValueError, "Segments cannot have identical endpoints."
         _st = st
-        #if _st is None:
-        #    _st = self.getDefaultStyle()
-        #super(Segment, self).__init__(_st, lt, col, th, **kw)
         self.__p1 = _p1
         self.__p2 = _p2     
         
     def getConstructionElements(self):
         """
-            Get the endpoints of the Arc.
+            Get the endpoints of the Point.
             This function returns a tuple containing the Point objects
-            that for inizializing the arc
+            that for inizializing the Point
         """
         return self.__p1, self.__p2
         
@@ -78,7 +63,8 @@ class Segment(object):
         return "Segment: %s to %s" % (self.__p1, self.__p2)
 
     def __eq__(self, obj):
-        """Compare a Segment to another for equality.
+        """
+            Compare a Segment to another for equality.
         """
         if not isinstance(obj, Segment):
             return False
@@ -104,152 +90,71 @@ class Segment(object):
         return (((_sp1 != _op1) or (_sp2 != _op2)) and
                 ((_sp1 != _op2) or (_sp2 != _op1)))
 
-    #def getDefaultStyle(cls):
-    #    if cls.__defstyle is None:
-    #        _s = style.Style(u'Default Segment Style',
-    #                         linetype.Linetype(u'Solid', None),
-    #                         color.Color(0xffffff),
-    #                         1.0)
-    #        cls.__defstyle = _s
-    #    return cls.__defstyle
-
-    #getDefaultStyle = classmethod(getDefaultStyle)
-
-    #def setDefaultStyle(cls, s):
-    #    if not isinstance(s, style.Style):
-    #        raise TypeError, "Invalid style: " + `type(s)`
-    #    cls.__defstyle = s
-    #setDefaultStyle = classmethod(setDefaultStyle)
-
-    def finish(self):
-        self.__p1.disconnect(self)
-        self.__p1.freeUser(self)
-        self.__p2.disconnect(self)
-        self.__p2.freeUser(self)
-        self.__p1 = self.__p2 = None
-        super(Segment, self).finish()
-
-    def setStyle(self, s):
-        """Set the Style of the Segment
-
-setStyle(s)
-
-This method extends GraphicObject::setStyle().
-        """
-        _s = s
-        if _s is None:
-            _s = self.getDefaultStyle()
-        super(Segment, self).setStyle(_s)
-
     def getValues(self):
-        """Return values comprising the Segment.
-
-getValues()
-
-This method extends the GraphicObject::getValues() method.
         """
-        _data = super(Segment, self).getValues()
-        _data.setValue('type', 'segment')
-        _data.setValue('p1', self.__p1.getID())
-        _data.setValue('p2', self.__p2.getID())
+            Return values comprising the Segment.
+            This method extends the GraphicObject::getValues() method.
+        """
+        _data = {}
+        _data['type']='segment'
+        _data['p1']=self.__p1.getID()
+        _data['p2']=self.__p2.getID()
         return _data
 
     def getEndpoints(self):
-        """Get the endpoints of the Segment.
-
-getEndpoints()
-
-This function returns a tuple containing the two Point objects
-that are the endpoints of the segment.
+        """
+            Get the endpoints of the Segment.
+            This function returns a tuple containing the two Point objects
+            that are the endpoints of the segment.
         """
         return self.__p1, self.__p2
 
     def getP1(self):
-        """Return the first endpoint Point of the Segment.
-
-getP1()
+        """
+            Return the first endpoint Point of the Segment.
         """
         return self.__p1
 
     def setP1(self, p):
-        """Set the first endpoint Point of the Segment.
-
-setP1(p)
         """
-        #if self.isLocked():
-        #    raise RuntimeError, "Setting endpoint not allowed - object locked."
+            Set the first endpoint Point of the Segment.
+        """
         if not isinstance(p, Point):
             raise TypeError, "Invalid P1 endpoint type: " + `type(p)`
         if p is self.__p2:
             raise ValueError, "Segments cannot have identical endpoints."
         _pt = self.__p1
         if _pt is not p:
-            _pt.disconnect(self)
-            _pt.freeUser(self)
             self.__p1 = p
-            p.storeUser(self)
-            if abs(_pt.x - p.x) > 1e-10 or abs(_pt.y - p.y) > 1e-10:
-                _x, _y = self.__p2.getCoords()
-
-            self.modified()
 
     p1 = property(getP1, setP1, None, "First endpoint of the Segment.")
 
     def getP2(self):
-        """Return the second endpoint Point of the Segment.
-
-getP2()
+        """
+            Return the second endpoint Point of the Segment.
         """
         return self.__p2
 
     def setP2(self, p):
-        """Set the second endpoint Point of the Segment.
-
-setP2(p)
         """
-        #if self.isLocked():
-        #    raise RuntimeError, "Setting endpoint not allowed - object locked."
+            Set the second endpoint Point of the Segment.
+        """
         if not isinstance(p, Point):
             raise TypeError, "Invalid P2 endpoint type: " + `type(p)`
         if p is self.__p1:
             raise ValueError, "Segments cannot have identical endpoints."
         _pt = self.__p2
         if _pt is not p:
-            _pt.disconnect(self)
-            _pt.freeUser(self)
             self.__p2 = p
-            p.storeUser(self)
-            if abs(_pt.x - p.x) > 1e-10 or abs(_pt.y - p.y) > 1e-10:
-                _x, _y = self.__p1.getCoords()
-                self.sendMessage('moved', _x, _y, _pt.x, _pt.y)
-            self.modified()
 
     p2 = property(getP2, setP2, None, "Second endpoint of the Segment.")
 
-    def move(self, dx, dy):
-        """
-            Move a Segment.
-            The first argument gives the x-coordinate displacement,
-            and the second gives the y-coordinate displacement. Both
-            values should be floats.
-        """
-        if self.isLocked() or self.__p1.isLocked() or self.__p2.isLocked():
-            raise RuntimeError, "Moving Segment not allowed - object locked."
-        _dx = util.get_float(dx)
-        _dy = util.get_float(dy)
-        if abs(_dx) > 1e-10 or abs(_dy) > 1e-10:
-            _x1, _y1 = self.__p1.getCoords()
-            _x2, _y2 = self.__p2.getCoords()
-            try:
-                self.__p1.move(_dx, _dy)
-                self.__p2.move(_dx, _dy)
-            finally:
-                pass
     def length(self):
         """
             Return the length of the Segment.
         """
         return self.__p1 - self.__p2
+        
     def getCoefficients(self):
         """
             Express the line segment as a function ax + by + c = 0
@@ -323,15 +228,13 @@ setP2(p)
         return util.map_coords(_x, _y, _x1, _y1, _x2, _y2, _t)
 
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
-        """Return whether or not a Segment exists within a region.
-
-inRegion(xmin, ymin, xmax, ymax[, fully])
-
-The four arguments define the boundary of an area, and the
-method returns True if the Segment lies within that area. If
-the optional argument fully is used and is True, then both
-endpoints of the Segment must lie within the boundary.
-Otherwise, the method returns False.
+        """
+            Return whether or not a Segment exists within a region.
+            The four arguments define the boundary of an area, and the
+            method returns True if the Segment lies within that area. If
+            the optional argument fully is used and is True, then both
+            endpoints of the Segment must lie within the boundary.
+            Otherwise, the method returns False.
         """
         _xmin = util.get_float(xmin)
         _ymin = util.get_float(ymin)
@@ -363,9 +266,8 @@ Otherwise, the method returns False.
         return util.in_region(_x1, _y1, _x2, _y2, _xmin, _ymin, _xmax, _ymax)
 
     def clipToRegion(self, xmin, ymin, xmax, ymax):
-        """Clip the Segment using the Liang-Barsky Algorithm.
-
-clipToRegion(xmin, ymin, xmax, ymax)
+        """
+            Clip the Segment using the Liang-Barsky Algorithm.
         """
         _xmin = util.get_float(xmin)
         _ymin = util.get_float(ymin)
@@ -441,28 +343,10 @@ clipToRegion(xmin, ymin, xmax, ymax)
                            ((_u2 * _dx) + _x1),
                            ((_u2 * _dy) + _y1))
         return _coords
-    def __movePoint(self, p, *args):
-        _alen = len(args)
-        if _alen < 2:
-            raise ValueError, "Invalid argument count: %d" % _alen
-        _x = util.get_float(args[0])
-        _y = util.get_float(args[1])
-        if p is self.__p1:
-            _x1 = _x
-            _y1 = _y
-            _x2, _y2 = self.__p2.getCoords()
-        elif p is self.__p2:
-            _x1, _y1 = self.__p1.getCoords()
-            _x2 = _x
-            _y2 = _y
-        else:
-            raise ValueError, "Unexpected Segment endpoint: " + `p`
-        self.sendMessage('moved', _x1, _y1, _x2, _y2)
 
     def clone(self):
-        """Create an identical copy of a Segment.
-
-clone()
+        """
+            Create an identical copy of a Segment.
         """
         _cp1 = self.__p1.clone()
         _cp2 = self.__p2.clone()
@@ -472,7 +356,3 @@ clone()
         _th = self.getThickness()
         return Segment(_cp1, _cp2, _st, _lt, _col, _th)
 
-    def sendsMessage(self, m):
-        if m in Segment.__messages:
-            return True
-        return super(Segment, self).sendsMessage(m)

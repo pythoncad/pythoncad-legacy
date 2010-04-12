@@ -78,7 +78,13 @@ class Application(object):
             return cmdIstance
         else:
             raise PyCadWrongCommand("") 
-    
+
+    def getCommandList(self):
+        """
+            get the list of all the command
+        """
+        return  self.__applicationCommand.keys()
+        
     def openDocument(self, fileName):
         """
             open a new document 

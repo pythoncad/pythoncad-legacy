@@ -37,20 +37,21 @@ from Generic.Kernel.basedb                  import BaseDb
 from Generic.Kernel.relation                import RelationDb
 from Generic.Kernel.settings                import *
 from Generic.Kernel.layertree               import LayerTree
-from Generic.Kernel.pycadlayer              import Layer
+from Generic.Kernel.layer                   import Layer
 #****************************************************Entity Import
 from Generic.Kernel.Entity.point        import Point
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
+from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.style        import Style
 
 # spatial index
 from Generic.Kernel.pycadindex          import PyCadIndex
 
-LEVELS = {'PyCad_Debug': logging.DEBUG,
-          'PyCad_Info': logging.INFO,
-          'PyCad_Warning': logging.WARNING,
-          'PyCad_Error': logging.ERROR,
+LEVELS = {'PyCad_Debug':    logging.DEBUG,
+          'PyCad_Info':     logging.INFO,
+          'PyCad_Warning':  logging.WARNING,
+          'PyCad_Error':    logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
 #set the debug level
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
@@ -58,7 +59,8 @@ logging.basicConfig(level=level)
 #
 DRAWIN_ENTITY={ Point:'POINT',
                 Segment:'SEGMENT',
-                Arc:'ARC'}
+                Arc:'ARC', 
+                Ellipse:'ELLIPSE'}
 
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 

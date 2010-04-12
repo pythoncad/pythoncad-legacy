@@ -24,12 +24,14 @@
 from Generic.Kernel.exception           import *
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
+from Generic.Kernel.Entity.point        import Point
+from Generic.Kernel.Entity.ellipse      import Ellipse
 
 class BaseCommand(object):
     """
         this class provide a base command 
     """
-    def __init__(self, kernel):
+    def __init__(self, document):
         """
             kernel is a PyCadKernel object
         """
@@ -37,7 +39,7 @@ class BaseCommand(object):
         self.value=[]
         self.message=[]
         self.index=-1
-        self.kernel=kernel
+        self.document=document
     def __iter__(self):
         return self
     def next(self):
@@ -60,13 +62,28 @@ class BaseCommand(object):
             this method here must be defined
         """
         pass
+
+class PointCommand(BaseCommand):
+    """
+        this class rappresent the point command
+    """
+    def __init__(self, kernel):
+        BaseCommand.__init__(self, kernel)
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[ExcPoint]
+        self.message=["Give Me the first Point"]
+    def applyCommand(self):
+        if len(self.value)!=1:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        seg=Point(self.value[0])
+        self.document.saveEntity(seg)
         
 class SegmentCommand(BaseCommand):
     """
         this class rappresent the segment command
     """
-    def __init__(self, kernel):
-        BaseCommand.__init__(self, kernel)
+    def __init__(self, document):
+        BaseCommand.__init__(self, document)
         #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me The Second Point"]
@@ -74,22 +91,35 @@ class SegmentCommand(BaseCommand):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         seg=Segment(self.value[0], self.value[1])
-        self.kernel.saveEntity(seg)
+        self.document.saveEntity(seg)
         
 class ArcCommand(BaseCommand):
     """
-        this class rappresent the segment command
+        this class rappresent the arc command
     """
-    def __init__(self, kernel):
-        BaseCommand.__init__(self, kernel)
+    def __init__(self, document):
+        BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
         self.message=["Give Me the center Point", "Give Me the radius", "Give Me the first Angle (Could Be None)", "Give Me the second Angle (Could Be None)"]
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         arc=Arc(self.value[0], self.value[1], self.value[2], self.value[3])
-        self.kernel.saveEntity(arc)
-        
+        self.document.saveEntity(arc)
+
+class EllipseCommand(BaseCommand):
+    """
+        this class rappresent the ellips command
+    """
+    def __init__(self, document):
+        BaseCommand.__init__(self, document)
+        self.exception=[ExcPoint, ExcLenght, ExcLenght, ExcAngle]
+        self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius", "Give Me ellipse Angle (Could Be None)"]
+    def applyCommand(self):
+        if len(self.value)<2:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        arc=Ellipse(self.value[0], self.value[1], self.value[2], self.value[3])
+        self.document.saveEntity(arc)        
         
 #Command list
-APPLICATION_COMMAND={'SEGMENT':SegmentCommand,'ARC':ArcCommand}
+APPLICATION_COMMAND={'SEGMENT':SegmentCommand,'ARC':ArcCommand,'POINT':PointCommand, 'ELLIPSE':EllipseCommand}

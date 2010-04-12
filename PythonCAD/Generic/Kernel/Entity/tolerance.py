@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2002, 2003 Art Haas
-#
+# Copyright (c) 2010 Matteo Boscolo
 # This file is part of PythonCAD.
 # 
 # PythonCAD is free software; you can redistribute it and/or modify
