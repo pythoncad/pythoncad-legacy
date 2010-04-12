@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas
+# Copyright (c) 2009,2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -25,9 +26,9 @@ from __future__ import generators
 
 import math
 
-from point import Point
-from pyGeoLib import Vector
-from util import *
+from point          import Point
+from pyGeoLib       import Vector
+from util           import *
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
@@ -43,23 +44,9 @@ class Arc(object):
 
         An Arc has the following methods:
     """
-
-    __defstyle = None
-
-    __messages = {
-        'moved' : True,
-        'center_changed' : True,
-        'radius_changed' : True,
-        'start_angle_changed' : True,
-        'end_angle_changed' : True
-        }
-
-    def __init__(self, center, radius, start_angle=None, end_angle=None,
-                 st=None, lt=None, col=None, th=None, **kw):
-        """Initialize a Arc.
-
-            Arc(center, radius, start_angle, end_angle)
-
+    def __init__(self, center, radius, start_angle=None, end_angle=None):
+        """
+            Initialize a Arc/Circle.
             The center should be a Point, or a two-entry tuple of floats,
             and the radius should be a float greater than 0.
         """
@@ -72,18 +59,12 @@ class Arc(object):
         _r = float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
-        _st = st
         _sa = make_c_angle(start_angle)
         _ea = make_c_angle(end_angle)
         self.__radius = _r
         self.__sa = _sa
         self.__ea = _ea
         self.__center = _cp
-        #_cp.connect('moved', self.__movePoint)
-        #_cp.connect('change_pending', self.__pointChangePending)
-        #_cp.connect('change_complete', self.__pointChangeComplete)
-        #_cp.storeUser(self)
-        self.isLocked=False
 
     def getConstructionElements(self):
         """
@@ -119,11 +100,6 @@ class Arc(object):
                 (abs(self.__sa - obj.getStartAngle()) > 1e-10) or
                 (abs(self.__ea - obj.getEndAngle()) > 1e-10))
 
-    def finish(self):
-        self.__center.disconnect(self)
-        self.__center.freeUser(self)
-        self.__center = self.__radius = self.__sa = self.__ea = None
-
     def getValues(self):
         """
             Return values comprising the Arc.
@@ -149,26 +125,11 @@ class Arc(object):
             The argument must be a Point or a tuple containing
             two float values.
         """
-        if self.isLocked():
-            raise RuntimeError, "Setting center not allowed - object locked."
         _cp = self.__center
         if not isinstance(c, point.Point):
             raise TypeError, "Invalid center point: " + `c`
         if _cp is not c:
-            _cp.disconnect(self)
-            _cp.freeUser(self)
-            self.startChange('center_changed')
             self.__center = c
-            self.endChange('center_changed')
-            self.sendMessage('center_changed', _cp)
-            c.connect('moved', self.__movePoint)
-            c.connect('change_pending', self.__pointChangePending)
-            c.connect('change_complete', self.__pointChangeComplete)
-            c.storeUser(self)
-            if abs(_cp.x - c.x) > 1e-10 or abs(_cp.y - c.y) > 1e-10:
-                self.sendMessage('moved', _cp.x, _cp.y, self.__radius,
-                                 self.__sa, self.__ea)
-            self.modified()
 
     center = property(getCenter, setCenter, None, "Arc center")
 
@@ -183,20 +144,12 @@ class Arc(object):
             Set the radius of the Arc.
             The argument must be float value greater than 0.
         """
-        if self.isLocked():
-            raise RuntimeError, "Setting radius not allowed - object locked."
         _r = get_float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
         _cr = self.__radius
         if abs(_cr - _r) > 1e-10:
-            self.startChange('radius_changed')
             self.__radius = _r
-            self.endChange('radius_changed')
-            self.sendMessage('radius_changed', _cr)
-            _cx, _cy = self.__center.getCoords()
-            self.sendMessage('moved', _cx, _cy, _cr, self.__sa, self.__ea)
-            self.modified()
 
     radius = property(getRadius, setRadius, None, "Arc radius")
 
@@ -211,18 +164,10 @@ class Arc(object):
             Set the start_angle for the Arc.
             The argument angle should be a float.
         """
-        if self.isLocked():
-            raise RuntimeError, "Setting start angle not allowed - object locked."
         _sa = self.__sa
         _angle = make_c_angle(angle)
         if abs(_sa - _angle) > 1e-10:
-            self.startChange('start_angle_changed')
             self.__sa = _angle
-            self.endChange('start_angle_changed')
-            self.sendMessage('start_angle_changed', _sa)
-            _cx, _cy = self.__center.getCoords()
-            self.sendMessage('moved', _cx, _cy, self.__radius, _sa, self.__ea)
-            self.modified()
 
     start_angle = property(getStartAngle, setStartAngle, None,
                            "Start angle for the Arc.")
@@ -238,18 +183,11 @@ class Arc(object):
             Set the end_angle for the Arc.
             The argument angle should be a float.
         """
-        if self.isLocked():
-            raise RuntimeError, "Setting end angle not allowed - object locked."
         _ea = self.__ea
         _angle = make_c_angle(angle)
         if abs(_ea - _angle) > 1e-10:
-            self.startChange('end_angle_changed')
             self.__ea = _angle
-            self.endChange('end_angle_changed')
-            self.sendMessage('end_angle_changed', _ea)
             _cx, _cy = self.__center.getCoords()
-            self.sendMessage('moved', _cx, _cy, self.__radius, self.__sa, _ea)
-            self.modified()
 
     end_angle = property(getEndAngle, setEndAngle, None,
                          "End angle for the Arc.")
@@ -319,27 +257,6 @@ class Arc(object):
         """
         return math.pi * pow(self.__radius, 2) * (self.getAngle()/360.0)
 
-    def move(self, dx, dy):
-        """
-            Move a Arc.
-            The first argument gives the x-coordinate displacement,
-            and the second gives the y-coordinate displacement. Both
-            values should be floats.
-        """
-        if self.isLocked():
-            raise RuntimeError, "Setting radius not allowed - object locked."
-        _dx = get_float(dx)
-        _dy = get_float(dy)
-        if abs(_dx) > 1e-10 or abs(_dy) > 1e-10:
-            _x, _y = self.__center.getCoords()
-            self.ignore('moved')
-            try:
-                self.__center.move(_dx, _dy)
-            finally:
-                self.receive('moved')
-            self.sendMessage('moved', _x, _y, self.__radius,
-                             self.__sa, self.__ea)
-
     def GetTangentPoint(self,x,y,outx,outy):
         """
             Get the tangent from an axternal point
@@ -363,19 +280,19 @@ class Arc(object):
         twoPointVector=Vector(fromPoint,self.__center)
         rightAngle=twoPointVector.Ang(xVector)
         cx,cy=self.__center.getCoords()
-        if(outy>cy): #stupid situation
+        if(outy>cy): # stupid situation
             rightAngle=-rightAngle
         posAngle=rightAngle+tgAngle
         negAngle=rightAngle-tgAngle
-        #Compute the Positive Tangent
+        # Compute the Positive Tangent
         xCord=math.cos(posAngle)
         yCord=math.sin(posAngle)
-        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
+        dirPoint=point.Point(xCord,yCord) # Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
         ver.Mult(tanMod)
         tangVectorPoint=ver.Point()
         posPoint=point.Point(tangVectorPoint+(outx,outy))
-        #Compute the Negative Tangent
+        # Compute the Negative Tangent
         xCord=math.cos(negAngle)
         yCord=math.sin(negAngle)
         dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
@@ -387,6 +304,7 @@ class Arc(object):
             return posPoint.getCoords()
         else:
             return negPoint.getCoords()
+            
     def GetRadiusPointFromExt(self,x,y):
         """
             get The intersecrion point from the line(x,y,cx,cy) and the circle
@@ -407,9 +325,6 @@ class Arc(object):
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
         """
             Return whether or not an Arc exists within a region.
-
-            inRegion(xmin, ymin, xmax, ymax[, fully])
-
             The first four arguments define the boundary. The optional
             fifth argument fully indicates whether or not the Arc
             must be completely contained within the region or just pass
@@ -516,32 +431,6 @@ class Arc(object):
             _ymin = _yc - _r
         return _xmin, _ymin, _xmax, _ymax
 
-    def __pointChangePending(self, p, *args):
-        _alen = len(args)
-        if _alen < 1:
-            raise ValueError, "Invalid argument count: %d" % _alen
-        if args[0] == 'moved':
-            self.startChange('moved')
-
-    def __pointChangeComplete(self, p, *args):
-        _alen = len(args)
-        if _alen < 1:
-            raise ValueError, "Invalid argument count: %d" % _alen
-        if args[0] == 'moved':
-            self.endChange('moved')
-
-    def __movePoint(self, p, *args):
-        _alen = len(args)
-        if _alen < 2:
-            raise ValueError, "Invalid argument count: %d" % _alen
-        _x = get_float(args[0])
-        _y = get_float(args[1])
-        _cp = self.__center
-        if p is not _cp:
-            raise ValueError, "Point is not arc center: " + `p`
-        _x, _y = _cp.getCoords()
-        self.sendMessage('moved', _x, _y, self.__radius, self.__sa, self.__ea)
-
     def clone(self):
         """
             Create an identical copy of a Arc
@@ -556,27 +445,15 @@ class Arc(object):
         _col = self.getColor()
         _th = self.getThickness()
         return Arc(_cp, _r, _sa, _ea, _st, _lt, _col, _th)
-
-#    def sendsMessage(self, m):
-#        if m in Arc.__messages:
-#            return True
-#        return super(Arc, self).sendsMessage(m)
-
-
 #
 # static functions for Arc class
 #
-
     def test_angle(s, e, a):
-        """Returns if an angle lies between the start and end angle of an arc.
-
-test_angle(s, e, a)
-
-The arguments are:
-
-s: arc start angle
-e: arc end angle
-a: angle being tested
+        """
+            Returns if an angle lies between the start and end angle of an arc.
+            s: arc start angle
+            e: arc end angle
+            a: angle being tested
         """
         _val = False
         if ((abs(e - s) < 1e-10) or

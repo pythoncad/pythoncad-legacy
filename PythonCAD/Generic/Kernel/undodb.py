@@ -27,7 +27,7 @@ from Generic.Kernel.pycadbasedb            import PyCadBaseDb
 from Generic.Kernel.pycaddbexception       import UndoDb
 
 
-class PyCadUndoDb(PyCadBaseDb):
+class UndoDb(PyCadBaseDb):
     """
         this Class Provide all the basic operation to be made on the
         undo

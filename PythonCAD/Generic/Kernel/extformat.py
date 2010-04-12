@@ -29,7 +29,7 @@ import math # added to handle arc start and end point defination
 import re # added to handle Mtext
 
 
-from pycadinitsetting   import cgcol
+from initsetting        import cgcol
 from Entity.point       import Point
 from Entity.segment     import Segment
 from Entity.arc         import Arc

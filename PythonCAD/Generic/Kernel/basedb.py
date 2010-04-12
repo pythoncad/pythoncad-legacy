@@ -27,9 +27,9 @@ import sys
 # sqlite + R*Tree module
 from pysqlite2 import dbapi2 as sql
 
-from pycaddbexception import *
+from exception import *
 
-class PyCadBaseDb(object):
+class BaseDb(object):
     """
         this class provide base db operation
     """
@@ -110,7 +110,7 @@ class PyCadBaseDb(object):
             _cursor = self.__dbConnection.cursor()
             _rows = _cursor.execute(statment)
             #if self.__commit:
-            if PyCadBaseDb.commit:
+            if BaseDb.commit:
                 self.performCommit()
                 _cursor.close()
         except sql.Error, _e:
@@ -132,14 +132,14 @@ class PyCadBaseDb(object):
             suspend the commit in the update\insert
         """
         #self.__commit=False
-        PyCadBaseDb.commit=False
+        BaseDb.commit=False
 
     def reactiveCommit(self):
         """
             reactive the commit in the update\insert
         """
         #self.__commit=True
-        PyCadBaseDb.commit=True
+        BaseDb.commit=True
 
 
     def performCommit(self):
