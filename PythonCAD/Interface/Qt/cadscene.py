@@ -34,7 +34,16 @@ class CadScene(QtGui.QGraphicsScene):
                 # add entities to scene
                 self.populateScene(document)
             
-            
+    def importDocument(self, filename):        
+        """
+            import a document in the file
+        """
+        if (filename != None) and (len(filename) > 0):
+            document = self.__application.getActiveDocument()
+            document.importExternalFormat(filename)
+            if document.haveDrawingEntitys():
+                # add entities to scene
+                self.populateScene(document)
     def closeDocument(self):
         if self.__filename != None:
             # close document from kernel
@@ -56,7 +65,6 @@ class CadScene(QtGui.QGraphicsScene):
             # adjust drawing limits
             self.updateLimits(segment.boundingRect())
             
-        
         
     def updateLimits(self, rect):
         # init size

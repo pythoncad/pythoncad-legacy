@@ -65,7 +65,12 @@ class CadWindow(QtGui.QMainWindow):
         if drawing != None:
             self._scene.openDocument(drawing)
     
-
+    def _onImportDrawing(self):
+        drawing = QtGui.QFileDialog.getOpenFileName(self, "Import Drawing", "/home", "Dxf (*.dxf)");
+        # open a document and load the drawing
+        if drawing != None:
+            self._scene.importDocument(drawing)
+            
     def _onCloseDrawing(self):
         self._scene.closeDocument()
     
@@ -95,6 +100,11 @@ class CadWindow(QtGui.QMainWindow):
                 statusTip="Open an existing drawing",
                 triggered=self._onOpenDrawing)
 
+        self.__import_drawing_action = QtGui.QAction(QtGui.QIcon(':/images/open.png'),
+                "&Import Drawing", self, 
+                statusTip="Import An external file ",
+                triggered=self._onImportDrawing)
+                
         self.__close_drawing_action = QtGui.QAction(QtGui.QIcon(':/images/close.png'),
                 "&Close Drawing", self, shortcut=QtGui.QKeySequence.Open,
                 statusTip="Close the current drawing",
@@ -125,6 +135,7 @@ class CadWindow(QtGui.QMainWindow):
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenu.addAction(self.__new_drawing_action)
         self.fileMenu.addAction(self.__open_drawing_action)
+        self.fileMenu.addAction(self.__import_drawing_action)
         self.fileMenu.addAction(self.__close_drawing_action)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.__print_action)
