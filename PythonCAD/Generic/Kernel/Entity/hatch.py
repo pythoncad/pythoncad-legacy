@@ -1,18 +1,19 @@
 #
 # Copyright (c) 2002, 2003, 2004, 2005 Art Haas
+# Copyright (c) 2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
-# 
+#
 # PythonCAD is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # PythonCAD is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -23,15 +24,16 @@
 
 import math
 
-from PythonCAD.Generic import point
-from PythonCAD.Generic import segment
-from PythonCAD.Generic import circle
-from PythonCAD.Generic import arc
-from PythonCAD.Generic import segjoint
-from PythonCAD.Generic import layer
-from PythonCAD.Generic import util
+from PythonCAD.Generic.Kernel.Entity.point import Point
+from PythonCAD.Generic.Kernel.Entity import Segment
+from PythonCAD.Generic.Kernel.Entity import Circle
+from PythonCAD.Generic.Kernel.Entity import Arc
+from PythonCAD.Generic.Kernel.Entity import Segjoint
+from PythonCAD.Generic.Kernel.Entity import Layer
+from PythonCAD.Generic.Kernel.Entity.util import *
+from PythonCAD.Generic.Kernel.Entity.geometricalentity  import *
 
-class Path(object):
+class Path(geometricalentity):
     """
         The class for maintaining a list of objects defining a hatch border.
         A Path object contains one or more objects defining the boundary
@@ -77,7 +79,7 @@ class Path(object):
             self.__objs = objs[:]
         else:
             raise ValueError, "Array List mast be a closef path"
-        
+
     def __len__(self):
         return len(self.__objs)
 
@@ -94,7 +96,7 @@ class Path(object):
         if len(self.__objs)==1:
             if isistance(self.__objs,(arc.Arc,circle.Circle)):
                 return True
-        return False        
+        return False
     def getPath(self):
         """
             Return the objects defining the Path.
@@ -175,7 +177,7 @@ class Path(object):
                 if _count % 2: # need to test if point is in an arc ...
                     _inside = True
         return _inside
-    
+
 class HatchRegion(object):
     """The class defining a hatched area.
 
@@ -214,13 +216,13 @@ that are not hatched.
 
     def hasVoids(self):
         """
-            Test if the HatchRegion has any internal non-hatched areas.      
+            Test if the HatchRegion has any internal non-hatched areas.
         """
         return len(self.__voids) > 0
 
     def getVoids(self):
         """
-            Get any internal areas in the HatchRegion.      
+            Get any internal areas in the HatchRegion.
         """
         return self.__voids[:]
 
@@ -254,11 +256,11 @@ def _seg_joint_touch(seg, joint):
     if _s1 is seg or _s2 is seg:
         _touch = True
     return _touch
-    
+
 def _old_validate_path(objlist):
     """
         Test if the objects in the objlist make a closed path.
-        This function is private the the hatching code.    
+        This function is private the the hatching code.
     """
     if not isinstance(objlist, list):
         raise TypeError, "Invalid object list: " + `objlist`
@@ -333,7 +335,7 @@ def _can_touch(obja, objb):
 def _validate_path(lyr, objlist):
     """
         Test if the objects in the objlist make a closed path.
-        This function is private the the hatching code.    
+        This function is private the the hatching code.
     """
     if not isinstance(objlist, list):
         raise TypeError, "Invalid object list: " + `objlist`
@@ -391,7 +393,7 @@ def point_in_path(path):
             # continue
         hits = 1 - hits
     return hits
-        
+
 def draw_path(path):
     if len(path):
         print "path: ["
@@ -474,7 +476,7 @@ def check_clist(ct, clist):
         if not add_flag:
             break
     return add_flag
-            
+
 def get_contained_circles(l, c):
     clist = []
     xc, yc = c.getCenter().getCoords()
@@ -688,6 +690,6 @@ def hatchtests():
     c1 = circle.Circle(p5, 1)
     l1.addObject(c1)
     # find_hatched_area(l1, hpx, hpy)
-    
+
 if __name__ == '__main__':
     hatchtests()

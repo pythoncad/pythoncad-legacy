@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas 
+# Copyright (c) 2002, 2003, 2004, 2005, 2006 Art Haas
 # Copyright (c) 2009,2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
@@ -26,9 +26,10 @@ from __future__ import generators
 
 import math
 
-from point import Point
-  
-class Segment(object):
+from geometricalentity  import *
+from point              import Point
+
+class Segment(GeometricalEntity):
     """
         A class representing a line segment.
     """
@@ -47,18 +48,9 @@ class Segment(object):
             _p2 = Point(p2)
         if _p1 is _p2:
             raise ValueError, "Segments cannot have identical endpoints."
-        _st = st
         self.__p1 = _p1
-        self.__p2 = _p2     
-        
-    def getConstructionElements(self):
-        """
-            Get the endpoints of the Point.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Point
-        """
-        return self.__p1, self.__p2
-        
+        self.__p2 = _p2
+
     def __str__(self):
         return "Segment: %s to %s" % (self.__p1, self.__p2)
 
@@ -89,6 +81,14 @@ class Segment(object):
         _op1, _op2 = obj.getEndpoints()
         return (((_sp1 != _op1) or (_sp2 != _op2)) and
                 ((_sp1 != _op2) or (_sp2 != _op1)))
+
+    def getConstructionElements(self):
+        """
+            Get the endpoints of the Point.
+            This function returns a tuple containing the Point objects
+            that for inizializing the Point
+        """
+        return self.__p1, self.__p2
 
     def getValues(self):
         """
@@ -154,7 +154,7 @@ class Segment(object):
             Return the length of the Segment.
         """
         return self.__p1 - self.__p2
-        
+
     def getCoefficients(self):
         """
             Express the line segment as a function ax + by + c = 0
@@ -166,7 +166,7 @@ class Segment(object):
         _b = _x1 - _x2
         _c = (_x2 * _y1) - (_x1 * _y2)
         return _a, _b, _c
-    
+
     def getMiddlePoint(self):
         """
             Return the middle point of the segment
@@ -187,13 +187,13 @@ class Segment(object):
         else:
             retY=_y2+_deltay
         return retX,retY
-    
+
     def getProjection(self,x,y):
         """
-            get Projection of the point x,y in the line 
+            get Projection of the point x,y in the line
         """
         _x = util.get_float(x)
-        _y = util.get_float(y)       
+        _y = util.get_float(y)
         p1=self.__p1
         p2=self.__p2
         p3=Point(_x, _y)
@@ -206,7 +206,7 @@ class Segment(object):
         x=x+_x1
         y=y+_y1
         return x,y
-        
+
     def mapCoords(self, x, y, tol=0.001):
         """
             Return the nearest Point on the Segment to a coordinate pair.

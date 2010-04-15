@@ -32,8 +32,9 @@ import math
 from tolerance          import *
 from util               import *
 from point              import Point
+from geometricalentity  import *
 
-class Ellipse(object):
+class Ellipse(GeometricalEntity):
     """
         A base class for Ellipses
         An ellipse has the following attributes:
@@ -59,15 +60,7 @@ class Ellipse(object):
         self.__major = _major
         self.__minor = _minor
         self.__angle = _angle
-        
-    def getConstructionElements(self):
-        """
-            Get the Construction element of the Ellipse.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Ellipse
-        """
-        return self.__center, self.__major,self.__minor,self.__angle
-        
+
     def __eq__(self, obj):
         """
             Compare one ellipse to another for equality.
@@ -94,6 +87,14 @@ class Ellipse(object):
                 abs(self.__minor - obj.getMinorAxis()) > 1e-10 or
                 abs(self.__angle - obj.getAngle()) > 1e-10)
 
+    def getConstructionElements(self):
+        """
+            Get the Construction element of the Ellipse.
+            This function returns a tuple containing the Point objects
+            that for inizializing the Ellipse
+        """
+        return self.__center, self.__major,self.__minor,self.__angle
+
     def getValues(self):
         """
             Return values comprising the Ellipse.
@@ -106,7 +107,7 @@ class Ellipse(object):
         _data['minor']= self.__minor
         _data['angle']=self.__angle
         return _data
-        
+
     def getCenter(self):
         """
             Return the center _Point of the Ellipse.
@@ -195,7 +196,7 @@ class Ellipse(object):
 
 
     def rotate(self, angle):
-        """ 
+        """
             Rotate an Ellipse
             Argument 'angle' should be a float.
         """
@@ -273,7 +274,7 @@ class Ellipse(object):
                 _esin = math.sin(self.__angle)
                 # FIXME ...
         return _ep
- 
+
 #
 # measure r from focus
 #

@@ -53,6 +53,9 @@ class Entity(PyCadObject):
         """
             update the bounding box from the construction elements
         """
+        # Todo : Find a better way to create the bounding box for all
+        # the geometrical entity may be is better that all the geometrical
+        # entity have an implementatio of the bounding box
         _xList=[]
         _yList=[]
         for key in self._constructionElements:

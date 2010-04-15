@@ -29,7 +29,7 @@ from Generic.Kernel.Entity.ellipse      import Ellipse
 
 class BaseCommand(object):
     """
-        this class provide a base command 
+        this class provide a base command
     """
     def __init__(self, document):
         """
@@ -51,7 +51,7 @@ class BaseCommand(object):
         if self.index>=TotNIter:
             raise StopIteration
         return (self.exception[self.index],self.message[self.index])
-        
+
     def __setitem__(self, key, value):
         """
             set the value of the command
@@ -77,7 +77,7 @@ class PointCommand(BaseCommand):
             raise PyCadWrongImputData("Wrong number of imput parameter")
         seg=Point(self.value[0])
         self.document.saveEntity(seg)
-        
+
 class SegmentCommand(BaseCommand):
     """
         this class rappresent the segment command
@@ -92,7 +92,7 @@ class SegmentCommand(BaseCommand):
             raise PyCadWrongImputData("Wrong number of imput parameter")
         seg=Segment(self.value[0], self.value[1])
         self.document.saveEntity(seg)
-        
+
 class ArcCommand(BaseCommand):
     """
         this class rappresent the arc command
@@ -119,7 +119,26 @@ class EllipseCommand(BaseCommand):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         arc=Ellipse(self.value[0], self.value[1], self.value[2], self.value[3])
-        self.document.saveEntity(arc)        
-        
+        self.document.saveEntity(arc)
+class PolylineCommand(BaseCommand):
+    """
+        this class rappresent the ellips command
+    """
+    def __init__(self, document):
+        BaseCommand.__init__(self, document)
+        self.exception=[ExcPoint, ExcLenght, ExcLenght, ExcAngle]
+        self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius", "Give Me ellipse Angle (Could Be None)"]
+    def applyCommand(self):
+        if len(self.value)<2:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        arc=Polyline(self.value[0], self.value[1], self.value[2], self.value[3])
+        self.document.saveEntity(arc)
+
+
+
 #Command list
-APPLICATION_COMMAND={'SEGMENT':SegmentCommand,'ARC':ArcCommand,'POINT':PointCommand, 'ELLIPSE':EllipseCommand}
+APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
+                        'ARC':ArcCommand,
+                        'POINT':PointCommand,
+                        'ELLIPSE':EllipseCommand,
+                        'POLYLINE':PolylineCommand}

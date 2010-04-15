@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2003 Art Haas
+# Copyright (c) 2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
 #
@@ -21,8 +22,9 @@
 
 
 import array
+from geometricalentity  import *
 
-class Nurb(object):
+class Nurb(GeometricalEntity):
     def __init__(self, ctrlpts, knots, order):
         if not isinstance(ctrlpts, list):
             raise TypeError, "Invalid control point list: " + str(ctrlpts)
@@ -108,7 +110,7 @@ class Nurb(object):
             # print "nx: %.3f" % _nx
             # print "ny: %.3f" % _ny
             if abs(_nw) > 1e-10:
-                _pts.append((_nx/_nw, _ny/_nw))                
+                _pts.append((_nx/_nw, _ny/_nw))
             else:
                 print "zero weight: %f, %f" % (_nx, _ny)
 

@@ -25,13 +25,13 @@ from __future__ import generators
 
 import math
 
-#from PythonCAD.Generic import tolerance
-#from PythonCAD.Generic import util
+from geometricalentity  import *
+from util               import *
 
-class Point(object):
+class Point(GeometricalEntity):
     """
         A 2-D point Class.
-    """       
+    """
     def __init__(self, x, y=None, **kw):
         """
             Initialize a Point.
@@ -43,7 +43,7 @@ class Point(object):
         if isinstance(x, tuple):
             if y is not None:
                 raise SyntaxError, "Invalid call to Point()"
-            _x, _y = util.tuple_to_two_floats(x)
+            _x, _y = tuple_to_two_floats(x)
         elif y is not None:
             _x = float(x)
             _y = float(y)
@@ -55,14 +55,6 @@ class Point(object):
             raise SyntaxError, "Invalid call to Point()."
         self.__x = _x
         self.__y = _y
-    
-    def getConstructionElements(self):
-        """
-            Get the endpoints of the Point.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Point
-        """
-        return (self, )
 
     def __str__(self):
         return "(%g,%g)" % (self.__x, self.__y)
@@ -89,7 +81,7 @@ class Point(object):
                 return True
             _x, _y = obj.getCoords()
         else:
-            _x, _y = util.tuple_to_two_floats(obj)
+            _x, _y = tuple_to_two_floats(obj)
         if abs(self.__x - _x) < 1e-10 and abs(self.__y - _y) < 1e-10:
             return True
         return False
@@ -105,24 +97,32 @@ class Point(object):
                 return False
             _x, _y = obj.getCoords()
         else:
-            _x, _y = util.tuple_to_two_floats(obj)
+            _x, _y = tuple_to_two_floats(obj)
         if abs(self.__x - _x) < 1e-10 and abs(self.__y - _y) < 1e-10:
             return False
         return True
-    
+
     def __add__(self,obj):
         """
             Add two Point
         """
         if not isinstance(obj, Point):
             if isinstance(obj, tuple):
-                x, y = util.tuple_to_two_floats(obj)
+                x, y = tuple_to_two_floats(obj)
             else:
                 raise TypeError,"Invalid Argument obj: Point or tuple Required"
         else:
             x,y = obj.getCoords()
         return self.__x+x,self.__y+y
-    
+
+    def getConstructionElements(self):
+        """
+            Get the endpoints of the Point.
+            This function returns a tuple containing the Point objects
+            that for inizializing the Point
+        """
+        return (self, )
+
     def getValues(self):
         """
             Return values comprising the Point.
@@ -147,7 +147,7 @@ class Point(object):
             setx(val)
             The argument 'val' must be a float.
         """
-        _v = util.get_float(val)
+        _v = get_float(val)
         _x = self.__x
         if abs(_x - _v) > 1e-10:
             self.__x = _v
@@ -165,7 +165,7 @@ class Point(object):
             Set the y-coordinate of a Point
             The argument 'val' must be a float.
         """
-        _v = util.get_float(val)
+        _v = get_float(val)
         _y = self.__y
         if abs(_y - _v) > 1e-10:
             self.__y = _v
@@ -183,8 +183,8 @@ class Point(object):
             Set both the coordinates of a Point.
             Arguments 'x' and 'y' should be float values.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
+        _x = get_float(x)
+        _y = get_float(y)
         _sx = self.__x
         _sy = self.__y
         if abs(_sx - _x) > 1e-10 or abs(_sy - _y) > 1e-10:
@@ -205,15 +205,15 @@ class Point(object):
             function returns True if the Point lies within that area.
             Otherwise, the function returns False.
         """
-        _xmin = util.get_float(xmin)
-        _ymin = util.get_float(ymin)
-        _xmax = util.get_float(xmax)
+        _xmin = get_float(xmin)
+        _ymin = get_float(ymin)
+        _xmax = get_float(xmax)
         if _xmax < _xmin:
             raise ValueError, "Illegal values: xmax < xmin"
-        _ymax = util.get_float(ymax)
+        _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
-        util.test_boolean(fully)
+        test_boolean(fully)
         _x = self.__x
         _y = self.__y
         return not ((_x < _xmin) or
@@ -226,12 +226,12 @@ class Point(object):
            Get The Distance From 2 Points
         """
         if not isinstance(obj, Point):
-            if isinstance(x, tuple):            
-                _x, _y = util.tuple_to_two_floats(obj)
+            if isinstance(x, tuple):
+                _x, _y = tuple_to_two_floats(obj)
             else:
-                raise TypeError,"Invalid Argument point: Point or Tuple Required"   
+                raise TypeError,"Invalid Argument point: Point or Tuple Required"
         else:
             x,y=obj.getCoords()
         xDist=x-self.__x
         yDist=y-self.__y
-        return math.sqrt(pow(xDist,2)+pow(yDist,2)) 
+        return math.sqrt(pow(xDist,2)+pow(yDist,2))

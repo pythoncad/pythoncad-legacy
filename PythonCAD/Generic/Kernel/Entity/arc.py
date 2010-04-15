@@ -26,14 +26,15 @@ from __future__ import generators
 
 import math
 
-from point          import Point
-from pyGeoLib       import Vector
-from util           import *
+from point              import Point
+from pyGeoLib           import Vector
+from geometricalentity  import *
+from util               import *
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
 
-class Arc(object):
+class Arc(GeometricalEntity):
     """
         A class for Arcs.
         An Arc has four attributes:
@@ -304,7 +305,7 @@ class Arc(object):
             return posPoint.getCoords()
         else:
             return negPoint.getCoords()
-            
+
     def GetRadiusPointFromExt(self,x,y):
         """
             get The intersecrion point from the line(x,y,cx,cy) and the circle
