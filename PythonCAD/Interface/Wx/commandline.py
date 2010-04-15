@@ -69,5 +69,5 @@ class Commandline(wx.Panel):
             result = self._function_handler.Evaluate(expression)
             # show the result in the command line
             self._entry.Value = str(result)
-        
+            self._entry.SelectAll()
         
