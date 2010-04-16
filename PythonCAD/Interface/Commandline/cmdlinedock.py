@@ -14,3 +14,4 @@ class CmdlineDock(QtGui.QDockWidget):
         self.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea | QtCore.Qt.TopDockWidgetArea)
         self.__cmdline = QtGui.QLineEdit(self)
         self.setWidget(self.__cmdline)
+
