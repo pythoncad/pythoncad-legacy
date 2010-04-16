@@ -25,7 +25,7 @@
 import sys
 from Generic.Kernel.exception           import *
 from Generic.Kernel.document            import *
-from Generic.Kernel.commands            import *
+from Generic.Kernel.Command             import *
 from Generic.Kernel.Entity.point        import Point
 
 

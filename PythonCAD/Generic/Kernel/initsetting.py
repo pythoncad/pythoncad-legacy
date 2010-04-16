@@ -21,7 +21,19 @@
 #
 # This  module provide all the global variable to be used from the kernel
 #
+#Command list
+from Generic.Kernel.Command                 import *
+from Generic.Kernel.Command.segmentcommand  import SegmentCommand
+from Generic.Kernel.Command.arccommand      import ArcCommand
+from Generic.Kernel.Command.pointcommand    import PointCommand
+from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
+from Generic.Kernel.Command.polylinecommand import PolylineCommand
 
+APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
+                        'ARC':ArcCommand,
+                        'POINT':PointCommand,
+                        'ELLIPSE':EllipseCommand,
+                        'POLYLINE':PolylineCommand}
 
 cgcol = {
 '#000000':0, 0:'#000000',

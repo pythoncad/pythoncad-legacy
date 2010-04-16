@@ -26,12 +26,11 @@ from __future__ import generators
 
 import math
 
-from tolerance          import *
-from point              import point
-from util               import util
-from geometricalentity  import *
+from Generic.Kernel.Entity.tolerance            import *
+from Generic.Kernel.Entity.point                import Point
+from Generic.Kernel.Entity.geometricalentity    import *
 
-class Polyline(geometricalentity):
+class Polyline(GeometricalEntity):
     """
         A class representing a polyline. A polyline is essentially
         a number of segments that connect end to end.
@@ -50,8 +49,8 @@ class Polyline(geometricalentity):
             raise ValueError, "Invalid list count: %d" % _count
         for _i in range(_count):
             _obj = plist[_i]
-            if not isinstance(_obj, point.Point):
-                _obj = point.Point(plist[_i])
+            if not isinstance(_obj, Point):
+                _obj = Point(plist[_i])
             _pts.append(_obj)
         _plist = []
         for _pt in _pts:
@@ -174,7 +173,7 @@ class Polyline(geometricalentity):
             the i'th Point used to define the Polyline. Argument 'p'
             must be a Point.
         """
-        if not isinstance(p, point.Point):
+        if not isinstance(p, Point):
             raise TypeError, "Invalid Point for Polyline point: " + `type(p)`
         _pt = self.__pts[i]
         if _pt is not p:
@@ -187,7 +186,7 @@ class Polyline(geometricalentity):
             Point. The Point is added into the list of points comprising
             the Polyline as the i'th point.
         """
-        if not isinstance(p, point.Point):
+        if not isinstance(p, Point):
             raise TypeError, "Invalid Point for Polyline point: " + `type(p)`
         self.__pts.insert(i, p)
 

@@ -707,11 +707,13 @@ class textApplication(object):
         """
         msg=msg + " x,y "
         value=self.inputMsg(msg)
-        coords=value.split(',')
-        x=float(coords[0])
-        y=float(coords[1])
-        return Point(x, y)
-
+        if value:
+            coords=value.split(',')
+            x=float(coords[0])
+            y=float(coords[1])
+            return Point(x, y)
+        return None
+        
     def outputMsg(self,msg):
         """
             print an output message

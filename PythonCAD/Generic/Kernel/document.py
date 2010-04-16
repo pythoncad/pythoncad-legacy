@@ -28,6 +28,7 @@ import cPickle as pickle
 import logging
 import time
 #***************************************************Kernel Import
+from Generic.Kernel.initsetting             import *
 from Generic.Kernel.extformat               import *
 from Generic.Kernel.exception               import *
 from Generic.Kernel.undodb                  import UndoDb
@@ -43,6 +44,7 @@ from Generic.Kernel.Entity.point        import Point
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
 from Generic.Kernel.Entity.ellipse      import Ellipse
+from Generic.Kernel.Entity.polyline     import Polyline
 from Generic.Kernel.Entity.style        import Style
 
 # spatial index
@@ -60,7 +62,8 @@ logging.basicConfig(level=level)
 DRAWIN_ENTITY={ Point:'POINT',
                 Segment:'SEGMENT',
                 Arc:'ARC', 
-                Ellipse:'ELLIPSE'}
+                Ellipse:'ELLIPSE', 
+                Polyline:'POLYLINE'}
 
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 
@@ -174,7 +177,18 @@ class Document(BaseDb):
             get all drawing entity from the db
         """
         return self.__EntityDb.getEntityFromTypeArray([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-
+   
+    def getEntInDbTableFormat(self, visible=1, entityType='ALL', entityTypeArray=None):
+        """
+            return a db table of the entity
+            visible:            1=show the visible entity 2= sho the hidden entity
+            entityType:         Tipe of Entity that you are looking for "SEGMENT,ARC.."
+            entityTypeArray:    an array of element in case we are lookin for all the ARC and SEGMENT
+                ['ARC','SEGMENT]
+            Remarks if entityTypeArray is not None entityType is ignored
+        """
+        return self.__EntityDb.getMultiFilteredEntity(visible,entityType , entityTypeArray)
+        
     def haveDrawingEntitys(self):
         """
             check if the drawing have some data in it

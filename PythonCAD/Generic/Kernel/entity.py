@@ -25,7 +25,7 @@ from Generic.Kernel.Entity.style            import Style
 from Generic.Kernel.Entity.pycadobject      import PyCadObject
 from Generic.Kernel.Entity.point            import Point
 
-PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC', 'ELLIPSE']
+PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC', 'ELLIPSE', 'POLYLINE']
 
 class Entity(PyCadObject):
     """
