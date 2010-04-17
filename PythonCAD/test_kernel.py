@@ -690,7 +690,11 @@ class textApplication(object):
                 cObject.applyCommand()
         except PyCadWrongCommand:
             self.outputMsg("Wrong Command")
-
+    def featureTest(self):
+        """
+            this function make a basic test
+        """
+        pass
 
     def inputFloat(self, msg):
         """
