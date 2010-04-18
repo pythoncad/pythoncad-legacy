@@ -59,15 +59,7 @@ LEVELS = {'PyCad_Debug':    logging.DEBUG,
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
 logging.basicConfig(level=level)
 #
-DRAWIN_ENTITY={ Point:'POINT',
-                Segment:'SEGMENT',
-                Arc:'ARC', 
-                Ellipse:'ELLIPSE', 
-                Polyline:'POLYLINE'}
 
-KERNEL_ENTITY=(Style,Entity,Settings,Layer)
-
-SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
 #
 class Document(BaseDb):
     """

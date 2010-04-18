@@ -29,11 +29,31 @@ from Generic.Kernel.Command.pointcommand    import PointCommand
 from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
 from Generic.Kernel.Command.polylinecommand import PolylineCommand
 
+from Generic.Kernel.Entity.point        import Point
+from Generic.Kernel.Entity.segment      import Segment
+from Generic.Kernel.Entity.arc          import Arc
+from Generic.Kernel.Entity.ellipse      import Ellipse
+from Generic.Kernel.Entity.polyline     import Polyline
+from Generic.Kernel.Entity.style        import Style
+#db Ent
+from Generic.Kernel.entity              import Entity
+from Generic.Kernel.settings            import *
+from Generic.Kernel.layer               import Layer
+
 APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand}
+
+DRAWIN_ENTITY={ Point:'POINT',
+                Segment:'SEGMENT',
+                Arc:'ARC', 
+                Ellipse:'ELLIPSE', 
+                Polyline:'POLYLINE'}
+
+KERNEL_ENTITY=(Style,Entity,Settings,Layer)
+SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
 
 cgcol = {
 '#000000':0, 0:'#000000',
