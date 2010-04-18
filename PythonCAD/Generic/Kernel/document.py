@@ -47,19 +47,18 @@ from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.polyline     import Polyline
 from Generic.Kernel.Entity.style        import Style
 
-# spatial index
+#   Spatial index
 from Generic.Kernel.pycadindex          import PyCadIndex
 
+#   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
           'PyCad_Info':     logging.INFO,
           'PyCad_Warning':  logging.WARNING,
           'PyCad_Error':    logging.ERROR,
           'PyCad_Critical': logging.CRITICAL}
-#set the debug level
+#   Set the debug level
 level = LEVELS.get('PyCad_Warning', logging.NOTSET)
 logging.basicConfig(level=level)
-#
-
 #
 class Document(BaseDb):
     """

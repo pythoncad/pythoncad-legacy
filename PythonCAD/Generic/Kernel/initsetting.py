@@ -34,11 +34,17 @@ from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
 from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.polyline     import Polyline
-from Generic.Kernel.Entity.style        import Style
+from Generic.Kernel.Entity.style        import Style 
 #db Ent
-from Generic.Kernel.entity              import Entity
 from Generic.Kernel.settings            import *
+from Generic.Kernel.entity              import Entity
 from Generic.Kernel.layer               import Layer
+
+MAIN_LAYER="MAIN"
+
+OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
+
+PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC', 'ELLIPSE', 'POLYLINE']
 
 APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
@@ -54,6 +60,8 @@ DRAWIN_ENTITY={ Point:'POINT',
 
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
+
+OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
 
 cgcol = {
 '#000000':0, 0:'#000000',

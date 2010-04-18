@@ -25,7 +25,7 @@ import cPickle as pickle
 
 from Generic.Kernel.entity              import *
 from Generic.Kernel.basedb              import BaseDb
-
+from Generic.Kernel.initsetting         import *
 
 class EntDb(BaseDb):
     """

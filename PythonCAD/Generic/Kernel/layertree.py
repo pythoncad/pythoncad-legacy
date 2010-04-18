@@ -25,8 +25,8 @@
 
 from Generic.Kernel.layer               import Layer
 from Generic.Kernel.exception           import *
+from Generic.Kernel.initsetting         import MAIN_LAYER
 
-MAIN_LAYER="MAIN"
 class LayerTree(object):
     """
         this class rappresent the layer tree strucrute
