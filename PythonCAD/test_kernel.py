@@ -41,7 +41,7 @@ try:
 except ImportError, e:
     print "Unable to load R*Tree sqlite extention"
 
-
+from random                             import random
 from Generic.Kernel.document            import *
 from Generic.Kernel.application         import Application
 from Generic.Kernel.Entity.point        import Point
@@ -546,6 +546,8 @@ class textApplication(object):
         self.__applicationCommand['GetActive']=self.getActiveDoc
         self.__applicationCommand['GetEnts']=self.getEnts
         self.__applicationCommand['Esc']=self.endApplication
+        self.__applicationCommand['?']=self.printHelp
+        self.__applicationCommand['Test']=self.featureTest
         # Document Commandf
         self.__pyCadApplication=Application()
         for command in self.__pyCadApplication.getCommandList():
@@ -556,7 +558,7 @@ class textApplication(object):
             mainLoop operation
         """
         while 1:
-            imputstr=self.inputMsg("Insert a command (H for Help)")
+            imputstr=self.inputMsg("Insert a command (? for Help)")
             try:
                 if self.__command.has_key(imputstr):
                     self.__command[imputstr](imputstr)
@@ -566,7 +568,16 @@ class textApplication(object):
                     self.outputMsg("Wrong Command !!")
             except EntityMissing, err:
                 self.outputMsg("Application Error %s "%str(err))
-                
+    def printHelp(self):            
+        """
+            print the command list
+        """
+        self.outputMsg("*****************************Drawing")
+        for commandName in self.__command:
+            self.outputMsg("Comand : %s "%str(commandName))
+        self.outputMsg("**************************Application Command")
+        for commandName in self.__applicationCommand:
+            self.outputMsg("Comand : %s "%str(commandName))
     def getEnts(self):
         """
             get database entitys
@@ -694,8 +705,65 @@ class textApplication(object):
         """
             this function make a basic test
         """
-        pass
-
+        self.outputMsg("Open the file p1.pdr")
+        filePath1="/home/matteo/Desktop/p1.pdr"
+        doc1=self.__pyCadApplication.openDocument(filePath1)
+        self.outputMsg("Open the file p2.pdr")
+        filePath2="/home/matteo/Desktop/p2.pdr"
+        doc2=self.__pyCadApplication.openDocument(filePath2)
+        self.outputMsg("Set Current p1")
+        self.__pyCadApplication.setActiveDocument(doc2)
+        self.outputMsg("Create Point")
+        self.performCommandRandomly("POINT")
+        self.outputMsg("Create Segment")
+        self.performCommandRandomly("SEGMENT")
+        self.outputMsg("Create Arc")
+        self.performCommandRandomly("ARC")
+        self.outputMsg("Create Ellipse")
+        self.performCommandRandomly("ELLIPSE")
+        self.outputMsg("Create Polyline")
+        self.performCommandRandomly("POLYLINE")
+        self.outputMsg("Get Entitys")
+        activeDoc=self.__pyCadApplication.getActiveDocument()
+        ents=activeDoc.getEntityFromType("ALL")
+        self.printEntity(ents)
+        
+    def performCommandRandomly(self, commandName, andLoop=10):
+        """
+            set some random Value at the command imput
+        """
+        self.outputMsg("Start Command %s"%str(commandName))
+        i=0
+        cObject=self.__pyCadApplication.getCommand(commandName)
+        for iv in cObject:
+            exception,message=iv
+            try:
+                raise exception(None)
+            except ExcPoint:
+                self.outputMsg("Add Point")
+                if i>=andLoop:
+                    cObject[iv]=None
+                else:
+                    cObject[iv]=self.getRandomPoint()
+            except (ExcLenght, ExcAngle):
+                self.outputMsg("Add Lengh/Angle")
+                cObject[iv]=100
+            except:
+                self.outputMsg("Bad error !!")
+                raise 
+            else:
+                self.outputMsg("Apply Command")
+                cObject.applyCommand()
+            i+=1
+            
+    def getRandomPoint(self):
+        """
+            get e random point
+        """
+        x=random()*1000
+        y=random()*1000
+        return Point(x, y)
+        
     def inputFloat(self, msg):
         """
             return a float number

@@ -94,7 +94,8 @@ class Application(object):
             self.__Docuemnts[fileName]=Document(fileName)
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
-
+        return self.__Docuemnts[fileName]
+        
     def closeDocument(self, fileName):
         """
             close the document
