@@ -20,7 +20,7 @@
 #
 # This module provide basic pythoncadObject
 #
-OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
+
 
 class PyCadObject(object):
     """
@@ -28,6 +28,8 @@ class PyCadObject(object):
         db like id for exsample
     """
     def __init__(self,objId,):
+        from Generic.Kernel.initsetting import OBJECT_STATE
+        self.OBJECT_STATE=OBJECT_STATE
         self.__entityId=objId
         self.__state="MODIFIE"
         self.__index=0
@@ -60,7 +62,7 @@ class PyCadObject(object):
         """
             set the active state
         """ 
-        if state in OBJECT_STATE:
+        if state in self.OBJECT_STATE:
             self.__state=state
         else:
             print "Wrong argunent"
@@ -80,10 +82,10 @@ class PyCadObject(object):
         """
         if index :
             self.__index+=self.__index
-            self.__state=OBJECT_STATE[0]
+            self.__state=self.OBJECT_STATE[0]
         else: 
             self.__index=0
-            self.__state=OBJECT_STATE[0]
+            self.__state=self.OBJECT_STATE[0]
     
     def setIndex(self,index):
         """

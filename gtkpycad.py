@@ -22,6 +22,9 @@
 #
 # main routine to start GTK-based pycad
 #
+raise DeprecationWarning,  """"The R38 Version si under complete restructuring this entry file is no more used
+use test_kernel.py or pythoncad_qt.py under PythonCAD folder"""
+
 
 import getopt
 import sys
