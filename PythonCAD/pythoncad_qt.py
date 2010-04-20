@@ -47,7 +47,7 @@ except ImportError, e:
     raise Exception('StructuralError', 'Unable to load the R*Tree extention module')
 
 
-from Interface.Qt.cadwindow import CadWindow
+from Interface.cadwindow import CadWindow
 
 if __name__ == '__main__':
 
