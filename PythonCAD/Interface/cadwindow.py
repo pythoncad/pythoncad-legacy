@@ -29,8 +29,10 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
-from Interface.Qt.cadscene import CadScene
-from Interface.Qt.cadview import CadView
+from Interface.cadscene import CadScene
+from Interface.cadview import CadView
+
+from Interface.Commandline.cmdlinedock import CmdlineDock
 
 
 class CadWindow(QtGui.QMainWindow):
@@ -179,6 +181,10 @@ class CadWindow(QtGui.QMainWindow):
         layer_dock.setWidget(self.__layer_list)
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, layer_dock)
         self.viewMenu.addAction(layer_dock.toggleViewAction())
+        
+        # commandline
+        command_dock = CmdlineDock("Command", self)
+        self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
 
 
 

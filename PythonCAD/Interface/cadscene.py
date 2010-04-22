@@ -2,7 +2,7 @@
 
 from PyQt4 import QtCore, QtGui
 from Generic.Kernel.application import Application
-from Interface.Qt.segment import Segment
+from Interface.segment import Segment
 
 
 class CadScene(QtGui.QGraphicsScene):
