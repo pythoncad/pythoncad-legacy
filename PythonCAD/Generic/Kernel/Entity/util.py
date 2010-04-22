@@ -64,12 +64,10 @@ def tuple_to_three_floats(t):
     return _x, _y, _z
 
 def make_angle(angle):
-    """Return an angle value such that -90 <= angle <= 90.
-
-make_angle(angle)
-
-The argument angle should be a float. Additionally the argument
-is expected to be in degrees, not radians.
+    """
+        Return an angle value such that -90 <= angle <= 90.
+        The argument angle should be a float. Additionally the argument
+        is expected to be in degrees, not radians.
     """
     _angle = get_float(angle)
     if _angle < -90.0 or _angle > 90.0:
@@ -93,11 +91,9 @@ is expected to be in degrees, not radians.
     return _angle
 
 def make_c_angle(angle):
-    """Return an angle value such that 0 <= angle <= 360.
-
-make_c_angle(angle)
-
-The argument angle should be a float.
+    """
+        Return an angle value such that 0 <= angle <= 360.
+        The argument angle should be a float.
     """
     _a = get_float(angle)
     if _a < 0.0:
@@ -147,12 +143,10 @@ the value isn't scaled from -360.0 <= angle <= 360.0
     return fmod(_value, 360.0)
 
 def radians(value):
-    """Convert a value from degrees to radians.
-
-radians(value)
-
-In Python 2.3 this is available ad the math.radians() function, but
-the value isn't scaled from -2*pi <= angle <= 2*pi
+    """
+        Convert a value from degrees to radians.
+        In Python 2.3 this is available ad the math.radians() function, but
+        the value isn't scaled from -2*pi <= angle <= 2*pi
     """
     _value = get_float(value)
     return fmod(_value, (2.0 * pi))
