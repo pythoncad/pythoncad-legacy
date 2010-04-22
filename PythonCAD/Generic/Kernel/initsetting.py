@@ -19,50 +19,68 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-# This  module provide all the global variable to be used from the kernel
+# This  module provide all the global variable to be used from the pythoncad Application
 #
-#Command list
+#
+# Command List
+#
 from Generic.Kernel.Command                 import *
 from Generic.Kernel.Command.segmentcommand  import SegmentCommand
 from Generic.Kernel.Command.arccommand      import ArcCommand
 from Generic.Kernel.Command.pointcommand    import PointCommand
 from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
 from Generic.Kernel.Command.polylinecommand import PolylineCommand
-
+#
+# Entity List
+#
 from Generic.Kernel.Entity.point        import Point
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
 from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.polyline     import Polyline
 from Generic.Kernel.Entity.style        import Style 
-#db Ent
+#
+# db Ent
+#
 from Generic.Kernel.settings            import *
 from Generic.Kernel.entity              import Entity
 from Generic.Kernel.layer               import Layer
-
+#
+# Default LAyer
+# 
 MAIN_LAYER="MAIN"
-
+#
+# Object workflow state of the entity
+#
 OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
-
+#
+# Supported entity by the Application
+#
 PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC', 'ELLIPSE', 'POLYLINE']
-
+#
+# Command Supported by the application
+#
 APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand}
-
+#
+# Match object Name
+#
 DRAWIN_ENTITY={ Point:'POINT',
                 Segment:'SEGMENT',
                 Arc:'ARC', 
                 Ellipse:'ELLIPSE', 
                 Polyline:'POLYLINE'}
-
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
+#
+# Entity supported by the kernel
+#
 SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
-
-OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
-
+#
+# Color table to define a match from Autocad external format and Pythoncad internal format
+#
 cgcol = {
 '#000000':0, 0:'#000000',
 '#ff0000':1, 1:'#ff0000',
