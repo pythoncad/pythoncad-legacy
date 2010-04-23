@@ -34,6 +34,7 @@ from Generic.Kernel.Command.aclinecommand   import ACLineCommand
 from Generic.Kernel.Command.clinecommand    import CLineCommand
 from Generic.Kernel.Command.vclinecommand   import VCLineCommand
 from Generic.Kernel.Command.hclinecommand   import HCLineCommand
+from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
 #
 # Entity List
 #
@@ -47,6 +48,7 @@ from Generic.Kernel.Entity.acline       import ACLine
 from Generic.Kernel.Entity.cline        import CLine
 from Generic.Kernel.Entity.vcline       import VCLine
 from Generic.Kernel.Entity.hcline       import HCLine
+from Generic.Kernel.Entity.ccircle      import CCircle
 #
 # db Ent
 #
@@ -74,7 +76,8 @@ PY_CAD_ENT=['POINT',
             'ACLINE', 
             'CLINE', 
             'VCLINE',
-            'HCLINE' ]
+            'HCLINE', 
+            'CCIRCLE' ]
 #
 # Command Supported by the application
 #
@@ -86,7 +89,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ACLINE':ACLineCommand, 
                         'CLINE':CLineCommand, 
                         'VCLINE':VCLineCommand, 
-                        'HCLINE':HCLineCommand}
+                        'HCLINE':HCLineCommand, 
+                        'CCIRCLE':CCircleCommand}
 #
 # Match object Name
 #
@@ -98,7 +102,8 @@ DRAWIN_ENTITY={ Point:'POINT',
                 ACLine:'ACLINE', 
                 CLine:'CLINE', 
                 VCLine:'VCLINE', 
-                HCLine:'HCLINE'}
+                HCLine:'HCLINE', 
+                CCircle:'CCIRCLE'}
                 
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
