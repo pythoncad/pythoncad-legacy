@@ -90,16 +90,6 @@ class Segment(GeometricalEntity):
         """
         return self.__p1, self.__p2
 
-    def getValues(self):
-        """
-            Return values comprising the Segment.
-            This method extends the GraphicObject::getValues() method.
-        """
-        _data = {}
-        _data['type']='segment'
-        _data['p1']=self.__p1.getID()
-        _data['p2']=self.__p2.getID()
-        return _data
 
     def getEndpoints(self):
         """

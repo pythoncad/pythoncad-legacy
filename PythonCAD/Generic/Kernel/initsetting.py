@@ -30,6 +30,10 @@ from Generic.Kernel.Command.arccommand      import ArcCommand
 from Generic.Kernel.Command.pointcommand    import PointCommand
 from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
 from Generic.Kernel.Command.polylinecommand import PolylineCommand
+from Generic.Kernel.Command.aclinecommand   import ACLineCommand
+from Generic.Kernel.Command.clinecommand    import CLineCommand
+from Generic.Kernel.Command.vclinecommand   import VCLineCommand
+from Generic.Kernel.Command.hclinecommand   import HCLineCommand
 #
 # Entity List
 #
@@ -39,6 +43,10 @@ from Generic.Kernel.Entity.arc          import Arc
 from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.polyline     import Polyline
 from Generic.Kernel.Entity.style        import Style 
+from Generic.Kernel.Entity.acline       import ACLine
+from Generic.Kernel.Entity.cline        import CLine
+from Generic.Kernel.Entity.vcline       import VCLine
+from Generic.Kernel.Entity.hcline       import HCLine
 #
 # db Ent
 #
@@ -56,7 +64,17 @@ OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
 #
 # Supported entity by the Application
 #
-PY_CAD_ENT=['POINT','SEGMENT','SETTINGS','LAYER','ARC', 'ELLIPSE', 'POLYLINE']
+PY_CAD_ENT=['POINT',
+            'SEGMENT',
+            'SETTINGS',
+            'LAYER',
+            'ARC', 
+            'ELLIPSE', 
+            'POLYLINE', 
+            'ACLINE', 
+            'CLINE', 
+            'VCLINE',
+            'HCLINE' ]
 #
 # Command Supported by the application
 #
@@ -64,7 +82,11 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
-                        'POLYLINE':PolylineCommand}
+                        'POLYLINE':PolylineCommand, 
+                        'ACLINE':ACLineCommand, 
+                        'CLINE':CLineCommand, 
+                        'VCLINE':VCLineCommand, 
+                        'HCLINE':HCLineCommand}
 #
 # Match object Name
 #
@@ -72,7 +94,12 @@ DRAWIN_ENTITY={ Point:'POINT',
                 Segment:'SEGMENT',
                 Arc:'ARC', 
                 Ellipse:'ELLIPSE', 
-                Polyline:'POLYLINE'}
+                Polyline:'POLYLINE', 
+                ACLine:'ACLINE', 
+                CLine:'CLINE', 
+                VCLine:'VCLINE', 
+                HCLine:'HCLINE'}
+                
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
 # Entity supported by the kernel

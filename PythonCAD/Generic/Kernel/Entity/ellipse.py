@@ -95,19 +95,6 @@ class Ellipse(GeometricalEntity):
         """
         return self.__center, self.__major,self.__minor,self.__angle
 
-    def getValues(self):
-        """
-            Return values comprising the Ellipse.
-        """
-        _data = {}
-        _data['type']='ellipse'
-        #_data['center']=self.__center.getID() # the geometrical entity have no id
-        _data['center']=self.__center
-        _data['major']=self.__major
-        _data['minor']= self.__minor
-        _data['angle']=self.__angle
-        return _data
-
     def getCenter(self):
         """
             Return the center _Point of the Ellipse.

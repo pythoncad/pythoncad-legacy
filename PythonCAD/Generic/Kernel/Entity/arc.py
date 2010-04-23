@@ -67,13 +67,7 @@ class Arc(GeometricalEntity):
         self.__ea = _ea
         self.__center = _cp
 
-    def getConstructionElements(self):
-        """
-            Get the endpoints of the Arc.
-            This function returns a tuple containing the Point objects
-            that for inizializing the arc
-        """
-        return self.__center, self.__radius,self.__sa,self.__ea
+
 
     def __eq__(self, obj):
         """
@@ -100,19 +94,14 @@ class Arc(GeometricalEntity):
                 (abs(self.__radius - obj.getRadius()) > 1e-10) or
                 (abs(self.__sa - obj.getStartAngle()) > 1e-10) or
                 (abs(self.__ea - obj.getEndAngle()) > 1e-10))
-
-    def getValues(self):
+                
+    def getConstructionElements(self):
         """
-            Return values comprising the Arc.
-            This method extends the GraphicObject::getValues() method.
+            Get the endpoints of the Arc.
+            This function returns a tuple containing the Point objects
+            that for inizializing the arc
         """
-        _data = super(Arc, self).getValues()
-        _data.setValue('type', 'arc')
-        _data.setValue('center', self.__center.getID())
-        _data.setValue('radius', self.__radius)
-        _data.setValue('start_angle', self.__sa)
-        _data.setValue('end_angle', self.__ea)
-        return _data
+        return self.__center, self.__radius,self.__sa,self.__ea
 
     def getCenter(self):
         """

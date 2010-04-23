@@ -123,13 +123,12 @@ class ACLine(GeometricalEntity):
         _point = self.getLocation()
         _angle = self.__angle
         return "Angled construction line through %s at %g degrees" % (_point, _angle)
-
-    def getValues(self):
-        _data = {}
-        _data['type']='acline'
-        _data['keypoint']=self.__keypoint.getID()
-        _data['angle']=self.__angle
-        return _data
+    
+    def getConstructionElements(self):
+        """
+            get construction elements
+        """
+        return (self.__keypoint, self.__angle)
 
     def getAngle(self):
         """
@@ -167,7 +166,7 @@ class ACLine(GeometricalEntity):
             _x, _y = _kp.getCoords()
             self.__keypoint = p
 
-    def mapCoords(self, x, y, tol=tolerance.TOL):
+    def mapCoords(self, x, y, tol=TOL):
         """
             Return the nearest Point on the ACLine to a coordinate pair.
 

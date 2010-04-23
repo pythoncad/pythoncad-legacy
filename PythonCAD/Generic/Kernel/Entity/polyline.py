@@ -131,19 +131,6 @@ class Polyline(GeometricalEntity):
         """
         return tuple(self.__pts)
 
-    def getValues(self):
-        """
-            Return values comprising the Polyline.
-        """
-        _data = {}
-        _data['type']='polyline'
-        _pts = []
-        for _pt in self.__pts:
-            #_pts.append(_pt.getID()) The id is not more present on geometrical entity
-            _pts.append(_pt)
-        _data['points']=_pts
-        return _data
-
     def getPoints(self):
         """
             Get the points of the Polyline.

@@ -123,17 +123,6 @@ class Point(GeometricalEntity):
         """
         return (self, )
 
-    def getValues(self):
-        """
-            Return values comprising the Point.
-            This method extends the Subpart::getValues() method.
-        """
-        _data = {}
-        _data['type']='point'
-        _data['x']=self.__x
-        _data['y']=self.__y
-        return _data
-
     def getx(self):
         """
             Return the x-coordinate of a Point.

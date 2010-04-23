@@ -61,7 +61,7 @@ class CLine(ACLine):
         self.__p1 = p1
         self.__p2 = p2
         angle=self._getAngle(p1, p2)
-        ACLine.__init__(p1, angle)
+        ACLine.__init__(self, p1, angle)
 
     def _getAngle(self, p1, p2):
         """
@@ -77,6 +77,11 @@ class CLine(ACLine):
             return angle
         except ZeroDivisionError:
             return math.pi/2
+    def getConstructionElements(self):
+        """
+            get the constaction element 
+        """
+        return self.__p1, self.__p2
         
     def getP1(self):
         """
@@ -96,7 +101,7 @@ class CLine(ACLine):
         _kp = self.__p1
         if _kp is not p:
             self.__p1 = p
-
+    
     p1 = property(getP1, setP1, None, "First keypoint of the CLine.")
 
     def getP2(self):

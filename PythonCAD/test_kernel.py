@@ -701,6 +701,7 @@ class textApplication(object):
                 cObject.applyCommand()
         except PyCadWrongCommand:
             self.outputMsg("Wrong Command")
+            
     def featureTest(self):
         """
             this function make a basic test
@@ -723,6 +724,8 @@ class textApplication(object):
         self.performCommandRandomly("ELLIPSE")
         self.outputMsg("Create Polyline")
         self.performCommandRandomly("POLYLINE")
+        self.outputMsg("Create ACLine")
+        self.performCommandRandomly("ACLINE")
         self.outputMsg("Get Entitys")
         activeDoc=self.__pyCadApplication.getActiveDocument()
         ents=activeDoc.getEntityFromType("ALL")
