@@ -40,7 +40,6 @@ class CCircle(GeometricalEntity):
         center: A Point object
         radius: The CCircle's radius
     """
-
     def __init__(self, center, radius):
         """
             Initialize a CCircle.

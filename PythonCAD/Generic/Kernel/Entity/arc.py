@@ -51,8 +51,10 @@ class Arc(GeometricalEntity):
             The center should be a Point, or a two-entry tuple of floats,
             and the radius should be a float greater than 0.
         """
+        __isCircle=false
         if start_angle ==None or end_angle==None:
             start_angle=end_angle=0
+            __isCircle=true
         _cp = center
         if not isinstance(_cp, Point):
             _cp = Point(center)
@@ -66,8 +68,12 @@ class Arc(GeometricalEntity):
         self.__sa = _sa
         self.__ea = _ea
         self.__center = _cp
-
-
+        
+    def isCircle(self):
+        """
+            return if the arc isa circle
+        """
+        return self.__isCircle
 
     def __eq__(self, obj):
         """

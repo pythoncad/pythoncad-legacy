@@ -308,4 +308,20 @@ class Polyline(GeometricalEntity):
         _col = self.getColor()
         _th = self.getThickness()
         return Polyline(_cpts, _st, _lt, _col, _th)
-
+    
+    def getSegments(self):
+        """
+            return an array of segments that identifie the polyline
+            used for intersection porpouse
+        """
+        tempPoint=None
+        exitArray=[]
+        for p in self.__pts:
+            if tempPoint:
+                exitArray.append(Segment(tempPoint, p))
+            tempPoint=p
+        else:
+            return exitArray
+        return []
+                
+                
