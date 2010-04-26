@@ -51,10 +51,10 @@ class Arc(GeometricalEntity):
             The center should be a Point, or a two-entry tuple of floats,
             and the radius should be a float greater than 0.
         """
-        __isCircle=false
+        __isCircle=False
         if start_angle ==None or end_angle==None:
             start_angle=end_angle=0
-            __isCircle=true
+            __isCircle=True
         _cp = center
         if not isinstance(_cp, Point):
             _cp = Point(center)
@@ -122,7 +122,7 @@ class Arc(GeometricalEntity):
             two float values.
         """
         _cp = self.__center
-        if not isinstance(c, point.Point):
+        if not isinstance(c, Point):
             raise TypeError, "Invalid center point: " + `c`
         if _cp is not c:
             self.__center = c
@@ -267,11 +267,11 @@ class Arc(GeometricalEntity):
         twoPointDistance=self.__center.Dist(fromPoint)
         if(twoPointDistance<self.__radius):
             return None,None
-        originPoint=point.Point(0.0,0.0)
+        originPoint=Point(0.0,0.0)
         tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
         tgAngle=math.asin(self.__radius/twoPointDistance)
         #Compute the x versor
-        xPoint=point.Point(1.0,0.0)
+        xPoint=Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
         twoPointVector=Vector(fromPoint,self.__center)
         rightAngle=twoPointVector.Ang(xVector)
@@ -283,19 +283,19 @@ class Arc(GeometricalEntity):
         # Compute the Positive Tangent
         xCord=math.cos(posAngle)
         yCord=math.sin(posAngle)
-        dirPoint=point.Point(xCord,yCord) # Versor that point at the tangentPoint
+        dirPoint=Point(xCord,yCord) # Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
         ver.Mult(tanMod)
         tangVectorPoint=ver.Point()
-        posPoint=point.Point(tangVectorPoint+(outx,outy))
+        posPoint=Point(tangVectorPoint+(outx,outy))
         # Compute the Negative Tangent
         xCord=math.cos(negAngle)
         yCord=math.sin(negAngle)
-        dirPoint=point.Point(xCord,yCord)#Versor that point at the tangentPoint
+        dirPoint=Point(xCord,yCord)#Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
         ver.Mult(tanMod)
         tangVectorPoint=ver.Point()
-        negPoint=point.Point(tangVectorPoint+(outx,outy))
+        negPoint=Point(tangVectorPoint+(outx,outy))
         if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
             return posPoint.getCoords()
         else:
@@ -307,15 +307,15 @@ class Arc(GeometricalEntity):
         """
         _cx, _cy = self.__center.getCoords()
         _r = self.__radius
-        centerPoint=point.Point(_cx,_cy)
-        outPoint=point.Point(x,y)
+        centerPoint=Point(_cx,_cy)
+        outPoint=Point(x,y)
         vector=Vector(outPoint,centerPoint)
         vNorm=vector.Norm()
         newNorm=abs(vNorm-_r)
         magVector=vector.Mag()
         magVector.Mult(newNorm)
         newPoint=magVector.Point()
-        intPoint=point.Point(outPoint+newPoint)
+        intPoint=Point(outPoint+newPoint)
         return intPoint.getCoords()
 
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):

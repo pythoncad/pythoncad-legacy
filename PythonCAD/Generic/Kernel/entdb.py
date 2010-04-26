@@ -26,6 +26,8 @@ import cPickle as pickle
 from Generic.Kernel.entity              import *
 from Generic.Kernel.basedb              import BaseDb
 from Generic.Kernel.initsetting         import *
+from Generic.Kernel.exception import EmptyDbSelect
+
 
 class EntDb(BaseDb):
     """
@@ -196,7 +198,7 @@ class EntDb(BaseDb):
                         WHERE pycad_undo_visible=1 
                         GROUP BY pycad_entity_id ORDER BY PyCad_Id)
                     AND pycad_style_id=%s"""%str(styleId)
-        _dbEntRow=self.makeSelect(_sqlCheck)
+        _dbEntRow=self.makeSelect(_sqlGet)
         for _row in _dbEntRow: 
             _style=_row[4]
             _dumpObj=pickle.loads(_row[3])
@@ -295,7 +297,7 @@ class EntDb(BaseDb):
         _outObj=[]
         _dbEntRow=self.getMultiFilteredEntity(entityTypeArray=typeArray)
         for _row in _dbEntRow: 
-            _objEnt=convertRowToDbEnt(_row)            
+            _objEnt=self.convertRowToDbEnt(_row)            
             _outObj.append(_objEnt)
         return _outObj  
         
@@ -313,12 +315,12 @@ class EntDb(BaseDb):
             pycad_visible
             FROM pycadent
         """
-        _style=_row[4]
-        _dumpObj=pickle.loads(str(_row[3]))
-        _objEnt=Entity(_row[2],_dumpObj,_style,_row[1])
-        _objEnt.state=_row[5]
-        _objEnt.index=_row[6]
-        _objEnt.visible=_row[7]
+        _style=row[4]
+        _dumpObj=pickle.loads(str(row[3]))
+        _objEnt=Entity(row[2],_dumpObj,_style,row[1])
+        _objEnt.state=row[5]
+        _objEnt.index=row[6]
+        _objEnt.visible=row[7]
         _objEnt.updateBBox()  
         return _objEnt
         
