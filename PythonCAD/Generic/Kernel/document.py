@@ -203,6 +203,8 @@ class Document(BaseDb):
             BaseDb.commit=False
             if isinstance(entity,tuple(DRAWIN_ENTITY.keys())):
                 _obj=self.saveDrwEnt(entity)
+            if isinstance(entity,tuple(DRAWIN_COMPOSED_ENTITY.keys())):
+                _obj=self.saveDrwComposeEnt(entity)
             if isinstance(entity,Settings):
                 _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
@@ -219,27 +221,46 @@ class Document(BaseDb):
         except:
             print "Unexpected error:", sys.exc_info()[0]
             raise
-
+    #ToDo: test the savedrwcomposeent and see if it's possible to improve it
+    #before saving an entity I need to chech if olready exsist
+    #in case of composed entity the entity are already in the drawing .
+    def saveDrwComposeEnt(self, entity):
+        """
+            save the entity that have some relation
+        """
+        for e in entity.getReletedComponent():
+            self.saveEntity(e)
+        _cElements=self._getCelements(entity)
+        _obj=self.saveDbEnt(entityType,_cElements)
+        self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
+        
     def saveDrwEnt(self,entity):
         """
             Save a PythonCad drawing entity
         """
-        self.__logger.debug('saveArc')
+        self.__logger.debug('saveDrwEnt')
         for t in DRAWIN_ENTITY :
             if isinstance(entity, t):
                 entityType=DRAWIN_ENTITY[t]
                 break
         self.__entId+=1
-        _cElements={}
-        i=0
-        for _p in entity.getConstructionElements():
-            _key='%s_%s'%(str(entityType),str(i))
-            _cElements[_key]=_p
-            i+=1
+        _cElements=self._getCelements(entity)
         _obj=self.saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         return _obj
-
+        
+    def _getCelements(self, entity):
+        """
+            get an array of construction elements
+        """
+        cElements={}
+        i=0
+        for _p in entity.getConstructionElements():
+            _key='%s_%s'%(str(entityType),str(i))
+            cElements[_key]=_p
+            i+=1
+        return cElements
+        
     def saveSettings(self,settingsObj):
         """
             save the settings object

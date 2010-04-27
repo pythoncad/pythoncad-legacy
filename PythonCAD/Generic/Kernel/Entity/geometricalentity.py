@@ -31,3 +31,19 @@ class GeometricalEntity(object):
             This must return a tuple of object better if there are point
         """
         pass
+
+class GeometricalEntityComposed(object):
+    """
+        this class provide the basic object for composed entity 
+    """
+    def getConstructionElements(self):
+        """
+            Get the construction element of ..
+            This must return a tuple of object better if there are point
+        """
+        pass
+    def getReletedComponent(self):
+        """
+            Get The releted object to be updated
+        """
+        pass

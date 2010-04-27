@@ -49,6 +49,8 @@ from Generic.Kernel.Entity.cline        import CLine
 from Generic.Kernel.Entity.vcline       import VCLine
 from Generic.Kernel.Entity.hcline       import HCLine
 from Generic.Kernel.Entity.ccircle      import CCircle
+from Generic.Kernel.Entity.segjoint     import Fillet, Chamfer
+
 #
 # db Ent
 #
@@ -104,7 +106,10 @@ DRAWIN_ENTITY={ Point:'POINT',
                 VCLine:'VCLINE', 
                 HCLine:'HCLINE', 
                 CCircle:'CCIRCLE'}
-                
+
+DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
+                        Chamfer:'CHAMFER'}
+            
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
 # Entity supported by the kernel
