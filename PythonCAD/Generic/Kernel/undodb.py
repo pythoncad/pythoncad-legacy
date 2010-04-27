@@ -23,17 +23,17 @@
 
 import sys
 
-from Generic.Kernel.pycadbasedb            import PyCadBaseDb
-from Generic.Kernel.pycaddbexception       import UndoDb
+from Generic.Kernel.basedb            import BaseDb
+#from Generic.Kernel.pycaddbexception       import UndoDb
 
 
-class UndoDb(PyCadBaseDb):
+class UndoDb(BaseDb):
     """
         this Class Provide all the basic operation to be made on the
         undo
     """
     def __init__(self,dbConnection):
-        PyCadBaseDb.__init__(self)
+        BaseDb.__init__(self)
         if dbConnection is None:
             self.createConnection()
         else:

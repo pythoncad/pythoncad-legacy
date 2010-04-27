@@ -6,7 +6,7 @@ __date__="$Mar 11, 2010 9:44:52 PM$"
 
 from pysqlite2 import dbapi2 as sql
 from Generic.Kernel.pycadtransaction import Transaction
-from Generic.Kernel.pycaddbexception import *
+from Generic.Kernel.exception import *
 
 print "Pysql2 --" , sql.__file__
 

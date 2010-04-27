@@ -47,7 +47,7 @@ class Application(object):
         # manage Document inizialization
         self.__Docuemnts={}
         if args.has_key('open'):
-            openDocument(args['open'])
+            self.openDocument(args['open'])
         else:
             self.__ActiveDocument=None
         # Fire the Application inizialization
