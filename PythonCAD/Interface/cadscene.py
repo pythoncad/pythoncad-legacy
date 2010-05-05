@@ -24,6 +24,8 @@ class CadScene(QtGui.QGraphicsScene):
 
     def openDocument(self, filename):
         if (filename != None) and (len(filename) > 0):
+            # Clear the scene
+            self.clear()
             # todo: check filename
             self.__filename = filename
             # open a new kernel
@@ -44,6 +46,7 @@ class CadScene(QtGui.QGraphicsScene):
             if document.haveDrawingEntitys():
                 # add entities to scene
                 self.populateScene(document)
+                
     def closeDocument(self):
         if self.__filename != None:
             # close document from kernel
@@ -52,7 +55,14 @@ class CadScene(QtGui.QGraphicsScene):
             self.clear()
             # reset filename
             self.__filename = None
-        
+            #looking if there is other document in the application
+            document=self.__application.getActiveDocument()
+            if document:
+                if document.haveDrawingEntitys():
+                    # add entities to scene
+                    self.populateScene(document) 
+        else:
+            self.clear()    
             
     def populateScene(self, document):
         

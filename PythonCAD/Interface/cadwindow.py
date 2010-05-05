@@ -51,7 +51,7 @@ class CadWindow(QtGui.QMainWindow):
         self._createStatusBar()
         self._createDockWindows()
 
-        self.setWindowTitle("PyCAD (Qt)")
+        self.setWindowTitle("PythonCAD (Qt)")
 
         self.setUnifiedTitleAndToolBarOnMac(True)
         

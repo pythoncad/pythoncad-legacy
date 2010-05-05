@@ -230,7 +230,7 @@ class Document(BaseDb):
         """
         for e in entity.getReletedComponent():
             self.saveEntity(e)
-        _cElements=self._getCelements(entity)
+        _cElements, entityType =self._getCelements(entity)
         _obj=self.saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         
@@ -239,12 +239,9 @@ class Document(BaseDb):
             Save a PythonCad drawing entity
         """
         self.__logger.debug('saveDrwEnt')
-        for t in DRAWIN_ENTITY :
-            if isinstance(entity, t):
-                entityType=DRAWIN_ENTITY[t]
-                break
+
         self.__entId+=1
-        _cElements=self._getCelements(entity)
+        _cElements, entityType=self._getCelements(entity)
         _obj=self.saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         return _obj
@@ -253,13 +250,17 @@ class Document(BaseDb):
         """
             get an array of construction elements
         """
+        for t in DRAWIN_ENTITY :
+            if isinstance(entity, t):
+                entityType=DRAWIN_ENTITY[t]
+                break
         cElements={}
         i=0
         for _p in entity.getConstructionElements():
             _key='%s_%s'%(str(entityType),str(i))
             cElements[_key]=_p
             i+=1
-        return cElements
+        return cElements, entityType
         
     def saveSettings(self,settingsObj):
         """
