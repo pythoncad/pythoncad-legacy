@@ -26,7 +26,7 @@ import cPickle as pickle
 from Generic.Kernel.entity              import *
 from Generic.Kernel.basedb              import BaseDb
 from Generic.Kernel.initsetting         import *
-from Generic.Kernel.exception import EmptyDbSelect
+from Generic.Kernel.exception           import EmptyDbSelect
 
 
 class EntDb(BaseDb):

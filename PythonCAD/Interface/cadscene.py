@@ -2,8 +2,8 @@
 
 from PyQt4 import QtCore, QtGui
 from Generic.Kernel.application import Application
-from Interface.segment import Segment
-
+from Interface.segment  import Segment
+from Interface.arc      import Arc
 
 class CadScene(QtGui.QGraphicsScene):
     
@@ -65,17 +65,20 @@ class CadScene(QtGui.QGraphicsScene):
             self.clear()    
             
     def populateScene(self, document):
-        
-        entities = document.getEntityFromType("SEGMENT")
-        
-        for entity in entities:
-            # add segment to scene port
-            segment = Segment(entity)
-            self.addItem(segment)
-            # adjust drawing limits
-            self.updateLimits(segment.boundingRect())
-            
-        
+        for entName in ("SEGMENT", "ARC"):
+            entities = document.getEntityFromType(entName)
+            for entity in entities:
+                if entity.getEntityType()=="SEGMENT":
+                    # add segment to scene port
+                    newQtEnt= Segment(entity)
+                    self.addItem(newQtEnt)
+                elif entity.getEntityType()=="ARC":
+                    # add segment to scene port
+                    newQtEnt = Arc(entity)
+                    self.addItem(newQtEnt)
+                # adjust drawing limits
+                self.updateLimits(newQtEnt.boundingRect())   
+                    
     def updateLimits(self, rect):
         # init size
         if self.__limits == None:
