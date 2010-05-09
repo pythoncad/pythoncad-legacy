@@ -31,6 +31,15 @@ class StructuralError(Exception):
     def __str__(self):
         return repr(self.value)
 
+class EmptyFile(Exception):
+    """
+        class for managin empty file 
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
    
         
 class EmptyDbSelect(Exception):

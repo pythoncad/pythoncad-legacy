@@ -541,6 +541,7 @@ class textApplication(object):
         # Application Command
         self.__applicationCommand['Open']=self.openFile
         self.__applicationCommand['Close']=self.closeFile
+        self.__applicationCommand['New']=self.newDoc
         self.__applicationCommand['Documents']=self.showDocuments
         self.__applicationCommand['SetActive']=self.setActiveDoc
         self.__applicationCommand['GetActive']=self.getActiveDoc
@@ -607,7 +608,15 @@ class textApplication(object):
                 self.outputMsg("There are more then 100 entitys in the select so i stop printing")
                 break
             i+=1
-            
+    def newDoc(self):
+        """
+            create a new document
+        """
+        try:
+            self.__pyCadApplication.newDocument(None)
+        except (IOError, EmptyFile):
+            self.outputMsg("Unable To open the file %s"%str(filePath))
+
     def getActiveDoc(self):            
         """
             print the active document
@@ -617,6 +626,7 @@ class textApplication(object):
             self.outputMsg("Active Document is %s"%str(doc.dbPath))
         except:
             self.outputMsg("Unable To Perform the getActiveDoc") 
+   
     def setActiveDoc(self):
         """
             set the active docuement

@@ -84,6 +84,18 @@ class Application(object):
             get the list of all the command
         """
         return  self.__applicationCommand.keys()
+    
+    def newDocument(self, fileName=None):
+        """
+            Create a new document empty document in the application
+        """
+        newDoc=Document(fileName)
+        fileName=newDoc.dbPath
+        self.__Docuemnts[fileName]=newDoc
+        self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
+        self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
+        return self.__Docuemnts[fileName]
+        
         
     def openDocument(self, fileName):
         """

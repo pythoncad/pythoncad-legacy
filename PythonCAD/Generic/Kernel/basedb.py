@@ -23,6 +23,7 @@
 
 import os
 import sys
+import tempfile
 #import sqlite3 as sql
 # sqlite + R*Tree module
 from pysqlite2 import dbapi2 as sql
@@ -36,16 +37,18 @@ class BaseDb(object):
     commit=True
     def __init__(self):
         self.__dbConnection=None
-
+        self.dbPath=None
     def createConnection(self,dbPath=None):
         """
             create the connection with the database
         """
         if dbPath is None:
-            dbPath='pythoncad.pdr'
-        if not os.path.exists(dbPath):
-            raise IOError , 'Unable lo get the db %s'%str(dbPath)
-            sys.exit()
+            # fix me must be fixed for windows installation
+            dbPath=tempfile.mkdtemp(suffix='_temp', prefix='PyCad_')+r"/PythonCad.pdr"
+        else:
+            if not os.path.exists(dbPath):
+                raise IOError , 'Unable lo get the db %s'%str(dbPath)
+                sys.exit()
         self.__dbConnection = sql.connect(dbPath)
         self.dbPath=dbPath
         

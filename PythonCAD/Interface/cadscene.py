@@ -1,5 +1,4 @@
 
-
 from PyQt4 import QtCore, QtGui
 from Generic.Kernel.application import Application
 from Interface.segment  import Segment
@@ -21,7 +20,12 @@ class CadScene(QtGui.QGraphicsScene):
     
     Limits = property(__getLimits, None, None, "Gets the drawing limits")
     
-
+    def newDocument(self):
+        """
+            create an empty document in temop file
+        """
+        self.__application.newDocument()
+        
     def openDocument(self, filename):
         if (filename != None) and (len(filename) > 0):
             # Clear the scene

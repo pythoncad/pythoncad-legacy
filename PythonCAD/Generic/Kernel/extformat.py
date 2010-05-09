@@ -287,7 +287,7 @@ class Dxf(DrawingFile):
         _c = e.getColor()
         _c = str(_c)
         _c = ChangeColor(_c)
-        print "debug Arc color are", _c # TODO : replace the dprint with the logging
+        dprint("debug Arc color are %s "%str( _c))
         self.writeLine("  0\nARC\n100\nAcDbCircle\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
         self.writeLine(" 10\n" +str(x1) +"\n")
@@ -301,7 +301,7 @@ class Dxf(DrawingFile):
         _c = e.getColor()
         _c = str(_c)
         _c = ChangeColor(_c)
-        print "debug Arc color are", _c # TODO : replace the dprint with the logging
+        dprint( "debug Arc color are %s"%str(_c))
         self.writeLine("  0\nLWPOLYLINE\n100\nAcDbPolyline\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
         count = e.getNumPoints()
@@ -324,7 +324,7 @@ class Dxf(DrawingFile):
         _c = e.getColor()
         _c = str(_c)
         _c = ChangeColor(_c)
-        print "debug Text color are", _c # TODO : replace the dprint with the logging
+        dprint("debug Text color are %s "%str( _c))
         txt = e.getText()
         txt = txt.replace(' ', '\~')
         txt = txt.replace('\n', '\P')
@@ -339,7 +339,7 @@ class Dxf(DrawingFile):
         """
             Open The file and create The entity in pythonCad
         """
-        dPrint( "Debug: import entitys") # TODO : replace the dprint with the logging
+        dPrint( "Debug: import entitys") 
         self.readAsci();
         #_layerName,_ext=os.path.splitext(os.path.basename(self.getFileName()))
         #_layerName="Imported_"+_layerName
@@ -351,19 +351,19 @@ class Dxf(DrawingFile):
             _k = self.readLine()
             if not _k: break
             else:
-                #print  "debug: readline", _k # TODO : replace the dprint with the logging
+                ##print  "debug: readline", _k # TODO : replace the dprint with the logging
                 #dPrint( "Debug: Read Line line = [%s]"%str(_k)) # TODO : replace the dprint with the logging
                 if _k[0:5] == 'TABLE':
                     _k = self.readLine() # for tag "  2"
                     _k = self.readLine() # for table name
-                    print "debug TABLE found" # TODO : replace the dprint with the logging
+                    ##print "debug TABLE found" # TODO : replace the dprint with the logging
                     if _k[0:5] == 'LAYER':
                         self.readLayer()
-                        print "debug LAYER found" # TODO : replace the dprint with the logging
+                        #print "debug LAYER found" # TODO : replace the dprint with the logging
                     continue
                 if _k[0:4] == 'LINE':
                     self.createLineFromDxf()
-                    #print "debug line found" # TODO : replace the dprint with the logging
+                    ##print "debug line found" # TODO : replace the dprint with the logging
                     continue
                 if _k[0:6] == 'CIRCLE':
                     self.createCircleFromDxf()
@@ -376,7 +376,7 @@ class Dxf(DrawingFile):
                     continue
                 if _k[0:3] == 'ARC':
                     self.createArcFromDxf()
-                    #print "debug arc found"
+                    ##print "debug arc found"
                     continue
                 if _k[0:10] == 'LWPOLYLINE':
                     #self.createPolylineFromDxf()
@@ -394,7 +394,7 @@ class Dxf(DrawingFile):
         Layers, Colors and Linetype
         WORK IN PROGRESS
         """
-        #print 'debug Layer found !'
+        ##print 'debug Layer found !'
         layerColor = {}
         dxfColor = 0
         layerName = '0'
@@ -406,11 +406,11 @@ class Dxf(DrawingFile):
             if _k[0:3] == '  2':
                 _k = self.readLine()
                 layerName = _k.replace('\n', '')
-                print "Debug New LayerName=", layerName
+                #print "Debug New LayerName=", layerName
             if _k[0:3] == ' 62':
                 _k = self.readLine()
                 dxfColor = _k.replace('\n', '')
-                print "Debug new dxfColor = ", dxfColor
+                #print "Debug new dxfColor = ", dxfColor
             layerColor[layerName] = dxfColor
         return layerColor
 
@@ -426,10 +426,10 @@ class Dxf(DrawingFile):
         g = 0 # start counter to read lines
         c = 0
         while g < 18:
-            #print "Debug g =", g
-            #print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
+            ##print "Debug g =", g
+            ##print "Debug: Read line  g = %s Value = %s "%(str(g),str(line))
             _k = self.readLine()
-            #print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
+            ##print "Debug: Read line g = %s k =  %s "%(str(g),str(k))
             #dPrint( "line value k="+_k)
             if _k[0:3] == ' 62':# COLOR
                 _k = self.readLine()
@@ -437,33 +437,33 @@ class Dxf(DrawingFile):
             if _k[0:3] == ' 10':
                 dPrint( "debug 10"+ _k)
                 # this line of file contains start point"X" co ordinate
-                #print "Debug: Convert To flot x1: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot x1: %s" % str(k[0:-1])
                 _k = self.readLine()
                 x1 = (float(_k[0:-1]))
                 continue
             if _k[0:3] == ' 20':# this line of file contains start point "Y" co ordinate
-                #print "Debug: Convert To flot y1: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot y1: %s" % str(k[0:-1])
                 _k = self.readLine()
                 y1 = (float(_k[0:-1]))
                 continue
             if _k[0:3] == ' 30':# this line of file contains start point "Z" co ordinate
-                #print "Debug: Convert To flot z1: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot z1: %s" % str(k[0:-1])
                 _k = self.readLine()
                 z1 = (float(_k[0:-1]))
                 continue
                 # Z co ordinates are not used in PythonCAD we can live without this line
             if _k[0:3] == ' 11':# this line of file contains End point "X" co ordinate
-                #print "Debug: Convert To flot x2: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot x2: %s" % str(k[0:-1])
                 _k = self.readLine()
                 x2 = (float(_k[0:-1]))
                 continue
             if _k[0:3] == ' 21':# this line of file contains End point "Y" co ordinate
-                #print "Debug: Convert To flot y2: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot y2: %s" % str(k[0:-1])
                 _k = self.readLine()
                 y2 = (float(_k[0:-1]))
                 continue
             if _k[0:3] == ' 31':# this line of file contains End point "Z" co ordinate
-                #print "Debug: Convert To flot z2: %s" % str(k[0:-1])
+                ##print "Debug: Convert To flot z2: %s" % str(k[0:-1])
                 _k = self.readLine()
                 z2 = (float(_k[0:-1]))
                 g = 119
@@ -487,7 +487,7 @@ class Dxf(DrawingFile):
           1) Create a new layer(ex: Dxf Import)
           2) Read dxf import style propertis and set it to the line
         """
-        #print "debug c=", c
+        ##print "debug c=", c
         #dPrint( "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) ) # TODO : replace the dprint with the logging
         #_active_layer = self.__dxfLayer
         _p1 = Point(x1, y1)
@@ -504,7 +504,7 @@ class Dxf(DrawingFile):
         #_c = self.__image.getOption('LINE_COLOR')
         #if _c != _s.getColor():
         #  _seg.setColor(_c)
-        #print _c
+        ##print _c
         #_t = self.__image.getOption('LINE_THICKNESS')
         #if abs(_t - _s.getThickness()) > 1e-10:
         #  _seg.setThickness(_t)
@@ -565,7 +565,7 @@ class Dxf(DrawingFile):
             if _k[0:3] == ' 10':
                 _k = self.readLine()
                 x = (float(_k[0:-1]))
-                #print "Text Loc x =", x
+                ##print "Text Loc x =", x
                 continue
             if _k[0:3] == ' 20':
                 _k = self.readLine()
@@ -575,7 +575,7 @@ class Dxf(DrawingFile):
             if _k[0:3] == ' 30':
                 _k = self.readLine()
                 z = (float(_k[0:-1]))
-                #print "Text Loc z =", z
+                ##print "Text Loc z =", z
                 continue
             if _k[0:3] == ' 40':
                 _k = self.readLine()
@@ -586,7 +586,7 @@ class Dxf(DrawingFile):
                 _k = self.readLine()
                 _t = _k.replace('\~', ' ')
                 _t = _t.replace('\P', '\n')
-                #print "Text itself is ", x, y, z, 'height', h, _t#
+                ##print "Text itself is ", x, y, z, 'height', h, _t#
                 g = 10 # g > 1 for break
                 continue
         if not (x is None or y is None or h is None):
@@ -725,7 +725,7 @@ class Dxf(DrawingFile):
         t = 0
         while True:
             # this line of file contains start point"X" co ordinate
-            # print "Debug: Convert To flot x1: %s" % str(k[0:-1])
+            # #print "Debug: Convert To flot x1: %s" % str(k[0:-1])
             _k = self.readLine()
             x = (float(_k[0:-1]))
             _k = self.readLine()#pass for k[0:3] == ' 20'

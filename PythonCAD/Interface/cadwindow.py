@@ -57,7 +57,10 @@ class CadWindow(QtGui.QMainWindow):
         
 
     def _onNewDrawing(self):
-        pass
+        """
+            Create a new drawing 
+        """
+        self._scene.newDocument()
     
 
     def _onOpenDrawing(self):
