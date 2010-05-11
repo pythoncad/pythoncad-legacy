@@ -689,6 +689,8 @@ class textApplication(object):
                     cObject[iv]=self.imputPoint(message)                    
                 except (ExcLenght, ExcAngle):
                     cObject[iv]=self.inputFloat(message)
+                except (ExText):
+                    cObject[iv]=self.inputMsg(message)
                 except:
                     print "Bad error !!"
                     raise 

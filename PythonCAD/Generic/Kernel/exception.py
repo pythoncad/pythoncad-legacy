@@ -40,17 +40,23 @@ class EmptyFile(Exception):
     def __str__(self):
         return repr(self.value)
 
-class   StyleUndefinedAttribute(Exception):
+class StyleUndefinedAttribute(Exception):
     """
         Class for managing styleAttribute problems 
     """
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)
+        return repr(self.value)  
 
-   
-        
+class PythopnCadWarning(Exception):
+    """
+        Class for raise a warning exception
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)  
 class EmptyDbSelect(Exception):
     """
         This exception is used for null return of
@@ -151,6 +157,15 @@ class ExcLenght(Exception):
 class ExcAngle(Exception):
     """
         when this exception is trown it means that the command need a deg angle
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class ExText(Exception):
+    """
+        when this exception is trown it means that the command need text
     """
     def __init__(self, value):
         self.value = value

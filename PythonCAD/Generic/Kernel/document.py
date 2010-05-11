@@ -99,7 +99,6 @@ class Document(BaseDb):
             self.__LayerTree=LayerTree(self)
         except StructuralError:
             raise StructuralError, 'Unable to create LayerTree structure'
-
         self.__logger.debug('Done inizialization')
     
     def getDBStyles(self):
@@ -122,19 +121,24 @@ class Document(BaseDb):
         """
             set the default active style
         """
+        self.__activeStyleObj=self.getStyle(id, name)
+    
+    def getStyle(self, id=None, name=None):
+        """
+            get the style object
+        """
         _styleObjs=self.getEntityFromType('STYLE')
         if id!=None:
             for sto in _styleObjs:
                 if sto.getId()==id:
-                    self.__activeStyleObj=sto
-                    break
+                    return sto
         else:
             for sto in _styleObjs:
                 _styleObj=sto.getConstructionElements()
                 if _styleObj.name==name:
-                   self.__activeStyleObj=sto 
-                   break 
-            
+                   return sto 
+        raise EntityMissing, "Miss entity style in db id: <%s> name : <%s>"%(str(id), str(name))
+        
     def getDbSettingsObject(self):
         """
             get the pythoncad settings object

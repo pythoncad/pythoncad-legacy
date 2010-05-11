@@ -35,6 +35,8 @@ from Generic.Kernel.Command.clinecommand    import CLineCommand
 from Generic.Kernel.Command.vclinecommand   import VCLineCommand
 from Generic.Kernel.Command.hclinecommand   import HCLineCommand
 from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
+from Generic.Kernel.Command.textcommand     import TextCommand
+
 #
 # Entity List
 #
@@ -50,7 +52,7 @@ from Generic.Kernel.Entity.vcline       import VCLine
 from Generic.Kernel.Entity.hcline       import HCLine
 from Generic.Kernel.Entity.ccircle      import CCircle
 from Generic.Kernel.Entity.segjoint     import Fillet, Chamfer
-
+from Generic.Kernel.Entity.text         import Text
 #
 # db Ent
 #
@@ -80,7 +82,8 @@ PY_CAD_ENT=['POINT',
             'CLINE', 
             'VCLINE',
             'HCLINE', 
-            'CCIRCLE' ]
+            'CCIRCLE', 
+            'TEXT' ]
 #
 # Command Supported by the application
 #
@@ -93,7 +96,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'CLINE':CLineCommand, 
                         'VCLINE':VCLineCommand, 
                         'HCLINE':HCLineCommand, 
-                        'CCIRCLE':CCircleCommand}
+                        'CCIRCLE':CCircleCommand, 
+                        'TEXT':TextCommand}
 #
 # Match object Name
 #
@@ -106,7 +110,8 @@ DRAWIN_ENTITY={ Point:'POINT',
                 CLine:'CLINE', 
                 VCLine:'VCLINE', 
                 HCLine:'HCLINE', 
-                CCircle:'CCIRCLE'}
+                CCircle:'CCIRCLE', 
+                Text:'TEXT'}
 
 DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
                         Chamfer:'CHAMFER'}
@@ -530,3 +535,5 @@ cgcol = {
 '#bebebe':254, 254:'#bebebe',
 '#ffffff':255, 255:'#ffffff',
 }
+
+TEXT_POSITION=['n','ne', 'e', 'se', 's', 'sw', 'w','nw']

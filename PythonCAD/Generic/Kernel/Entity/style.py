@@ -41,14 +41,7 @@ class Style(GeometricalEntity):
             if name:
                 self.__name=name
             else: #assing a default name (usefoul for list o tree name)
-                self.name=getRandomString()
-        
-        def getConstructionElements(self):        
-            """
-                get the construction elements of the style
-            """
-            #the style entity retun the self istance
-            return (self, )
+                self.name=getRandomString()       
             
         def setName(self, name):
             """

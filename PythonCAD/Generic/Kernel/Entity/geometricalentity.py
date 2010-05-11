@@ -30,7 +30,7 @@ class GeometricalEntity(object):
             Get the construction element of ..
             This must return a tuple of object better if there are point
         """
-        pass
+        return (self, )
 
 class GeometricalEntityComposed(object):
     """

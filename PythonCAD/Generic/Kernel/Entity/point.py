@@ -115,14 +115,6 @@ class Point(GeometricalEntity):
             x,y = obj.getCoords()
         return self.__x+x,self.__y+y
 
-    def getConstructionElements(self):
-        """
-            Get the endpoints of the Point.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Point
-        """
-        return (self, )
-
     def getx(self):
         """
             Return the x-coordinate of a Point.

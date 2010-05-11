@@ -46,7 +46,6 @@ class Application(object):
         self.beforeCloseDocumentEvent=PyCadEvent()
         self.afterCloseDocumentEvent=PyCadEvent()
         self.activeteDocumentEvent=PyCadEvent()
-        
         # manage Document inizialization
         self.__Docuemnts={}
         if args.has_key('open'):
@@ -55,10 +54,10 @@ class Application(object):
             self.__ActiveDocument=None
         # Fire the Application inizialization
         self.startUpEvent(self)
-
+    
     def setActiveDocument(self, document):    
         """
-            set the document to active
+            Set the document to active
         """
         if document:
             if self.__Docuemnts.has_key(document.dbPath):
@@ -98,7 +97,6 @@ class Application(object):
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
         return self.__Docuemnts[fileName]
-        
         
     def openDocument(self, fileName):
         """

@@ -20,8 +20,6 @@
 #
 # This module provide basic DB class for storing entity in pythoncad
 #
-
-
 from Generic.Kernel.Entity.style            import Style
 from Generic.Kernel.Entity.pycadobject      import *
 from Generic.Kernel.Entity.point            import Point
