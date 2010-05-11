@@ -645,12 +645,16 @@ class Dxf(DrawingFile):
         #_s = self.__image.getOption('LINE_STYLE')
         if sa is None or ea is None:
             sa=ea=0 #This is the case of circle
-        ex = x + r*math.cos((sa*math.pi)/180)
-        ey = y + r*math.sin((sa*math.pi)/180)
-        lpx = x + r*math.cos((ea*math.pi)/180)
-        lpy = y + r*math.sin((ea*math.pi)/180)
-        ep = Point(ex, ey)
-        lp = Point(lpx, lpy)
+        else:
+            sa=(sa*math.pi)/180
+            ea=(ea*math.pi)/180
+            ea=ea-sa
+        #ex = x + r*math.cos(sa)
+        #ey = y + r*math.sin(sa)
+        #lpx = x + r*math.cos(ea)
+        #lpy = y + r*math.sin(ea)
+        #ep = Point(ex, ey)
+        #lp = Point(lpx, lpy)
         #_active_layer.addObject(ep)
         #_active_layer.addObject(lp)
         _arc = Arc(_center, r, sa, ea)
