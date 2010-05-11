@@ -10,12 +10,11 @@ import sqlite3 as sqlite
 # This is needed for me to use unpickle objects
 sys.path.append(os.path.join(os.getcwd(), 'Generic', 'Kernel'))    
     
-
 from random                             import random
 from Generic.Kernel.document            import *
 from Generic.Kernel.application         import Application
 from Generic.Kernel.Entity.point        import Point
-
+from Generic.Kernel.Entity.style import Style
 def printId(kernel,obj):
     """
         print the id of the obj
@@ -513,6 +512,7 @@ class textApplication(object):
         self.__applicationCommand['Close']=self.closeFile
         self.__applicationCommand['New']=self.newDoc
         self.__applicationCommand['Documents']=self.showDocuments
+        self.__applicationCommand['CreateStyle']=self.createStyle
         self.__applicationCommand['SetActive']=self.setActiveDoc
         self.__applicationCommand['GetActive']=self.getActiveDoc
         self.__applicationCommand['GetEnts']=self.getEnts
@@ -539,6 +539,7 @@ class textApplication(object):
                     self.outputMsg("Wrong Command !!")
             except EntityMissing, err:
                 self.outputMsg("Application Error %s "%str(err))
+                
     def printHelp(self):            
         """
             print the command list
@@ -559,6 +560,10 @@ class textApplication(object):
                 type="ALL"
             startTime=time.clock()
             activeDoc=self.__pyCadApplication.getActiveDocument()
+            if activeDoc == None:
+                self.outputMsg("No Object opened")
+                return
+                
             ents=activeDoc.getEntityFromType(type)
             endTime=time.clock()-startTime       
             self.printEntity(ents)
@@ -566,7 +571,8 @@ class textApplication(object):
             self.outputMsg("********************************")
         except:
             self.outputMsg("Unable To Perform the getEnts")   
-            
+
+        
     def printEntity(self, ents):
         """
             print a query result
@@ -586,7 +592,16 @@ class textApplication(object):
             self.__pyCadApplication.newDocument(None)
         except (IOError, EmptyFile):
             self.outputMsg("Unable To open the file %s"%str(filePath))
-
+    
+    def createStyle(self):        
+        """
+            create a new style object
+        """
+        styleName=self.inputMsg("Write style name")
+        stl=Style(styleName)
+        doc=self.__pyCadApplication.getActiveDocument()
+        doc.saveEntity(stl);
+        
     def getActiveDoc(self):            
         """
             print the active document

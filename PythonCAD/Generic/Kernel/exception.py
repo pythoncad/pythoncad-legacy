@@ -40,6 +40,15 @@ class EmptyFile(Exception):
     def __str__(self):
         return repr(self.value)
 
+class   StyleUndefinedAttribute(Exception):
+    """
+        Class for managing styleAttribute problems 
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
    
         
 class EmptyDbSelect(Exception):

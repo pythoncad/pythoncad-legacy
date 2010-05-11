@@ -59,7 +59,6 @@ class Arc(GeometricalEntity):
         if not isinstance(_cp, Point):
             _cp = Point(center)
         _r = get_float(radius)
-        _r = float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
         _sa = make_c_angle(start_angle)
@@ -160,10 +159,7 @@ class Arc(GeometricalEntity):
             Set the start_angle for the Arc.
             The argument angle should be a float.
         """
-        _sa = self.__sa
-        _angle = make_c_angle(angle)
-        if abs(_sa - _angle) > 1e-10:
-            self.__sa = _angle
+        self.__sa = _angle
 
     start_angle = property(getStartAngle, setStartAngle, None,
                            "Start angle for the Arc.")
@@ -179,11 +175,7 @@ class Arc(GeometricalEntity):
             Set the end_angle for the Arc.
             The argument angle should be a float.
         """
-        _ea = self.__ea
-        _angle = make_c_angle(angle)
-        if abs(_ea - _angle) > 1e-10:
-            self.__ea = _angle
-            _cx, _cy = self.__center.getCoords()
+        self.__ea = _angle
 
     end_angle = property(getEndAngle, setEndAngle, None,
                          "End angle for the Arc.")

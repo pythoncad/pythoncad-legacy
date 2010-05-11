@@ -23,6 +23,7 @@
 #
 #
 import sys
+import os
 from Generic.Kernel.exception           import *
 from Generic.Kernel.document            import *
 from Generic.Kernel.Command             import *
@@ -34,7 +35,9 @@ class Application(object):
         this class provide the real pythoncad api interface ..
     """
     def __init__(self, **args):
-        self.kernel=Document()
+        baseDbName=os.path.join(os.getcwd(), 'Pythoncad_baseDb.pdr')
+        print("Base db name location %s"%str(baseDbName))
+        self.kernel=Document(baseDbName)
         self.__applicationCommand=APPLICATION_COMMAND
         # Setting up Application Events
         self.startUpEvent=PyCadEvent()

@@ -83,12 +83,13 @@ class Document(BaseDb):
         self.__EntityDb=EntDb(self.getConnection())
         self.__RelationDb=RelationDb(self.getConnection())
         # Some inizialization parameter
-        #   set the default style
-        self.__logger.debug('Set Style')
-        self.__activeStyleObj=Style(0)
         self.__bulkCommit=False
         self.__bulkUndoIndex=-1     # undo index are alweys positive so we do not breke in case missing entity id
         self.__entId=self.__EntityDb.getNewEntId()
+        #   set the default style
+        self.__logger.debug('Set Style')
+        self.__activeStyleObj=None
+        self.__activeStyleObj=self.getDBStyles()
         self.__settings=self.getDbSettingsObject()
         #************************
         #Inizialize Layer structure
@@ -100,7 +101,40 @@ class Document(BaseDb):
             raise StructuralError, 'Unable to create LayerTree structure'
 
         self.__logger.debug('Done inizialization')
-
+    
+    def getDBStyles(self):
+        """
+            get all the db styles
+        """
+        
+        self.__logger.debug('getDbSettingsObject')
+        styleObjs=self.getEntityFromType('STYLE')
+        if len(styleObjs)<=0:
+            style=Style("Style0")
+            styleEntityObj=self.saveEntity(style)
+        else:
+            for sto in styleObjs:
+                styleEntityObj=sto
+                break
+        return styleEntityObj
+    
+    def setStyle(self, id=None, name=None):
+        """
+            set the default active style
+        """
+        _styleObjs=self.getEntityFromType('STYLE')
+        if id!=None:
+            for sto in _styleObjs:
+                if sto.getId()==id:
+                    self.__activeStyleObj=sto
+                    break
+        else:
+            for sto in _styleObjs:
+                _styleObj=sto.getConstructionElements()
+                if _styleObj.name==name:
+                   self.__activeStyleObj=sto 
+                   break 
+            
     def getDbSettingsObject(self):
         """
             get the pythoncad settings object
@@ -195,6 +229,8 @@ class Document(BaseDb):
                 _obj=self.saveSettings(entity)
             if isinstance(entity,Layer):
                 _obj=self.saveLayer(entity)
+            if isinstance(entity,Style):
+                _obj=self.saveStyle(entity)
             if isinstance(entity,Entity):
                 _obj=self.savePyCadEnt(entity)
             if not self.__bulkCommit:
@@ -254,19 +290,34 @@ class Document(BaseDb):
         """
         self.__logger.debug('saveSettings')
         self.__entId+=1
-        _points={}
-        _points['SETTINGS']=settingsObj
-        return self.saveDbEnt('SETTINGS',_points)
-
+        _cElements={}
+        _cElements['SETTINGS']=settingsObj
+        return self.saveDbEnt('SETTINGS',_cElements)
+        
+    def saveStyle(self, styleObject):
+        """
+            save the style object
+        """
+        self.__logger.debug('saveStyle')
+        self.__entId+=1
+        _cElements={}
+        _cElements['STYLE']=styleObject
+        #-1 is for all the entity style that do not have style :-)
+        _newDbEnt=Entity('STYLE',_cElements,-1,self.__entId)
+        self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
+        self.saveEntityEvent(self,_newDbEnt)
+        self.showEnt(self,_newDbEnt)
+        return _newDbEnt
+        
     def saveLayer(self,layerObj):
         """
             save the layer object
         """
         self.__logger.debug('saveLayer')
         self.__entId+=1
-        _points={}
-        _points['LAYER']=layerObj
-        return self.saveDbEnt('LAYER',_points)
+        _cElements={}
+        _cElements['LAYER']=layerObj
+        return self.saveDbEnt('LAYER',_cElements)
 
     def savePyCadEnt(self, entity):
         """
@@ -299,7 +350,7 @@ class Document(BaseDb):
         """
         self.__logger.debug('getActiveStyle')
         if self.__activeStyleObj==None:
-            self.setActiveStyle(0) # in this case get the first style
+            self.setActiveStyle(0) # In this case get the first style
         return self.__activeStyleObj
 
     def setActiveStyle(self,id,name=None):

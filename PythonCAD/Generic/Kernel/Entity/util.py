@@ -21,6 +21,9 @@
 # miscellaneous utility functions
 #
 
+import random
+import string 
+
 from math import fmod, pi
 import types
 
@@ -268,3 +271,16 @@ def to_unicode(obj, encoding='utf-8'):
             obj =obj.replace('\x00', '').decode(encoding, 'ignore').encode(encoding)
         return obj
     raise TypeError, "Invalid object type : " + `type(obj)`
+
+def getRandomString(lengh=None):
+    """
+        get a random name 
+    """
+    random.seed(14)
+    if lengh==None:
+        lengh=10
+    d = [random.choice(string.letters) for x in range(lengh)]
+    return "".join(d)
+    
+    
+    

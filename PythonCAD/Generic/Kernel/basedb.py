@@ -26,6 +26,7 @@ import sys
 import tempfile
 import sqlite3 as sql
 
+
 from exception import *
 
 class BaseDb(object):
@@ -41,12 +42,8 @@ class BaseDb(object):
             create the connection with the database
         """
         if dbPath is None:
-            # fix me must be fixed for windows installation
-            dbPath=tempfile.mkdtemp(suffix='_temp', prefix='PyCad_')+r"/PythonCad.pdr"
-        else:
-            if not os.path.exists(dbPath):
-                raise IOError , 'Unable lo get the db %s'%str(dbPath)
-                sys.exit()
+            dbPath=tempfile.mkdtemp(prefix='PyCad_')
+            dbPath=os.path.join(dbPath, 'PythonCad.pdr')
         self.__dbConnection = sql.connect(dbPath)
         self.dbPath=dbPath
         
