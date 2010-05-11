@@ -47,9 +47,6 @@ from Generic.Kernel.Entity.ellipse      import Ellipse
 from Generic.Kernel.Entity.polyline     import Polyline
 from Generic.Kernel.Entity.style        import Style
 
-#   Spatial index
-from Generic.Kernel.pycadindex          import PyCadIndex
-
 #   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
           'PyCad_Info':     logging.INFO,
@@ -103,17 +100,6 @@ class Document(BaseDb):
             raise StructuralError, 'Unable to create LayerTree structure'
 
         self.__logger.debug('Done inizialization')
-
-    def getSpIndex(self):
-        """
-        returns a new constructed spatial index object
-        """
-        try:
-            index = PyCadIndex(self.getConnection())
-            return index
-        except:
-            self.__logger.debug('Unable to create indexobject')
-        return None
 
     def getDbSettingsObject(self):
         """

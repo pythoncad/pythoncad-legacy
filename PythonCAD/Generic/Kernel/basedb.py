@@ -24,9 +24,7 @@
 import os
 import sys
 import tempfile
-#import sqlite3 as sql
-# sqlite + R*Tree module
-from pysqlite2 import dbapi2 as sql
+import sqlite3 as sql
 
 from exception import *
 
