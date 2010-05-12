@@ -329,7 +329,7 @@ class Document(BaseDb):
             if this entity have an id mark pycad_visible = 0
             and then save the entity
         """
-        self.saveDbEnt(Entity=entity)
+        self.saveDbEnt(entity=entity)
 
     def saveDbEnt(self,entType=None,points=None, entity=None):
         """

@@ -14,7 +14,8 @@ from random                             import random
 from Generic.Kernel.document            import *
 from Generic.Kernel.application         import Application
 from Generic.Kernel.Entity.point        import Point
-from Generic.Kernel.Entity.style import Style
+from Generic.Kernel.Entity.style        import Style
+
 def printId(kernel,obj):
     """
         print the id of the obj

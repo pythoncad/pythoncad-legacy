@@ -136,6 +136,47 @@ class Application(object):
             get the Docuemnts Collection
         """    
         return self.__Docuemnts
+    #
+    # manage application style
+    #
+    def getApplicatonStyles(self):
+        """
+            Get the application styles
+        """
+        return self.kernel.getDBStyles()
+    
+    def getApplicationStyle(self, id=None, name=None):
+        """
+            retrive a style from the application
+        """
+        self.kernel.getStyle(id, name)
 
-
-
+    def setApplicationStyle(self, style):
+        """
+            add style to the application
+        """
+        self.kernel.saveEntity(style)
+    
+    def deleteApplicationStyle(self, styleID):
+        """
+            delete the application style
+        """
+        self.kernel.deleteEntity(styleID)
+    #
+    # Manage the application settings
+    #
+    def getApplicationSetting(self):
+        """
+            return the setting object from the application
+        """
+        return self.kernel.getDbSettingsObject()
+    
+    def updateApplicationSetting(self, settingObj):
+        """
+            update the application settingObj
+        """
+        apObj=self.kernel.getApplicationSetting()
+        apObj.setConstructionElement(settingObj)
+        self.kernel.savePyCadEnt(apObj)
+    
+    
