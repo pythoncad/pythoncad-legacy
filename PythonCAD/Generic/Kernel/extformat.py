@@ -33,6 +33,7 @@ from initsetting        import cgcol
 from Entity.point       import Point
 from Entity.segment     import Segment
 from Entity.arc         import Arc
+from Entity.text        import Text
 
 #from PythonCAD.Generic.circle import Circle
 #from PythonCAD.Generic.arc import Arc
@@ -369,7 +370,7 @@ class Dxf(DrawingFile):
                     self.createCircleFromDxf()
                     continue
                 if _k[0:5] == 'MTEXT':
-                    #self.createTextFromDxf()
+                    self.createTextFromDxf()
                     continue
                 if _k[0:4] == 'TEXT':
                     #self.createTextFromDxf()
@@ -675,41 +676,42 @@ class Dxf(DrawingFile):
         """
             Create a Text entitys into the current drawing
         """
-        _active_layer = self.__dxfLayer
+        #_active_layer = self.__dxfLayer
         try:
             _text = t.replace('\x00', '').decode('utf8', 'ignore').encode('utf8')
         except:
             self.writeError("createText","Debug Error Converting in unicode [%s]"%t)
             _text ='Unable to convert in unicode'
-        _x, _y = x, y
-        _ts = self.__image.getOption('TEXT_STYLE')
-        _tb = TextBlock(_x, _y, _text, _ts)
+        _p = Point(x, y)
+        #_ts = self.__image.getOption('TEXT_STYLE')
+        _tb = Text(_p, _text)
 
-        _f = self.__image.getOption('FONT_FAMILY')
-        if _f != _ts.getFamily():
-            _tb.setFamily(_f)
+        #_f = self.__image.getOption('FONT_FAMILY')
+        #if _f != _ts.getFamily():
+        #    _tb.setFamily(_f)
 
-        _s = self.__image.getOption('FONT_STYLE')
-        if _s != _ts.getStyle():
-            _tb.setStyle(_s)
+        #_s = self.__image.getOption('FONT_STYLE')
+        #if _s != _ts.getStyle():
+        #    _tb.setStyle(_s)
 
-        _w = self.__image.getOption('FONT_WEIGHT')
-        if _w != _ts.getWeight():
-            _tb.setWeight(_w)
+        #_w = self.__image.getOption('FONT_WEIGHT')
+        #if _w != _ts.getWeight():
+        #    _tb.setWeight(_w)
         #_c = changeColorFromDxf(c)
-        _c = self.__image.getOption('FONT_COLOR')
-        if _c != _ts.getColor():
-            _tb.setColor(_c)
-        _sz = h
-        if abs(_sz - _ts.getSize()) > 1e-10:
-            _tb.setSize(_sz)
-        _a = self.__image.getOption('TEXT_ANGLE')
-        if abs(_a - _ts.getAngle()) > 1e-10:
-            _tb.setAngle(_a)
-        _al = self.__image.getOption('TEXT_ALIGNMENT')
-        if _al != _ts.getAlignment():
-            _tb.setAlignment(_al)
-        _active_layer.addObject(_tb)
+        #_c = self.__image.getOption('FONT_COLOR')
+        #if _c != _ts.getColor():
+        #    _tb.setColor(_c)
+        #_sz = h
+        #if abs(_sz - _ts.getSize()) > 1e-10:
+        #    _tb.setSize(_sz)
+        #_a = self.__image.getOption('TEXT_ANGLE')
+        #if abs(_a - _ts.getAngle()) > 1e-10:
+        #_tb.setAngle(_a)
+        #_al = self.__image.getOption('TEXT_ALIGNMENT')
+        #if _al != _ts.getAlignment():
+        #    _tb.setAlignment(_al)
+        #_active_layer.addObject(_tb)
+        self.__kernel.saveEntity(_tb)
 
     def createPolylineFromDxf(self):
         """

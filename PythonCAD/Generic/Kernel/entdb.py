@@ -109,20 +109,22 @@ class EntDb(BaseDb):
                     pycad_entity_state,
                     pycad_index,
                     pycad_visible) VALUES
-                    (%s,"%s","%s",%s,%s,1,"%s","%s",%s,%s,"%s",%s,%s)"""%(
-                    str(_entityId),
-                    str(_entityType),
-                    str(_entityDump),
-                    str(_styleId),
-                    str(undoId),
-                    str(_xMin),
-                    str(_yMin),
-                    str(_xMax),
-                    str(_yMax), 
-                    str(_revisionState),
-                    str(_revisionIndex), 
-                    str(_entityVisible))
-        self.makeUpdateInsert(_sqlInsert)
+                    (?,?,?,?,?,1,?,?,?,?,?,?,?)"""
+                    
+        tupleArg=(
+                    _entityId,
+                    _entityType,
+                    _entityDump,
+                    _styleId,
+                    undoId,
+                    _xMin,
+                    _yMin,
+                    _xMax,
+                    _yMax, 
+                    _revisionState,
+                    _revisionIndex, 
+                    _entityVisible)
+        self.makeUpdateInsert(_sqlInsert, tupleArg)
         
     def getEntityFromTableId(self,entityTableId):
         """

@@ -36,7 +36,7 @@ class Text(GeometricalEntity):
         A class representing text in a drawing.
         A Text instance has the following attributes:
     """
-    def __init__(self, p, text, angle,pointPosition):
+    def __init__(self, p, text, angle=None,pointPosition=None):
         """
             Initialize a Text instance
         """

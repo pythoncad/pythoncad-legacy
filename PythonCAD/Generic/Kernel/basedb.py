@@ -79,13 +79,16 @@ class BaseDb(object):
         #_cursor.close()
         return _rows
 
-    def fetchOneRow(self,sqlSelect):
+    def fetchOneRow(self,sqlSelect, tupleArgs=None):
         """
             get the first row of the select
         """
         try:
             _cursor = self.__dbConnection.cursor()
-            _rows = _cursor.execute(sqlSelect)
+            if tupleArgs:
+                _rows = _cursor.execute(statment,tupleArgs )
+            else:
+                _rows = _cursor.execute(sqlSelect)
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(sqlSelect)+"\nSql Error: %s"%str( _e.args[0] )
             raise StructuralError, msg
@@ -98,7 +101,7 @@ class BaseDb(object):
         if _row is None or _row[0] is None:
             return None
         return _row[0]
-
+            
     def makeUpdateInsert(self,statment):
         """
             make an update Inster operation
