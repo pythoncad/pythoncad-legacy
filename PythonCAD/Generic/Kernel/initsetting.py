@@ -273,7 +273,24 @@ PYTHONCAD_LINETYPE={
     'continue':             (1),
     'dash':                 (10, 10), 
     'central':              (10, 8, 1, 8)}
+    
+PYTHONCAD_STYLE_ATTRIBUTES=['entity_color',
+                            'entity_linetype', 
+                            'entity_tichness',
+                            'text_font', 
+                            'text_haigt',
+                            'text_aling', 
+                            'text_aline_to_point']
+PYTHONCAD_STYLE_DEFAULT_VALUE=['000000000',
+                                '1', 
+                                '1',
+                                'arial', 
+                                '10',
+                                'left'
+                                'sw']
 
+def getDefaultStyle():
+    return dict(zip(PYTHONCAD_STYLE_ATTRIBUTES,PYTHONCAD_STYLE_DEFAULT_VALUE))
 #
 # Color table to define a match from Autocad external format and Pythoncad internal format
 #

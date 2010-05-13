@@ -32,12 +32,8 @@ class Style(GeometricalEntity):
             objID is the object that rappresent the id in the db
         """
         def __init__(self, name=None):
-            from Generic.Kernel.initsetting         import PYTHONCAD_COLOR, PYTHONCAD_LINETYPE
-            self.__colorArray=PYTHONCAD_COLOR
-            self.__lineType=PYTHONCAD_LINETYPE
-            GeometricalEntity.__init__(self)  
-            self.__color=PYTHONCAD_COLOR['black']
-            self.__LineType=PYTHONCAD_LINETYPE['continue']
+            GeometricalEntity.__init__(self) 
+            self.__styleProperty={}
             if name:
                 self.__name=name
             else: #assing a default name (usefoul for list o tree name)
@@ -55,38 +51,19 @@ class Style(GeometricalEntity):
             """
             return self.__name
         
-        name=property(setName, getName, None, "Style Name ")
+        name=property(setName, getName, None, "Style Name")
         
-        def setColor(self, colorName):
+        def getStyleProp(self, name):
             """
-                set style color
+                get the style property
             """
-            if colorName in self.__colorArray:
-                self.color=self.__colorArray[colorName]
+            if name in  self.__styleProperty:
+                return  self.__styleProperty[name]
             else:
-                raise StyleUndefinedAttribute, "Color not in the dictionary PYTHONCAD_COLOR"
-            
-        def getColor(self):
-            """
-                get the color
-            """
-            return self.color
+                return None
         
-        color=property(getColor, setColor, None,"Style Color")
-        
-        def setLineType(self, lineTypeName):
+        def setStyleProp(self, name, value):
             """
-                this class rappresent the line type
+                set the style property 
             """
-            if lineTypeName in self.__lineType:
-                self.__lineType=self.__lineType[lineTypeName]
-            else:
-                raise StyleUndefinedAttribute, "Line type not in the dictionary PYTHONCAD_LINETYPE"
-                
-        def getLineType(self):
-            """
-                get the lineType
-            """
-            return self.__lineType
-        lineType=property(setLineType, getLineType, None, "Style lineType ")
-        
+            self.__styleProperty[name]=value

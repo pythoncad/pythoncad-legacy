@@ -47,7 +47,7 @@ class EntDb(BaseDb):
                     pycad_entity_id INTEGER,
                     pycad_object_type TEXT,
                     pycad_object_definition TEXT,
-                    pycad_style_id INTEGER,
+                    pycad_object_style TEXT,
                     pycad_security_id INTEGER,
                     pycad_undo_id INTEGER,
                     pycad_entity_state TEXT,
@@ -70,6 +70,7 @@ class EntDb(BaseDb):
         index=self.fetchOneRow(_sql)
         if index is None: return 0
         return index
+        
     def increaseRevisionIndex(self):
         """
             increase the relesed index
@@ -91,7 +92,7 @@ class EntDb(BaseDb):
         _entityDump=pickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _entityVisible=entityObj.visible
-        _styleId=entityObj.style
+        _styleObject=pickle.dumps(entityObj.style)
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=self.__revisionIndex
         _revisionState=entityObj.state
@@ -99,7 +100,7 @@ class EntDb(BaseDb):
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
-                    pycad_style_id,
+                    pycad_object_style,
                     pycad_undo_id,
                     pycad_undo_visible,
                     pycad_bbox_xmin,
@@ -115,7 +116,7 @@ class EntDb(BaseDb):
                     _entityId,
                     _entityType,
                     _entityDump,
-                    _styleId,
+                    _styleObject,
                     undoId,
                     _xMin,
                     _yMin,
@@ -134,7 +135,7 @@ class EntDb(BaseDb):
         _sqlGet="""SELECT   pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id,
+                            pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
                             pycad_visible
@@ -144,7 +145,7 @@ class EntDb(BaseDb):
         if _rows is not None:
             _row=_rows.fetchone()
             if _row is not None:
-                _style=str(_row[3])
+                _style=pickle.loads(str(_row[3]))
                 _dumpObj=pickle.loads(str(_row[2]))
                 _outObj=Entity(_row[1],_dumpObj,_style,_row[0])
                 _outObj.state=_row[4]
@@ -162,7 +163,7 @@ class EntDb(BaseDb):
                             pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id,
+                            pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
                             pycad_visible
@@ -171,7 +172,7 @@ class EntDb(BaseDb):
         _dbEntRow=self.makeSelect(_sqlGet)
         if _dbEntRow is not None:
             _row=_dbEntRow.fetchone()
-            _style=str(_row[4])
+            _style=pickle.loads(str(_row[4]))
             _dumpObj=pickle.loads(str(_row[3]))
             _entObj=Entity(_row[2],_dumpObj,_style,_row[1])       
             _entObj.state=_row[5]
@@ -184,12 +185,17 @@ class EntDb(BaseDb):
         """
             return all the entity that match the styleId
         """
+        return
+        #
+        # This function need to be redefined
+        # the new style system is changed
+        #
         _outObj=[]
         _sqlGet="""SELECT   pycad_id,
                             pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id,
+                            pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
                             pycad_visible
@@ -199,7 +205,7 @@ class EntDb(BaseDb):
                         FROM pycadent  
                         WHERE pycad_undo_visible=1 
                         GROUP BY pycad_entity_id ORDER BY PyCad_Id)
-                    AND pycad_style_id=%s"""%str(styleId)
+                    AND pycad_object_style=%s"""%str(styleId)
         _dbEntRow=self.makeSelect(_sqlGet)
         for _row in _dbEntRow: 
             _style=_row[4]
@@ -221,7 +227,7 @@ class EntDb(BaseDb):
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
-                    pycad_style_id,
+                    pycad_object_style,
                     pycad_entity_state,
                     pycad_index,
                     pycad_visible
@@ -259,7 +265,7 @@ class EntDb(BaseDb):
                     pycad_entity_id,
                     pycad_object_type,
                     pycad_object_definition,
-                    pycad_style_id,
+                    pycad_object_style,
                     pycad_entity_state,
                     pycad_index,
                     pycad_visible
@@ -282,7 +288,7 @@ class EntDb(BaseDb):
         _outObj=[]
         _dbEntRow=self.getMultiFilteredEntity(entityType=entityType)
         for _row in _dbEntRow: 
-            _style=_row[4]
+            _style=pickle.loads(str(_row[4]))
             _dumpObj=pickle.loads(str(_row[3]))
             _objEnt=Entity(_row[2],_dumpObj,_style,_row[1])
             _objEnt.state=_row[5]
@@ -311,13 +317,13 @@ class EntDb(BaseDb):
             pycad_entity_id,
             pycad_object_type,
             pycad_object_definition,
-            pycad_style_id,
+            pycad_object_style,
             pycad_entity_state,
             pycad_index,
             pycad_visible
             FROM pycadent
         """
-        _style=row[4]
+        _style=pickle.loads(str(row[4]))
         _dumpObj=pickle.loads(str(row[3]))
         _objEnt=Entity(row[2],_dumpObj,_style,row[1])
         _objEnt.state=row[5]
@@ -425,14 +431,14 @@ class EntDb(BaseDb):
         _entityDump=pickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
         _entityVisible=entityObj.visible
-        _styleId=entityObj.style
+        _styleObject=pickle.dumps(entityObj.style)
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=entityObj.index
         _revisionState=entityObj.state
         _sqlInsert="""UPDATE pycadent set 
                     pycad_object_type="%s",
                     pycad_object_definition="%s",
-                    pycad_style_id=%s,
+                    pycad_object_style=%s,
                     pycad_bbox_xmin=%s,
                     pycad_bbox_ymin=%s,
                     pycad_bbox_xmax=%s,
@@ -449,7 +455,7 @@ class EntDb(BaseDb):
                     """%(
                     str(_entityType),
                     str(_entityDump),
-                    str(_styleId),
+                    str(_styleObject),
                     str(_xMin),
                     str(_yMin),
                     str(_xMax),
@@ -458,6 +464,11 @@ class EntDb(BaseDb):
                     str(_revisionIndex), 
                     str(_entityVisible), 
                     str(_entityId))
+        #**************************************
+        #**************Attention***************
+        #**************************************
+        #if dose not work conver it with ? insted of %s
+        #and use the  self.makeUpdateInsert(_sqlInsert,tupleargs)
         self.makeUpdateInsert(_sqlInsert)
         
     def clearEnt(self):

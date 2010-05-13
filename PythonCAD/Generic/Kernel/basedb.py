@@ -86,7 +86,7 @@ class BaseDb(object):
         try:
             _cursor = self.__dbConnection.cursor()
             if tupleArgs:
-                _rows = _cursor.execute(statment,tupleArgs )
+                _rows = _cursor.execute(sqlSelect,tupleArgs )
             else:
                 _rows = _cursor.execute(sqlSelect)
         except sql.Error, _e:
@@ -102,14 +102,17 @@ class BaseDb(object):
             return None
         return _row[0]
             
-    def makeUpdateInsert(self,statment):
+    def makeUpdateInsert(self,statment, tupleArgs=None):
         """
             make an update Inster operation
         """
         #print "qui1 : sql ",statment
         try:
             _cursor = self.__dbConnection.cursor()
-            _rows = _cursor.execute(statment)
+            if tupleArgs:
+                _rows = _cursor.execute(statment,tupleArgs )
+            else:
+                _rows = _cursor.execute(statment)
             #if self.__commit:
             if BaseDb.commit:
                 self.performCommit()

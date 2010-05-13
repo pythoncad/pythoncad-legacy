@@ -20,8 +20,8 @@
 #
 # This module provide basic DB class for storing entity in pythoncad
 #
-from Generic.Kernel.Entity.style            import Style
 from Generic.Kernel.Entity.pycadobject      import *
+from Generic.Kernel.Entity.style            import Style
 from Generic.Kernel.Entity.point            import Point
 
 class Entity(PyCadObject):
@@ -34,8 +34,6 @@ class Entity(PyCadObject):
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported'
         self.__entType=entType
-        #if not (PyCadStyle is None or isinstance(style,PyCadStyle)):
-        #    raise TypeError,'style not supported'
         self.__style=style
         if not isinstance(constructionElements,dict):
             raise TypeError,'type error in dictionary'
@@ -101,8 +99,8 @@ class Entity(PyCadObject):
         """
             set/update the entity style
         """
-        #if not isinstance(style,PyCadStyle):
-        #    raise TypeError,'Type error in style'
+        if not isinstance(style,Style):
+            raise TypeError,'Type error in style'
         self.__style=style
 
     style=property(getStyle,setStyle,None,"Get/Set the entity style")

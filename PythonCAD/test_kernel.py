@@ -704,27 +704,33 @@ class textApplication(object):
         """
             this function make a basic test
         """
-        self.outputMsg("Open the file p1.pdr")
-        filePath1="/home/matteo/Desktop/p1.pdr"
-        doc1=self.__pyCadApplication.openDocument(filePath1)
-        self.outputMsg("Open the file p2.pdr")
-        filePath2="/home/matteo/Desktop/p2.pdr"
-        doc2=self.__pyCadApplication.openDocument(filePath2)
+        self.outputMsg("Create a new document 1")
+        doc1=self.__pyCadApplication.newDocument()
+        self.outputMsg("Create a new document 2")
+        doc2=self.__pyCadApplication.newDocument()
         self.outputMsg("Set Current p1")
-        self.__pyCadApplication.setActiveDocument(doc2)
+        self.__pyCadApplication.setActiveDocument(doc1)
         self.outputMsg("Create Point")
         self.performCommandRandomly("POINT")
         self.outputMsg("Create Segment")
         self.performCommandRandomly("SEGMENT")
         self.outputMsg("Create Arc")
         self.performCommandRandomly("ARC")
+        self.__pyCadApplication.setActiveDocument(doc2)
         self.outputMsg("Create Ellipse")
         self.performCommandRandomly("ELLIPSE")
         self.outputMsg("Create Polyline")
         self.performCommandRandomly("POLYLINE")
         self.outputMsg("Create ACLine")
         self.performCommandRandomly("ACLINE")
-        self.outputMsg("Get Entitys")
+        
+        self.outputMsg("Get Entitys for doc 1")
+        self.__pyCadApplication.setActiveDocument(doc1)
+        activeDoc=self.__pyCadApplication.getActiveDocument()
+        ents=activeDoc.getEntityFromType("ALL")
+        self.printEntity(ents)
+        self.outputMsg("Get Entitys for doc 2")
+        self.__pyCadApplication.setActiveDocument(doc2)
         activeDoc=self.__pyCadApplication.getActiveDocument()
         ents=activeDoc.getEntityFromType("ALL")
         self.printEntity(ents)
@@ -752,10 +758,11 @@ class textApplication(object):
             except:
                 self.outputMsg("Bad error !!")
                 raise 
-            else:
-                self.outputMsg("Apply Command")
-                cObject.applyCommand()
             i+=1
+        else:
+            self.outputMsg("Apply Command")
+            cObject.applyCommand()
+            
             
     def getRandomPoint(self):
         """

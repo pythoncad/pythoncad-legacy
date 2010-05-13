@@ -89,7 +89,7 @@ class Document(BaseDb):
         #   set the default style
         self.__logger.debug('Set Style')
         self.__activeStyleObj=None
-        self.__activeStyleObj=self.getDBStyles()
+        self.__activeStyleObj=self.getMainStyle()
         self.__settings=self.getDbSettingsObject()
         #************************
         #Inizialize Layer structure
@@ -101,43 +101,22 @@ class Document(BaseDb):
             raise StructuralError, 'Unable to create LayerTree structure'
         self.__logger.debug('Done inizialization')
     
-    def getDBStyles(self):
+    def getMainStyle(self):
         """
             get all the db styles
         """
         
         self.__logger.debug('getDbSettingsObject')
-        styleObjs=self.getEntityFromType('STYLE')
-        if len(styleObjs)<=0:
-            style=Style("Style0")
-            styleEntityObj=self.saveEntity(style)
+        styleEntitys=self.getEntityFromType('STYLE')
+        for styleEntity in styleEntitys:
+            styles=styleEntity.getConstructionElements()
+            for stl in styles:
+                if styles[stl].getName()=="Main":
+                    return styleEntity
+                    break
         else:
-            for sto in styleObjs:
-                styleEntityObj=sto
-                break
-        return styleEntityObj
-    
-    def setStyle(self, id=None, name=None):
-        """
-            set the default active style
-        """
-        self.__activeStyleObj=self.getStyle(id, name)
-    
-    def getStyle(self, id=None, name=None):
-        """
-            get the style object
-        """
-        _styleObjs=self.getEntityFromType('STYLE')
-        if id!=None:
-            for sto in _styleObjs:
-                if sto.getId()==id:
-                    return sto
-        else:
-            for sto in _styleObjs:
-                _styleObj=sto.getConstructionElements()
-                if _styleObj.name==name:
-                   return sto 
-        raise EntityMissing, "Miss entity style in db id: <%s> name : <%s>"%(str(id), str(name))
+            style=Style("Main")
+            return self.saveEntity(style) 
         
     def getDbSettingsObject(self):
         """
@@ -307,7 +286,7 @@ class Document(BaseDb):
         _cElements={}
         _cElements['STYLE']=styleObject
         #-1 is for all the entity style that do not have style :-)
-        _newDbEnt=Entity('STYLE',_cElements,-1,self.__entId)
+        _newDbEnt=Entity('STYLE',_cElements,None,self.__entId)
         self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
         self.showEnt(self,_newDbEnt)
@@ -337,7 +316,7 @@ class Document(BaseDb):
         """
         self.__logger.debug('saveDbEnt')
         if entity==None:
-            _newDbEnt=Entity(entType,points,self.__activeStyleObj.getId(),self.__entId)
+            _newDbEnt=Entity(entType,points,self.__activeStyleObj,self.__entId)
         else:
             _newDbEnt=entity
         if self.__bulkUndoIndex>=0:
@@ -348,45 +327,54 @@ class Document(BaseDb):
         self.showEnt(self,_newDbEnt)
         return _newDbEnt
 
+    def getStyle(self, id=None, name=None):
+        """
+            get the style object
+        """
+        self.__logger.debug('getStyle')
+        _styleObjs=self.getStyleList()
+        if id!=None:
+            for sto in _styleObjs:
+                if sto.getId()==id:
+                    return sto
+        else:
+            for sto in _styleObjs:
+                _styleObj=sto.getConstructionElements()
+                if _styleObj.name==name:
+                   return sto 
+        raise EntityMissing, "Miss entity style in db id: <%s> name : <%s>"%(str(id), str(name))
+
     def getActiveStyle(self):
         """
             Get the current style
         """
         self.__logger.debug('getActiveStyle')
         if self.__activeStyleObj==None:
+            
             self.setActiveStyle(0) # In this case get the first style
+            
         return self.__activeStyleObj
 
-    def setActiveStyle(self,id,name=None):
+    def setActiveStyle(self, id=None, name=None):
         """
             set the current style
         """
         self.__logger.debug('setActiveStyle')
-        #ToDO: set active style
-        # check if the style id is in the db
-        # if not create the style in the db with default settings
-        # get from db the object style pickled
-        # set in a global variable self.__activeStyleObj=_newStyle
-        pass
-
-    def getStyle(self,id,name=None):
-        """
-            get the style object
-        """
-        self.__logger.debug('getStyle')
-        #todo get the style object of the give id
-        pass
+        if id==None and name==None:
+            raise EntityMissing,"Unable to retive the Style object"
+        styleObject=self.getStyle(id, name)
+        if styleObject==None:
+            raise EntityMissing,"Unable to retive the Style object"
+        self.__activeStyleObj=styleObject
 
     def getStyleList(self):
         """
             get all the style from the db
         """
         self.__logger.debug('getStyleList')
-        # Make a query at the style Table and return an array of (stylesName,id)
-        # this method is used for populate the style form ..
-        pass
+        return self.getEntityFromType('STYLE')
 
-    activeStyleId=property(getActiveStyle,setActiveStyle)
+    activeStyle=property(getActiveStyle,setActiveStyle)
 
     def unDo(self):
         """

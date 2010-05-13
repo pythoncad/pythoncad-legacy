@@ -35,7 +35,6 @@ class Application(object):
     """
     def __init__(self, **args):
         baseDbName=os.path.join(os.getcwd(), 'Pythoncad_baseDb.pdr')
-        print("Base db name location %s"%str(baseDbName))
         self.kernel=Document(baseDbName)
         self.__applicationCommand=APPLICATION_COMMAND
         # Setting up Application Events
@@ -138,7 +137,7 @@ class Application(object):
     #
     # manage application style
     #
-    def getApplicatonStyles(self):
+    def getApplicationStyleList(self):
         """
             Get the application styles
         """
