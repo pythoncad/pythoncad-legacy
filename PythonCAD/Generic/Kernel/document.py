@@ -205,17 +205,17 @@ class Document(BaseDb):
             #self.__RelationDb.suspendCommit()
             BaseDb.commit=False
             if isinstance(entity,tuple(DRAWIN_ENTITY.keys())):
-                _obj=self.saveDrwEnt(entity)
+                _obj=self._saveDrwEnt(entity)
             if isinstance(entity,tuple(DRAWIN_COMPOSED_ENTITY.keys())):
-                _obj=self.saveDrwComposeEnt(entity)
+                _obj=self._saveDrwComposeEnt(entity)
             if isinstance(entity,Settings):
-                _obj=self.saveSettings(entity)
+                _obj=self._saveSettings(entity)
             if isinstance(entity,Layer):
-                _obj=self.saveLayer(entity)
+                _obj=self._saveLayer(entity)
             if isinstance(entity,Style):
-                _obj=self.saveStyle(entity)
+                _obj=self._saveStyle(entity)
             if isinstance(entity,Entity):
-                _obj=self.savePyCadEnt(entity)
+                _obj=self._savePyCadEnt(entity)
             if not self.__bulkCommit:
                 #self.__UndoDb.reactiveCommit()
                 #self.__EntityDb.reactiveCommit()
@@ -229,25 +229,25 @@ class Document(BaseDb):
     #ToDo: test the savedrwcomposeent and see if it's possible to improve it
     #before saving an entity I need to chech if olready exsist
     #in case of composed entity the entity are already in the drawing .
-    def saveDrwComposeEnt(self, entity):
+    def _saveDrwComposeEnt(self, entity):
         """
             save the entity that have some relation
         """
         for e in entity.getReletedComponent():
             self.saveEntity(e)
         _cElements, entityType =self._getCelements(entity)
-        _obj=self.saveDbEnt(entityType,_cElements)
+        _obj=self._saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         
-    def saveDrwEnt(self,entity):
+    def _saveDrwEnt(self,entity):
         """
             Save a PythonCad drawing entity
         """
-        self.__logger.debug('saveDrwEnt')
+        self.__logger.debug('_saveDrwEnt')
 
         self.__entId+=1
         _cElements, entityType=self._getCelements(entity)
-        _obj=self.saveDbEnt(entityType,_cElements)
+        _obj=self._saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         return _obj
         
@@ -267,21 +267,21 @@ class Document(BaseDb):
             i+=1
         return cElements, entityType
         
-    def saveSettings(self,settingsObj):
+    def _saveSettings(self,settingsObj):
         """
             save the settings object
         """
-        self.__logger.debug('saveSettings')
+        self.__logger.debug('_saveSettings')
         self.__entId+=1
         _cElements={}
         _cElements['SETTINGS']=settingsObj
-        return self.saveDbEnt('SETTINGS',_cElements)
+        return self._saveDbEnt('SETTINGS',_cElements)
         
-    def saveStyle(self, styleObject):
+    def _saveStyle(self, styleObject):
         """
             save the style object
         """
-        self.__logger.debug('saveStyle')
+        self.__logger.debug('_saveStyle')
         self.__entId+=1
         _cElements={}
         _cElements['STYLE']=styleObject
@@ -292,29 +292,29 @@ class Document(BaseDb):
         self.showEnt(self,_newDbEnt)
         return _newDbEnt
         
-    def saveLayer(self,layerObj):
+    def _saveLayer(self,layerObj):
         """
             save the layer object
         """
-        self.__logger.debug('saveLayer')
+        self.__logger.debug('_saveLayer')
         self.__entId+=1
         _cElements={}
         _cElements['LAYER']=layerObj
-        return self.saveDbEnt('LAYER',_cElements)
+        return self._saveDbEnt('LAYER',_cElements)
 
-    def savePyCadEnt(self, entity):
+    def _savePyCadEnt(self, entity):
         """
             save the entity in the database
             if this entity have an id mark pycad_visible = 0
             and then save the entity
         """
-        self.saveDbEnt(entity=entity)
+        self._saveDbEnt(entity=entity)
 
-    def saveDbEnt(self,entType=None,points=None, entity=None):
+    def _saveDbEnt(self,entType=None,points=None, entity=None):
         """
             save the DbEnt to db
         """
-        self.__logger.debug('saveDbEnt')
+        self.__logger.debug('_saveDbEnt')
         if entity==None:
             _newDbEnt=Entity(entType,points,self.__activeStyleObj,self.__entId)
         else:
@@ -340,7 +340,8 @@ class Document(BaseDb):
         else:
             for sto in _styleObjs:
                 _styleObj=sto.getConstructionElements()
-                if _styleObj.name==name:
+                stlName=_styleObj[_styleObj.keys()[0]].getName()
+                if stlName==name:
                    return sto 
         raise EntityMissing, "Miss entity style in db id: <%s> name : <%s>"%(str(id), str(name))
 

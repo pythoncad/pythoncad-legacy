@@ -91,13 +91,13 @@ class Entity(PyCadObject):
 
     def getStyle(self):
         """
-            get the object style
+            get the object EntityStyle
         """
         return self.__style
 
     def setStyle(self,style):
         """
-            set/update the entity style
+            set/update the entitystyle
         """
         if not isinstance(style,Style):
             raise TypeError,'Type error in style'
@@ -105,4 +105,12 @@ class Entity(PyCadObject):
 
     style=property(getStyle,setStyle,None,"Get/Set the entity style")
 
-
+    def getInnerStyle(self):
+        """
+            return the inner style of type Style
+        """
+        if self.getStyle():
+            styleEnt=self.getStyle().getConstructionElements() 
+            return styleEnt[styleEnt.keys()[0]]
+        else:
+            return None

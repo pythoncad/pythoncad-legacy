@@ -24,7 +24,7 @@
 import sys
 
 from Generic.Kernel.basedb            import BaseDb
-#from Generic.Kernel.pycaddbexception       import UndoDb
+#from Generic.Kernel.exception       import UndoDb
 
 
 class UndoDb(BaseDb):

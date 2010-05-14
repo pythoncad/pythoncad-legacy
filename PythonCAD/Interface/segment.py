@@ -1,5 +1,4 @@
 
-
 from PyQt4 import QtCore, QtGui
 
 class Segment(QtGui.QGraphicsLineItem):
@@ -10,6 +9,7 @@ class Segment(QtGui.QGraphicsLineItem):
         pt_end = None
         # get the geometry
         geometry = entity.getConstructionElements()
+        style=entity.getInnerStyle()
         # get the begin and endpoint from the geometry
         for key in geometry.keys():
             if pt_begin == None:
@@ -18,7 +18,8 @@ class Segment(QtGui.QGraphicsLineItem):
                 pt_end = geometry[key]
         # set the line
         self.setLine(pt_begin.x, -1.0 * pt_begin.y, pt_end.x, -1.0 * pt_end.y)
-        # set pen accoording to layer
-        self.setPen(QtGui.QPen(QtGui.QColor.fromRgb(255, 0, 0)))
+        # set pen 
+        r, g, b=style.getStyleProp("entity_color") 
+        self.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         return
     

@@ -734,7 +734,30 @@ class textApplication(object):
         activeDoc=self.__pyCadApplication.getActiveDocument()
         ents=activeDoc.getEntityFromType("ALL")
         self.printEntity(ents)
+        # Working with styles
+        self.outputMsg("Create NewStyle")
+        stl=Style("NewStyle")
+        self.outputMsg("Save in document")
+        activeDoc.saveEntity(stl)
+        activeDoc.setActiveStyle(name='NewStyle')
+        self.outputMsg("Create Segment")
+        self.performCommandRandomly("SEGMENT")
+        self.outputMsg("Create Arc")
+        self.performCommandRandomly("ARC")
         
+        self.outputMsg("Create NewStyle1")
+        stl1=Style("NewStyle1")
+        self.__pyCadApplication.setApplicationStyle(stl1)
+        stl11=self.__pyCadApplication.getApplicationStyle(name='NewStyle1')
+        styleDic=stl11.getConstructionElements()
+        styleDic[styleDic.keys()[0]].setStyleProp('entity_color',(255,215,000))
+        self.__pyCadApplication.setApplicationStyle(stl11)
+        activeDoc.saveEntity(stl11)
+        self.outputMsg("Create Segment")
+        self.performCommandRandomly("SEGMENT")
+        self.outputMsg("Create Arc")
+        self.performCommandRandomly("ARC")
+
     def performCommandRandomly(self, commandName, andLoop=10):
         """
             set some random Value at the command imput

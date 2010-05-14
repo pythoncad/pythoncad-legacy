@@ -134,6 +134,7 @@ class Application(object):
             get the Docuemnts Collection
         """    
         return self.__Docuemnts
+
     #
     # manage application style
     #
@@ -147,7 +148,7 @@ class Application(object):
         """
             retrive a style from the application
         """
-        self.kernel.getStyle(id, name)
+        return self.kernel.getStyle(id, name)
 
     def setApplicationStyle(self, style):
         """
@@ -160,6 +161,7 @@ class Application(object):
             delete the application style
         """
         self.kernel.deleteEntity(styleID)
+
     #
     # Manage the application settings
     #

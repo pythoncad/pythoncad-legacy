@@ -24,16 +24,18 @@
 from geometricalentity                  import GeometricalEntity
 from util                               import getRandomString
 
-
-
 class Style(GeometricalEntity):
         """
             This class rappresent the style in pythoncad
             objID is the object that rappresent the id in the db
         """
-        def __init__(self, name=None):
+        def __init__(self, name=None, styleProp=None):
             GeometricalEntity.__init__(self) 
-            self.__styleProperty={}
+            if styleProp:
+                self.__styleProperty=styleProp
+            else:
+                from Generic.Kernel.initsetting import getDefaultStyle
+                self.__styleProperty=getDefaultStyle()
             if name:
                 self.__name=name
             else: #assing a default name (usefoul for list o tree name)
@@ -66,4 +68,9 @@ class Style(GeometricalEntity):
             """
                 set the style property 
             """
-            self.__styleProperty[name]=value
+            from Generic.Kernel.initsetting         import PYTHONCAD_STYLE_ATTRIBUTES
+            from Generic.Kernel.exception           import EntityMissing
+            if name in PYTHONCAD_STYLE_ATTRIBUTES:
+                self.__styleProperty[name]=value
+            else:
+                raise EntityMissing,"Unable to find the property %s"%str(name)

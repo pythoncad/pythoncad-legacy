@@ -10,8 +10,8 @@ class Arc(QtGui.QGraphicsItem):
         pt_end = None
         # get the geometry
         geometry = entity.getConstructionElements()
-        # get the begin and endpoint from the geometry
-        # self.__center, self.__radius,self.__sa,self.__ea
+        self.style=entity.getInnerStyle()
+        # Get Construction arc elements
         pCenter=geometry["ARC_0"]
         radius=geometry["ARC_1"]
         startAngle=geometry["ARC_2"]
@@ -30,6 +30,7 @@ class Arc(QtGui.QGraphicsItem):
            spanAngle=spanAngle
         self.startAngle=startAngle
         self.spanAngle=spanAngle
+
         return
         
     def boundingRect(self):
@@ -37,12 +38,14 @@ class Arc(QtGui.QGraphicsItem):
             overloading of the qt bounding rectangle
         """
         return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h )
+        
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
         """
         # set pen accoording to layer
-        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(255, 0, 0)))
+        r, g, b=self.style.getStyleProp("entity_color") 
+        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #Create Arc/Circle
         painter.drawArc(self.xc,self.yc ,self.h ,self.h ,self.startAngle,  self.spanAngle)
 
