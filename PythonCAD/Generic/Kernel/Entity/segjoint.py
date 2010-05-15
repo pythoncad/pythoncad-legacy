@@ -29,274 +29,202 @@ from geometricalentity                      import *
 from Generic.Kernel.Entity.util             import *
 from Generic.Kernel.intersection            import *
 from Generic.Kernel.Entity.segment          import Segment
+from Generic.Kernel.Entity.acline           import ACLine
+from Generic.Kernel.Entity.arc              import Arc
+from Generic.Kernel.Entity.ccircle          import CCircle
+from Generic.Kernel.Entity.pygeolib         import Vector
 
 _dtr = 180.0/pi
 
-class SegJoint(GeometricalEntityComposed):
+ALLOW_CHAMFER_ENTITY=(Segment, ACLine)
+
+class ObjectJoint(GeometricalEntityComposed):
     """
         A base class for chamfers and fillets
-        A SegJoint object has the following methods:
+        A ObjectJoint object has the following methods:
     """
-    #
-    # The default style for the Segjoint class
-    #
-    __defstyle = None
+   
+    def __init__(self, obj1, obj2):
+        from Generic.Kernel.initsettings import DRAWIN_ENTITY
+        if not isinstance(obj1, DRAWIN_ENTITY):
+            raise TypeError, "Invalid first Element for DRAWIN_ENTITY: " + `type(obj1)`
+        if not isinstance(obj2, DRAWIN_ENTITY):
+            raise TypeError, "Invalid second Element for DRAWIN_ENTITY: " + `type(obj2)`
     
-    def __init__(self, s1, s2):
-        if not isinstance(s1, Segment):
-            raise TypeError, "Invalid first Segment for SegJoint: " + `type(s1)`
-        if not isinstance(s2, Segment):
-            raise TypeError, "Invalid second Segment for SegJoint: " + `type(s2)`
-        self.__s1 = s1
-        self.__s2 = s2
-        self.__xi = None # segment intersection x-coordinate
-        self.__yi = None # segment intersection y-coordinate
-        self.__s1_float = None # s1 endpoint at joint
-        self.__s1_fixed = None # s1 other endpoint
-        self.__s2_float = None # s2 endpoint at joint
-        self.__s2_fixed = None # s2 other endpoint
-
+        self._obj1 = obj1
+        self._obj2 = obj2
+        self._externalIntersectio=False
+        spoolIntersection=[Point(x, y) for x, y in find_intersections(obj1, obj2)]
+        if not spoolIntersection: #if not intesection is found extend it on cLine
+            spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(obj1, obj2)]
+            self._externalIntersectio=True
+        self.__intersectionPoints=spoolIntersection
+        
+        
     def getConstructionElements(self):
         """
-            Return the two segments joined by the SegJoint.
-            This method returns a tuple holding the two segments joined
-            by the SegJoint.
+            Return the two Entity Object joined by the ObjectJoint.
+            This method returns a tuple holding the two Entity Object joined
+            by the ObjectJoint.
         """
-        return self.__s1, self.__s2
+        return self._obj1, self._obj2
         
-    def getReletedComponent(self):
-        """
-            return the releted component 
-        """
-        return self.__s1, self.__s2
-        
-    def getMovingPoints(self):
-        """
-            Return the joined segment points used by the SegJoint.
-            This method returns a tuple of two points, the first point is the
-            used point on the SegJoint initial segment, and the second point
-            is the used point on the SegJoint secondary segment.
-        """
-        return self.__s1_float, self.__s2_float
-
-    def getFixedPoints(self):
-        """
-            Return the joined segment points not used by the SegJoint.
-            This method returns a tuple of two points, the first point is the
-            unused point on the SegJoint initial segment, and the second point
-            is the unused point on the SegJoint secondary segment.
-        """
-        return self.__s1_fixed, self.__s2_fixed
-
     def getIntersection(self):
         """
-            Return the intersection points of the SegJoint segments.
+            Return the intersection points of the ObjectJoint Entity Object.
 
-            This method returns a tuple of two floats; the first is the
-            intersection 'x' coordinate, and the second is the 'y' coordinate.
+            This method returns an array of intersection point 
+            [] no intersection
         """
-        return self.__xi, self.__yi
-
-    def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
-        """
-            Return whether or not a segjoint exists with a region.
-            The four arguments define the boundary of an area, and the
-            function returns True if the joint lies within that area.
-            Otherwise, the function returns False.
-        """
-        _xmin = get_float(xmin)
-        _ymin = get_float(ymin)
-        _xmax = get_float(xmax)
-        if _xmax < _xmin:
-            raise ValueError, "Illegal values: xmax < xmin"
-        _ymax = get_float(ymax)
-        if _ymax < _ymin:
-            raise ValueError, "Illegal values: ymax < ymin"
-        test_boolean(fully)
-        _mp1, _mp2 = self.getMovingPoints()
-        _mx1, _my1 = _mp1.getCoords()
-        _mx2, _my2 = _mp2.getCoords()
-        _fxmin = min(_mx1, _mx2)
-        _fymin = min(_my1, _my2)
-        _fxmax = max(_mx1, _mx2)
-        _fymax = max(_my1, _my2)
-        if ((_fxmax < _xmin) or
-            (_fymax < _ymin) or
-            (_fxmin > _xmax) or
-            (_fymin > _ymax)):
-            return False
-        if fully:
-            if ((_fxmin > _xmin) and
-                (_fymin > _ymin) and
-                (_fxmax < _xmax) and
-                (_fymax < _ymax)):
-                return True
-            return False
-        return in_region(_mx1, _my1, _mx2, _my2,
-                              _xmin, _ymin, _xmax, _ymax)
-
-
-class Chamfer(SegJoint):
-    """
-        A Chamfer class
-
-        A chamfer is a small distance taken off a sharp
-        corner in a drawing. For the chamfer to be valid,
-        the chamfer length must be less than the length of
-        either segment, and the two segments must be extendable
-        so they could share a common endpoint.
-
-        A Chamfer is derived from a SegJoint, so it shares all
-        the methods and attributes of that class. A Chamfer has
-        the following additional methods:
-        A Chamfer has the following attributes:
-
-        length: The Chamfer length.
-    """
+        return self.__intersectionPoints
     
-    def __init__(self, s1, s2, l):
-    
-        _len = get_float(l)
-        if _len < 0.0:
-            raise ValueError, "Invalid chamfer length: %g" % _len
-        if _len > s1.length():
-            raise ValueError, "Chamfer is longer than first Segment."
-        if _len > s2.length():
-            raise ValueError, "Chamfer is longer than second Segment."
-        _xi, _yi = getIntersection(self)
-        SegJoint.__init__(self, s1, s2)
-        # print "xi: %g; yi: %g" % (_xi, _yi)
-        _xp, _yp = _sp1.getCoords()
-        _sep = hypot((_yp - _yi), (_xp - _xi))
-        if _sep > (_len + 1e-10):
-            # print "sep: %g" % _sep
-            # print "xp: %g; yp: %g" % (_xp, _yp)
-            raise ValueError, "First segment too far from intersection point."
-        _xp, _yp = _sp2.getCoords()
-        _sep = hypot((_yp - _yi), (_xp - _xi))
-        if _sep > (_len + 1e-10):
-            # print "sep: %g" % _sep
-            # print "xp: %g; yp: %g" % (_xp, _yp)
-            raise ValueError, "Second segment too far from intersection point."
-        self.__length = _len
+    def getReletedComponent(self):
+        """
+            return the releted compont of the ObjectJoint
+        """
+        return self.getConstructionElements()
+
+
+class Chamfer(ObjectJoint):
+    """
+        A Chamfer class 
+    """
+    def __init__(self, obj1, obj2, distance1, distance2, pointClick1=None, pointClick2=None):
+        """
+            obj1        :(Segment ,ACLine)
+            obj2        :(Segment ,ACLine)
+            distance1   :Real distance from intersection point to chamfer
+            distance2   :Real distance from intersection point to chamfer
+            pointClick1 :Clicked point from the u.i near the obj1
+            pointClick2 :Clicked point from the u.i near the obj2
+        """
+        for obj in (obj1, obj2):
+            if not isinstance(obj, ALLOW_CHAMFER_ENTITY):
+                raise StructuralError, "Bad imput parameter %s"%str(type(obj))
+        ObjectJoint.__init__(self, obj1, obj2)
+        for dis in (distance1, distance2):
+            if dis<0.0:
+                raise StructuralError, "Distance parameter must be greater then 0"
+        self.__distance1=distance1
+        self.__distance2=distance2
+        self.__pointClick1=pointClick1
+        self.__pointClick2=pointClick2      
+        self.__segment=_UpdateChamferSegment()
         
-    def __eq__(self, obj):
-        if not isinstance(obj, Chamfer):
-            return False
-        if obj is self:
-            return True
-        _s1, _s2 = self.getSegments()
-        _os1, _os2 = obj.getSegments()
-        return (((_s1 == _os1 and _s2 == _os2) or
-                 (_s1 == _os2 and _s2 == _os1)) and
-                abs(self.__length - obj.getLength()) < 1e-10)
-
-    def __ne__(self, obj):
-        if not isinstance(obj, Chamfer):
-            return True
-        if obj is self:
-            return False
-        _s1, _s2 = self.getSegments()
-        _os1, _os2 = obj.getSegments()
-        return (((_s1 != _os1 or _s2 == _os2) and
-                 (_s1 != _os2 or _s2 == _os1)) or
-                abs(self.__length - obj.getLength()) > 1e-10)
-
+    def _UpdateChamferSegment(self):           
+        """
+            Recompute the Chamfer segment
+        """
+        #   Get The intersection point
+        intersectionPoint=self.__intersectionPoints[0]
+        #   Get Nearest Point
+        if self.__pointClick1:
+            np1=getNearestPoint(self._obj1, self.__pointClick1)    
+        else:
+            np1=getNearestPoint(self._obj1, intersectionPoint)    
+        #   Compute the new point
+        v1=Vector(intersectionPoint, np1 )
+        magv1=v1.mag()
+        newPointSegment1=intersectionPoint+magv1.mult(distance1).point()
+        #   Update original Segment
+        if isinstance(self._obj1, Segment):
+            self._obj1=self._updateSegment(self._obj1,np1 , newPointSegment1)
+        #   Get Nearest Point
+        if self.__pointClick2:
+            np2=getNearestPoint(self._obj2, self.__pointClick2)    
+        else:
+            np2=getNearestPoint(self._obj2, self.__intersectionPoints[0])                
+        #   Compute the point
+        v2=Vector(intersectionPoint, np2 )
+        magv2=v2.mag()
+        newPointSegment2=intersectionPoint+magv2.mult(distance2).point()
+        #   Update original Segment
+        if isinstance(self._obj2, Segment):
+            self._obj2=self._updateSegment(self._obj2,np2 , newPointSegment2)
+        self.__segment=Segment(newPointSegment1,newPointSegment2 )
+    
+    def _updateSegment(self, objSegment, oldPoint , newPoint):    
+        """
+            Get a new segment moving the old point to the newPoint
+        """
+        p1, p2=objSegment.getEndpoints()
+        dist1=p1.dist(oldPoint)
+        dist2=p2.dist(oldPoint)
+        if dist1<dist2:
+            return Segment(p1, newPoint)
+        else:
+            return Segment(p2, newPoint)
+        
     def getConstructionElements(self):
         """
             retutn the construction element of the object
         """
-        return self.__s1 , self.__s2 , self.__length
+        outElement=(self._obj1 , 
+                    self._obj2 ,
+                    self.__distance1, 
+                    self.__distance2, 
+                    self.__pointClick1, 
+                    self.__pointClick2
+                    )
+        return outElement
 
     def getLength(self):
         """
             Return the Chamfer length.
         """
-        return self.__length
+        return self.__segment.length()
 
-    def setLength(self, l):
+    def setDistance1(self, distance):
         """
-            Set the Chamfer length.
-            The length should be a positive float value.
+            change the value of the distance1
         """
-        _s1, _s2 = self.getSegments()        
-        _l = get_float(l)
-        if _l < 0.0:
-            raise ValueError, "Invalid chamfer length: %g" % _l
-        if _l > _s1.length():
-            raise ValueError, "Chamfer is larger than first Segment."
-        if _l > _s2.length():
-            raise ValueError, "Chamfer is larger than second Segment."
-        _ol = self.__length
-        if abs(_l - _ol) > 1e-10:
-            self.__length = _l
+        if distance<=TOL:
+            raise StructuralError, "Distance could be greater then 0"
+        self.__distance1=distance
+        self._UpdateChamferSegment()
 
-
-    length = property(getLength, setLength, None, "Chamfer length.")
-    def _moveSegmentPoints(self, dist):
+    def setDistance2(self, distance):
         """
-            Set the Chamfer endpoints at the correct location
-            The argument 'dist' is the chamfer length. This method is private
-            the the Chamfer object.
+            change the value of the distance1
         """
-        _d = util.get_float(dist)
-        #
-        # process segment 1
-        #
-        _xi, _yi = self.getIntersection()
-        # print "xi: %g; yi: %g" % (xi, yi)
-        _mp1, _mp2 = self.getMovingPoints()
-        _sp1, _sp2 = self.getFixedPoints()
-        _sx, _sy = _sp1.getCoords()
-        _slen = hypot((_yi - _sy), (_xi - _sx))
-        # print "slen: %g" % slen
-        _newlen = (_slen - _d)/_slen
-        # print "newlen: %g" % _newlen
-        _xs, _ys = _sp1.getCoords()
-        _xm, _ym = _mp1.getCoords()
-        _xn = _xs + _newlen * (_xi - _xs)
-        _yn = _ys + _newlen * (_yi - _ys)
-        # print "xn: %g; yn: %g" % (_xn, _yn)
-        _mp1.setCoords(_xn, _yn)
-        #
-        # process segment 2
-        #
-        _sx, _sy = _sp2.getCoords()
-        _slen = hypot((_yi - _sy), (_xi - _sx))
-        # print "slen: %g" % _slen
-        _newlen = (_slen - _d)/_slen
-        # print "newlen: %g" % _newlen
-        _xs, _ys = _sp2.getCoords()
-        _xm, _ym = _mp2.getCoords()
-        _xn = _xs + _newlen * (_xi - _xs)
-        _yn = _ys + _newlen * (_yi - _ys)
-        # print "xn: %g; yn: %g" % (_xn, _yn)
-        _mp2.setCoords(_xn, _yn)
-        
+        if distance<=TOL:
+            raise StructuralError, "Distance could be greater then 0"
+        self.__distance2=distance
+        self._UpdateChamferSegment()
+           
     def clone(self):
-        _s1, _s2 = self.getSegments()
-        _l = self.__length
-        _s = self.getStyle()
-        _ch = Chamfer(_s1, _s2, _l, _s)
-        _ch.setColor(self.getColor())
-        _ch.setLinetype(self.getLinetype())
-        _ch.setThickness(self.getThickness())
-        return _ch
+        """
+            Clone the Chamfer .. 
+            I do not why somone whant to clone a chamfer ..
+            But Tis is the functionality .. :-)
+        """
+        newChamfer=Chamfer(self._obj1 , 
+                    self._obj2 ,
+                    self.__distance1, 
+                    self.__distance2, 
+                    self.__pointClick1, 
+                    self.__pointClick2)
+        return newChamfer
 
-
-class Fillet(SegJoint):
+    def getReletedComponent(self):
+        """
+            return the element to be written in the db and used for renderin
+        """
+        return self._obj1 , self._obj2 ,self.__segment
+        
+class Fillet(ObjectJoint):
     """
-        A fillet is a curved joining of two segments. For a filleted
+        A fillet is a curved joining of two Entity Object. For a filleted
         joint to be valid, the radius must fall within some distance
         determined by the segment endpoints and segment intersection
-        point, and the two segments must be extendable so they can
+        point, and the two Entity Object must be extendable so they can
         share a common endpoint.
-        A Fillet is derived from a SegJoint, so it shares the methods
+        A Fillet is derived from a ObjectJoint, so it shares the methods
         and attributes of that class. 
     """
     
-    def __init__(self, s1, s2, r):
-        SegJoint.__init__(s1, s2)
+    def __init__(self, obj1, obj2, r):
+        ObjectJoint.__init__(obj1, obj2)
         _r = get_float(r)
         if _r < 0.0:
             raise ValueError, "Invalid fillet radius: %g" % _r
@@ -334,7 +262,7 @@ class Fillet(SegJoint):
         """
             retutn the construction element of the object
         """
-        return self.__s1 , self.__s2 , self.__radius
+        return self._obj1 , self._obj2 , self.__radius
 
     def getRadius(self):
         """
@@ -468,7 +396,7 @@ class Fillet(SegJoint):
         """
             Return the radial limits of the fillet.
             This method returns a tuple of two floats; the first is
-            the minimal radius for the fillet between two segments,
+            the minimal radius for the fillet between two Entity Object,
             and the second is the maximum radius.
         """
         return self.__rmin, self.__rmax

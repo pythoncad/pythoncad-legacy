@@ -88,7 +88,7 @@ class Segment(GeometricalEntity):
             This function returns a tuple containing the Point objects
             that for inizializing the Point
         """
-        return self.__p1, self.__p2
+        return self.getEndpoints()
 
 
     def getEndpoints(self):

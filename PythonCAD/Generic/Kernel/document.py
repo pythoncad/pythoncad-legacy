@@ -256,6 +256,7 @@ class Document(BaseDb):
         """
             save the entity that have some relation
         """
+        #finire qui
         for e in entity.getReletedComponent():
             self.saveEntity(e)
         _cElements, entityType =self._getCelements(entity)

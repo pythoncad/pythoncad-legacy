@@ -56,7 +56,8 @@ class PythopnCadWarning(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)  
+        return repr(self.value) 
+        
 class EmptyDbSelect(Exception):
     """
         This exception is used for null return of
@@ -166,6 +167,15 @@ class ExcAngle(Exception):
 class ExText(Exception):
     """
         when this exception is trown it means that the command need text
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class ExcEntity(Exception):
+    """
+        when this exception is trown it means that the command need an dbEnity
     """
     def __init__(self, value):
         self.value = value

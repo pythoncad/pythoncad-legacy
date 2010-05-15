@@ -36,6 +36,7 @@ from Generic.Kernel.Command.vclinecommand   import VCLineCommand
 from Generic.Kernel.Command.hclinecommand   import HCLineCommand
 from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
 from Generic.Kernel.Command.textcommand     import TextCommand
+from Generic.Kernel.Command.chamfercommand  import ChamferCommand
 
 #
 # Entity List
@@ -97,7 +98,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'VCLINE':VCLineCommand, 
                         'HCLINE':HCLineCommand, 
                         'CCIRCLE':CCircleCommand, 
-                        'TEXT':TextCommand}
+                        'TEXT':TextCommand, 
+                        'CHAMFER':ChamferCommand}
 #
 # Match object Name
 #
@@ -115,7 +117,9 @@ DRAWIN_ENTITY={ Point:'POINT',
 
 DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
                         Chamfer:'CHAMFER'}
-            
+
+
+
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
 # Entity supported by the kernel

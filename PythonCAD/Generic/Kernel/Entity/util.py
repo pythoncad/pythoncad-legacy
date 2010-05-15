@@ -27,7 +27,8 @@ import string
 from math import fmod, pi
 import types
 
-from tolerance import *
+from tolerance      import *
+
 
 def get_float(val):
     _v = val
@@ -281,6 +282,40 @@ def getRandomString(lengh=None):
         lengh=10
     d = [random.choice(string.letters) for x in range(lengh)]
     return "".join(d)
+
+
+def getSegmentNearestPoint(segment, p):
+    """
+        get the segment nearest end point
+    """
+    ps1, ps2=segment.getEndpoints()
+    dist1=ps1.Dist(p1)
+    dist2=ps2.Dist(p1)
+    if (dist1-dist2<TOL):
+        return ps1
+    elif(dist1>dist2):
+        return ps2
+    else:
+        return ps1
+        
+def getACLineNearestPoint(acline, p):
+    """
+        Get ACLine point nearest
+    """
+    x, y=p.getCoords()
+    px, py=acline.getProjection(x, y)
+    return Point(px, py)
+    
+def getNearestPoint(obj, p):
+    """
+        return the segment end point nearest of p
+    """
+    from segment        import Segment
+    from acline         import ACline   
+    if isinstance(obj, Segment):
+       return getSegmentNearestPoint(obj, p)
+    if isinstance(obj, ACline):
+        pass
     
     
     

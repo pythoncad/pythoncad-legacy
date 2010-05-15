@@ -1211,51 +1211,23 @@ def _get_intfunc(obja, objb):
     return _intfunc
 
 def find_intersections(obja, objb):
+    """
+        Find intersection points`
+        Return an array of tuple point[(x,y),(x,y)]
+    """
     _ipts = []
     _intfunc = _get_intfunc(obja, objb)
     _intfunc(_ipts, obja, objb)
     return _ipts
 
-class Intersection(object):
+def find_segment_extended_intersection(obja, objb):
     """
-        this class provide intersection functionality for the geometrical entity
+        Extend the segment intersection on a cline intersection
     """
-    def __init__(self, objA, objB):
-        self.__objA=objA
-        self.__objB=objB
-        self.__intersectionPoint=[]
-        self.computeIntersection()
-    def setFirstObject(self, obj):
-        """
-            update the first object
-        """
-        self.__objA=obj
-        self.computeIntersection()
-    def setSecondObject(self, obj):
-        """
-            update the first object
-        """
-        self.__objB=obj
-        self.computeIntersection()
-    def getIntersectionPoints(self):
-        """
-            return the intersection point 
-        """
-        return self.__intersectionPoint
-    def computeIntersection(self):
-        """
-            compute the intersection with with the two object 
-        """
-        pass
-        
-class segmentIntersection(Intersection):
-    """
-        this class provide all the intersection with the segment
-    """
-    def __init__(self, objA, ObjB):
-        Intersection.__init__(self, objA, objB)
-    def computeIntersection(self):
-        """
-           compute the intersection with the two given object 
-        """
-        
+    if isinstance(obja, Segment):
+        p1, p2=obja.getEndpoints()
+        obja=CLine(p1, p2)
+    if isinstance(objb, Segment):
+        p1, p2=objb.getEndpoints()
+        objb=CLine(p1, p2)
+    return find_intersections(obja, objb)

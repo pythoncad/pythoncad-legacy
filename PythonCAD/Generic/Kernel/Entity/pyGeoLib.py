@@ -41,7 +41,7 @@ class Vector:
         x1,y1=p2.getCoords()
         self.X=x1-x
         self.Y=y1-y
-    def Mag(self):
+    def mag(self):
         """
             Get the versor
         """
@@ -66,7 +66,7 @@ class Vector:
         p2=Point(x,y)
         retVector=Vector(p1,p2)
         return retVector
-    def Norm(self):
+    def norm(self):
         """
           Get The Norm Of the vector
         """
@@ -81,12 +81,12 @@ class Vector:
             return True             
         else:
             return False
-    def Point(self):
+    def point(self):
         """
               Return The Point 
         """
         return Point(self.X,self.Y)
-    def Dot(self,vector):
+    def dot(self,vector):
         """
             Compute The Dot Product
         """
@@ -98,7 +98,7 @@ class Vector:
         for a, b in zip(v0, v1):
           som+=a*b
         return som  
-    def Cross(self,vector):
+    def cross(self,vector):
         """
             Compute The Cross Product
         """
@@ -108,7 +108,7 @@ class Vector:
         x2,y2=vector.Point().getCoords()
         cros=x1*y2 - y1*x2
         return cros
-    def Ang(self,vector):
+    def ang(self,vector):
         """
             Calculate the angle Between the two vector
         """
@@ -123,13 +123,13 @@ class Vector:
             dot=1
         ang=math.acos(dot)
         return ang
-    def Mult(self,scalar):
+    def mult(self,scalar):
         """
             Multiplae the vector for a scalar value
         """
         self.X=scalar*self.X
         self.Y=scalar*self.Y
-    def Map(self,x,y):
+    def map(self,x,y):
         """
             Get a vector for the mapping point
         """
