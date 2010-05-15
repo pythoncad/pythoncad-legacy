@@ -26,7 +26,6 @@ import sys
 import tempfile
 import sqlite3 as sql
 
-
 from exception import *
 
 class BaseDb(object):
@@ -37,13 +36,15 @@ class BaseDb(object):
     def __init__(self):
         self.__dbConnection=None
         self.dbPath=None
+        
     def createConnection(self,dbPath=None):
         """
             create the connection with the database
         """
         if dbPath is None:
-            dbPath=tempfile.mkdtemp(prefix='PyCad_')
-            dbPath=os.path.join(dbPath, 'PythonCad.pdr')
+            f=tempfile.NamedTemporaryFile(prefix='PyCad_',suffix='.pdr')
+            dbPath=f.name
+            f.close()
         self.__dbConnection = sql.connect(dbPath)
         self.dbPath=dbPath
         

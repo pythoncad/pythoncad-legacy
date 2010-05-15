@@ -39,7 +39,10 @@ from Generic.Kernel.relation                import RelationDb
 from Generic.Kernel.settings                import *
 from Generic.Kernel.layertree               import LayerTree
 from Generic.Kernel.layer                   import Layer
+
+
 #****************************************************Entity Import
+from Generic.Kernel.Entity.geometricalentity       import GeometricalEntity, GeometricalEntityComposed
 from Generic.Kernel.Entity.point        import Point
 from Generic.Kernel.Entity.segment      import Segment
 from Generic.Kernel.Entity.arc          import Arc
@@ -204,18 +207,18 @@ class Document(BaseDb):
             #self.__EntityDb.suspendCommit()
             #self.__RelationDb.suspendCommit()
             BaseDb.commit=False
-            if isinstance(entity,tuple(DRAWIN_ENTITY.keys())):
-                _obj=self._saveDrwEnt(entity)
-            if isinstance(entity,tuple(DRAWIN_COMPOSED_ENTITY.keys())):
-                _obj=self._saveDrwComposeEnt(entity)
-            if isinstance(entity,Settings):
-                _obj=self._saveSettings(entity)
-            if isinstance(entity,Layer):
+            if isinstance(entity,GeometricalEntity):
+                _obj=self._saveGeometricalEntity(entity)    
+            elif isinstance(entity,GeometricalEntityComposed):
+                _obj=self._saveGeometricalEntityComposed(entity)
+            elif isinstance(entity,Layer):
                 _obj=self._saveLayer(entity)
-            if isinstance(entity,Style):
-                _obj=self._saveStyle(entity)
-            if isinstance(entity,Entity):
+            elif isinstance(entity,Settings):
+                _obj=self._saveSettings(entity)
+            elif isinstance(entity,Entity): # This is used if case of update of the entity
                 _obj=self._savePyCadEnt(entity)
+            else:
+                raise StructuralError, "Entity %s not allowed to be Saved"%str(type(entity))
             if not self.__bulkCommit:
                 #self.__UndoDb.reactiveCommit()
                 #self.__EntityDb.reactiveCommit()
@@ -224,8 +227,28 @@ class Document(BaseDb):
                 self.performCommit()
             return _obj
         except:
-            print "Unexpected error:", sys.exc_info()[0]
-            raise
+            msg="Unexpected error: %s "%str(sys.exc_info()[0])
+            raise StructuralError, msg
+            
+    def _saveGeometricalEntityComposed(self, entity):
+        """
+            save all the geometrical entity composed
+        """
+        _obj=self._saveDrwComposeEnt(entity)
+        return _obj
+        
+    def _saveGeometricalEntity(self, entity):
+        """
+            save all the geometrical entity
+        """
+        if isinstance(entity,Style):
+            _obj=self._saveStyle(entity)
+        elif isinstance(entity,Entity):
+            _obj=self._savePyCadEnt(entity)
+        else:
+            _obj=self._saveDrwEnt(entity)
+        return _obj
+        
     #ToDo: test the savedrwcomposeent and see if it's possible to improve it
     #before saving an entity I need to chech if olready exsist
     #in case of composed entity the entity are already in the drawing .
@@ -238,6 +261,7 @@ class Document(BaseDb):
         _cElements, entityType =self._getCelements(entity)
         _obj=self._saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
+        return _obj
         
     def _saveDrwEnt(self,entity):
         """
@@ -308,7 +332,7 @@ class Document(BaseDb):
             if this entity have an id mark pycad_visible = 0
             and then save the entity
         """
-        self._saveDbEnt(entity=entity)
+        return self._saveDbEnt(entity=entity)
 
     def _saveDbEnt(self,entType=None,points=None, entity=None):
         """
