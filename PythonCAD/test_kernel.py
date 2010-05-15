@@ -757,7 +757,16 @@ class textApplication(object):
         self.performCommandRandomly("SEGMENT")
         self.outputMsg("Create Arc")
         self.performCommandRandomly("ARC")
-
+        
+        self.outputMsg("Create NewStyle2 ")
+        stl1=Style("NewStyle2")
+        stl12=activeDoc.saveEntity(stl1)
+        styleDic=stl11.getConstructionElements()
+        styleDic[styleDic.keys()[0]].setStyleProp('entity_color',(255,215,000))
+        self.outputMsg("Update NewStyle2")
+        activeDoc.saveEntity(stl12)
+        self.outputMsg("Done")
+        
     def performCommandRandomly(self, commandName, andLoop=10):
         """
             set some random Value at the command imput

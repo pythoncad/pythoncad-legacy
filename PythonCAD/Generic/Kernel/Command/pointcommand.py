@@ -36,5 +36,5 @@ class PointCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=1:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        seg=Point(self.value[0])
-        self.document.saveEntity(seg)
+        point=Point(self.value[0])
+        self.document.saveEntity(point)
