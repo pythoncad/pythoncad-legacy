@@ -35,6 +35,7 @@ class GeometricalEntity(object):
 class GeometricalEntityComposed(object):
     """
         this class provide the basic object for composed entity 
+        like dimension labels ...
     """
     def getConstructionElements(self):
         """

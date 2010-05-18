@@ -27,7 +27,7 @@ from __future__ import generators
 import math
 
 from point              import Point
-from pyGeoLib           import Vector
+from pygeolib           import Vector
 from geometricalentity  import *
 from util               import *
 

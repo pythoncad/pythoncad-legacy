@@ -27,7 +27,7 @@ import string
 from math import fmod, pi
 import types
 
-from tolerance      import *
+from tolerance      import TOL
 
 
 def get_float(val):
@@ -289,8 +289,8 @@ def getSegmentNearestPoint(segment, p):
         get the segment nearest end point
     """
     ps1, ps2=segment.getEndpoints()
-    dist1=ps1.Dist(p1)
-    dist2=ps2.Dist(p1)
+    dist1=ps1.dist(p)
+    dist2=ps2.dist(p)
     if (dist1-dist2<TOL):
         return ps1
     elif(dist1>dist2):
@@ -311,7 +311,7 @@ def getNearestPoint(obj, p):
         return the segment end point nearest of p
     """
     from segment        import Segment
-    from acline         import ACline   
+    from acline         import ACLine   
     if isinstance(obj, Segment):
        return getSegmentNearestPoint(obj, p)
     if isinstance(obj, ACline):

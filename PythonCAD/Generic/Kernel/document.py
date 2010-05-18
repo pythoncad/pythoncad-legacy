@@ -31,12 +31,13 @@ import time
 from Generic.Kernel.initsetting             import *
 from Generic.Kernel.extformat               import *
 from Generic.Kernel.exception               import *
+from Generic.Kernel.settings                import *
 from Generic.Kernel.undodb                  import UndoDb
 from Generic.Kernel.entdb                   import EntDb
 from Generic.Kernel.entity                  import Entity
+from Generic.Kernel.composedentity          import ComposedEntity
 from Generic.Kernel.basedb                  import BaseDb
 from Generic.Kernel.relation                import RelationDb
-from Generic.Kernel.settings                import *
 from Generic.Kernel.layertree               import LayerTree
 from Generic.Kernel.layer                   import Layer
 
@@ -209,8 +210,8 @@ class Document(BaseDb):
             BaseDb.commit=False
             if isinstance(entity,GeometricalEntity):
                 _obj=self._saveGeometricalEntity(entity)    
-            elif isinstance(entity,GeometricalEntityComposed):
-                _obj=self._saveGeometricalEntityComposed(entity)
+            elif isinstance(entity,ComposedEntity):
+                _obj=self._saveComposedEntity(entity)
             elif isinstance(entity,Layer):
                 _obj=self._saveLayer(entity)
             elif isinstance(entity,Settings):
@@ -230,11 +231,22 @@ class Document(BaseDb):
             msg="Unexpected error: %s "%str(sys.exc_info()[0])
             raise StructuralError, msg
             
-    def _saveGeometricalEntityComposed(self, entity):
+    def _saveComposedEntity(self, entity):
         """
             save all the geometrical entity composed
         """
-        _obj=self._saveDrwComposeEnt(entity)
+        relComp=[]
+        #Save the releted component
+        for e in entity.getChildEnt():
+            relComp.append(self.saveEntity(e))
+        #save the composedEntity
+        _cElements, entityType =self._getCelements(entity)
+        _obj=self._saveDbEnt(entType=entityType,constructorElements=_cElements)
+        #seve the relation layer compose ent
+        self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
+        #seve the relation composed ent ent
+        for c in relComp:
+            self.__RelationDb.saveRelation(_obj,c)
         return _obj
         
     def _saveGeometricalEntity(self, entity):
@@ -249,20 +261,6 @@ class Document(BaseDb):
             _obj=self._saveDrwEnt(entity)
         return _obj
         
-    #ToDo: test the savedrwcomposeent and see if it's possible to improve it
-    #before saving an entity I need to chech if olready exsist
-    #in case of composed entity the entity are already in the drawing .
-    def _saveDrwComposeEnt(self, entity):
-        """
-            save the entity that have some relation
-        """
-        #finire qui
-        for e in entity.getReletedComponent():
-            self.saveEntity(e)
-        _cElements, entityType =self._getCelements(entity)
-        _obj=self._saveDbEnt(entityType,_cElements)
-        self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
-        return _obj
         
     def _saveDrwEnt(self,entity):
         """
@@ -276,9 +274,17 @@ class Document(BaseDb):
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         return _obj
         
+    def getNewId(self):
+        """
+            get a new id
+        """
+        self.__entId+=1    
+        return self.__entId
+        
     def _getCelements(self, entity):
         """
             get an array of construction elements
+            entity must be a DRAWIN_ENTITY
         """
         for t in DRAWIN_ENTITY :
             if isinstance(entity, t):
@@ -335,13 +341,13 @@ class Document(BaseDb):
         """
         return self._saveDbEnt(entity=entity)
 
-    def _saveDbEnt(self,entType=None,points=None, entity=None):
+    def _saveDbEnt(self,entType=None,constructorElements=None, entity=None):
         """
             save the DbEnt to db
         """
         self.__logger.debug('_saveDbEnt')
         if entity==None:
-            _newDbEnt=Entity(entType,points,self.__activeStyleObj,self.__entId)
+            _newDbEnt=Entity(entType,constructorElements,self.__activeStyleObj,self.__entId)
         else:
             _newDbEnt=entity
         if self.__bulkUndoIndex>=0:

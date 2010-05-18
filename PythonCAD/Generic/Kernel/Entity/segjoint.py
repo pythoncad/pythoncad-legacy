@@ -45,10 +45,11 @@ class ObjectJoint(GeometricalEntityComposed):
     """
    
     def __init__(self, obj1, obj2):
-        from Generic.Kernel.initsettings import DRAWIN_ENTITY
-        if not isinstance(obj1, DRAWIN_ENTITY):
+        from Generic.Kernel.initsetting import DRAWIN_ENTITY
+        classNames=tuple(DRAWIN_ENTITY.keys())
+        if not isinstance(obj1, classNames):
             raise TypeError, "Invalid first Element for DRAWIN_ENTITY: " + `type(obj1)`
-        if not isinstance(obj2, DRAWIN_ENTITY):
+        if not isinstance(obj2, classNames):
             raise TypeError, "Invalid second Element for DRAWIN_ENTITY: " + `type(obj2)`
     
         self._obj1 = obj1
@@ -58,7 +59,7 @@ class ObjectJoint(GeometricalEntityComposed):
         if not spoolIntersection: #if not intesection is found extend it on cLine
             spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(obj1, obj2)]
             self._externalIntersectio=True
-        self.__intersectionPoints=spoolIntersection
+        self._intersectionPoints=spoolIntersection
         
         
     def getConstructionElements(self):
@@ -109,51 +110,55 @@ class Chamfer(ObjectJoint):
         self.__distance2=distance2
         self.__pointClick1=pointClick1
         self.__pointClick2=pointClick2      
-        self.__segment=_UpdateChamferSegment()
+        self.__segment=self._UpdateChamferSegment()
         
     def _UpdateChamferSegment(self):           
         """
             Recompute the Chamfer segment
         """
-        #   Get The intersection point
-        intersectionPoint=self.__intersectionPoints[0]
-        #   Get Nearest Point
-        if self.__pointClick1:
-            np1=getNearestPoint(self._obj1, self.__pointClick1)    
-        else:
-            np1=getNearestPoint(self._obj1, intersectionPoint)    
-        #   Compute the new point
-        v1=Vector(intersectionPoint, np1 )
-        magv1=v1.mag()
-        newPointSegment1=intersectionPoint+magv1.mult(distance1).point()
-        #   Update original Segment
-        if isinstance(self._obj1, Segment):
-            self._obj1=self._updateSegment(self._obj1,np1 , newPointSegment1)
-        #   Get Nearest Point
-        if self.__pointClick2:
-            np2=getNearestPoint(self._obj2, self.__pointClick2)    
-        else:
-            np2=getNearestPoint(self._obj2, self.__intersectionPoints[0])                
-        #   Compute the point
-        v2=Vector(intersectionPoint, np2 )
-        magv2=v2.mag()
-        newPointSegment2=intersectionPoint+magv2.mult(distance2).point()
-        #   Update original Segment
-        if isinstance(self._obj2, Segment):
-            self._obj2=self._updateSegment(self._obj2,np2 , newPointSegment2)
-        self.__segment=Segment(newPointSegment1,newPointSegment2 )
+        self._obj1, pc1=self._updateSegment(self._obj1,self.__distance1, self.__pointClick1 )
+        self._obj2, pc2=self._updateSegment(self._obj2,self.__distance2, self.__pointClick2 )
+        seg=Segment(pc1, pc2)
+        return seg
     
-    def _updateSegment(self, objSegment, oldPoint , newPoint):    
+    def _updateSegment(self, obj,distance,  clickPoint=None):
         """
-            Get a new segment moving the old point to the newPoint
+            recalculate the segment for the chamfer
+            and give the point for the chamfer
         """
-        p1, p2=objSegment.getEndpoints()
-        dist1=p1.dist(oldPoint)
-        dist2=p2.dist(oldPoint)
-        if dist1<dist2:
-            return Segment(p1, newPoint)
-        else:
-            return Segment(p2, newPoint)
+        ip=self._intersectionPoints[0]
+        if isinstance(obj, Segment):
+            p1, p2=obj.getEndpoints()
+            if p1==ip:
+                mvPoint=p1
+                stPoint=p2
+            elif p2==ip:
+                mvPoint=p2
+                stPoint=p1
+            elif clickPoint:
+                dist1=clickPoint.dist(p1)
+                dist2=clickPoint.dist(p2)
+                if dist1<dist2:
+                    mvPoint=p1
+                    stPoint=p2  
+                else:
+                    mvPoint=p2
+                    stPoint=p1           
+            else:
+                dist1=ip.dist(p1)
+                dist2=ip.dist(p2)
+                if dist1<dist2:
+                    mvPoint=p1
+                    stPoint=p2  
+                else:
+                    mvPoint=p2
+                    stPoint=p1   
+                    
+            v=Vector(mvPoint,stPoint).mag()
+            v.mult(distance)
+            ePoint=ip+v.point()
+            return Segment(ePoint, stPoint), ePoint
+            
         
     def getConstructionElements(self):
         """
@@ -172,7 +177,10 @@ class Chamfer(ObjectJoint):
         """
             Return the Chamfer length.
         """
-        return self.__segment.length()
+        if self.__segment:
+            return self.__segment.length()
+        else:
+            return 0.0
 
     def setDistance1(self, distance):
         """

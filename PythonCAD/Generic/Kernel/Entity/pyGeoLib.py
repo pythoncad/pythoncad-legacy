@@ -59,7 +59,7 @@ class Vector:
                 else:
                     x=-1
         else:
-          module=self.Norm()
+          module=self.norm()
           y=self.Y/module
           x=self.X/module
         p1=Point(0,0)
@@ -77,7 +77,7 @@ class Vector:
         """ 
         if(not isinstance(vector,Vector)):
           raise TypeError,"Invalid Argument vector: Vector Required"   
-        if(self.Point()==vector.Point()):
+        if(self.point()==vector.point()):
             return True             
         else:
             return False
@@ -92,8 +92,8 @@ class Vector:
         """
         if(not isinstance(vector,Vector)):
             raise TypeError,"Invalid Argument vector: Vector Required"  
-        v0=self.Point().getCoords()
-        v1=vector.Point().getCoords()
+        v0=self.point().getCoords()
+        v1=vector.point().getCoords()
         som=0
         for a, b in zip(v0, v1):
           som+=a*b
@@ -104,8 +104,8 @@ class Vector:
         """
         if(not isinstance(vector,Vector)):
             raise TypeError,"Invalid Argument vector: Vector Required"  
-        x1,y1=self.Point().getCoords()
-        x2,y2=vector.Point().getCoords()
+        x1,y1=self.point().getCoords()
+        x2,y2=vector.point().getCoords()
         cros=x1*y2 - y1*x2
         return cros
     def ang(self,vector):
@@ -114,9 +114,9 @@ class Vector:
         """
         if(not isinstance(vector,Vector)):
             raise TypeError,"Invalid Argument vector: Vector Required"  
-        vself=self.Mag()
-        vvector=vector.Mag()
-        dot=vself.Dot(vvector)
+        vself=self.mag()
+        vvector=vector.mag()
+        dot=vself.dot(vvector)
         if(dot<-1):
             dot=-1
         if(dot>1):
@@ -136,9 +136,9 @@ class Vector:
         p0=Point(0,0)
         pPro=Point(x,y)
         vProj=Vector(p0,pPro)
-        ang=self.Ang(vProj)
-        vProjNorm=vProj.Norm()
+        ang=self.ang(vProj)
+        vProjNorm=vProj.norm()
         projectionUnitDistance=vProjNorm*math.cos(ang)
-        vSelfMag=self.Mag()
-        vSelfMag.Mult(projectionUnitDistance)
+        vSelfMag=self.mag()
+        vSelfMag.mult(projectionUnitDistance)
         return vSelfMag    

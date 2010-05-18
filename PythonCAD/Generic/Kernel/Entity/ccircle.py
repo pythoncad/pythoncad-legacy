@@ -31,7 +31,7 @@ from tolerance          import *
 from util               import *
 from geometricalentity  import *
 from point              import Point
-from pyGeoLib           import Vector
+from pygeolib           import Vector
 
 class CCircle(GeometricalEntity):
     """

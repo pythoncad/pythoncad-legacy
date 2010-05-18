@@ -20,20 +20,23 @@
 #
 # This module provide basic pythoncadObject
 #
-
+from Generic.Kernel.Entity.style            import Style
 
 class PyCadObject(object):
     """
         This class provide basic information usefoul for the
         db like id for exsample
     """
-    def __init__(self,objId,):
+    def __init__(self,objId,style,eType):
         from Generic.Kernel.initsetting import OBJECT_STATE
         self.OBJECT_STATE=OBJECT_STATE
         self.__entityId=objId
         self.__state="MODIFIE"
         self.__index=0
         self.__visible=1
+        self.__style=style
+        self.__entType=eType
+        
     def setVisible(self, visible):
         """
             set the visible value
@@ -106,4 +109,41 @@ class PyCadObject(object):
             mark the entity as released
         """
         self.__state='RELEASED'
+    def getStyle(self):
+        """
+            get the object EntityStyle
+        """
+        return self.__style
 
+    def setStyle(self,style):
+        """
+            set/update the entitystyle
+        """
+        if not isinstance(style,Style):
+            raise TypeError,'Type error in style'
+        self.__style=style
+
+    style=property(getStyle,setStyle,None,"Get/Set the entity style")
+
+    def getInnerStyle(self):
+        """
+            return the inner style of type Style
+        """
+        if self.getStyle():
+            styleEnt=self.getStyle().getConstructionElements() 
+            return styleEnt[styleEnt.keys()[0]]
+        else:
+            return None
+    def setEntType(self, type):
+        """
+            Set the entity type
+        """
+        self.__entType=type
+        
+    def getEntityType(self):
+        """
+            Get the entity type
+        """
+        return self.__entType
+
+    eType=property(getEntityType,setEntType,None,"Get/Set the etity type ")

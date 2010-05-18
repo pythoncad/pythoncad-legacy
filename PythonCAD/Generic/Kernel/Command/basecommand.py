@@ -46,7 +46,12 @@ class BaseCommand(object):
         if self.index>=TotNIter:
             raise StopIteration
         return (self.exception[self.index],self.message[self.index])
-
+    def keys(self):
+        """
+            return all the exception key
+        """
+        return self.exception
+        
     def __setitem__(self, key, value):
         """
             set the value of the command
@@ -58,3 +63,12 @@ class BaseCommand(object):
             this method here must be defined
         """
         pass
+    def getActiveMessage(self):
+        """
+            get Active message
+        """
+        _index=self.index+1
+        if len(self.message)>_index:
+            return self.message[_index]
+        else:
+            return "Press enter to ececute the command"

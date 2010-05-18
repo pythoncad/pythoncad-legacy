@@ -164,7 +164,7 @@ class ExcAngle(Exception):
     def __str__(self):
         return repr(self.value)
 
-class ExText(Exception):
+class ExcText(Exception):
     """
         when this exception is trown it means that the command need text
     """

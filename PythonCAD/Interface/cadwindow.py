@@ -28,10 +28,10 @@ sip.setapi('QString', 2)
 from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
-
+from customevent import testCmdLine
 from Interface.cadscene import CadScene
-from Interface.cadview import CadView
-
+from Interface.cadview  import CadView
+from Ui_TestWindow      import Ui_TestDialog
 from Interface.Commandline.cmdlinedock import CmdlineDock
 
 
@@ -50,7 +50,7 @@ class CadWindow(QtGui.QMainWindow):
         self._createToolBars()
         self._createStatusBar()
         self._createDockWindows()
-
+        
         self.setWindowTitle("PythonCAD (Qt)")
 
         self.setUnifiedTitleAndToolBarOnMac(True)
@@ -93,6 +93,19 @@ class CadWindow(QtGui.QMainWindow):
         QtGui.QMessageBox.about(self, "About PythonCAD",
                 "<b>PythonCAD</b> is a 2D CAD system.")
         
+    def _onDevelop(self):
+        """
+            on develop 
+        """
+        TestDialog = QtGui.QDialog()
+        ui = Ui_TestDialog()
+        ui.setupUi(TestDialog)
+        tcl=testCmdLine(ui, self._scene)
+        TestDialog.exec_()
+        
+        #qw=Ui_TestWindow()
+        #self.setActiveWindow(qw)
+        
 
     def _createActions(self):
         self.__new_drawing_action = QtGui.QAction(QtGui.QIcon(':/images/new.png'),
@@ -134,8 +147,11 @@ class CadWindow(QtGui.QMainWindow):
         self.__about_qt_action = QtGui.QAction("About &Qt", self,
                 statusTip="Show the Qt library's About box",
                 triggered=QtGui.qApp.aboutQt)
-
         
+        self.__develop_action = QtGui.QAction("&Develop", self,
+                statusTip="Open the develop windows",
+                triggered=self._onDevelop)
+                
     def _createMenus(self):
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenu.addAction(self.__new_drawing_action)
@@ -157,7 +173,9 @@ class CadWindow(QtGui.QMainWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.__about_action)
         self.helpMenu.addAction(self.__about_qt_action)
-
+        
+        self.develop = self.menuBar().addMenu("&Develop")
+        self.develop.addAction(self.__develop_action)
         
     def _createToolBars(self):
         self.fileToolBar = self.addToolBar("File")

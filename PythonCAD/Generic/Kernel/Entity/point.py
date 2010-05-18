@@ -202,7 +202,7 @@ class Point(GeometricalEntity):
                     (_y < _ymin) or
                     (_y > _ymax))
 
-    def Dist(self,obj):
+    def dist(self,obj):
         """
            Get The Distance From 2 Points
         """
