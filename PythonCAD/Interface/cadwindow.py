@@ -29,11 +29,13 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
-from Interface.cadscene import CadScene
-from Interface.cadview import CadView
 
-from Interface.CmdIntf.cmdintf import CmdIntf
 from Interface.LayerIntf.layerdock import LayerDock
+from Interface.cadscene             import CadScene
+from Interface.cadview              import CadView
+from Ui_TestWindow                  import Ui_TestDialog
+from customevent                    import testCmdLine
+from Interface.CmdIntf.cmdintf      import CmdIntf
 
 
 class CadWindow(QtGui.QMainWindow):
@@ -87,6 +89,9 @@ class CadWindow(QtGui.QMainWindow):
         
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
+        
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Debug, 'Debug', '&Debug PyCAD', self._onDebug)
+        
         return
         
 
@@ -137,7 +142,20 @@ class CadWindow(QtGui.QMainWindow):
                 "<b>PythonCAD</b> is a 2D CAD system.")
         return
         
-        
+    def _onDebug(self):
+        """
+            debug dialog
+        """
+    
+        TestDialog = QtGui.QDialog()
+        ui = Ui_TestDialog()
+        ui.setupUi(TestDialog)
+        testCmdLine(ui,self.__scene )
+        TestDialog.show()
+        TestDialog.exec_()
+    
+#Ui_TestWindow
+        return    
 
     def _createStatusBar(self):
         '''
