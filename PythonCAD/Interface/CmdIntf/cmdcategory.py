@@ -37,7 +37,7 @@ class CmdCategory(object):
         # list with tool-bars
         self.__toolbars = {}
         # categories defines all possible categories
-        self.__categories = 'File Edit Draw Modify View Help'
+        self.__categories = 'File Edit Draw Modify View Help Debug'
         # create attributes from the categories string
         for number, category in enumerate(self.__categories.split()):
             # create menu

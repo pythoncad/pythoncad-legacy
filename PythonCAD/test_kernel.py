@@ -15,6 +15,7 @@ from Generic.Kernel.document            import *
 from Generic.Kernel.application         import Application
 from Generic.Kernel.Entity.point        import Point
 from Generic.Kernel.Entity.style        import Style
+from Generic.Kernel.Entity.segjoint     import Chamfer
 
 def printId(kernel,obj):
     """
@@ -520,6 +521,7 @@ class textApplication(object):
         self.__applicationCommand['Esc']=self.endApplication
         self.__applicationCommand['?']=self.printHelp
         self.__applicationCommand['Test']=self.featureTest
+        self.__applicationCommand['ETest']=self.easyTest
         # Document Commandf
         self.__pyCadApplication=Application()
         for command in self.__pyCadApplication.getCommandList():
@@ -692,6 +694,8 @@ class textApplication(object):
                     cObject[iv]=self.inputFloat(message)
                 except (ExText):
                     cObject[iv]=self.inputMsg(message)
+                except (ExEntity):
+                    cObject[iv]=self.inputInt(message)
                 except:
                     print "Bad error !!"
                     raise 
@@ -766,6 +770,77 @@ class textApplication(object):
         self.outputMsg("Update NewStyle2")
         activeDoc.saveEntity(stl12)
         self.outputMsg("Done")
+        # Test  Geometrical chamfer ent
+        self.GeotestChamfer()
+        # Test Chamfer Command 
+        self.testChamferCommand()
+        
+    def testGeoChamfer(self):    
+        self.outputMsg("Test Chamfer")
+        p1=Point(0.0, 0.0)
+        p2=Point(10.0, 0.0)
+        p3=Point(0.0, 10.0)
+        s1=Segment(p1, p2)
+        s2=Segment(p1, p3)
+        cmf=Chamfer(s1, s2, 2.0, 2.0)
+        cl=cmf.getLength()
+        self.outputMsg("Chamfer Lengh %s"%str(cl))
+        s1, s2, s3=cmf.getReletedComponent()
+        if s3:
+            for p in s3.getEndpoints():
+                x, y=p.getCoords()
+                self.outputMsg("P1 Cords %s,%s"%(str(x), str(y)))
+        else:
+            self.outputMsg("Chamfer segment in None")
+    
+    def testChamferCommand(self):
+        """
+            this function is usefoul for short test
+            as soon it works copy the code into featureTest
+        """
+        newDoc=self.__pyCadApplication.newDocument()
+        intPoint=Point(0.0, 0.0)
+        
+        s1=Segment(intPoint, Point(10.0, 0.0))
+        s2=Segment(intPoint, Point(0.0, 10.0))
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+       
+        cObject=self.__pyCadApplication.getCommand("CHAMFER")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=2
+        cObject[keys[3]]=2
+        cObject[keys[4]]=None
+        cObject[keys[5]]=None
+        cObject.applyCommand()
+    
+    def easyTest(self):
+        """
+            this function is usefoul for short test
+            as soon it works copy the code into featureTest
+        """
+        pass
+        newDoc=self.__pyCadApplication.newDocument()
+        intPoint=Point(2.0, 2.0)
+        
+        s1=Segment(intPoint, Point(10.0, 0.0))
+        s2=Segment(intPoint, Point(0.0, 10.0))
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+       
+        cObject=self.__pyCadApplication.getCommand("CHAMFER")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=2
+        cObject[keys[3]]=2
+        cObject[keys[4]]=None
+        cObject[keys[5]]=None
+        cObject.applyCommand()
         
     def performCommandRandomly(self, commandName, andLoop=10):
         """
@@ -803,6 +878,14 @@ class textApplication(object):
         x=random()*1000
         y=random()*1000
         return Point(x, y)
+    def inputInt(self, msg):   
+        """
+            return an int from user
+        """        
+        value=self.inputMsg(msg)
+        if value:
+            return int(value)
+        return None
         
     def inputFloat(self, msg):
         """

@@ -29,8 +29,11 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
+<<<<<<< HEAD
 
 from Interface.LayerIntf.layerdock import LayerDock
+=======
+>>>>>>> cf76a9a09b69586b46ed60e615e7e08541894712
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Ui_TestWindow                  import Ui_TestDialog

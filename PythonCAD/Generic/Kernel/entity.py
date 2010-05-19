@@ -21,7 +21,7 @@
 # This module provide basic DB class for storing entity in pythoncad
 #
 from Generic.Kernel.Entity.pycadobject      import *
-from Generic.Kernel.Entity.style            import Style
+
 from Generic.Kernel.Entity.point            import Point
 
 class Entity(PyCadObject):
@@ -30,14 +30,12 @@ class Entity(PyCadObject):
     """
     def __init__(self,entType,constructionElements,style,objId):
         from Generic.Kernel.initsetting             import PY_CAD_ENT
-        PyCadObject.__init__(self,objId)
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported'
-        self.__entType=entType
-        self.__style=style
         if not isinstance(constructionElements,dict):
             raise TypeError,'type error in dictionary'
-        self.setConstructionElement(constructionElements)
+        PyCadObject.__init__(self,eType=entType, objId=objId,style=style)
+        self.setConstructionElements(constructionElements)
 
     def getBBox(self):
         """
@@ -52,6 +50,8 @@ class Entity(PyCadObject):
         # Todo : Find a better way to create the bounding box for all
         # the geometrical entity may be is better that all the geometrical
         # entity have an implementatio of the bounding box
+        self.__bBox=(0,0,0,0)
+        return
         _xList=[]
         _yList=[]
         for key in self._constructionElements:
@@ -74,43 +74,13 @@ class Entity(PyCadObject):
         """
         return self._constructionElements
 
-    def setConstructionElement(self, constructionElements):
+    def setConstructionElements(self, constructionElements):
         """
             set the construction elements for the object
         """
         self._constructionElements=constructionElements
         self.updateBBox()
 
-    def getEntityType(self):
-        """
-            Get the entity type
-        """
-        return self.__entType
 
-    eType=property(getEntityType,None,None,"Get the etity type read only attributes")
 
-    def getStyle(self):
-        """
-            get the object EntityStyle
-        """
-        return self.__style
 
-    def setStyle(self,style):
-        """
-            set/update the entitystyle
-        """
-        if not isinstance(style,Style):
-            raise TypeError,'Type error in style'
-        self.__style=style
-
-    style=property(getStyle,setStyle,None,"Get/Set the entity style")
-
-    def getInnerStyle(self):
-        """
-            return the inner style of type Style
-        """
-        if self.getStyle():
-            styleEnt=self.getStyle().getConstructionElements() 
-            return styleEnt[styleEnt.keys()[0]]
-        else:
-            return None

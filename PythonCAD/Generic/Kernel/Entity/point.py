@@ -113,7 +113,7 @@ class Point(GeometricalEntity):
                 raise TypeError,"Invalid Argument obj: Point or tuple Required"
         else:
             x,y = obj.getCoords()
-        return self.__x+x,self.__y+y
+        return Point(self.__x+x,self.__y+y)
 
     def getx(self):
         """
@@ -202,7 +202,7 @@ class Point(GeometricalEntity):
                     (_y < _ymin) or
                     (_y > _ymax))
 
-    def Dist(self,obj):
+    def dist(self,obj):
         """
            Get The Distance From 2 Points
         """

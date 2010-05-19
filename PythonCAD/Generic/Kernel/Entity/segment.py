@@ -27,7 +27,10 @@ from __future__ import generators
 import math
 
 from geometricalentity  import *
+from util               import *
+from pygeolib           import Vector
 from point              import Point
+
 
 class Segment(GeometricalEntity):
     """
@@ -88,7 +91,7 @@ class Segment(GeometricalEntity):
             This function returns a tuple containing the Point objects
             that for inizializing the Point
         """
-        return self.__p1, self.__p2
+        return self.getEndpoints()
 
 
     def getEndpoints(self):
@@ -162,10 +165,10 @@ class Segment(GeometricalEntity):
             Return the middle point of the segment
         """
         _p1,_p2=self.getEndpoints()
-        _x1=util.get_float(_p1.x)
-        _x2=util.get_float(_p2.x)
-        _y1=util.get_float(_p1.y)
-        _y2=util.get_float(_p2.y)
+        _x1=get_float(_p1.x)
+        _x2=get_float(_p2.x)
+        _y1=get_float(_p1.y)
+        _y2=get_float(_p2.y)
         _deltax=abs(_x1-_x2)/2.0
         _deltay=abs(_y1-_y2)/2.0
         if(_x1<_x2):
@@ -182,15 +185,15 @@ class Segment(GeometricalEntity):
         """
             get Projection of the point x,y in the line
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
+        _x = get_float(x)
+        _y = get_float(y)
         p1=self.__p1
         p2=self.__p2
         p3=Point(_x, _y)
-        v=pyGeoLib.Vector(p1,p2)
-        v1=pyGeoLib.Vector(p1,p3)
-        xp,yp=v1.Point().getCoords()
-        pjPoint=v.Map(xp,yp).Point()
+        v=Vector(p1,p2)
+        v1=Vector(p1,p3)
+        xp,yp=v1.point().getCoords()
+        pjPoint=v.map(xp,yp).point()
         x,y = pjPoint.getCoords()
         _x1,_y1=p1.getCoords()
         x=x+_x1
@@ -210,12 +213,12 @@ class Segment(GeometricalEntity):
             Point and the coordinates used as an argument is less than the tolerance,
             the actual Point is returned. Otherwise, this function returns None.
         """
-        _x = util.get_float(x)
-        _y = util.get_float(y)
+        _x = get_float(x)
+        _y = get_float(y)
         _t = tolerance.toltest(tol)
         _x1, _y1 = self.__p1.getCoords()
         _x2, _y2 = self.__p2.getCoords()
-        return util.map_coords(_x, _y, _x1, _y1, _x2, _y2, _t)
+        return map_coords(_x, _y, _x1, _y1, _x2, _y2, _t)
 
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
         """
@@ -226,15 +229,15 @@ class Segment(GeometricalEntity):
             endpoints of the Segment must lie within the boundary.
             Otherwise, the method returns False.
         """
-        _xmin = util.get_float(xmin)
-        _ymin = util.get_float(ymin)
-        _xmax = util.get_float(xmax)
+        _xmin = get_float(xmin)
+        _ymin = get_float(ymin)
+        _xmax = get_float(xmax)
         if _xmax < _xmin:
             raise ValueError, "Illegal values: xmax < xmin"
-        _ymax = util.get_float(ymax)
+        _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
-        util.test_boolean(fully)
+        test_boolean(fully)
         _x1, _y1 = self.__p1.getCoords()
         _x2, _y2 = self.__p2.getCoords()
         _pxmin = min(_x1, _x2)
@@ -253,18 +256,18 @@ class Segment(GeometricalEntity):
                 (_pymax < _ymax)):
                 return True
             return False
-        return util.in_region(_x1, _y1, _x2, _y2, _xmin, _ymin, _xmax, _ymax)
+        return in_region(_x1, _y1, _x2, _y2, _xmin, _ymin, _xmax, _ymax)
 
     def clipToRegion(self, xmin, ymin, xmax, ymax):
         """
             Clip the Segment using the Liang-Barsky Algorithm.
         """
-        _xmin = util.get_float(xmin)
-        _ymin = util.get_float(ymin)
-        _xmax = util.get_float(xmax)
+        _xmin = get_float(xmin)
+        _ymin = get_float(ymin)
+        _xmax = get_float(xmax)
         if _xmax < _xmin:
             raise ValueError, "Illegal values: xmax < xmin"
-        _ymax = util.get_float(ymax)
+        _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
         _x1, _y1 = self.__p1.getCoords()

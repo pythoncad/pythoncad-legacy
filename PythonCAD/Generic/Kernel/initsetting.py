@@ -36,6 +36,7 @@ from Generic.Kernel.Command.vclinecommand   import VCLineCommand
 from Generic.Kernel.Command.hclinecommand   import HCLineCommand
 from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
 from Generic.Kernel.Command.textcommand     import TextCommand
+from Generic.Kernel.Command.chamfercommand  import ChamferCommand
 
 #
 # Entity List
@@ -59,6 +60,7 @@ from Generic.Kernel.Entity.text         import Text
 from Generic.Kernel.settings            import *
 from Generic.Kernel.entity              import Entity
 from Generic.Kernel.layer               import Layer
+from Generic.Kernel.composedentity      import ComposedEntity
 #
 # Default LAyer
 # 
@@ -83,7 +85,10 @@ PY_CAD_ENT=['POINT',
             'VCLINE',
             'HCLINE', 
             'CCIRCLE', 
-            'TEXT' ]
+            'TEXT', 
+            'COMPOSED_ENTITY' ]
+
+PY_CAD_COMPOSED_ENT=['CHAMFER']
 #
 # Command Supported by the application
 #
@@ -97,7 +102,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'VCLINE':VCLineCommand, 
                         'HCLINE':HCLineCommand, 
                         'CCIRCLE':CCircleCommand, 
-                        'TEXT':TextCommand}
+                        'TEXT':TextCommand, 
+                        'CHAMFER':ChamferCommand}
 #
 # Match object Name
 #
@@ -111,16 +117,19 @@ DRAWIN_ENTITY={ Point:'POINT',
                 VCLine:'VCLINE', 
                 HCLine:'HCLINE', 
                 CCircle:'CCIRCLE', 
-                Text:'TEXT'}
-
+                Text:'TEXT', 
+                ComposedEntity:'COMPOSED_ENTITY'}
+                
 DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
                         Chamfer:'CHAMFER'}
-            
+
+
+
 KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
 # Entity supported by the kernel
 #
-SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())
+SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())+(ComposedEntity, )
 
 PYTHONCAD_COLOR={
     'aliceblue'             :(240,248,255),

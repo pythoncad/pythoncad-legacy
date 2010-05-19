@@ -20,7 +20,12 @@ class CadScene(QtGui.QGraphicsScene):
         return self.__limits
     
     Limits = property(__getLimits, None, None, "Gets the drawing limits")
-    
+    def getApplication(self):
+        """
+            get The application object 
+        """
+        return self.__application
+        
     def newDocument(self):
         """
             create an empty document in temop file
