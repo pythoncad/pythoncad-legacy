@@ -31,6 +31,8 @@ class CadScene(QtGui.QGraphicsScene):
             create an empty document in temop file
         """
         self.__application.newDocument()
+        document = self.__application.getActiveDocument()
+        document.showEnt+=self.eventShow
         
     def openDocument(self, filename):
         if (filename != None) and (len(filename) > 0):
@@ -41,6 +43,7 @@ class CadScene(QtGui.QGraphicsScene):
             # open a new kernel
             self.__application.openDocument(self.__filename)
             document = self.__application.getActiveDocument()
+            document.showEnt+=self.eventShow
             #if self._cadkernel.getEntityFromType('SEGMENT'):
             if document.haveDrawingEntitys():
                 # add entities to scene
@@ -78,21 +81,33 @@ class CadScene(QtGui.QGraphicsScene):
         for entName in ("SEGMENT", "ARC", "TEXT"):
             entities = document.getEntityFromType(entName)
             for entity in entities:
-                newQtEnt=None
-                if entity.getEntityType()=="SEGMENT":
-                    # add segment to scene port
-                    newQtEnt= Segment(entity)
-                elif entity.getEntityType()=="ARC":
-                    # add arc to scene port
-                    newQtEnt = Arc(entity)
-                elif entity.getEntityType()=="TEXT":
-                    # add Text to scene port
-                    newQtEnt = Text(entity)
-                if newQtEnt:
-                    self.addItem(newQtEnt)
-                # adjust drawing limits
-                self.updateLimits(newQtEnt.boundingRect())   
-                    
+                addGraficalObject(entity)
+ 
+    def addGraficalObject(self, entity):                
+        """
+            add the single object
+        """
+        newQtEnt=None
+        if entity.getEntityType()=="SEGMENT":
+            # add segment to scene port
+            newQtEnt= Segment(entity)
+        elif entity.getEntityType()=="ARC":
+            # add arc to scene port
+            newQtEnt = Arc(entity)
+        elif entity.getEntityType()=="TEXT":
+            # add Text to scene port
+            newQtEnt = Text(entity)
+        if newQtEnt:
+            self.addItem(newQtEnt)
+            # adjust drawing limits
+            self.updateLimits(newQtEnt.boundingRect())  
+    
+    def eventShow(self, document, entity):        
+        """
+            manage the fired event
+        """
+        self.addGraficalObject(entity)
+        
     def updateLimits(self, rect):
         # init size
         if self.__limits == None:

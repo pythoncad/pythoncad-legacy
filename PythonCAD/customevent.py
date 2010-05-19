@@ -25,14 +25,12 @@ class testCmdLine(object):
         self.__applicationCommand['SetActiveDoc']=SetActiveDoc(self.__pyCadApplication)
         self.__applicationCommand['GetActiveDoc']=GetActiveDoc(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
-        #self.__applicationCommand['?']=self.printHelp
         #self.__applicationCommand['Test']=self.featureTest
         #self.__applicationCommand['ETest']=self.easyTest
         # Document Commandf
-        
         for command in self.__pyCadApplication.getCommandList():
             self.__applicationCommand[command]=self.__pyCadApplication.getCommand(command)
-            
+        self.__applicationCommand['?']=PrintHelp(self.__applicationCommand, self.outputMsg)    
     def _addCustomEvent(self):
         """
             add custom event at the user interface
@@ -50,15 +48,17 @@ class testCmdLine(object):
             try:
                 if not self.performCommand(self.activeCommand, text):
                     self.activeCommand=None
-                    self.scene.populateScene(self.__pyCadApplication.getActiveDocument())
+                    #self.scene.populateScene(self.__pyCadApplication.getActiveDocument())
                 else:
                     self.outputMsg(self.activeCommand.getActiveMessage())
             except:
                 self.outputMsg("Unable to perfor the command")
+                self.activeCommand=None
         else:
             cmdObject=None
             if text in self.__applicationCommand:
                 cmdObject=self.__applicationCommand[text]
+                cmdObject.reset()
                 self.outputMsg(cmdObject.getActiveMessage())
             else:
                 self.outputMsg('Command not avaiable write ? for command list')
@@ -236,3 +236,22 @@ class CreateStyle(BaseCommand):
         #self.inputMsg("Write style name")
         stl=Style(styleName)
         self.document.saveEntity(stl);
+
+
+class PrintHelp(BaseCommand):
+    def __init__(self, commandArray, msgFunction):
+        BaseCommand.__init__(self, None)
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[]
+        self.outputMsg=msgFunction
+        self.message=["Print the help Press enter to ally the command "]
+        self.commandNames=commandArray.keys()
+
+    def next(self):    
+        raise StopIteration
+
+    def applyCommand(self):
+        self.outputMsg("***********Command List******************")
+        for s in   self.commandNames:
+            self.outputMsg(s)
+            

@@ -122,7 +122,7 @@ class Application(object):
         else:
             raise IOError, "Unable to remove the file %s"%str(fileName)
         self.afterCloseDocumentEvent(self)
-        
+    
     def getActiveDocument(self):
         """
             get The active Document
