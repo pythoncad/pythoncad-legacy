@@ -1,4 +1,5 @@
 
+
 # This is only needed for Python v2 but is harmless for Python v3.
 import sip
 sip.setapi('QString', 2)
@@ -58,7 +59,9 @@ class LayerDock(QtGui.QDockWidget):
     
     
     def addLayer(self, layer):
-        
+        '''
+        Add a new layer to the drawing
+        '''
         
         return
     
