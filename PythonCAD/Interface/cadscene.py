@@ -31,7 +31,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
         self.__application.newDocument()
         document = self.__application.getActiveDocument()
-        document.showEnt+=self.eventShow
+        document.showEntEvent+=self.eventShow
+        document.updateShowEntEvent+=self.eventUpdate
         
     def openDocument(self, filename):
         if (filename != None) and (len(filename) > 0):
@@ -103,9 +104,15 @@ class CadScene(QtGui.QGraphicsScene):
     
     def eventShow(self, document, entity):        
         """
-            manage the fired event
+            manage the show entity event
         """
         self.addGraficalObject(entity)
+    
+    def eventUpdate(self, document, entity):    
+        """
+            manage the Update entity event  
+        """
+        self.updateItemsFromID([entity])
         
     def updateLimits(self, rect):
         # init size
@@ -124,5 +131,12 @@ class CadScene(QtGui.QGraphicsScene):
         # top side
         if rect.top() > self.__limits.top():
             self.__limits.setTop(rect.top())
-
-            
+    
+    def updateItemsFromID(self,entitys):
+        """
+            update the scene from the Entity []
+        """
+        dicItems=dict([( item.ID, item)for item in self.items()])
+        for ent in entitys:
+            self.removeItem(dicItems[ent.getId()])
+            self.addGraficalObject(ent)

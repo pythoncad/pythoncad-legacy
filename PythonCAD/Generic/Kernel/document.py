@@ -77,9 +77,10 @@ class Document(BaseDb):
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadEvent()
         self.deleteEntityEvent=PyCadEvent()
-        self.showEnt=PyCadEvent()
-        self.hideEnt=PyCadEvent()
-        self.handledError=PyCadEvent()
+        self.showEntEvent=PyCadEvent()
+        self.hideEntEvent=PyCadEvent()
+        self.updateShowEntEvent=PyCadEvent()
+        self.handledErrorEvent=PyCadEvent()
         #create Connection
         self.createConnection(dbPath)
         # inizialize extentionObject
@@ -320,7 +321,7 @@ class Document(BaseDb):
         _newDbEnt=Entity('STYLE',_cElements,None,self.__entId)
         self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
-        self.showEnt(self,_newDbEnt)
+        self.showEntEvent(self,_newDbEnt)
         return _newDbEnt
         
     def _saveLayer(self,layerObj):
@@ -346,18 +347,30 @@ class Document(BaseDb):
             save the DbEnt to db
         """
         self.__logger.debug('_saveDbEnt')
+        updateEvent=False
         if entity==None:
             _newDbEnt=Entity(entType,constructorElements,self.__activeStyleObj,self.__entId)
         else:
+            if self.entityExsist(entity.getId()):
+                updateEvent=True
             _newDbEnt=entity
         if self.__bulkUndoIndex>=0:
             self.__EntityDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
             self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
-        self.showEnt(self,_newDbEnt)
+        if updateEvent:
+            self.updateShowEntEvent(self,_newDbEnt)
+        else:
+            self.showEntEvent(self,_newDbEnt)
         return _newDbEnt
 
+    def entityExsist(self, id):
+        """
+            check id the entity exsist in the database
+        """
+        return self.__EntityDb.exsisting(id)
+        
     def getStyle(self, id=None, name=None):
         """
             get the style object
@@ -484,14 +497,14 @@ class Document(BaseDb):
             Hide an entity
         """
         self._hide(entity, entityId, 0)
-        self.hideEnt(self, entity) # Event
+        self.hideEntEvent(self, entity) # Event
 
     def unHideEntity(self, entity=None, entityId=None):
         """
             Unhide an entity
         """
         self._hide(entity, entityId, 1)
-        self.showEnt(self, entity) #Event
+        self.showEntEvent(self, entity) #Event
 
     def _hide(self,entity=None, entityId=None,  visible=0):
         """
@@ -518,11 +531,11 @@ class Document(BaseDb):
         except DxfReport:
             self.__logger.error('DxfReport')
             _err={'object':extFormat, 'error':DxfReport}
-            self.handledError(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
         except DxfUnsupportedFormat:
             self.__logger.error('DxfUnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
-            self.handledError(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
 
     def getTreeLayer(self):
         """

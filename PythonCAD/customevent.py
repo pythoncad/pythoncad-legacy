@@ -25,6 +25,7 @@ class testCmdLine(object):
         #self.__applicationCommand['SetActiveDoc']=SetActiveDoc(self.__pyCadApplication)
         self.__applicationCommand['GetActiveDoc']=GetActiveDoc(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
+        self.__applicationCommand['EntExsist']=EntityExsist(self.__pyCadApplication.getActiveDocument(),self.outputMsg )
         self.__applicationCommand['T']=TestKernel(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['ET']=EasyTest(self.__pyCadApplication, self.outputMsg)
         # Document Commandf
@@ -161,9 +162,9 @@ class GetEnts(BaseCommand):
         startTime=time.clock()
         if not docName:
             docName="ALL"
-        ents=self.document.getEntityFromType(type)
+        ents=self.document.getEntityFromType(docName)
         endTime=time.clock()-startTime       
-        printEntity(ents,msgFucntion )
+        printEntity(ents,self.outputMsg )
         self.outputMsg("Exec query get %s ent in %s s"%(str(len(ents)), str(endTime)))
         self.outputMsg("********************************")
 
@@ -236,8 +237,25 @@ class CreateStyle(BaseCommand):
         styleName=self.value[0]
         #self.inputMsg("Write style name")
         stl=Style(styleName)
-        self.document.saveEntity(stl);
-
+        self.document.saveEntity(stl)
+        
+class EntityExsist(BaseCommand):
+    def __init__(self, document, msgFunction ):
+        BaseCommand.__init__(self, document)
+        self.outputMsg=msgFunction
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[ExcText]
+        self.message=["Give me the entity id"]
+    def applyCommand(self):
+        if len(self.value)!=1:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        entId=self.value[0]
+        #self.inputMsg("Write style name")
+        if self.document.entityExsist(entId):
+            self.outputMsg("Entity Found in the db")
+        else:
+            self.outputMsg("Entity Not Found")
+        
 
 class PrintHelp(BaseCommand):
     def __init__(self, commandArray, msgFunction):

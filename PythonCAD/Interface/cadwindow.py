@@ -152,8 +152,7 @@ class CadWindow(QtGui.QMainWindow):
         testCmdLine(ui,self.__scene )
         TestDialog.show()
         TestDialog.exec_()
-    
-#Ui_TestWindow
+   
         return    
 
     def _createStatusBar(self):

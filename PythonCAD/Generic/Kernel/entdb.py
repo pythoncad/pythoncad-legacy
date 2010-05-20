@@ -332,6 +332,20 @@ class EntDb(BaseDb):
         _objEnt.updateBBox()  
         return _objEnt
         
+    def exsisting(self, id):    
+        """
+            check id the entity is new or is olready in the database
+        """
+        sqlFrase="""
+                    SELECT COUNT(*) FROM pycadent 
+                    WHERE pycad_entity_id=%s"""%str(id)
+        _rows=self.makeSelect(sqlFrase)
+        if _rows is not None:
+            _row=_rows.fetchone()
+            if _row is not None:
+                return True
+        return False
+        
     def haveDrwEntitys(self, drwEntArray):
         """
             check if there is some drawing entity in the db
