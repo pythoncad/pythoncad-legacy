@@ -14,7 +14,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.__filename = None
         # drawing limits
         self.__limits = None
-        
 
     def __getLimits(self):
         return self.__limits
@@ -38,7 +37,7 @@ class CadScene(QtGui.QGraphicsScene):
         if (filename != None) and (len(filename) > 0):
             # Clear the scene
             self.clear()
-            # todo: check filename
+            # Todo : check filename
             self.__filename = filename
             # open a new kernel
             self.__application.openDocument(self.__filename)
@@ -81,7 +80,7 @@ class CadScene(QtGui.QGraphicsScene):
         for entName in ("SEGMENT", "ARC", "TEXT"):
             entities = document.getEntityFromType(entName)
             for entity in entities:
-                addGraficalObject(entity)
+                self.addGraficalObject(entity)
  
     def addGraficalObject(self, entity):                
         """

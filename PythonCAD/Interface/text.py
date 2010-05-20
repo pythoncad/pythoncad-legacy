@@ -15,6 +15,7 @@ class Text(QtGui.QGraphicsTextItem):
         #angle,geometry[keys[1]] 
         #location,geometry[keys[0]]
         #pointPosition,geometry[keys[3]]
+        self.ID=entity.getId()
         self.setPlainText(geometry[keys[2]] )#text
         x, y=geometry[keys[0]].getCoords() #location
         self.setPos(x, -1.0*y)

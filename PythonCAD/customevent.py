@@ -22,15 +22,16 @@ class testCmdLine(object):
         # Application Command
         self.__applicationCommand['Documents']=GetDocuments(self.__pyCadApplication.getDocuments(), self.outputMsg)
         self.__applicationCommand['CreateStyle']=CreateStyle(self.__pyCadApplication.getActiveDocument())
-        self.__applicationCommand['SetActiveDoc']=SetActiveDoc(self.__pyCadApplication)
+        #self.__applicationCommand['SetActiveDoc']=SetActiveDoc(self.__pyCadApplication)
         self.__applicationCommand['GetActiveDoc']=GetActiveDoc(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
-        #self.__applicationCommand['Test']=self.featureTest
-        #self.__applicationCommand['ETest']=self.easyTest
+        self.__applicationCommand['T']=TestKernel(self.__pyCadApplication, self.outputMsg)
+        self.__applicationCommand['ET']=EasyTest(self.__pyCadApplication, self.outputMsg)
         # Document Commandf
         for command in self.__pyCadApplication.getCommandList():
             self.__applicationCommand[command]=self.__pyCadApplication.getCommand(command)
         self.__applicationCommand['?']=PrintHelp(self.__applicationCommand, self.outputMsg)    
+        
     def _addCustomEvent(self):
         """
             add custom event at the user interface
@@ -255,3 +256,209 @@ class PrintHelp(BaseCommand):
         for s in   self.commandNames:
             self.outputMsg(s)
             
+class TestKernel(BaseCommand):
+    def __init__(self, application, msgFunction):
+        BaseCommand.__init__(self, None)
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[]
+        self.outputMsg=msgFunction
+        self.message=["Press enter to start the test"]
+        self.__pyCadApplication=application
+
+    def next(self):    
+        raise StopIteration
+
+    def applyCommand(self):
+        self.outputMsg("*********** Start Test ******************")
+        self.featureTest()
+        self.outputMsg("*********** End   Test ******************")
+            
+    def featureTest(self):
+            """
+                this function make a basic test
+            """
+            self.outputMsg("Create a new document 1")
+            doc1=self.__pyCadApplication.newDocument()
+            self.outputMsg("Create a new document 2")
+            doc2=self.__pyCadApplication.newDocument()
+            self.outputMsg("Set Current p1")
+            self.__pyCadApplication.setActiveDocument(doc1)
+            self.outputMsg("Create Point")
+            self.performCommandRandomly("POINT")
+            self.outputMsg("Create Segment")
+            self.performCommandRandomly("SEGMENT")
+            self.outputMsg("Create Arc")
+            self.performCommandRandomly("ARC")
+            self.__pyCadApplication.setActiveDocument(doc2)
+            self.outputMsg("Create Ellipse")
+            self.performCommandRandomly("ELLIPSE")
+            self.outputMsg("Create Polyline")
+            self.performCommandRandomly("POLYLINE")
+            self.outputMsg("Create ACLine")
+            self.performCommandRandomly("ACLINE")
+            
+            self.outputMsg("Get Entitys for doc 1")
+            self.__pyCadApplication.setActiveDocument(doc1)
+            activeDoc=self.__pyCadApplication.getActiveDocument()
+            ents=activeDoc.getEntityFromType("ALL")
+            self.printEntity(ents)
+            self.outputMsg("Get Entitys for doc 2")
+            self.__pyCadApplication.setActiveDocument(doc2)
+            activeDoc=self.__pyCadApplication.getActiveDocument()
+            ents=activeDoc.getEntityFromType("ALL")
+            self.printEntity(ents)
+            # Working with styles
+            self.outputMsg("Create NewStyle")
+            stl=Style("NewStyle")
+            self.outputMsg("Save in document")
+            activeDoc.saveEntity(stl)
+            activeDoc.setActiveStyle(name='NewStyle')
+            self.outputMsg("Create Segment")
+            self.performCommandRandomly("SEGMENT")
+            self.outputMsg("Create Arc")
+            self.performCommandRandomly("ARC")
+            
+            self.outputMsg("Create NewStyle1")
+            stl1=Style("NewStyle1")
+            self.__pyCadApplication.setApplicationStyle(stl1)
+            stl11=self.__pyCadApplication.getApplicationStyle(name='NewStyle1')
+            styleDic=stl11.getConstructionElements()
+            styleDic[styleDic.keys()[0]].setStyleProp('entity_color',(255,215,000))
+            self.__pyCadApplication.setApplicationStyle(stl11)
+            activeDoc.saveEntity(stl11)
+            self.outputMsg("Create Segment")
+            self.performCommandRandomly("SEGMENT")
+            self.outputMsg("Create Arc")
+            self.performCommandRandomly("ARC")
+            
+            self.outputMsg("Create NewStyle2 ")
+            stl1=Style("NewStyle2")
+            stl12=activeDoc.saveEntity(stl1)
+            styleDic=stl11.getConstructionElements()
+            styleDic[styleDic.keys()[0]].setStyleProp('entity_color',(255,215,000))
+            self.outputMsg("Update NewStyle2")
+            activeDoc.saveEntity(stl12)
+            self.outputMsg("Done")
+            # Test  Geometrical chamfer ent
+            self.GeotestChamfer()
+            # Test Chamfer Command 
+            self.testChamferCommand()
+            
+    def testGeoChamfer(self):    
+        self.outputMsg("Test Chamfer")
+        p1=Point(0.0, 0.0)
+        p2=Point(10.0, 0.0)
+        p3=Point(0.0, 10.0)
+        s1=Segment(p1, p2)
+        s2=Segment(p1, p3)
+        cmf=Chamfer(s1, s2, 2.0, 2.0)
+        cl=cmf.getLength()
+        self.outputMsg("Chamfer Lengh %s"%str(cl))
+        s1, s2, s3=cmf.getReletedComponent()
+        if s3:
+            for p in s3.getEndpoints():
+                x, y=p.getCoords()
+                self.outputMsg("P1 Cords %s,%s"%(str(x), str(y)))
+        else:
+            self.outputMsg("Chamfer segment in None")
+
+    def testChamferCommand(self):
+        """
+            this function is usefoul for short test
+            as soon it works copy the code into featureTest
+        """
+        newDoc=self.__pyCadApplication.newDocument()
+        intPoint=Point(0.0, 0.0)
+        
+        s1=Segment(intPoint, Point(10.0, 0.0))
+        s2=Segment(intPoint, Point(0.0, 10.0))
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+       
+        cObject=self.__pyCadApplication.getCommand("CHAMFER")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=2
+        cObject[keys[3]]=2
+        cObject[keys[4]]=None
+        cObject[keys[5]]=None
+        cObject.applyCommand()
+
+    def getRandomPoint(self):
+        """
+            get e random point
+        """
+        x=random()*1000
+        y=random()*1000
+        return Point(x, y)
+
+    def performCommandRandomly(self, commandName, andLoop=10):
+        """
+            set some random Value at the command imput
+        """
+        self.outputMsg("Start Command %s"%str(commandName))
+        i=0
+        cObject=self.__pyCadApplication.getCommand(commandName)
+        for iv in cObject:
+            exception,message=iv
+            try:
+                raise exception(None)
+            except ExcPoint:
+                self.outputMsg("Add Point")
+                if i>=andLoop:
+                    cObject[iv]=None
+                else:
+                    cObject[iv]=self.getRandomPoint()
+            except (ExcLenght, ExcAngle):
+                self.outputMsg("Add Lengh/Angle")
+                cObject[iv]=100
+            except:
+                self.outputMsg("Bad error !!")
+                raise 
+            i+=1
+        else:
+            self.outputMsg("Apply Command")
+            cObject.applyCommand()
+            
+class EasyTest(BaseCommand):
+    def __init__(self, application, msgFunction):
+        BaseCommand.__init__(self, None)
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[]
+        self.outputMsg=msgFunction
+        self.message=["Press enter to start the test"]
+        self.__pyCadApplication=application
+
+    def next(self):    
+        raise StopIteration
+
+    def applyCommand(self):
+        self.outputMsg("*********** Start Test ******************")
+        self.easyTest()
+        self.outputMsg("*********** End   Test ******************")    
+    
+    def easyTest(self):
+        """
+            this function is usefoul for short test
+            as soon it works copy the code into featureTest
+        """
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        intPoint=Point(2.0, 2.0)
+        
+        s1=Segment(intPoint, Point(10.0, 0.0))
+        s2=Segment(intPoint, Point(0.0, 10.0))
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+       
+        cObject=self.__pyCadApplication.getCommand("CHAMFER")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=2
+        cObject[keys[3]]=2
+        cObject[keys[4]]=None
+        cObject[keys[5]]=None
+        cObject.applyCommand()

@@ -16,6 +16,7 @@ class Arc(QtGui.QGraphicsItem):
         radius=geometry["ARC_1"]
         startAngle=geometry["ARC_2"]
         spanAngle=geometry["ARC_3"]
+        self.ID=entity.getId()
         self.xc,self.yc=pCenter.getCoords()
         self.yc=(-1.0*self.yc)- radius
         self.xc=self.xc-radius

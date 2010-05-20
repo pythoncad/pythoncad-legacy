@@ -9,6 +9,7 @@ class Segment(QtGui.QGraphicsLineItem):
         pt_end = None
         # get the geometry
         geometry = entity.getConstructionElements()
+        self.ID=entity.getId()
         style=entity.getInnerStyle()
         # get the begin and endpoint from the geometry
         for key in geometry.keys():
