@@ -27,7 +27,7 @@ from math import hypot, pi, sin, cos, tan, atan2
 
 from geometricalentity                      import *
 from Generic.Kernel.Entity.util             import *
-from Generic.Kernel.intersection            import *
+#from Generic.Kernel.intersection            import *
 from Generic.Kernel.Entity.segment          import Segment
 from Generic.Kernel.Entity.acline           import ACLine
 from Generic.Kernel.Entity.arc              import Arc

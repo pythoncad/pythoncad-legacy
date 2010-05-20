@@ -29,6 +29,7 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
+from Interface.LayerIntf.layerdock import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Ui_TestWindow                  import Ui_TestDialog
@@ -168,18 +169,8 @@ class CadWindow(QtGui.QMainWindow):
         Creates all dockable windows for the application
         '''
         # layer list
-        layer_dock = QtGui.QDockWidget("Layers", self)
-        layer_dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
-        self.__layer_list = QtGui.QListWidget(layer_dock)
-        self.__layer_list.addItems((
-            "Layer 0",
-            "Just an layer name",
-            "Another layer",
-            "The last layer"))
-        
-        layer_dock.setWidget(self.__layer_list)
+        layer_dock = LayerDock(self)
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, layer_dock)
-        #self.viewMenu.addAction(layer_dock.toggleViewAction())
         
         # commandline
         command_dock = self.__cmd_intf.Commandline
