@@ -250,10 +250,12 @@ class EntDb(BaseDb):
             isFirst=1
             for t in entityTypeArray:
                 if isFirst:
-                    entityTypes="""AND pycad_object_type like '%s'"""%str(t)
+                    entityTypes="""AND (pycad_object_type like '%s'"""%str(t)
                     isFirst=0
                 else:
                     entityTypes="""%s OR pycad_object_type like '%s'"""%(str(entityTypes), str(t))
+            else:
+                entityTypes=entityTypes+")"
         else:
             if entityType=='ALL':
                 entityTypes="""AND pycad_object_type like '%'"""
@@ -273,7 +275,7 @@ class EntDb(BaseDb):
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
                         FROM pycadent  
-                        WHERE pycad_undo_visible=1 
+                        WHERE pycad_undo_visible=1  
                         GROUP BY pycad_entity_id ORDER BY PyCad_Id)
                     AND pycad_entity_state NOT LIKE "DELETE"
                     AND pycad_visible =%s
