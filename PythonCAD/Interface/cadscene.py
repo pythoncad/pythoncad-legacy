@@ -70,6 +70,16 @@ class CadScene(QtGui.QGraphicsScene):
                 # add entities to scene
                 self.populateScene(document)
                 
+    def saveAs(self, fileName):            
+        """
+            save in a different location the current file
+        """
+        document=self.__application.saveAs(fileName)
+        self.documentEvent()
+        if document.haveDrawingEntitys():
+            # add entities to scene
+            self.populateScene(document)
+            
     def closeDocument(self):
         if self.__filename != None:
             # close document from kernel

@@ -24,6 +24,8 @@
 #
 import sys
 import os
+import shutil
+
 from Generic.Kernel.exception           import *
 from Generic.Kernel.document            import *
 from Generic.Kernel.Command             import *
@@ -106,7 +108,18 @@ class Application(object):
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
         return self.__Docuemnts[fileName]
-        
+    
+    def saveAs(self, newFileName):
+        """
+            seve the current document to the new position
+        """
+        if self.__ActiveDocument:
+            oldFileName=self.__ActiveDocument.getName()
+            self.closeDocument(oldFileName)
+            shutil.copy2(oldFileName,newFileName)
+            return self.openDocument(newFileName)
+        raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
+    
     def closeDocument(self, fileName):
         """
             close the document

@@ -563,6 +563,12 @@ class Document(BaseDb):
             getRelationObject
         """
         return self.__RelationDb
+    
+    def getName(self):
+        """
+            get the name of the active document
+        """
+        return self.dbPath
 
 class PyCadEvent(object):
     """

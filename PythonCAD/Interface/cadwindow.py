@@ -76,6 +76,7 @@ class CadWindow(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'SaveAs', '&Save In A Different location...', self._onSaveAsDrawing)
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'close', '&Close', self._onCloseDrawing)
@@ -110,14 +111,15 @@ class CadWindow(QtGui.QMainWindow):
             self.__scene.openDocument(drawing)
         return
     
-    
     def _onImportDrawing(self):
         drawing = QtGui.QFileDialog.getOpenFileName(self, "Import Drawing", "/home", "Dxf (*.dxf)");
         # open a document and load the drawing
         if drawing != None:
             self.__scene.importDocument(drawing)
         return
-    
+    def _onSaveAsDrawing(self):
+        drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As Drawing", "/home", "Drawings (*.pdr)");
+        self.__scene.saveAs(drawing)
             
     def _onCloseDrawing(self):
         self.__scene.closeDocument()
