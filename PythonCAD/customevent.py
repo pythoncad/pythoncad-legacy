@@ -83,8 +83,11 @@ class testCmdLine(object):
             except ExcPoint:
                 cObject[iv]=self.convertToPoint(text)  
                 return cObject
-            except (ExcLenght, ExcAngle):
+            except (ExcLenght, ExcAngle, ExcInt):
                 cObject[iv]=self.convertToFloat(text)
+                return cObject
+            except (ExcBool):
+                cObject[iv]=self.convertToBool(text)
                 return cObject
             except (ExcText):
                 cObject[iv]=text
@@ -103,6 +106,15 @@ class testCmdLine(object):
         except PyCadWrongCommand:
             self.outputMsg("Wrong Command")
     
+    def convertToBool(self, msg):   
+        """
+            return an int from user
+        """        
+        if msg=="Yes":
+            return True
+        else:
+            return False
+
     def convertToInt(self, msg):   
         """
             return an int from user

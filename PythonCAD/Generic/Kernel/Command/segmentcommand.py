@@ -30,7 +30,6 @@ class SegmentCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me The Second Point"]
     def applyCommand(self):

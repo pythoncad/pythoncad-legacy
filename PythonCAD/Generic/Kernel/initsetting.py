@@ -38,6 +38,7 @@ from Generic.Kernel.Command.ccirclecommand      import CCircleCommand
 from Generic.Kernel.Command.textcommand         import TextCommand
 from Generic.Kernel.Command.chamfercommand      import ChamferCommand
 from Generic.Kernel.Command.rectanglecommand    import RectangleCommand
+from Generic.Kernel.Command.polygoncommand      import PolygonCommand
 #
 # Entity List
 #
@@ -104,7 +105,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
                         'CHAMFER':ChamferCommand, 
-                        'RECTANGLE':RectangleCommand}
+                        'RECTANGLE':RectangleCommand, 
+                        'POLYGON':PolygonCommand}
 #
 # Match object Name
 #
