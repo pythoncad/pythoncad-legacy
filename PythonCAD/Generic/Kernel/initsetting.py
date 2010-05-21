@@ -24,20 +24,20 @@
 #
 # Command List
 #
-from Generic.Kernel.Command                 import *
-from Generic.Kernel.Command.segmentcommand  import SegmentCommand
-from Generic.Kernel.Command.arccommand      import ArcCommand
-from Generic.Kernel.Command.pointcommand    import PointCommand
-from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
-from Generic.Kernel.Command.polylinecommand import PolylineCommand
-from Generic.Kernel.Command.aclinecommand   import ACLineCommand
-from Generic.Kernel.Command.clinecommand    import CLineCommand
-from Generic.Kernel.Command.vclinecommand   import VCLineCommand
-from Generic.Kernel.Command.hclinecommand   import HCLineCommand
-from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
-from Generic.Kernel.Command.textcommand     import TextCommand
-from Generic.Kernel.Command.chamfercommand  import ChamferCommand
-
+from Generic.Kernel.Command                     import *
+from Generic.Kernel.Command.segmentcommand      import SegmentCommand
+from Generic.Kernel.Command.arccommand          import ArcCommand
+from Generic.Kernel.Command.pointcommand        import PointCommand
+from Generic.Kernel.Command.ellipsecommand      import EllipseCommand
+from Generic.Kernel.Command.polylinecommand     import PolylineCommand
+from Generic.Kernel.Command.aclinecommand       import ACLineCommand
+from Generic.Kernel.Command.clinecommand        import CLineCommand
+from Generic.Kernel.Command.vclinecommand       import VCLineCommand
+from Generic.Kernel.Command.hclinecommand       import HCLineCommand
+from Generic.Kernel.Command.ccirclecommand      import CCircleCommand
+from Generic.Kernel.Command.textcommand         import TextCommand
+from Generic.Kernel.Command.chamfercommand      import ChamferCommand
+from Generic.Kernel.Command.rectanglecommand    import RectangleCommand
 #
 # Entity List
 #
@@ -103,7 +103,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'HCLINE':HCLineCommand, 
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
-                        'CHAMFER':ChamferCommand}
+                        'CHAMFER':ChamferCommand, 
+                        'RECTANGLE':RectangleCommand}
 #
 # Match object Name
 #
