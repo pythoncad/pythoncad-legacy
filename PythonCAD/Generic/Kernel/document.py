@@ -80,6 +80,7 @@ class Document(BaseDb):
         self.showEntEvent=PyCadEvent()
         self.hideEntEvent=PyCadEvent()
         self.updateShowEntEvent=PyCadEvent()
+        self.undoRedoEvent=PyCadEvent()
         self.handledErrorEvent=PyCadEvent()
         #create Connection
         self.createConnection(dbPath)
@@ -167,10 +168,16 @@ class Document(BaseDb):
     def getEntityFromType(self,entityType):
         """
             get all the entity from a specifie type
+            imput :
+            type as string "SEGMENT"
+            type as list ["SEGMENT","ARC",...   ]
         """
         self.__logger.debug('getEntityFromType')
-        return self.__EntityDb.getEntityFromType(entityType)
-
+        if isinstance(entityType,list):
+            return self.__EntityDb.getEntityFromTypeArray(entityType)
+        else:
+            return self.__EntityDb.getEntityFromType(entityType)
+        
     def getAllDrawingEntity(self):
         """
             get all drawing entity from the db
@@ -430,8 +437,9 @@ class Document(BaseDb):
             self.__EntityDb.markUndoVisibility(self.__UndoDb.getActiveUndoId(),0)
             _newUndo=self.__UndoDb.dbUndo()
             self.__EntityDb.performCommit()
+            self.undoRedoEvent(self, None)
         except UndoDb:
-            raise
+            raise UndoDb, "Generical problem to perform undo"
 
     def reDo(self):
         """
@@ -442,8 +450,9 @@ class Document(BaseDb):
             _activeRedo=self.__UndoDb.dbRedo()
             self.__EntityDb.markUndoVisibility(_activeRedo, 1)
             self.__EntityDb.performCommit()
+            self.undoRedoEvent(self, None)
         except UndoDb:
-            raise
+            raise UndoDb, "Generical problem to perform reDo"
 
     def clearUnDoHistory(self):
         """
@@ -490,7 +499,7 @@ class Document(BaseDb):
         entity=self.__EntityDb.getEntityEntityId(entityId)
         entity.delete()
         self.saveEntity(entity)
-        self.deleteEntityEvent(entity)
+        self.deleteEntityEvent(self,entity)
 
     def hideEntity(self, entity=None, entityId=None):
         """

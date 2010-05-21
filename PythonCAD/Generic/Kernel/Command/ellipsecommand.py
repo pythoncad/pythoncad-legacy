@@ -30,10 +30,10 @@ class EllipseCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcPoint, ExcLenght, ExcLenght, ExcAngle]
-        self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius", "Give Me ellipse Angle (Could Be None)"]
+        self.exception=[ExcPoint, ExcLenght, ExcLenght]
+        self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius"]
     def applyCommand(self):
-        if len(self.value)<2:
+        if len(self.value)>3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        arc=Ellipse(self.value[0], self.value[1], self.value[2], self.value[3])
-        self.document.saveEntity(arc)
+        ellipse=Ellipse(self.value[0], self.value[1], self.value[2])
+        self.document.saveEntity(ellipse)

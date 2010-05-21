@@ -69,27 +69,29 @@ def tuple_to_three_floats(t):
 
 def make_angle(angle):
     """
-        Return an angle value such that -90 <= angle <= 90.
+        Return an angle value such that -pi/2 <= angle <= pi/2.
         The argument angle should be a float. Additionally the argument
-        is expected to be in degrees, not radians.
+        is expected to be in radians.
     """
+    pi_2=math.pi/2
+    pi_3=3*pi_2
     _angle = get_float(angle)
-    if _angle < -90.0 or _angle > 90.0:
-        _fa = fmod(_angle, 360.0)
+    if _angle < -pi_2 or _angle > pi_2:
+        _fa = fmod(_angle, math.pi)
         if abs(_fa) < 1e-10:
             _angle = 0.0
         elif _fa > 0.0:
-            if _fa > 270.0:
-                _angle = _fa - 360.0
-            elif _fa > 90.0:
-                _angle = _fa - 180.0
+            if _fa > pi_3:
+                _angle = _fa - math.pi
+            elif _fa > pi_2:
+                _angle = _fa - pi_2
             else:
                 _angle = _fa
         else:
-            if _fa < -270.0:
-                _angle = _fa + 360.0
-            elif _fa < -90.0:
-                _angle = _fa + 180.0
+            if _fa < -pi_3:
+                _angle = _fa + math.pi
+            elif _fa < -pi_2:
+                _angle = _fa + pi_2
             else:
                 _angle = _fa
     return _angle

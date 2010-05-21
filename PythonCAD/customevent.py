@@ -26,6 +26,9 @@ class testCmdLine(object):
         self.__applicationCommand['GetActiveDoc']=GetActiveDoc(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
         self.__applicationCommand['EntExsist']=EntityExsist(self.__pyCadApplication.getActiveDocument(),self.outputMsg )
+        self.__applicationCommand['Delete']=DeleteEntity(self.__pyCadApplication.getActiveDocument(),self.outputMsg )
+        self.__applicationCommand['UnDo']=UnDo(self.__pyCadApplication, self.outputMsg)
+        self.__applicationCommand['ReDo']=ReDo(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['T']=TestKernel(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['ET']=EasyTest(self.__pyCadApplication, self.outputMsg)
         # Document Commandf
@@ -168,6 +171,35 @@ class GetEnts(BaseCommand):
         self.outputMsg("Exec query get %s ent in %s s"%(str(len(ents)), str(endTime)))
         self.outputMsg("********************************")
 
+
+class UnDo(BaseCommand):
+    def __init__(self, application, msgFunction):
+        BaseCommand.__init__(self, None)
+        self.__application=application
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[]
+        self.message=["Press enter to perform the Undo command"]
+        self.outputMsg=msgFunction
+    def applyCommand(self):
+        if len(self.value)!=0:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        doc=self.__application.getActiveDocument()
+        doc.unDo()
+
+class ReDo(BaseCommand):
+    def __init__(self, application, msgFunction):
+        BaseCommand.__init__(self, None)
+        self.__application=application
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[]
+        self.message=["Press enter to perform the ReDo command"]
+        self.outputMsg=msgFunction
+    def applyCommand(self):
+        if len(self.value)!=0:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        doc=self.__application.getActiveDocument()
+        doc.reDo()
+
 class GetActiveDoc(BaseCommand):
     def __init__(self, application, msgFunction):
         BaseCommand.__init__(self, None)
@@ -183,7 +215,6 @@ class GetActiveDoc(BaseCommand):
         self.__application.setActiveDocument(docName)
         doc=self.__application.getActiveDocument()
         self.outputMsg("Active Document is %s"%str(doc.dbPath))
-        
         
 class SetActiveDoc(BaseCommand):
     def __init__(self, application):
@@ -255,7 +286,21 @@ class EntityExsist(BaseCommand):
             self.outputMsg("Entity Found in the db")
         else:
             self.outputMsg("Entity Not Found")
-        
+            
+class DeleteEntity(BaseCommand):
+    def __init__(self, document, msgFunction ):
+        BaseCommand.__init__(self, document)
+        self.outputMsg=msgFunction
+        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
+        self.exception=[ExcText]
+        self.message=["Give me the entity id"]
+    def applyCommand(self):
+        if len(self.value)!=1:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        entId=self.value[0]
+        #self.inputMsg("Write style name")
+        if self.document.entityExsist(entId):
+            self.document.deleteEntity(entId)
 
 class PrintHelp(BaseCommand):
     def __init__(self, commandArray, msgFunction):

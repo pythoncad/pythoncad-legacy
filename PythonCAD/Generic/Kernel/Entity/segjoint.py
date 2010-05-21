@@ -243,29 +243,7 @@ class Fillet(ObjectJoint):
         self.__radius = _r
         self.__center = (0.0, 0.0)
         self._calculateCenter()
-
-    def __eq__(self, obj):
-        if not isinstance(obj, Fillet):
-            return False
-        if obj is self:
-            return True
-        _s1, _s2 = self.getSegments()
-        _os1, _os2 = obj.getSegments()
-        return (((_s1 == _os1 and _s2 == _os2) or
-                 (_s1 == _os2 and _s2 == _os1)) and
-                abs(self.__radius - obj.getRadius()) < 1e-10)
-
-    def __ne__(self, obj):
-        if not isinstance(obj, Fillet):
-            return True
-        if obj is self:
-            return False
-        _s1, _s2 = self.getSegments()
-        _os1, _os2 = obj.getSegments()
-        return (((_s1 != _os1 or _s2 != _os2) and
-                 (_s1 != _os2 or _s2 != _os1)) or
-                abs(self.__radius - obj.getRadius()) > 1e-10)
-        
+       
     def getConstructionElements(self):
         """
             retutn the construction element of the object
@@ -283,7 +261,6 @@ class Fillet(ObjectJoint):
             Set the Fillet radius.
             The radius should be a positive float value.
         """
-        _s1, _s2 = self.getSegments()        
         _r = get_float(r)
         if _r < 0.0:
             raise ValueError, "Invalid fillet radius: %g" % _r

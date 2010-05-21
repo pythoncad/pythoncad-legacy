@@ -29,11 +29,12 @@ import math # added to handle arc start and end point defination
 import re # added to handle Mtext
 
 
-from initsetting        import cgcol
-from Entity.point       import Point
-from Entity.segment     import Segment
-from Entity.arc         import Arc
-from Entity.text        import Text
+from initsetting            import cgcol
+from Entity.point           import Point
+from Entity.segment         import Segment
+from Entity.arc             import Arc
+from Entity.text            import Text
+from Entity.ellipse         import Ellipse
 
 #from PythonCAD.Generic.circle import Circle
 #from PythonCAD.Generic.arc import Arc
