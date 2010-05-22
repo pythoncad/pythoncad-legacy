@@ -40,8 +40,9 @@ class Ellipse(QtGui.QGraphicsItem):
         self.ID=entity.getId()
         self.xc,self.yc=pCenter.getCoords()
        
-        self.h=major/2.0
-        self.w=minor/2.0
+        self.h=major
+        self.w=minor
+        
         return
         
     def boundingRect(self):
@@ -58,16 +59,5 @@ class Ellipse(QtGui.QGraphicsItem):
         r, g, b=self.style.getStyleProp("entity_color") 
         painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #   Create Ellipse
-        painter.drawEllipse(self.xc,self.yc ,self.h ,self.w)
+        painter.drawEllipse(self.xc-(self.h/2.0),self.yc- (self.w/2.0),self.h ,self.w)
 
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-  
