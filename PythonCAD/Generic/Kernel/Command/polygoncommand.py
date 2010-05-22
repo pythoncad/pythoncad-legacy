@@ -150,11 +150,11 @@ class PolygonCommand(BaseCommand):
             _yp[_i] = _cy + (_rad * math.sin(_angle))
             _angle = _angle + _inc
 
-    def getSegments(self):
+    def getEntsToSave(self):
         """
             return a list of segment
         """
-        segments=[]
+        objEnt=[]
         self.CalculatePoint()
         if len(self.__xpts):
             _count = self.__nsides
@@ -174,13 +174,13 @@ class PolygonCommand(BaseCommand):
                 _x = _xp[_i]
                 _y = _yp[_i]
                 _pi = Point(_x, _y)
-                segments.append(Segment(_p1, _pi))
+                objEnt.append(Segment(_p1, _pi))
                 _p1 = _pi
             #
             # now add closing segment ...
             #
-            segments.append(Segment(_p1, _p0))
-        return  segments   
+            objEnt.append(Segment(_p1, _p0))
+        return  objEnt   
     def applyCommand(self):
         """
             Create a Polygon from Segments and add it to the kernel.
@@ -192,8 +192,8 @@ class PolygonCommand(BaseCommand):
         self.setCenter(self.value[0])
         try:
             self.document.startMassiveCreation()
-            for _seg in self.getSegments():
-                self.document.saveEntity(_seg)
+            for _ent in self.getEntsToSave():
+                self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
  

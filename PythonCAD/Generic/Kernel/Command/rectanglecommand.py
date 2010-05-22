@@ -33,21 +33,29 @@ class RectangleCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me The second Point"]
-    def applyCommand(self):
-        if len(self.value)!=2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+    def getEntsToSave(self):
+        """
+            get all the segment of the rectangle
+        """
+        objEnt=[]
         p1=self.value[0]
         p2=self.value[1]
         x1, y1=p1.getCoords()
         x2, y2=p2.getCoords()
         p3=Point(x1, y2)
         p4=Point(x2, y1)
-        s1=Segment(p1, p4)
-        s2=Segment(p4, p2)
-        s3=Segment(p2, p3)
-        s4=Segment(p3, p1)
-        self.document.saveEntity(s1)
-        self.document.saveEntity(s2)
-        self.document.saveEntity(s3)
-        self.document.saveEntity(s4)
+        objEnt.append(Segment(p1, p4))
+        objEnt.append(Segment(p4, p2))
+        objEnt.append(Segment(p2, p3))
+        objEnt.append(Segment(p3, p1))
+        return objEnt
+    def applyCommand(self):
+        if len(self.value)!=2:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        try:
+            self.document.startMassiveCreation()
+            for _ent in self.getEntsToSave():
+                self.document.saveEntity(_ent)
+        finally:
+            self.document.stopMassiveCreation()
         

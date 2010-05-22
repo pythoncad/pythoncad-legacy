@@ -44,15 +44,11 @@ class ChamferCommand(BaseCommand):
                         "Give Me the seconf Lenght", 
                         "Give me the first point near the first entity",
                         "Give me the second point near the second entity"]
-    def applyCommand(self):
+    def getEntsToSave(self):
         """
-            apply the champfer command
+            get the chamfer segments
         """
-        if len(self.value)!=6:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
-        
-        #objId,constructionElements, eType, style, childEnt=[]
-
+        objEnt=[]
         ent1=self.document.getEntity(self.value[0].getId())
         ent2=self.document.getEntity(self.value[1].getId())
         
@@ -80,8 +76,22 @@ class ChamferCommand(BaseCommand):
         ent1.setConstructionElements(_cElements1)
         ent2.setConstructionElements(_cElements2)
         
-        self.document.saveEntity(ent1)
-        self.document.saveEntity(ent2)
-        ent3=self.document.saveEntity(chamferSegment)
+        objEnt.append(ent1)
+        objEnt.append(ent2)
+        objEnt.append(chamferSegment)
+        return objEnt
         
+    def applyCommand(self):
+        """
+            apply the champfer command
+        """
+        if len(self.value)!=6:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        
+        try:
+            self.document.startMassiveCreation()
+            for _ent in self.getEntsToSave():
+                self.document.saveEntity(_ent)
+        finally:
+            self.document.stopMassiveCreation()
        
