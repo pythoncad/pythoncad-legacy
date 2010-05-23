@@ -40,20 +40,20 @@ class CCircle(GeometricalEntity):
         center: A Point object
         radius: The CCircle's radius
     """
-    def __init__(self, center, radius):
+    def __init__(self,kw):
         """
             Initialize a CCircle.
-            The center should be a Point, or a two-entry tuple of floats,
-            and the radius should be a float greater than 0.
+            kw['ARC_0'] center must be a point 
+            kw['ARC_1'] radius must be a valid float
         """
-        _cp = center
-        if not isinstance(_cp, Point):
-            _cp = Point(center)
-        _r = get_float(radius)
-        if not _r > 0.0:
-            raise ValueError, "Invalid radius: %g" % _r
-        self.__radius = _r
-        self.__center = _cp
+        argDescription={
+                        "CCIRCLE_0":Point,
+                        "CCIRCLE_1":(float, int)
+                        }
+        GeometricalEntity.__init__(self,kw, argDescription)
+        
+        if not get_float(self.radius) > 0.0:
+            raise ValueError, "Invalid radius" 
 
     def __eq__(self, obj):
         """
@@ -64,22 +64,22 @@ class CCircle(GeometricalEntity):
         if obj is self:
             return True
         _val = False
-        if self.__center == obj.getCenter():
-            if abs(self.__radius - obj.getRadius()) < 1e-10:
+        if self.center == obj.center:
+            if abs(self.radius - obj.radius) < 1e-10:
                 _val = True
         return _val
 
     def __ne__(self, obj):
-        """C
-            ompare a CCircle to another for inequality.
+        """
+            Compare a CCircle to another for inequality.
         """
         if not isinstance(obj, CCircle):
             return True
         if obj is self:
             return False
         _val = True
-        if self.__center == obj.getCenter():
-            if abs(self.__radius - obj.getRadius()) < 1e-10:
+        if self.center == obj.center:
+            if abs(self.radius - obj.radius) < 1e-10:
                 _val = False
         return _val
         
@@ -87,25 +87,24 @@ class CCircle(GeometricalEntity):
         """
             get construction elements
         """
-        return (self.__center, self.__radius)
+        return (self.center, self.radius)
         
     def getCenter(self):
         """
             Return the center Point of the CCircle.
         """
-        return self.__center
+        return self['CCIRCLE_0']
 
-    def setCenter(self, c):
+    def setCenter(self, point):
         """
             Set the center Point of the CCircle.
             The argument must be a Point or a tuple containing
             two float values.
         """
-        _cp = self.__center
-        if not isinstance(c, Point):
-            raise TypeError, "Invalid center point: " + `type(c)`
-        if _cp is not c:
-            self.__center = c
+        if not isinstance(point, Point):
+            raise TypeError, "Invalid center point: " + `type(point)`
+       
+        self['CCIRCLE_0'] = point
 
     center = property(getCenter, setCenter, None, "CCircle center")
 
@@ -113,7 +112,7 @@ class CCircle(GeometricalEntity):
         """
             Return the radius of the the CCircle.
         """
-        return self.__radius
+        return self['CCIRCLE_1']
 
     def setRadius(self, radius):
         """
@@ -123,24 +122,21 @@ class CCircle(GeometricalEntity):
         _r = get_float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
-        _cr = self.__radius
-        if abs(_cr - _r) > 1e-10:
-            self.__radius = _r
+        self['CCIRCLE_1'] = _r
 
     radius = property(getRadius, setRadius, None, "CCircle radius")
-
 
     def circumference(self):
         """
             Return the circumference of the CCircle.
         """
-        return 2.0 * math.pi * self.__radius
+        return 2.0 * math.pi * self.radius
 
     def area(self):
         """
             Return the area enclosed by the CCircle.
         """
-        return math.pi * pow(self.__radius, 2)
+        return math.pi * pow(self.radius, 2)
 
     def mapCoords(self, x, y, tol=TOL):
         """
@@ -162,8 +158,8 @@ class CCircle(GeometricalEntity):
         _x = get_float(x)
         _y = get_float(y)
         _t = toltest(tol)
-        _cx, _cy = self.__center.getCoords()
-        _r = self.__radius
+        _cx, _cy = self.center.getCoords()
+        _r = self.radius
         _dist = math.hypot((_x - _cx), (_y - _cy))
         if abs(_dist - _r) < _t:
             _angle = math.atan2((_y - _cy),(_x - _cx))
@@ -183,18 +179,18 @@ class CCircle(GeometricalEntity):
         """
         firstPoint=Point(x,y)
         fromPoint=Point(outx,outy)
-        twoPointDistance=self.__center.Dist(fromPoint)
-        if(twoPointDistance<self.__radius):
+        twoPointDistance=self.center.Dist(fromPoint)
+        if(twoPointDistance<self.radius):
             return None,None
         originPoint=Point(0.0,0.0)        
-        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
-        tgAngle=math.asin(self.__radius/twoPointDistance)
+        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.radius,2))
+        tgAngle=math.asin(self.radius/twoPointDistance)
         #Compute the x versor
         xPoint=point.Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
-        twoPointVector=Vector(fromPoint,self.__center)
+        twoPointVector=Vector(fromPoint,self.center)
         rightAngle=twoPointVector.Ang(xVector)                
-        cx,cy=self.__center.getCoords()        
+        cx,cy=self.center.getCoords()        
         if(outy>cy): #stupid situation 
             rightAngle=-rightAngle
         posAngle=rightAngle+tgAngle
@@ -224,8 +220,8 @@ class CCircle(GeometricalEntity):
         """
             get The intersecrion point from the line(x,y,cx,cy) and the circle
         """
-        _cx, _cy = self.__center.getCoords()
-        _r = self.__radius
+        _cx, _cy = self.center.getCoords()
+        _r = self.radius
         centerPoint=Point(_cx,_cy)
         outPoint=Point(x,y)
         vector=Vector(outPoint,centerPoint)
@@ -254,8 +250,8 @@ class CCircle(GeometricalEntity):
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
         util.test_boolean(fully)
-        _xc, _yc = self.__center.getCoords()
-        _r = self.__radius
+        _xc, _yc = self.center.getCoords()
+        _r = self.radius
         #
         # cheap test to see if ccircle cannot be in region
         #
@@ -306,10 +302,10 @@ class CCircle(GeometricalEntity):
             if _bits == 0xff or fully:
                 _val = False
         return _val
+
     def clone(self):
         """
             Create an identical copy of a CCircle
         """
-        _cp = self.__center.clone()
-        return CCircle(_cp, self.__radius)
+        return CCircle(self.getConstructionElements())
 

@@ -20,23 +20,90 @@
 #
 # This is the base class for all the geometrical entitys
 #
+import math
 
-class GeometricalEntity(object):
+class GeometricalEntity(dict):
     """
         This class provide the basic interface for all the geometrical entitys
     """
+    def __init__(self, kw, argNameType):
+        """
+            argv name must be created befor init the base class
+        """
+        if kw is None and argNameType is none:
+            return
+        if len(kw)!=len(argNameType):
+            raise TypeError, "Wrong number of items "
+        for k in kw:
+            if k in argNameType:
+                if isinstance(kw[k],argNameType[k]):
+                    self[k]=kw[k]
+                else:
+                    raise TypeError, "Wrong Type for argument %s"%str(k)
+            else:
+                raise TypeError, "Wrong argument %s "%str(k)
+        self.arguments=argNameType
+    
+    def getArgumentsName(self):
+        """
+            get the construction arguments Name
+        """
+        return self.arguments
+    
     def getConstructionElements(self):
         """
-            Get the construction element of ..
-            This must return a tuple of object better if there are point
+            Get the construction element of entity..
         """
-        return (self, )
-
-class GeometricalEntityComposed(object):
+        return self
+        
+    def setConstructionElements(self, **kw):
+        """
+            set the construction elemtnts
+        """
+        self=kw
+        
+    def move(self, fromPoint, toPoint):
+        """
+            this method must be defined for moving operation
+        """
+        v=Vector(fromPoint, toPoint)
+        return v.point()
+    
+    def rotate(self, rotationPoint, angle):
+        """
+            this method must be defined for rotation
+        """
+        x, y=rotationPoint.getCoords()
+        x1=x*math.cos(angle)-y*math.sin(angle)
+        y1=x*math.sin(angle)+y*math.cos(angle)
+        return Point(x1, y1)
+        
+    
+class GeometricalEntityComposed(dict):
     """
         this class provide the basic object for composed entity 
         like dimension labels ...
     """
+    def __init__(self, kw):
+        if kw is None and argNameType is none:
+            return
+        if len(kw)!=len(argNameType):
+            raise TypeError, "Wrong number of items "
+        for k in kw:
+            if k in argNameType:
+                if isinstance(kw[k],argNameType[k]):
+                    self[k]=kw[k]
+                else:
+                    raise TypeError, "Wrong Type for argument %s"%str(k)
+            else:
+                raise TypeError, "Wrong argument %s "%str(k)
+        self.arguments=argNameType
+    
+    def getArgumentsName(self):
+        """
+            get the construction arguments Name
+        """
+        return self.arguments
     def getConstructionElements(self):
         """
             Get the construction element of ..

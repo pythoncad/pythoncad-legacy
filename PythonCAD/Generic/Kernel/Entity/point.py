@@ -115,6 +115,12 @@ class Point(GeometricalEntity):
             x,y = obj.getCoords()
         return Point(self.__x+x,self.__y+y)
 
+    def getConstructionElements(self):
+        """
+            Get the construction element of entity..
+        """
+        return {"POINT_1":self.__x, "POINT_2":self.__y}
+    
     def getx(self):
         """
             Return the x-coordinate of a Point.

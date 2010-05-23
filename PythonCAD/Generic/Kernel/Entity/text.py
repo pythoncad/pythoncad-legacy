@@ -27,7 +27,7 @@ from geometricalentity      import GeometricalEntity
 
 
 from util import *
-
+from point import Point
 #
 # Text
 #
@@ -36,21 +36,34 @@ class Text(GeometricalEntity):
         A class representing text in a drawing.
         A Text instance has the following attributes:
     """
-    def __init__(self, p, text, angle=None,pointPosition=None):
+    def __init__(self,kw):
         """
-            Initialize a Text instance
+            Initialize a Arc/Circle.
+            kw['TEXT_0'] position point must be a point 
+            kw['TEXT_1'] text must be a valid text
+            kw['TEXT_2'] angle must be a valid radiant float value or None
+            kw['TEXT_3'] position of the text refered to the position point must be a valid string value or None
         """
-        from Generic.Kernel.initsetting             import TEXT_POSITION
-        self.__angle =0
-        if angle:
-            self.__angle = angle
-        self.__pointPosition='sw' #is the left down corner
-        if pointPosition:
-            if pointPosition in TEXT_POSITION:
-                self.__pointPosition=pointPosition
+        argDescription={
+                        "TEXT_0":Point,
+                        "TEXT_1":(float, str, unicode), 
+                        "TEXT_2":(float, int), 
+                        "TEXT_3":(float, str)
+                        }
         
-        self.__location = p
-        self.__text = text
+        if kw['TEXT_2']==None:
+            kw['TEXT_2'] = 0
+        from Generic.Kernel.initsetting             import TEXT_POSITION
+        if kw['TEXT_3']==None:
+            kw['TEXT_3'] = 'sw'
+        else:
+            if not kw['TEXT_3'] in TEXT_POSITION:
+                if kw['TEXT_3']=='':
+                    kw['TEXT_3'] = 'sw'
+                else:
+                    raise TypeError, "Argument for TEXT_3 not supported"
+
+        GeometricalEntity.__init__(self,kw, argDescription)
         
     def __eq__(self, objTest):
         if isistance(objTest,Text):
@@ -63,21 +76,12 @@ class Text(GeometricalEntity):
                 return False
         else:
             raise TypeError,"obj must be of type Text"
-        
-    def getConstructionElements(self):
-        """
-            get the construction elements
-        """
-        return (self.__text, 
-                self.__angle, 
-                self.__location,
-                self.__pointPosition)
-        
+                
     def getText(self):
         """
             Get the current text within the Text.
         """
-        return self.__text
+        return self['TEXT_1']
 
     def setText(self, text):
         """
@@ -85,7 +89,7 @@ class Text(GeometricalEntity):
         """
         if not isinstance(text, str):
             raise TypeError, "Invalid text data: " + str(text)
-        self.__text = text
+        self['TEXT_1'] = text
 
     text = property(getText, setText, None, "Text text.")
 
@@ -93,7 +97,7 @@ class Text(GeometricalEntity):
         """
             Return the Text spatial position.
         """
-        return self.__location
+        return self['TEXT_0']
 
 
     def setLocation(self, x, y):
@@ -102,7 +106,7 @@ class Text(GeometricalEntity):
         """
         _x = get_float(x)
         _y = get_float(y)
-        self.__location = (_x, _y)
+        self['TEXT_0'] = Point(_x, _y)
 
     location = property(getLocation, None, None, "Text location")
 
@@ -110,20 +114,20 @@ class Text(GeometricalEntity):
         """
             Return the angle at which the text is drawn.
         """
-        return self.__angle
+        return self['TEXT_2']
 
     def setAngle(self, angle=None):
         """
             Set the angle at which the text block should be drawn.
         """
-        self.__angle= get_float(_angle)
+        self['TEXT_2']= get_float(_angle)
     angle = property(getAngle, setAngle, None, "Text angle.")
 
     def getPointPosition(self):
         """
             return the position of the textrefered to the point 
         """
-        return self.__pointPosition
+        return self['TEXT_3']
     
     def setPointPosition(self, position):
         """
@@ -132,8 +136,8 @@ class Text(GeometricalEntity):
         from Generic.Kernel.initsetting             import TEXT_POSITION
         from Generic.Kernel.exception               import PythopnCadWarning
         if position in TEXT_POSITION:
-            self.__pointPosition=position
-        raise PythopnCadWarning,"bad Point position"    
+            self['TEXT_3']=position
+        raise TypeError,"bad Point position"    
     
     pointPosition=property(setPointPosition, getPointPosition, None, "Position of the text refered to the point")
     
@@ -145,7 +149,7 @@ class Text(GeometricalEntity):
         # ideally Python itself would provide a linecount() method
         # so the temporary list would not need to be created ...
         #
-        return len(self.__text.splitlines())
+        return len(self.text.splitlines())
 
     def clone(self):
         """

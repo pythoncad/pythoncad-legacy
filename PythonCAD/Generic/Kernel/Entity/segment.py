@@ -36,26 +36,20 @@ class Segment(GeometricalEntity):
     """
         A class representing a line segment.
     """
-    def __init__(self, p1, p2):
+    def __init__(self,kw):
         """
             Initialize a Segment object.
-            p1: Segment first endpoint - may be a Point or a two-item tuple of floats.
-            p2: Segment second endpoint - may be a Point or a two-item tuple of floats.
+            kw['SEGMENT_0'] must be a point 
+            kw['SEGMENT_1'] must be a point 
         """
-
-        _p1 = p1
-        if not isinstance(_p1, Point):
-            _p1 = Point(p1)
-        _p2 = p2
-        if not isinstance(_p2, Point):
-            _p2 = Point(p2)
-        if _p1 is _p2:
-            raise ValueError, "Segments cannot have identical endpoints."
-        self.__p1 = _p1
-        self.__p2 = _p2
+        argDescription={
+                        "SEGMENT_0":Point,
+                        "SEGMENT_1":Point
+                        }
+        GeometricalEntity.__init__(self,kw, argDescription)
 
     def __str__(self):
-        return "Segment: %s to %s" % (self.__p1, self.__p2)
+        return "Segment: %s to %s" % (self.p1, self.p2)
 
     def __eq__(self, obj):
         """
@@ -65,8 +59,8 @@ class Segment(GeometricalEntity):
             return False
         if obj is self:
             return True
-        _sp1 = self.__p1
-        _sp2 = self.__p2
+        _sp1 = self.p1
+        _sp2 = self.p2
         _op1, _op2 = obj.getEndpoints()
         return (((_sp1 == _op1) and (_sp2 == _op2)) or
                 ((_sp1 == _op2) and (_sp2 == _op1)))
@@ -79,20 +73,11 @@ class Segment(GeometricalEntity):
             return True
         if obj is self:
             return False
-        _sp1 = self.__p1
-        _sp2 = self.__p2
+        _sp1 = self.p1
+        _sp2 = self.p2
         _op1, _op2 = obj.getEndpoints()
         return (((_sp1 != _op1) or (_sp2 != _op2)) and
                 ((_sp1 != _op2) or (_sp2 != _op1)))
-
-    def getConstructionElements(self):
-        """
-            Get the endpoints of the Point.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Point
-        """
-        return self.getEndpoints()
-
 
     def getEndpoints(self):
         """
@@ -100,13 +85,13 @@ class Segment(GeometricalEntity):
             This function returns a tuple containing the two Point objects
             that are the endpoints of the segment.
         """
-        return self.__p1, self.__p2
+        return self.p1, self.p2
 
     def getP1(self):
         """
             Return the first endpoint Point of the Segment.
         """
-        return self.__p1
+        return self["SEGMENT_0"]
 
     def setP1(self, p):
         """
@@ -114,11 +99,11 @@ class Segment(GeometricalEntity):
         """
         if not isinstance(p, Point):
             raise TypeError, "Invalid P1 endpoint type: " + `type(p)`
-        if p is self.__p2:
+        if p is self.p2:
             raise ValueError, "Segments cannot have identical endpoints."
-        _pt = self.__p1
+        _pt = self.p1
         if _pt is not p:
-            self.__p1 = p
+            self["SEGMENT_0"] = p
 
     p1 = property(getP1, setP1, None, "First endpoint of the Segment.")
 
@@ -126,7 +111,7 @@ class Segment(GeometricalEntity):
         """
             Return the second endpoint Point of the Segment.
         """
-        return self.__p2
+        return self["SEGMENT_1"]
 
     def setP2(self, p):
         """
@@ -134,11 +119,11 @@ class Segment(GeometricalEntity):
         """
         if not isinstance(p, Point):
             raise TypeError, "Invalid P2 endpoint type: " + `type(p)`
-        if p is self.__p1:
+        if p is self.p1:
             raise ValueError, "Segments cannot have identical endpoints."
-        _pt = self.__p2
+        _pt = self.p2
         if _pt is not p:
-            self.__p2 = p
+            self["SEGMENT_1"] = p
 
     p2 = property(getP2, setP2, None, "Second endpoint of the Segment.")
 
@@ -146,15 +131,15 @@ class Segment(GeometricalEntity):
         """
             Return the length of the Segment.
         """
-        return self.__p1 - self.__p2
+        return self.p1 - self.p2
 
     def getCoefficients(self):
         """
             Express the line segment as a function ax + by + c = 0
             This method returns a tuple of three floats: (a, b, c)
         """
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()
+        _x1, _y1 = self.p1.getCoords()
+        _x2, _y2 = self.p2.getCoords()
         _a = _y2 - _y1
         _b = _x1 - _x2
         _c = (_x2 * _y1) - (_x1 * _y2)
@@ -187,8 +172,8 @@ class Segment(GeometricalEntity):
         """
         _x = get_float(x)
         _y = get_float(y)
-        p1=self.__p1
-        p2=self.__p2
+        p1=self.p1
+        p2=self.p2
         p3=Point(_x, _y)
         v=Vector(p1,p2)
         v1=Vector(p1,p3)
@@ -216,8 +201,8 @@ class Segment(GeometricalEntity):
         _x = get_float(x)
         _y = get_float(y)
         _t = tolerance.toltest(tol)
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()
+        _x1, _y1 = self.p1.getCoords()
+        _x2, _y2 = self.p2.getCoords()
         return map_coords(_x, _y, _x1, _y1, _x2, _y2, _t)
 
     def inRegion(self, xmin, ymin, xmax, ymax, fully=False):
@@ -238,8 +223,8 @@ class Segment(GeometricalEntity):
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
         test_boolean(fully)
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()
+        _x1, _y1 = self.p1.getCoords()
+        _x2, _y2 = self.p2.getCoords()
         _pxmin = min(_x1, _x2)
         _pymin = min(_y1, _y2)
         _pxmax = max(_x1, _x2)
@@ -270,8 +255,8 @@ class Segment(GeometricalEntity):
         _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
-        _x1, _y1 = self.__p1.getCoords()
-        _x2, _y2 = self.__p2.getCoords()
+        _x1, _y1 = self.p1.getCoords()
+        _x2, _y2 = self.p2.getCoords()
         #
         # simple tests to reject line
         #
@@ -341,11 +326,8 @@ class Segment(GeometricalEntity):
         """
             Create an identical copy of a Segment.
         """
-        _cp1 = self.__p1.clone()
-        _cp2 = self.__p2.clone()
-        _st = self.getStyle()
-        _lt = self.getLinetype()
-        _col = self.getColor()
-        _th = self.getThickness()
-        return Segment(_cp1, _cp2, _st, _lt, _col, _th)
+        _cp1 = self.p1.clone()
+        _cp2 = self.p2.clone()
+        args={"SEGMENT_0":_cp1, "SEGMENT_1":_cp2}
+        return Segment(args)
 

@@ -121,7 +121,7 @@ class Document(BaseDb):
                     return styleEntity
                     break
         else:
-            style=Style("Main")
+            style=Style({"STYLE_0":"Main"})
             return self.saveEntity(style) 
         
     def getDbSettingsObject(self):
@@ -194,6 +194,11 @@ class Document(BaseDb):
             Remarks if entityTypeArray is not None entityType is ignored
         """
         return self.__EntityDb.getMultiFilteredEntity(visible,entityType , entityTypeArray)
+
+    def convertToGeometricalEntity(self, entity):
+        """
+            Convert an entity into a geometrical entity
+        """    
         
     def haveDrawingEntitys(self):
         """
@@ -298,13 +303,7 @@ class Document(BaseDb):
             if isinstance(entity, t):
                 entityType=DRAWIN_ENTITY[t]
                 break
-        cElements={}
-        i=0
-        for _p in entity.getConstructionElements():
-            _key='%s_%s'%(str(entityType),str(i))
-            cElements[_key]=_p
-            i+=1
-        return cElements, entityType
+        return entity.getConstructionElements(), entityType
         
     def _saveSettings(self,settingsObj):
         """

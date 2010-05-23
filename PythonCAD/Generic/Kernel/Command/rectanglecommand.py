@@ -44,11 +44,16 @@ class RectangleCommand(BaseCommand):
         x2, y2=p2.getCoords()
         p3=Point(x1, y2)
         p4=Point(x2, y1)
-        objEnt.append(Segment(p1, p4))
-        objEnt.append(Segment(p4, p2))
-        objEnt.append(Segment(p2, p3))
-        objEnt.append(Segment(p3, p1))
+        segArg={"SEGMENT_0":p1, "SEGMENT_1":p4}
+        objEnt.append(Segment(segArg))
+        segArg={"SEGMENT_0":p4, "SEGMENT_1":p2}
+        objEnt.append(Segment(segArg))
+        segArg={"SEGMENT_0":p2, "SEGMENT_1":p3}
+        objEnt.append(Segment(segArg))
+        segArg={"SEGMENT_0":p3, "SEGMENT_1":p1}
+        objEnt.append(Segment(segArg))
         return objEnt
+        
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

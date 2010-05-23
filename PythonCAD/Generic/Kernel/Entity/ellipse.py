@@ -42,23 +42,24 @@ class Ellipse(GeometricalEntity):
         major_axis:
         minor_axis:
     """
-    def __init__(self, center, major, minor):
-        if not isinstance(center, Point):
-            raise ValueError, "Center must be a Point Object"
-        _major = get_float(major)
-        if not _major > 0.0:
-            raise ValueError, "Invalid major axis value: %g" % _major
-        _minor = get_float(minor)
-        if not _minor > 0.0:
-            raise ValueError, "Invalid minor axis value: %g" % _minor
-        #in case the user make some error we can manage in this way
+    def __init__(self,kw):
+        """
+            Initialize a Arc/Circle.
+            kw['ELLIPSE_0'] center must be a point 
+            kw['ELLIPSE_1'] major ax
+            kw['ELLIPSE_2'] minor ax
+        """
+        argDescription={
+                        "ELLIPSE_0":Point,
+                        "ELLIPSE_1":(float, int), 
+                        "ELLIPSE_2":(float, int)
+                        }
+        _major=kw['ELLIPSE_1']
+        _minor=kw['ELLIPSE_2']
         if _minor > _major:
-            _minor=get_float(major)
-            _major=get_float(minor)
-            
-        self.__center = center
-        self.__major = _major
-        self.__minor = _minor
+            kw['ELLIPSE_2']=get_float(major)
+            kw['ELLIPSE_1']=get_float(minor)
+        GeometricalEntity.__init__(self,kw, argDescription)
             
     def __eq__(self, obj):
         """
@@ -68,9 +69,9 @@ class Ellipse(GeometricalEntity):
             return False
         if obj is self:
             return True
-        return (self.__center == obj.getCenter() and
-                abs(self.__major - obj.getMajorAxis()) < 1e-10 and
-                abs(self.__minor - obj.getMinorAxis()) < 1e-10 
+        return (self.center == obj.getCenter() and
+                abs(self.major - obj.getMajorAxis()) < 1e-10 and
+                abs(self.minor - obj.getMinorAxis()) < 1e-10 
                 )
 
     def __ne__(self, obj):
@@ -85,25 +86,21 @@ class Ellipse(GeometricalEntity):
             This function returns a tuple containing the Point objects
             that for inizializing the Ellipse
         """
-        return self.__center, self.__major,self.__minor
+        return self.center, self.major,self.minor
 
     def getCenter(self):
         """
             Return the center _Point of the Ellipse.
         """
-        return self.__center
+        return self.kw['ELLIPSE_0']
 
-    def setCenter(self, cp):
+    def setCenter(self, point):
         """
             Set the center _Point of the Ellipse.
             The argument must be a _Point or a tuple containing
             two float values.
         """
-        if not isinstance(cp, Point):
-            raise TypeError, "Invalid Point: " + `cp`
-        _c = self.__center
-        if _c is not cp:
-            self.__center = cp
+        self.kw['ELLIPSE_0'] = point
 
     center = property(getCenter, setCenter, None, "Ellipse center")
 
@@ -112,7 +109,7 @@ class Ellipse(GeometricalEntity):
             Return the major axis value of the Ellipse.
             This method returns a float.
         """
-        return self.__major
+        return self.kw['ELLIPSE_1']
 
     def setMajorAxis(self, val):
         """
@@ -122,13 +119,13 @@ class Ellipse(GeometricalEntity):
         _val = get_float(val)
         if _val < 0.0:
             raise ValueError, "Invalid major axis value: %g" % _val
-        if _val < self.__minor:
-            self.__major=self.__minor
-            self.__minor=_val
+        if _val < self.minor:
+            self.self.kw['ELLIPSE_1']=self.minor
+            self.minor=_val
         else:
-            self.__major=_val
+            self.kw['ELLIPSE_1']=_val
             
-    major_axis = property(getMajorAxis, setMajorAxis, None,
+    major= property(getMajorAxis, setMajorAxis, None,
                           "Ellipse major axis")
 
     def getMinorAxis(self):
@@ -136,7 +133,7 @@ class Ellipse(GeometricalEntity):
             Return the minor axis value of the Ellipse.
             This method returns a float.
         """
-        return self.__minor
+        return self.kw['ELLIPSE_2']
 
     def setMinorAxis(self, val):
         """
@@ -146,11 +143,11 @@ class Ellipse(GeometricalEntity):
         _val = get_float(val)
         if _val < 0.0:
             raise ValueError, "Invalid minor axis value: %g" % _val
-        if _val > self.__major:
-            self.__minor=self.__major
-            self.__major=_val
+        if _val > self.major:
+            self.kw['ELLIPSE_2']=self.major
+            self.major=_val
         else:
-            self.__minor=_val
+            self.kw['ELLIPSE_2']=_val
             
     minor_axis = property(getMinorAxis, setMinorAxis, None,
                           "Ellipse minor axis")
@@ -161,8 +158,8 @@ class Ellipse(GeometricalEntity):
             Return the eccecntricity of the Ellipse.
             This method returns a float value.
         """
-        _major = self.__major
-        _minor = self.__minor
+        _major = self.major
+        _minor = self.minor
         if abs(_major - _minor) < 1e-10: # circular
             _e = 0.0
         else:
@@ -174,7 +171,7 @@ class Ellipse(GeometricalEntity):
             Return the area of the Ellipse.
             This method returns a float value.
         """
-        return math.pi * self.__major * self.__minor
+        return math.pi * self.major * self.minor
 
     def circumference(self):
         """
@@ -184,8 +181,8 @@ class Ellipse(GeometricalEntity):
             http://astronomy.swin.edu.au/~pbourke/geometry/ellipsecirc/
             Ramanujan, Second Approximation
         """
-        _a = self.__major
-        _b = self.__minor
+        _a = self.major
+        _b = self.minor
         _h = math.pow((_a - _b), 2)/math.pow((_a + _b), 2)
         _3h = 3.0 * _h
         return math.pi * (_a + _b) * (1.0 + _3h/(10.0 + math.sqrt(4.0 - _3h)))
@@ -205,6 +202,5 @@ class Ellipse(GeometricalEntity):
             Make a copy of an Ellipse.
             This method returns a new Ellipse object
         """
-        _cp = self.__center.clone()
-        return Ellipse(_cp, self.__major, self.__minor)
+        return Ellipse(self.getConstructionElements())
 

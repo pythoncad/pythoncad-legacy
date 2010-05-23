@@ -492,13 +492,14 @@ class Dxf(DrawingFile):
         ##print "debug c=", c
         #dPrint( "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) ) # TODO : replace the dprint with the logging
         #_active_layer = self.__dxfLayer
-        _p1 = Point(x1, y1)
+        #_p1 = Point(x1, y1)
         #_active_layer.addObject(_p1)
-        _p2 = Point(x2, y2)
+        #_p2 = Point(x2, y2)
         #_active_layer.addObject(_p2)
         #_s = self.__image.getOption('LINE_STYLE')
         #_seg = Segment(_p1, _p2, _s)
-        _seg = Segment(_p1, _p2)
+        args={"SEGMENT_0":Point(x1, y1), "SEGMENT_1":Point(x2, y2)}
+        _seg = Segment(args)
         #_l = self.__image.getOption('LINE_TYPE')
         #if _l != _s.getLinetype():
         #  _seg.setLinetype(_l)
@@ -659,7 +660,8 @@ class Dxf(DrawingFile):
         #lp = Point(lpx, lpy)
         #_active_layer.addObject(ep)
         #_active_layer.addObject(lp)
-        _arc = Arc(_center, r, sa, ea)
+        args={"ARC_0":_center, "ARC_1":r, "ARC_2":sa, "ARC_3":ea}
+        _arc = Arc(args)
         #_l = self.__image.getOption('LINE_TYPE')
         #if _l != _s.getLinetype():
         #    _arc.setLinetype(_l)
@@ -685,7 +687,8 @@ class Dxf(DrawingFile):
             _text ='Unable to convert in unicode'
         _p = Point(x, y)
         #_ts = self.__image.getOption('TEXT_STYLE')
-        _tb = Text(_p, _text)
+        args={"TEXT_0":_p,"TEXT_1":_text, "TEXT_2":0.0, "TEXT_3":""}
+        _tb = Text(args)
 
         #_f = self.__image.getOption('FONT_FAMILY')
         #if _f != _ts.getFamily():

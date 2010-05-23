@@ -18,22 +18,45 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the segment command
+#This module provide a class for the move command
 #
 from Generic.Kernel.exception               import *
 from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.hcline           import HCLine
+from Generic.Kernel.Entity.arc import Arc
 
-class HCLineCommand(BaseCommand):
+class MoveCommand(BaseCommand):
     """
-        this class rappresent the segment command
+        this class rappresent the Move command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcPoint]
-        self.message=["Give Me the first Point"]
+        self.exception=[ExcEntity,
+                        ExcPoint, 
+                        ExcPoint ]
+        self.message=[  "Give Me the first  Entity ID", 
+                        "Give me the from point",
+                        "Give me the to point"]
+
+    def getEntsToSave(self):
+        """
+            get the chamfer segments
+        """
+        objEnt=[]
+        ent=self.document.getEntity(self.value[0].getId())
+        entity=ent1.getConstructionElements()
+        return objEnt
+        
     def applyCommand(self):
-        if len(self.value)!=1:
+        """
+            apply the champfer command
+        """
+        if len(self.value)!=3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        hcline=HCLine(self.value[0])
-        self.document.saveEntity(hcline)
+        
+        try:
+            self.document.startMassiveCreation()
+            for _ent in self.getEntsToSave():
+                self.document.saveEntity(_ent)
+        finally:
+            self.document.stopMassiveCreation()
+       

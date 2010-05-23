@@ -35,5 +35,6 @@ class SegmentCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        seg=Segment(self.value[0], self.value[1])
+        segArg={"SEGMENT_0":self.value[0], "SEGMENT_1":self.value[1]}
+        seg=Segment(segArg)
         self.document.saveEntity(seg)

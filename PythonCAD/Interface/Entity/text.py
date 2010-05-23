@@ -37,8 +37,8 @@ class Text(QtGui.QGraphicsTextItem):
         #location,geometry[keys[0]]
         #pointPosition,geometry[keys[3]]
         self.ID=entity.getId()
-        self.setPlainText(geometry[keys[2]] )#text
-        x, y=geometry[keys[0]].getCoords() #location
+        self.setPlainText(geometry['TEXT_1'])#text
+        x, y=geometry['TEXT_0'].getCoords() #location
         self.setPos(x, -1.0*y)
        
         # set pen accoording to layer

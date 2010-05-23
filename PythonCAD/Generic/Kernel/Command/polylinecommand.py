@@ -55,5 +55,10 @@ class PolylineCommand(BaseCommand):
         """
             perform the write of the entity
         """
-        pline=Polyline(self.value)
+        i=0
+        args={}
+        for k in self.value:
+           args["POLYLINE_%S"%str(i)]=k
+           i+=1 
+        pline=Polyline(args)
         self.document.saveEntity(pline)

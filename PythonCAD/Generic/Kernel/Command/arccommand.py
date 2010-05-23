@@ -35,5 +35,10 @@ class ArcCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        arc=Arc(self.value[0], self.value[1], self.value[2], self.value[3])
+        arg={"ARC_0":self.value[0], 
+                "ARC_1":self.value[1], 
+                "ARC_2":self.value[2], 
+                "ARC_3":self.value[3]
+                }    
+        arc=Arc(arg)
         self.document.saveEntity(arc)

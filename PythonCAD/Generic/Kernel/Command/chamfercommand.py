@@ -53,21 +53,20 @@ class ChamferCommand(BaseCommand):
         ent2=self.document.getEntity(self.value[1].getId())
         
         cel1=ent1.getConstructionElements()
-        p1=cel1["SEGMENT_0"]
-        p2=cel1["SEGMENT_1"]
-        seg1=Segment(p1, p2)
+        seg1=Segment(cel1)
         
         cel2=ent2.getConstructionElements()
-        p1=cel2["SEGMENT_0"]
-        p2=cel2["SEGMENT_1"]
-        seg2=Segment(p1, p2)
+        seg2=Segment(cel2)
+        arg={
+             "CHAMFER_0":seg1,
+             "CHAMFER_1":seg2,  
+             "CHAMFER_2":self.value[2], 
+             "CHAMFER_3":self.value[3], 
+             "CHAMFER_4":self.value[4], 
+             "CHAMFER_5":self.value[5]
+             }
 
-        cmf=Chamfer(seg1,
-                    seg2,  
-                    self.value[2], 
-                    self.value[3], 
-                    self.value[4], 
-                    self.value[5])
+        cmf=Chamfer(arg)
         seg1Mod, seg2Mod, chamferSegment = cmf.getReletedComponent()
         
         _cElements1, entityType=self.document._getCelements(seg1Mod)

@@ -25,7 +25,9 @@ import math
 from PyQt4 import QtCore, QtGui
 
 class Arc(QtGui.QGraphicsItem):
-    
+    """
+        this class define the arcQT object 
+    """
     def __init__(self, entity):
         super(Arc, self).__init__()
         pt_begin = None

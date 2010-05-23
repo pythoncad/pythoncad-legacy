@@ -35,5 +35,6 @@ class EllipseCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)>3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        ellipse=Ellipse(self.value[0], self.value[1], self.value[2])
+        arg={"ELLIPSE_0":self.value[0], "ELLIPSE_1":self.value[1], "ELLIPSE_2":self.value[2]}
+        ellipse=Ellipse(arg)
         self.document.saveEntity(ellipse)

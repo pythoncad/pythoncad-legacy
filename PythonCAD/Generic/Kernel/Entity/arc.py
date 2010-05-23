@@ -34,39 +34,44 @@ from util               import *
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi
 
+pi_2=math.pi*2.0
+pi2=math.pi/2.0
+
 class Arc(GeometricalEntity):
     """
         A class for Arcs.
         An Arc has four attributes:
         center: A Point object
         radius: The Arc's radius
-        start_angle: The start angle
-        end_angle: The end angle
+        startAngle: The start angle
+        endAngle: The end angle
 
         An Arc has the following methods:
     """
-    def __init__(self, center, radius, start_angle=None, end_angle=None):
+    def __init__(self,kw):
         """
             Initialize a Arc/Circle.
-            The center should be a Point, or a two-entry tuple of floats,
-            and the radius should be a float greater than 0.
+            kw['ARC_0'] center must be a point 
+            kw['ARC_1'] radius must be a valid float
+            kw['ARC_2'] startAngle must be a valid radiant float value
+            kw['ARC_3'] endAngle   must be a valid radiant float value
         """
+        argDescription={
+                        "ARC_0":Point,
+                        "ARC_1":(float, int), 
+                        "ARC_2":(float, int), 
+                        "ARC_3":(float, int)
+                        }
+        GeometricalEntity.__init__(self,kw, argDescription)
         __isCircle=False
-        if start_angle ==None or end_angle==None:
-            start_angle=end_angle=0
+        if self.startAngle ==None or self.endAngle==None:
+            self.startAngle=self.endAngle=0
             __isCircle=True
-        _cp = center
-        if not isinstance(_cp, Point):
-            _cp = Point(center)
-        _r = get_float(radius)
-        if not _r > 0.0:
-            raise ValueError, "Invalid radius: %g" % _r
-        _sa = make_c_angle(start_angle)
-        _ea = make_c_angle(end_angle)
-        self.__radius = _r
-        self.__sa = _sa
-        self.__ea = _ea
-        self.__center = _cp
+        if not get_float(self.radius) > 0.0:
+            raise ValueError, "Invalid radius" 
+        
+        self.startAngle = make_c_angle(self.startAngle)
+        self.endAngle= make_c_angle(self.endAngle)
         
     def isCircle(self):
         """
@@ -82,10 +87,10 @@ class Arc(GeometricalEntity):
             return False
         if obj is self:
             return True
-        return ((self.__center == obj.getCenter()) and
-                (abs(self.__radius - obj.getRadius()) < 1e-10) and
-                (abs(self.__sa - obj.getStartAngle()) < 1e-10) and
-                (abs(self.__ea - obj.getEndAngle()) < 1e-10))
+        return ((self.center == obj.center) and
+                (abs(self.radius - obj.radius) < 1e-10) and
+                (abs(self.startAngle - obj.startAngle) < 1e-10) and
+                (abs(self.endAngle - obj.endAngle) < 1e-10))
 
     def __ne__(self, obj):
         """
@@ -95,36 +100,40 @@ class Arc(GeometricalEntity):
             return True
         if obj is self:
             return False
-        return ((self.__center != obj.getCenter()) or
-                (abs(self.__radius - obj.getRadius()) > 1e-10) or
-                (abs(self.__sa - obj.getStartAngle()) > 1e-10) or
-                (abs(self.__ea - obj.getEndAngle()) > 1e-10))
-                
-    def getConstructionElements(self):
+        return ((self.center != obj.center) or
+                (abs(self.radius - obj.radius) > 1e-10) or
+                (abs(self.startAngle - obj.startAngle) > 1e-10) or
+                (abs(self.endAngle - obj.endAngle) > 1e-10))
+                   
+    def move(self, fromPoint, toPoint):
         """
-            Get the endpoints of the Arc.
-            This function returns a tuple containing the Point objects
-            that for inizializing the arc
+            move the angle acline from a position to enother
         """
-        return self.__center, self.__radius,self.__sa,self.__ea
-
+        newPoint=GeometricalEntity.move(fromPoint, toPoint)
+        self.__center=self.__center+newPoint
+        
+    def rotate(self, rotationPoint, angle):
+        """
+            rotate the acline for a given angle
+        """    
+        self.__keypoint=GeometricalEntity.rotate(rotationPoint,angle )
+        if self.startAngle!=self.endAngle:
+            self.startAngle=self.startAngle+angle
+            self.endAngle=self.endAngle+angle
+        
     def getCenter(self):
         """
             Return the center Point of the Arc.
         """
-        return self.__center
+        return self['ARC_0']
 
-    def setCenter(self, c):
+    def setCenter(self, point):
         """
             Set the center Point of the Arc.
-            The argument must be a Point or a tuple containing
-            two float values.
         """
-        _cp = self.__center
-        if not isinstance(c, Point):
-            raise TypeError, "Invalid center point: " + `c`
-        if _cp is not c:
-            self.__center = c
+        if not isinstance(point, self.arguments['ARC_0'] ):
+            raise TypeError, "Wrong argument type Need a Point"
+        self['ARC_0']=point
 
     center = property(getCenter, setCenter, None, "Arc center")
 
@@ -132,7 +141,7 @@ class Arc(GeometricalEntity):
         """
             Return the radius of the the Arc.
         """
-        return self.__radius
+        return self['ARC_1']
 
     def setRadius(self, radius):
         """
@@ -142,57 +151,52 @@ class Arc(GeometricalEntity):
         _r = get_float(radius)
         if not _r > 0.0:
             raise ValueError, "Invalid radius: %g" % _r
-        _cr = self.__radius
-        if abs(_cr - _r) > 1e-10:
-            self.__radius = _r
+        self['ARC_1']=_r
 
     radius = property(getRadius, setRadius, None, "Arc radius")
 
     def getStartAngle(self):
         """
-            Return the start_angle for the Arc.
+            Return the startAngle for the Arc.
         """
-        return self.__sa
+        return self['ARC_2']
 
     def setStartAngle(self, angle):
         """
-            Set the start_angle for the Arc.
+            Set the startAngle for the Arc.
             The argument angle should be a float.
         """
-        self.__sa = _angle
+        self['ARC_2'] = angle
 
-    start_angle = property(getStartAngle, setStartAngle, None,
+    startAngle = property(getStartAngle, setStartAngle, None,
                            "Start angle for the Arc.")
 
     def getEndAngle(self):
         """
-            Return the end_angle for the Arc.
+            Return the endAngle for the Arc.
         """
-        return self.__ea
+        return self['ARC_3']
 
     def setEndAngle(self, angle):
         """
-            Set the end_angle for the Arc.
+            Set the endAngle for the Arc.
             The argument angle should be a float.
         """
-        self.__ea = _angle
+        self['ARC_3'] = angle
 
-    end_angle = property(getEndAngle, setEndAngle, None,
+    endAngle = property(getEndAngle, setEndAngle, None,
                          "End angle for the Arc.")
 
     def getAngle(self):
         """
             Return the angular sweep of the Arc.
-
         """
-        _sa = self.__sa
-        _ea = self.__ea
-        if abs(_ea - _sa) < 1e-10:
-            _angle = 360.0
-        elif _ea > _sa:
-            _angle = _ea - _sa
+        if abs(self.endAngle - self.startAngle) < 1e-10:
+            _angle = pi_2
+        elif self.endAngle > self.startAngle:
+            _angle =self.endAngle - self.startAngle
         else:
-            _angle = 360.0 - _sa + _ea
+            _angle = pi_2 - self.startAngle + self.endAngle
         return _angle
 
     def throughAngle(self, angle):
@@ -201,9 +205,9 @@ class Arc(GeometricalEntity):
             The argument angle should be a float value. This method returns
             True if the arc exists at that angle, otherwise the method returns False.
         """
-        _angle = math.fmod(get_float(angle), 360.0)
+        _angle = math.fmod(get_float(angle), pi_2)
         if _angle < 0.0:
-            _angle = _angle + 360.0
+            _angle = _angle + pi_2
         _sa = self.__sa
         _ea = self.__ea
         _val = True
@@ -221,14 +225,14 @@ class Arc(GeometricalEntity):
             Return where the two endpoints for the arc-segment lie.
             This function returns two tuples, each containing the x-y coordinates
             of the arc endpoints. The first tuple corresponds to the endpoint at
-            the start_angle, the second to the endpoint at the end_angle.
+            the startAngle, the second to the endpoint at the endAngle.
         """
-        _cx, _cy = self.__center.getCoords()
-        _r = self.__radius
-        _sa = self.__sa
+        _cx, _cy = self.center.getCoords()
+        _r = self.radius
+        _sa = self.startAngle
         _sax = _cx + _r * math.cos(_sa * _dtr)
         _say = _cy + _r * math.sin(_sa * _dtr)
-        _ea = self.__ea
+        _ea = self.endAngle
         _eax = _cx + _r * math.cos(_ea * _dtr)
         _eay = _cy + _r * math.sin(_ea * _dtr)
         return (_sax, _say), (_eax, _eay)
@@ -237,13 +241,14 @@ class Arc(GeometricalEntity):
         """
             Return the length of the Arc.
         """
-        return 2.0 * math.pi * self.__radius * (self.getAngle()/360.0)
+        
+        return self.radius*self.getAngle()
 
     def area(self):
         """
             Return the area enclosed by the Arc.
         """
-        return math.pi * pow(self.__radius, 2) * (self.getAngle()/360.0)
+        return pow(self.radius, 2) * (self.getAngle()/2)
 
     def GetTangentPoint(self,x,y,outx,outy):
         """
@@ -256,18 +261,18 @@ class Arc(GeometricalEntity):
         """
         firstPoint=Point(x,y)
         fromPoint=Point(outx,outy)
-        twoPointDistance=self.__center.Dist(fromPoint)
-        if(twoPointDistance<self.__radius):
+        twoPointDistance=self.center.Dist(fromPoint)
+        if(twoPointDistance<self.radius):
             return None,None
         originPoint=Point(0.0,0.0)
-        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.__radius,2))
-        tgAngle=math.asin(self.__radius/twoPointDistance)
+        tanMod=math.sqrt(pow(twoPointDistance,2)-pow(self.radius,2))
+        tgAngle=math.asin(self.radius/twoPointDistance)
         #Compute the x versor
         xPoint=Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
-        twoPointVector=Vector(fromPoint,self.__center)
+        twoPointVector=Vector(fromPoint,self.center)
         rightAngle=twoPointVector.Ang(xVector)
-        cx,cy=self.__center.getCoords()
+        cx,cy=self.center.getCoords()
         if(outy>cy): # stupid situation
             rightAngle=-rightAngle
         posAngle=rightAngle+tgAngle
@@ -297,8 +302,8 @@ class Arc(GeometricalEntity):
         """
             get The intersecrion point from the line(x,y,cx,cy) and the circle
         """
-        _cx, _cy = self.__center.getCoords()
-        _r = self.__radius
+        _cx, _cy = self.center.getCoords()
+        _r = self.radius
         centerPoint=Point(_cx,_cy)
         outPoint=Point(x,y)
         vector=Vector(outPoint,centerPoint)
@@ -328,8 +333,8 @@ class Arc(GeometricalEntity):
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
         test_boolean(fully)
-        _xc, _yc = self.__center.getCoords()
-        _r = self.__radius
+        _xc, _yc = self.center.getCoords()
+        _r = self.radius
         #
         # cheap test to see if arc cannot be in region
         #
@@ -403,8 +408,8 @@ class Arc(GeometricalEntity):
 
     def getBounds(self):
         _ep1, _ep2 = self.getEndpoints()
-        _xc, _yc = self.__center.getCoords()
-        _r = self.__radius
+        _xc, _yc = self.center.getCoords()
+        _r = self.radius
         _xmin = min(_xc, _ep1[0], _ep2[0])
         _ymin = min(_yc, _ep1[1], _ep2[1])
         _xmax = max(_xc, _ep1[0], _ep2[0])
@@ -424,15 +429,7 @@ class Arc(GeometricalEntity):
             Create an identical copy of a Arc
             clone()
         """
-        _cp = self.__center.clone()
-        _r = self.__radius
-        _sa = self.__sa
-        _ea = self.__ea
-        _st = self.getStyle()
-        _lt = self.getLinetype()
-        _col = self.getColor()
-        _th = self.getThickness()
-        return Arc(_cp, _r, _sa, _ea, _st, _lt, _col, _th)
+        return Arc(self.getConstructionElements())
 #
 # static functions for Arc class
 #
@@ -446,7 +443,7 @@ class Arc(GeometricalEntity):
         _val = False
         if ((abs(e - s) < 1e-10) or
             ((s > e) and
-             ((s <= a <= 360.0) or (0.0 <= a <= e))) or
+             ((s <= a <= math.pi) or (0.0 <= a <= e))) or
             (s <= a <= e)):
             _val = True
         return _val

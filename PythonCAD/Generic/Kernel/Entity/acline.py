@@ -32,6 +32,7 @@ from geometricalentity  import *
 from tolerance          import *
 from util               import *
 from point              import Point
+from pygeolib           import Vector
 
 class ACLine(GeometricalEntity):
     """
@@ -47,125 +48,68 @@ class ACLine(GeometricalEntity):
         that range are adjusted to fall between those limits.
     """
     
-    def __init__(self, p, a):
+    def __init__(self, kw):
         """
             Initialize an ACLine object.
-            p: A Point object the line passes through
-            a: The angle at which the line rises or declines
+            kw must be a dict with 2 argument 
+            ACLINE_0=p: A Point object the line passes through
+            ACLINE_1=a: The angle at which the line rises or declines
             angle must be in radiants
         """
-        if not isinstance(p, Point):
-            p = Point(p)
-        self.__keypoint = p
-        self.__angle = a
-
-    def __eq__(self, obj):
-        """
-            Compare one ACLine to another for equality.
-        """
-        if not isinstance(obj, ACLine):
-            return False
-        if obj is self:
-            return True
-        _as = self.__angle
-        _ao = obj.getAngle()
-        _xs, _ys = self.getLocation().getCoords()
-        _xo, _yo = obj.getLocation().getCoords()
-        _val = False
-        if (self.isVertical() and
-            obj.isVertical() and
-            abs(_xs - _xo) < 1e-10):
-            _val = True
-        elif (self.isHorizontal() and
-              obj.isHorizontal() and
-              abs(_ys - _yo) < 1e-10):
-              _val = True
-        else:
-            if abs(_as - _ao) < 1e-10: # same angle
-                _ms = math.tan(_as)
-                _bs = _ys - (_ms * _xs)
-                _y = (_ms * _xo) + _bs
-                if abs(_y - _yo) < 1e-10:
-                    _val = True
-        return _val
-
-    def __ne__(self, obj):
-        """
-            Compare one ACLine to another for inequality.
-        """
-        if not isinstance(obj, ACLine):
-            return False
-        if obj is self:
-            return False
-        _as = self.__angle
-        _ao = obj.getAngle()
-        _xs, _ys = self.getLocation().getCoords()
-        _xo, _yo = obj.getLocation().getCoords()
-        _val = True
-        if (self.isVertical() and
-            obj.isVertical() and
-            abs(_xs - _xo) < 1e-10):
-            _val = False
-        elif (self.isHorizontal() and
-              obj.isHorizontal() and
-              abs(_ys - _yo) < 1e-10):
-              _val = False
-        else:
-            if abs(_as - _ao) < 1e-10: # same angle
-                _ms = math.tan(_as)
-                _bs = _ys - (_ms * _xs)
-                _y = (_ms * _xo) + _bs
-                if abs(_y - _yo) < 1e-10:
-                    _val = False
-        return _val
+        argDescription={"ACLINE_0":Point, "ACLINE_1":float}
+        GeometricalEntity.__init__(self,kw, argDescription)
+        if not isinstance(self.location, Point):
+            raise TypeError, "First argument of the dictionary must be a Point"
 
     def __str__(self):
-        _point = self.getLocation()
-        _angle = self.__angle
-        return "Angled construction line through %s at %g degrees" % (_point, _angle)
+        return "Angled construction line through %s at %g degrees" % (self.location, self.angle)
     
-    def getConstructionElements(self):
+    def move(self, fromPoint, toPoint):
         """
-            get construction elements
+            move the angle acline from a position to enother
         """
-        return (self.__keypoint, self.__angle)
+        newPoint=GeometricalEntity.move(fromPoint, toPoint)
+        self.__keypoint=self.__keypoint+newPoint
+        
+    def rotate(self, rotationPoint, angle):
+        """
+            rotate the acline for a given angle
+        """    
+        self.location=GeometricalEntity.rotate(rotationPoint,angle )
+        self.angle=self.angle+angle
+        
 
     def getAngle(self):
         """
             Return the angle of the ACLine.
         """
-        return self.__angle
+        return self['ACLINE_1']
 
     def setAngle(self, angle):
         """
             The argument a should be a float representing the angle
             of the ACLine in degrees.
         """
-        _a = util.make_angle(angle)
-        _oa = self.__angle
-        if abs(_a - _oa) > 1e-10:
-            self.__angle = _a
-            _x, _y = self.__keypoint.getCoords()
+        self['ACLINE_1']=angle
 
     angle = property(getAngle, setAngle, None, "Angle of inclination.")
 
     def isVertical(self):
-        return abs(abs(self.__angle) - 90.0) < 1e-10
+        return abs(abs(self.angle) - math.pi/2) < 1e-10
 
     def isHorizontal(self):
-        return abs(self.__angle) < 1e-10
+        return abs(self.angle) < 1e-10
 
     def getLocation(self):
-        return self.__keypoint
+        return self['ACLINE_0']
 
     def setLocation(self, p):
         if not isinstance(p, Point):
             raise TypeError, "Unexpected type for point: " + `type(p)`
-        _kp = self.__keypoint
-        if p is not _kp:
-            _x, _y = _kp.getCoords()
-            self.__keypoint = p
-
+        self['ACLINE_0']=p
+        
+    location=property(getLocation, setLocation, None, "Set the location point of the line")
+    
     def mapCoords(self, x, y, tol=TOL):
         """
             Return the nearest Point on the ACLine to a coordinate pair.
@@ -189,8 +133,8 @@ class ACLine(GeometricalEntity):
         _x = get_float(x)
         _y = get_float(y)
         _t = toltest(tol)
-        _xs, _ys = self.getLocation().getCoords()
-        _angle = self.__angle
+        _xs, _ys = self.location.getCoords()
+        _angle = self.angle
         #
         # the second point is 1 unit away - this simplifies things ...
         #
@@ -217,8 +161,8 @@ class ACLine(GeometricalEntity):
         """
         _x = get_float(x)
         _y = get_float(y)
-        _x1, _y1 = self.getLocation().getCoords()
-        _angle = self.__angle
+        _x1, _y1 = self.location.getCoords()
+        _angle = self.angle
         if self.isHorizontal():
             _px = _x
             _py = _y1
@@ -253,8 +197,8 @@ class ACLine(GeometricalEntity):
         test_boolean(fully)
         if fully:
             return False
-        _x, _y = self.getLocation().getCoords()
-        _angle = self.__angle
+        _x, _y = self.location.getCoords()
+        _angle = self.angle
         _val = False
         if _xmin < _x < _xmax and _ymin < _y < _ymax:
             _val = True
@@ -314,8 +258,8 @@ class ACLine(GeometricalEntity):
         _ymax = get_float(ymax)
         if _ymax < _ymin:
             raise ValueError, "Illegal values: ymax < ymin"
-        _x, _y = self.getLocation().getCoords()
-        _angle = self.__angle
+        _x, _y = self.location.getCoords()
+        _angle = self.angle
         _coords = None
         if self.isVertical() and _xmin < _x < _xmax:
             _coords = (_x, _ymin, _x, _ymax)
@@ -374,7 +318,7 @@ class ACLine(GeometricalEntity):
         """
             Create an identical copy of an ACLine.
         """
-        return ACLine(self.__keypoint.clone(), self.__angle)
+        return ACLine(self.location, self.angle)
 
 
 def intersect_region(acl, xmin, ymin, xmax, ymax):

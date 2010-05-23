@@ -43,32 +43,54 @@ class ObjectJoint(GeometricalEntityComposed):
         A base class for chamfers and fillets
         A ObjectJoint object has the following methods:
     """
-   
-    def __init__(self, obj1, obj2):
+    def __init__(self, kw):
         from Generic.Kernel.initsetting import DRAWIN_ENTITY
         classNames=tuple(DRAWIN_ENTITY.keys())
-        if not isinstance(obj1, classNames):
-            raise TypeError, "Invalid first Element for DRAWIN_ENTITY: " + `type(obj1)`
-        if not isinstance(obj2, classNames):
-            raise TypeError, "Invalid second Element for DRAWIN_ENTITY: " + `type(obj2)`
-    
-        self._obj1 = obj1
-        self._obj2 = obj2
+        argDescription={"OBJECTJOINT_0":classNames, 
+                        "OBJECTJOINT_1":classNames
+                        }
+        GeometricalEntityComposed.__init__(self, kw, argDescription)
         self._externalIntersectio=False
-        spoolIntersection=[Point(x, y) for x, y in find_intersections(obj1, obj2)]
+        spoolIntersection=[Point(x, y) for x, y in find_intersections(self.obj1, self.obj2)]
         if not spoolIntersection: #if not intesection is found extend it on cLine
-            spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(obj1, obj2)]
+            spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(self.obj1, self.obj2)]
             self._externalIntersectio=True
         self._intersectionPoints=spoolIntersection
         
-        
+    def getObj1(self):    
+        """
+            get first object
+        """
+        return self["OBJECTJOINT_0"]
+
+    def setObj1(self, value):
+        """
+            set the object 1
+        """
+        self["OBJECTJOINT_0"]=value
+    
+    obj1=property(getObj1, setObj1, None, "Set/Get  The first object")
+    
+    def getObj2(self):    
+        """
+            get first object
+        """
+        return self["OBJECTJOINT_1"]
+    def setObj2(self, value):
+        """
+            set the object 1
+        """
+        self["OBJECTJOINT_1"]=value
+   
+    obj2=property(getObj2, setObj2, None, "Set/Get The Second object")   
+    
     def getConstructionElements(self):
         """
             Return the two Entity Object joined by the ObjectJoint.
             This method returns a tuple holding the two Entity Object joined
             by the ObjectJoint.
         """
-        return self._obj1, self._obj2
+        return self
         
     def getIntersection(self):
         """
@@ -90,34 +112,53 @@ class Chamfer(ObjectJoint):
     """
         A Chamfer class 
     """
-    def __init__(self, obj1, obj2, distance1, distance2, pointClick1=None, pointClick2=None):
+    def __init__(self, kw):
         """
-            obj1        :(Segment ,ACLine)
-            obj2        :(Segment ,ACLine)
-            distance1   :Real distance from intersection point to chamfer
-            distance2   :Real distance from intersection point to chamfer
-            pointClick1 :Clicked point from the u.i near the obj1
-            pointClick2 :Clicked point from the u.i near the obj2
+        #   obj1, obj2, distance1, distance2, pointClick1=None, pointClick2=None
+            "CHAMFER_0" obj1        :(Segment ,ACLine)
+            "CHAMFER_1" obj2        :(Segment ,ACLine)
+            "CHAMFER_2" distance1   :Real distance from intersection point to chamfer
+            "CHAMFER_3" distance2   :Real distance from intersection point to chamfer
+            "CHAMFER_4" pointClick1 :Clicked point from the u.i near the obj1
+            "CHAMFER_5" pointClick2 :Clicked point from the u.i near the obj2
         """
-        for obj in (obj1, obj2):
-            if not isinstance(obj, ALLOW_CHAMFER_ENTITY):
-                raise StructuralError, "Bad imput parameter %s"%str(type(obj))
-        ObjectJoint.__init__(self, obj1, obj2)
+        wkp={}
+        kwp["OBJECTJOINT_0"]=wk["CHAMFER_0"]
+        kwp["OBJECTJOINT_1"]=wk["CHAMFER_1"]
+        ObjectJoint.__init__(self, kwp)
         for dis in (distance1, distance2):
             if dis<0.0:
                 raise StructuralError, "Distance parameter must be greater then 0"
-        self.__distance1=distance1
-        self.__distance2=distance2
-        self.__pointClick1=pointClick1
-        self.__pointClick2=pointClick2      
         self.__segment=self._UpdateChamferSegment()
+    
+    def setConstructionElements(self, kw):    
+        """
+            set the construction elements
+        """
+        for k in kw:
+            if k=='CHAMFER_0':
+                self["OBJECTJOINT_0"]=kw["CHAMFER_0"]
+            elif k=='CHAMFER_1':
+                self["OBJECTJOINT_1"]=kw["CHAMFER_1"]
+            else:
+                self[k]=kw[k]
+    def getConstructionElements(self):
+        """
+            get the constructionelement
+        """
+        newDic={}
+        i=0
+        for key in self:
+            newDic["CHAMFER_%s"%str(i)]=self[key]
+            i+=1
+        return newDic
         
     def _UpdateChamferSegment(self):           
         """
             Recompute the Chamfer segment
         """
-        self._obj1, pc1=self._updateSegment(self._obj1,self.__distance1, self.__pointClick1 )
-        self._obj2, pc2=self._updateSegment(self._obj2,self.__distance2, self.__pointClick2 )
+        self.obj1, pc1=self._updateSegment(self.obj1,self.distance1, self.pointClick1 )
+        self.obj2, pc2=self._updateSegment(self.obj2,self.distance2, self.pointClick2 )
         seg=Segment(pc1, pc2)
         return seg
     
@@ -166,10 +207,10 @@ class Chamfer(ObjectJoint):
         """
         outElement=(self._obj1 , 
                     self._obj2 ,
-                    self.__distance1, 
-                    self.__distance2, 
-                    self.__pointClick1, 
-                    self.__pointClick2
+                    self.distance1, 
+                    self.distance2, 
+                    self.pointClick1, 
+                    self.pointClick2
                     )
         return outElement
 
@@ -188,7 +229,7 @@ class Chamfer(ObjectJoint):
         """
         if distance<=TOL:
             raise StructuralError, "Distance could be greater then 0"
-        self.__distance1=distance
+        self.distance1=distance
         self._UpdateChamferSegment()
 
     def setDistance2(self, distance):
@@ -197,7 +238,7 @@ class Chamfer(ObjectJoint):
         """
         if distance<=TOL:
             raise StructuralError, "Distance could be greater then 0"
-        self.__distance2=distance
+        self.distance2=distance
         self._UpdateChamferSegment()
            
     def clone(self):
@@ -208,10 +249,10 @@ class Chamfer(ObjectJoint):
         """
         newChamfer=Chamfer(self._obj1 , 
                     self._obj2 ,
-                    self.__distance1, 
-                    self.__distance2, 
-                    self.__pointClick1, 
-                    self.__pointClick2)
+                    self.distance1, 
+                    self.distance2, 
+                    self.pointClick1, 
+                    self.pointClick2)
         return newChamfer
 
     def getReletedComponent(self):

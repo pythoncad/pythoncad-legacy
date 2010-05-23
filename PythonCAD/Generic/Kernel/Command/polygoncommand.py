@@ -174,12 +174,14 @@ class PolygonCommand(BaseCommand):
                 _x = _xp[_i]
                 _y = _yp[_i]
                 _pi = Point(_x, _y)
-                objEnt.append(Segment(_p1, _pi))
+                segArg={"SEGMENT_0":_p1, "SEGMENT_1":_pi}
+                objEnt.append(Segment(segArg))
                 _p1 = _pi
             #
             # now add closing segment ...
             #
-            objEnt.append(Segment(_p1, _p0))
+            segArg={"SEGMENT_0":_p1, "SEGMENT_1":_p0}
+            objEnt.append(Segment(segArg))
         return  objEnt   
     def applyCommand(self):
         """

@@ -35,5 +35,6 @@ class ACLineCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        acline=ACLine(self.value[0], self.value[1])
+        arg={"ACLINE_0":self.value[0],"ACLINE_0":self.value[1] }
+        acline=ACLine(arg)
         self.document.saveEntity(acline)
