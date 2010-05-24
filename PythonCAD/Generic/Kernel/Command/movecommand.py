@@ -41,10 +41,11 @@ class MoveCommand(BaseCommand):
         """
             get the chamfer segments
         """
-        objEnt=[]
-        ent=self.document.getEntity(self.value[0].getId())
-        entity=ent1.getConstructionElements()
-        return objEnt
+        ent=self.document.getEntity(self.value[0])
+        geoEnt=self.document.convertToGeometricalEntity(ent)
+        geoEnt.move(self.value[1], self.value[2])
+        ent.setConstructionElements(geoEnt.getConstructionElements())
+        return [ent]
         
     def applyCommand(self):
         """

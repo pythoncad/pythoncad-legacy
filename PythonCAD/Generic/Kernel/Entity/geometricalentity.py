@@ -22,6 +22,7 @@
 #
 import math
 
+
 class GeometricalEntity(dict):
     """
         This class provide the basic interface for all the geometrical entitys
@@ -66,7 +67,12 @@ class GeometricalEntity(dict):
         """
             this method must be defined for moving operation
         """
+        from pygeolib import Vector
+        from point import Point
         v=Vector(fromPoint, toPoint)
+        for key in self:
+            if isinstance(self[key] , Point):
+                self[key]+=v.point()
         return v.point()
     
     def rotate(self, rotationPoint, angle):

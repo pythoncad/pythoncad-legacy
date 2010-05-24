@@ -92,7 +92,7 @@ class testCmdLine(object):
             except (ExcText):
                 cObject[iv]=text
                 return cObject
-            except (ExEntity):
+            except (ExcEntity):
                 cObject[iv]=self.convertToInt(text)
                 return cObject
             except:

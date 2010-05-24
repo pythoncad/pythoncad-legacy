@@ -39,6 +39,7 @@ from Generic.Kernel.Command.textcommand         import TextCommand
 from Generic.Kernel.Command.chamfercommand      import ChamferCommand
 from Generic.Kernel.Command.rectanglecommand    import RectangleCommand
 from Generic.Kernel.Command.polygoncommand      import PolygonCommand
+from Generic.Kernel.Command.movecommand         import MoveCommand
 #
 # Entity List
 #
@@ -106,7 +107,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'TEXT':TextCommand, 
                         'CHAMFER':ChamferCommand, 
                         'RECTANGLE':RectangleCommand, 
-                        'POLYGON':PolygonCommand}
+                        'POLYGON':PolygonCommand, 
+                        'MOVE':MoveCommand}
 #
 # Match object Name
 #
