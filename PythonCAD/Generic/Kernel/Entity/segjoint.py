@@ -123,13 +123,17 @@ class Chamfer(ObjectJoint):
             "CHAMFER_5" pointClick2 :Clicked point from the u.i near the obj2
         """
         wkp={}
-        kwp["OBJECTJOINT_0"]=wk["CHAMFER_0"]
-        kwp["OBJECTJOINT_1"]=wk["CHAMFER_1"]
-        ObjectJoint.__init__(self, kwp)
-        for dis in (distance1, distance2):
+        wkp["OBJECTJOINT_0"]=kw["CHAMFER_0"]
+        wkp["OBJECTJOINT_1"]=kw["CHAMFER_1"]
+        
+
+        ObjectJoint.__init__(self, wkp)
+        for k in kw:
+            self[k]=kw[k]
+        for dis in (self.distance1, self.distance2):
             if dis<0.0:
                 raise StructuralError, "Distance parameter must be greater then 0"
-        self.__segment=self._UpdateChamferSegment()
+        self.segment=self._UpdateChamferSegment()
     
     def setConstructionElements(self, kw):    
         """
@@ -159,7 +163,8 @@ class Chamfer(ObjectJoint):
         """
         self.obj1, pc1=self._updateSegment(self.obj1,self.distance1, self.pointClick1 )
         self.obj2, pc2=self._updateSegment(self.obj2,self.distance2, self.pointClick2 )
-        seg=Segment(pc1, pc2)
+        arg={"SEGMENT_0":pc1, "SEGMENT_1":pc2}
+        seg=Segment(arg)
         return seg
     
     def _updateSegment(self, obj,distance,  clickPoint=None):
@@ -198,7 +203,8 @@ class Chamfer(ObjectJoint):
             v=Vector(mvPoint,stPoint).mag()
             v.mult(distance)
             ePoint=ip+v.point()
-            return Segment(ePoint, stPoint), ePoint
+            arg={"SEGMENT_0":ePoint, "SEGMENT_1":stPoint}
+            return Segment(arg), ePoint
             
         
     def getConstructionElements(self):
@@ -231,7 +237,12 @@ class Chamfer(ObjectJoint):
             raise StructuralError, "Distance could be greater then 0"
         self.distance1=distance
         self._UpdateChamferSegment()
-
+    def getDistance1(self):
+        """
+            return the distance from intersection point to chanfer start
+        """
+        return self["CHAMFER_2"]
+        
     def setDistance2(self, distance):
         """
             change the value of the distance1
@@ -240,7 +251,35 @@ class Chamfer(ObjectJoint):
             raise StructuralError, "Distance could be greater then 0"
         self.distance2=distance
         self._UpdateChamferSegment()
-           
+    def getDistance2(self):
+        """
+            return the distance from intersection point to chanfer start
+        """
+        return self["CHAMFER_3"]
+    distance1=property(getDistance1, setDistance1, None, "set the first distance") 
+    distance2=property(getDistance2, setDistance2, None, "set the second distance") 
+    def getPointClick1(self):
+        """
+            get the clicked point
+        """
+        return self["CHAMFER_3"]
+    def setPointClick1(self, value):
+        """
+            set the clicked point
+        """
+        self["CHAMFER_3"]=value
+    def getPointClick2(self):
+        """
+            get the clicked point
+        """
+        return self["CHAMFER_4"]
+    def setPointClick2(self, value):
+        """
+            set the clicked point
+        """
+        self["CHAMFER_4"]=value
+    pointClick1=property(getPointClick1, setPointClick1, None, "Set\Get the clicked point")
+    pointClick2=property(getPointClick2, setPointClick2, None, "Set\Get the clicked point")
     def clone(self):
         """
             Clone the Chamfer .. 
@@ -259,7 +298,7 @@ class Chamfer(ObjectJoint):
         """
             return the element to be written in the db and used for renderin
         """
-        return self._obj1 , self._obj2 ,self.__segment
+        return self.obj1 , self.obj2 ,self.segment
         
 class Fillet(ObjectJoint):
     """

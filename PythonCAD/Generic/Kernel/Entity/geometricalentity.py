@@ -84,7 +84,7 @@ class GeometricalEntityComposed(dict):
         this class provide the basic object for composed entity 
         like dimension labels ...
     """
-    def __init__(self, kw):
+    def __init__(self, kw, argNameType):
         if kw is None and argNameType is none:
             return
         if len(kw)!=len(argNameType):

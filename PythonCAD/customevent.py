@@ -521,9 +521,10 @@ class EasyTest(BaseCommand):
         """
         newDoc=self.__pyCadApplication.getActiveDocument()
         intPoint=Point(2.0, 2.0)
-        
-        s1=Segment(intPoint, Point(10.0, 0.0))
-        s2=Segment(intPoint, Point(0.0, 10.0))
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
+        s1=Segment(args)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
+        s2=Segment(args)
         
         ent1=newDoc.saveEntity(s1)
         ent2=newDoc.saveEntity(s2)
