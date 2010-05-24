@@ -30,7 +30,7 @@ class MoveCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcEntity,
+        self.exception=[ExcText,
                         ExcPoint, 
                         ExcPoint ]
         self.message=[  "Give Me the first  Entity ID", 
@@ -41,11 +41,14 @@ class MoveCommand(BaseCommand):
         """
             get the chamfer segments
         """
-        ent=self.document.getEntity(self.value[0])
-        geoEnt=self.document.convertToGeometricalEntity(ent)
-        geoEnt.move(self.value[1], self.value[2])
-        ent.setConstructionElements(geoEnt.getConstructionElements())
-        return [ent]
+        updEnts=[]
+        for id in str(self.value[0]).split(','):
+            ent=self.document.getEntity(id)
+            geoEnt=self.document.convertToGeometricalEntity(ent)
+            geoEnt.move(self.value[1], self.value[2])
+            ent.setConstructionElements(geoEnt.getConstructionElements())
+            updEnts.append(ent)
+        return updEnts
         
     def applyCommand(self):
         """
