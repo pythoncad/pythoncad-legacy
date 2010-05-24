@@ -80,19 +80,11 @@ class Ellipse(GeometricalEntity):
         """
         return not self==object
 
-    def getConstructionElements(self):
-        """
-            Get the Construction element of the Ellipse.
-            This function returns a tuple containing the Point objects
-            that for inizializing the Ellipse
-        """
-        return self.center, self.major,self.minor
-
     def getCenter(self):
         """
             Return the center _Point of the Ellipse.
         """
-        return self.kw['ELLIPSE_0']
+        return self['ELLIPSE_0']
 
     def setCenter(self, point):
         """
@@ -100,7 +92,7 @@ class Ellipse(GeometricalEntity):
             The argument must be a _Point or a tuple containing
             two float values.
         """
-        self.kw['ELLIPSE_0'] = point
+        self['ELLIPSE_0'] = point
 
     center = property(getCenter, setCenter, None, "Ellipse center")
 
@@ -109,7 +101,7 @@ class Ellipse(GeometricalEntity):
             Return the major axis value of the Ellipse.
             This method returns a float.
         """
-        return self.kw['ELLIPSE_1']
+        return self['ELLIPSE_1']
 
     def setMajorAxis(self, val):
         """
@@ -120,10 +112,10 @@ class Ellipse(GeometricalEntity):
         if _val < 0.0:
             raise ValueError, "Invalid major axis value: %g" % _val
         if _val < self.minor:
-            self.self.kw['ELLIPSE_1']=self.minor
+            self.self['ELLIPSE_1']=self.minor
             self.minor=_val
         else:
-            self.kw['ELLIPSE_1']=_val
+            self['ELLIPSE_1']=_val
             
     major= property(getMajorAxis, setMajorAxis, None,
                           "Ellipse major axis")
@@ -133,7 +125,7 @@ class Ellipse(GeometricalEntity):
             Return the minor axis value of the Ellipse.
             This method returns a float.
         """
-        return self.kw['ELLIPSE_2']
+        return self['ELLIPSE_2']
 
     def setMinorAxis(self, val):
         """
@@ -144,10 +136,10 @@ class Ellipse(GeometricalEntity):
         if _val < 0.0:
             raise ValueError, "Invalid minor axis value: %g" % _val
         if _val > self.major:
-            self.kw['ELLIPSE_2']=self.major
+            self['ELLIPSE_2']=self.major
             self.major=_val
         else:
-            self.kw['ELLIPSE_2']=_val
+            self['ELLIPSE_2']=_val
             
     minor_axis = property(getMinorAxis, setMinorAxis, None,
                           "Ellipse minor axis")

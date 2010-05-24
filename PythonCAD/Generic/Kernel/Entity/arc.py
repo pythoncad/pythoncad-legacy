@@ -105,12 +105,6 @@ class Arc(GeometricalEntity):
                 (abs(self.startAngle - obj.startAngle) > 1e-10) or
                 (abs(self.endAngle - obj.endAngle) > 1e-10))
                    
-    def move(self, fromPoint, toPoint):
-        """
-            move the angle acline from a position to enother
-        """
-        newPoint=GeometricalEntity.move(fromPoint, toPoint)
-        self.__center=self.__center+newPoint
         
     def rotate(self, rotationPoint, angle):
         """
