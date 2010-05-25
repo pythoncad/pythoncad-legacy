@@ -24,6 +24,7 @@
 from Generic.Kernel.exception               import *
 from Generic.Kernel.Command.basecommand     import *
 from Generic.Kernel.Entity.polyline         import Polyline
+from Generic.Kernel.Entity.point            import Point
 
 class PolylineCommand(BaseCommand):
     """
@@ -47,7 +48,7 @@ class PolylineCommand(BaseCommand):
         """
             overwrite the command to perform the stop operation
         """
-        if value:
+        if isinstance(value, Point):
             self.value.append(value)    
         else:
            self.raiseStop=True 
@@ -58,7 +59,7 @@ class PolylineCommand(BaseCommand):
         i=0
         args={}
         for k in self.value:
-           args["POLYLINE_%S"%str(i)]=k
+           args["POLYLINE_%s"%str(i)]=k
            i+=1 
         pline=Polyline(args)
         self.document.saveEntity(pline)

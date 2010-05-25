@@ -25,16 +25,19 @@ from Interface.Entity.segment   import Segment
 from Interface.Entity.arc       import Arc
 from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
+from Interface.Entity.polyline   import Polyline
 
 SCENE_SUPPORTED_TYPE=["SEGMENT",
                         "ARC",
                         "TEXT", 
-                        "ELLIPSE"]
+                        "ELLIPSE", 
+                        "POLYLINE"]
 
 SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE, 
                        (
                         Segment, 
                         Arc, 
                         Text, 
-                        Ellipse
+                        Ellipse, 
+                        Polyline
                        )))
