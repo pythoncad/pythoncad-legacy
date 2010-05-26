@@ -22,21 +22,32 @@
 # This  module provide the main api interface of pythoncad
 #
 #
+
+#
 import sys
 import os
 import shutil
-
-from Generic.Kernel.exception           import *
-from Generic.Kernel.document            import *
-from Generic.Kernel.Command             import *
-from Generic.Kernel.Entity.point        import Point
+#
+if __name__=="__main__":
+    sys.path.append(os.path.join(os.getcwd(), 'Kernel'))
+#
+from Kernel.exception           import *
+from Kernel.document            import *
+from Kernel.Command             import *
 
 class Application(object):
     """
         this class provide the real pythoncad api interface ..
     """
     def __init__(self, **args):
+        #++
+        #TODO: Improve the local directory for different os ..
+        #this file will be in the local setting os application folder
+        #W$     :   alluser\PythonCad\db
+        #mac    :   ask to Gertwin
+        #linux  :   /usr/local/etc 
         baseDbName=os.path.join(os.getcwd(), 'Pythoncad_baseDb.pdr')
+        #--
         self.kernel=Document(baseDbName)
         self.__applicationCommand=APPLICATION_COMMAND
         # Setting up Application Events
@@ -85,7 +96,7 @@ class Application(object):
         """
             get the list of all the command
         """
-        return  self.__applicationCommand.keys()
+        return self.__applicationCommand.keys()
     
     def newDocument(self, fileName=None):
         """
@@ -191,5 +202,14 @@ class Application(object):
         apObj=self.kernel.getApplicationSetting()
         apObj.setConstructionElement(settingObj)
         self.kernel.savePyCadEnt(apObj)
+    
+    
+if __name__=='__main__':
+    app= Application()
+    doc=app.newDocument()
+    doc.importExternalFormat('C:\Users\mboscolo\Desktop\jettrainer.dxf')
+    segments=doc.getEntityFromType("SEGMENT")
+    print len(segments)
+    
     
     

@@ -27,11 +27,11 @@ from __future__ import generators
 
 import math
 
-from tolerance          import *
-from util               import *
-from geometricalentity  import *
-from point              import Point
-from pygeolib           import Vector
+from Kernel.GeoUtil.tolerance              import *
+from Kernel.GeoUtil.util                   import *
+from Kernel.GeoEntity.geometricalentity    import *
+from Kernel.GeoEntity.point                import Point
+from Kernel.GeoUtil.geolib             import Vector
 
 class CCircle(GeometricalEntity):
     """

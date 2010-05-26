@@ -20,7 +20,7 @@
 #
 #This module provide basic command function
 #
-from Generic.Kernel.exception           import *
+from Kernel.exception           import *
 
 class BaseCommand(object):
     """

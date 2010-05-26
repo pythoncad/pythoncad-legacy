@@ -26,10 +26,10 @@ from __future__ import generators
 
 import math
 
-from point              import Point
-from pygeolib           import Vector
-from geometricalentity  import *
-from util               import *
+from Kernel.GeoEntity.point                import Point
+from Kernel.GeoUtil.geolib                 import Vector
+from Kernel.GeoEntity.geometricalentity    import *
+from Kernel.GeoUtil.util                   import *
 
 _dtr = math.pi/180.0
 _rtd = 180.0/math.pi

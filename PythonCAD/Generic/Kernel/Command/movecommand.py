@@ -20,9 +20,9 @@
 #
 #This module provide a class for the move command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.arc import Arc
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.arc import Arc
 
 class MoveCommand(BaseCommand):
     """

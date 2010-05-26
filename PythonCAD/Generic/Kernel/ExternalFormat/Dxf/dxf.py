@@ -24,26 +24,17 @@
 
 dxfDebug=False
 
-import os.path
+
 import math # added to handle arc start and end point defination
 import re # added to handle Mtext
 
+from Kernel.initsetting               import cgcol
 
-from initsetting            import cgcol
-from Entity.point           import Point
-from Entity.segment         import Segment
-from Entity.arc             import Arc
-from Entity.text            import Text
-from Entity.ellipse         import Ellipse
-
-#from PythonCAD.Generic.circle import Circle
-#from PythonCAD.Generic.arc import Arc
-#from PythonCAD.Generic.polyline import Polyline
-#from PythonCAD.Generic.layer import Layer
-#from PythonCAD.Interface.Gtk import gtkdialog as gtkDialog
-#from PythonCAD.Generic.text import *
-#from PythonCAD.Generic import util
-
+from Kernel.GeoEntity.point           import Point
+from Kernel.GeoEntity.segment         import Segment
+from Kernel.GeoEntity.arc             import Arc
+from Kernel.GeoEntity.text            import Text
+from Kernel.GeoEntity.ellipse         import Ellipse
 
 def ChangeColor(x):
     try:
@@ -58,46 +49,7 @@ def changeColorFromDxf(col):
     else:
         newcol = ChangeColor(col)
     return newcol
-
-class ExtFormat(object):
-    """
-        This class provide base class for hendly different drawing format in pythoncad
-    """
-    def __init__(self,kernel):
-        """
-            Default Constructor
-        """
-        self.__kernel=kernel
-        self.__errorList=[]
-    def openFile(self,fileName):
-        """
-           Open a generic file
-        """
-        path,exte=os.path.splitext( fileName )
-        if( exte.upper()==".dxf".upper()):
-            dxf=Dxf(self.__kernel,fileName)
-            dxf.importEntitis()
-            if not dxf.getError() is None:
-                self.__errorList=dxf.getError()
-                raise DxfReport, "Dxf report have to be shown some error/warning in import dxf"
-        else:
-            raise  DxfUnsupportedFormat,  "Format %s not supported"%str(exte)
-
-    def saveFile(self,fileName):
-        """
-            save the current file in a non pythoncad Format
-        """
-        path,exte=os.path.splitext( fileName )
-        if( exte.upper()==".dxf".upper()):
-            dxf=Dxf(self.__kernel,fileName)
-            dxf.exportEntitis()
-
-    def getErrorList(self):
-        """
-            get the error warning generated
-        """
-        return self.__errorList
-
+    
 class DrawingFile(object):
     """
         This Class provide base capability to read write a  file
@@ -189,6 +141,7 @@ class DrawingFile(object):
             Return The active file Name
         """
         return self.__fn
+
 
 class Dxf(DrawingFile):
     """

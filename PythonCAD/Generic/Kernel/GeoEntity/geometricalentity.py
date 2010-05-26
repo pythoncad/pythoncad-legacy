@@ -31,7 +31,7 @@ class GeometricalEntity(dict):
         """
             argv name must be created befor init the base class
         """
-        if kw is None and argNameType is none:
+        if kw is None and argNameType is None:
             return
         if len(kw)!=len(argNameType):
             raise TypeError, "Wrong number of items "
@@ -67,8 +67,8 @@ class GeometricalEntity(dict):
         """
             this method must be defined for moving operation
         """
-        from pygeolib import Vector
-        from point import Point
+        from Kernel.GeoUtil.geolib import Vector
+        from Kernel.GeoEntity.point import Point
         v=Vector(fromPoint, toPoint)
         for key in self:
             if isinstance(self[key] , Point):

@@ -27,29 +27,34 @@ import sys
 import cPickle as pickle
 import logging
 import time
+
+
 #***************************************************Kernel Import
-from Generic.Kernel.initsetting             import *
-from Generic.Kernel.extformat               import *
-from Generic.Kernel.exception               import *
-from Generic.Kernel.settings                import *
-from Generic.Kernel.undodb                  import UndoDb
-from Generic.Kernel.entdb                   import EntDb
-from Generic.Kernel.entity                  import Entity
-from Generic.Kernel.composedentity          import ComposedEntity
-from Generic.Kernel.basedb                  import BaseDb
-from Generic.Kernel.relation                import RelationDb
-from Generic.Kernel.layertree               import LayerTree
-from Generic.Kernel.layer                   import Layer
+from Kernel.initsetting             import *
+from Kernel.ExternalFormat.externalformat          import ExtFormat
+from Kernel.ExternalFormat.Dxf.dxf  import Dxf
+from Kernel.exception               import *
+from Kernel.settings                import *
+from Kernel.entity                  import Entity
+from Kernel.composedentity          import ComposedEntity
+from Kernel.layertree               import LayerTree
+from Kernel.layer                   import Layer
+
+#***************************************************Db Import
+from Kernel.Db.undodb               import UndoDb
+from Kernel.Db.entitydb             import EntityDb
+from Kernel.Db.basedb               import BaseDb
+from Kernel.Db.relationdb           import RelationDb
 
 
 #****************************************************Entity Import
-from Generic.Kernel.Entity.geometricalentity       import GeometricalEntity, GeometricalEntityComposed
-from Generic.Kernel.Entity.point        import Point
-from Generic.Kernel.Entity.segment      import Segment
-from Generic.Kernel.Entity.arc          import Arc
-from Generic.Kernel.Entity.ellipse      import Ellipse
-from Generic.Kernel.Entity.polyline     import Polyline
-from Generic.Kernel.Entity.style        import Style
+from Kernel.GeoEntity.geometricalentity       import GeometricalEntity, GeometricalEntityComposed
+from Kernel.GeoEntity.point        import Point
+from Kernel.GeoEntity.segment      import Segment
+from Kernel.GeoEntity.arc          import Arc
+from Kernel.GeoEntity.ellipse      import Ellipse
+from Kernel.GeoEntity.polyline     import Polyline
+from Kernel.GeoEntity.style        import Style
 
 #   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
@@ -86,7 +91,7 @@ class Document(BaseDb):
         self.createConnection(dbPath)
         # inizialize extentionObject
         self.__UndoDb=UndoDb(self.getConnection())
-        self.__EntityDb=EntDb(self.getConnection())
+        self.__EntityDb=EntityDb(self.getConnection())
         self.__RelationDb=RelationDb(self.getConnection())
         # Some inizialization parameter
         self.__bulkCommit=False

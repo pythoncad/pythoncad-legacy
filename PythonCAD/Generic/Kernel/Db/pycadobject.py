@@ -20,7 +20,7 @@
 #
 # This module provide basic pythoncadObject
 #
-from Generic.Kernel.Entity.style            import Style
+from Kernel.GeoEntity.style            import Style
 
 class PyCadObject(object):
     """
@@ -28,7 +28,7 @@ class PyCadObject(object):
         db like id for exsample
     """
     def __init__(self,objId,style,eType):
-        from Generic.Kernel.initsetting import OBJECT_STATE
+        from Kernel.initsetting import OBJECT_STATE
         self.OBJECT_STATE=OBJECT_STATE
         self.__entityId=objId
         self.__state="MODIFIE"

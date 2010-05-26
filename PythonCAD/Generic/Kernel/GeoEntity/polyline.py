@@ -26,9 +26,9 @@ from __future__ import generators
 
 import math
 
-from Generic.Kernel.Entity.tolerance            import *
-from Generic.Kernel.Entity.point                import Point
-from Generic.Kernel.Entity.geometricalentity    import *
+from Kernel.GeoUtil.tolerance              import *
+from Kernel.GeoEntity.point                import Point
+from Kernel.GeoEntity.geometricalentity    import *
 
 class Polyline(GeometricalEntity):
     """

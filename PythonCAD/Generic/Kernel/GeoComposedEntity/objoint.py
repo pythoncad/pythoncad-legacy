@@ -25,14 +25,14 @@
 
 from math import hypot, pi, sin, cos, tan, atan2
 
-from geometricalentity                      import *
-from Generic.Kernel.Entity.util             import *
-from Generic.Kernel.Entity.intersection            import *
-from Generic.Kernel.Entity.segment          import Segment
-from Generic.Kernel.Entity.acline           import ACLine
-from Generic.Kernel.Entity.arc              import Arc
-from Generic.Kernel.Entity.ccircle          import CCircle
-from Generic.Kernel.Entity.pygeolib         import Vector
+from Kernel.GeoEntity.geometricalentity    import *
+from Kernel.GeoUtil.util                   import *
+from Kernel.GeoUtil.intersection           import *
+from Kernel.GeoEntity.segment              import Segment
+from Kernel.GeoEntity.acline               import ACLine
+from Kernel.GeoEntity.arc                  import Arc
+from Kernel.GeoEntity.ccircle              import CCircle
+from Kernel.GeoUtil.geolib                 import Vector
 
 _dtr = 180.0/pi
 
@@ -44,7 +44,7 @@ class ObjectJoint(GeometricalEntityComposed):
         A ObjectJoint object has the following methods:
     """
     def __init__(self, kw):
-        from Generic.Kernel.initsetting import DRAWIN_ENTITY
+        from Kernel.initsetting import DRAWIN_ENTITY
         classNames=tuple(DRAWIN_ENTITY.keys())
         argDescription={"OBJECTJOINT_0":classNames, 
                         "OBJECTJOINT_1":classNames
@@ -124,8 +124,7 @@ class Chamfer(ObjectJoint):
         """
         wkp={}
         wkp["OBJECTJOINT_0"]=kw["CHAMFER_0"]
-        wkp["OBJECTJOINT_1"]=kw["CHAMFER_1"]
-        
+        wkp["OBJECTJOINT_1"]=kw["CHAMFER_1"]        
 
         ObjectJoint.__init__(self, wkp)
         for k in kw:
@@ -146,6 +145,7 @@ class Chamfer(ObjectJoint):
                 self["OBJECTJOINT_1"]=kw["CHAMFER_1"]
             else:
                 self[k]=kw[k]
+
     def getConstructionElements(self):
         """
             get the constructionelement
@@ -307,34 +307,33 @@ class Fillet(ObjectJoint):
         determined by the segment endpoints and segment intersection
         point, and the two Entity Object must be extendable so they can
         share a common endpoint.
-        A Fillet is derived from a ObjectJoint, so it shares the methods
-        and attributes of that class. 
     """
-    
-    def __init__(self, obj1, obj2, r):
-        ObjectJoint.__init__(obj1, obj2)
-        _r = get_float(r)
-        if _r < 0.0:
-            raise ValueError, "Invalid fillet radius: %g" % _r
+    def __init__(self, kw):
+        """
+            "FILLET_0" obj1         :(Segment ,ACLine,Arc,CCircle)
+            "FILLET_1" obj2         :(Segment ,ACLine,Arc,CCircle)
+            "FILLET_2" radius       : Radius of the Fillet
+            "FILLET_3" pointClick1 :Clicked point from the u.i near the obj1
+            "FILLET_4" pointClick2 :Clicked point from the u.i near the obj2
+        """
+        wkp={}
+        wkp["OBJECTJOINT_0"]=kw["FILLET_0"]
+        wkp["OBJECTJOINT_1"]=kw["FILLET_1"]        
+        ObjectJoint.__init__(self, wkp)
+        for k in kw:
+            self[k]=kw[k]
         self._calculateLimits()
         _rmin, _rmax = self.getRadialLimits()
         if _r < _rmin or _r > _rmax:
             raise ValueError, "Invalid radius: %g" % _r
-        self.__radius = _r
         self.__center = (0.0, 0.0)
         self._calculateCenter()
-       
-    def getConstructionElements(self):
-        """
-            retutn the construction element of the object
-        """
-        return self._obj1 , self._obj2 , self.__radius
 
     def getRadius(self):
         """
             Return the Fillet radius.
         """
-        return self.__radius
+        return self['FILLET_2']
 
     def setRadius(self, r):
         """
@@ -348,9 +347,9 @@ class Fillet(ObjectJoint):
         _rmin, _rmax = self.getRadialLimits()
         if _r < _rmin or _r > _rmax:
             raise ValueError, "Invalid radius: %g" % _r
-        _or = self.__radius
+        _or = self.radius
         if abs(_r - _or) > 1e-10:
-            self.__radius = _r
+            self.radius = _r
             self._calculateCenter()
             self._moveSegmentPoints()
 
@@ -361,7 +360,7 @@ class Fillet(ObjectJoint):
             Find the center point of the radius
             This method is private to the Fillet object.
         """
-        _r = self.__radius
+        _r = self.radius
         _p1, _p3 = self.getMovingPoints()
         _p2, _p4 = self.getFixedPoints()
         _as1 = atan2((_p2.y - _p1.y), (_p2.x - _p1.x)) # _as1 in radians
@@ -533,7 +532,7 @@ class Fillet(ObjectJoint):
         _mp1, _mp2 = self.getMovingPoints()
         _mx1, _my1 = _mp1.getCoords()
         _mx2, _my2 = _mp2.getCoords()
-        _r = self.__radius
+        _r = self.radius
         _xc, _yc = self.__center
         _a1, _a2 = self.getAngles()
         _xl = [_mx1, _mx2, _xc]
@@ -553,9 +552,6 @@ class Fillet(ObjectJoint):
                               _xmin, _ymin, _xmax, _ymax)
 
     def clone(self):
-        _s1, _s2 = self.getSegments()
-        _r = self.__radius
-        _f = Fillet(_s1, _s2, _r)
-        return _f
+        return Fillet(self)
 
 

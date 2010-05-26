@@ -26,10 +26,11 @@ from __future__ import generators
 
 import math
 
-from geometricalentity  import *
-from util               import *
-from pygeolib           import Vector
-from point              import Point
+
+from Kernel.GeoUtil.util                    import *
+from Kernel.GeoUtil.geolib                  import Vector
+from Kernel.GeoEntity.point                 import Point
+from Kernel.GeoEntity.geometricalentity     import *
 
 
 class Segment(GeometricalEntity):

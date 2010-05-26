@@ -20,10 +20,10 @@
 #
 #This module provide a class for the Rectangle command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.point            import Point
-from Generic.Kernel.Entity.segment          import Segment
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.point            import Point
+from Kernel.GeoEntity.segment          import Segment
 
 class RectangleCommand(BaseCommand):
     """

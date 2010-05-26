@@ -23,8 +23,8 @@
 
 import cPickle as pickle
 
-from Generic.Kernel.entity          import Entity
-from Generic.Kernel.basedb          import BaseDb
+from Kernel.entity          import Entity
+from Kernel.Db.basedb       import BaseDb
 
 class RelationDb(BaseDb):
     """

@@ -20,9 +20,9 @@
 #
 #This module provide a class for the point command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.point            import Point
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.point            import Point
 
 class PointCommand(BaseCommand):
     """
@@ -30,7 +30,6 @@ class PointCommand(BaseCommand):
     """
     def __init__(self, kernel):
         BaseCommand.__init__(self, kernel)
-        #PyCadBaseCommand.__exception=[ExcPoint, ExcPoint]
         self.exception=[ExcPoint]
         self.message=["Give Me the first Point"]
     def applyCommand(self):

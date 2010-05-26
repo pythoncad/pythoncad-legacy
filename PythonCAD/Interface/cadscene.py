@@ -1,6 +1,6 @@
 
 from PyQt4 import QtCore, QtGui
-from Generic.Kernel.application import Application
+from Generic.application import Application
 
 from Interface.Entity.segment   import Segment
 from Interface.Entity.arc       import Arc

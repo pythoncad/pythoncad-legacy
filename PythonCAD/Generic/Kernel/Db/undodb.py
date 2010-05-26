@@ -23,9 +23,7 @@
 
 import sys
 
-from Generic.Kernel.basedb            import BaseDb
-#from Generic.Kernel.exception       import UndoDb
-
+from Kernel.Db.basedb            import BaseDb
 
 class UndoDb(BaseDb):
     """

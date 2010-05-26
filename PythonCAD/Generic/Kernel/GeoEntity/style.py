@@ -21,8 +21,8 @@
 # This class provide all the style operation for the pythoncadDB
 #
 
-from geometricalentity                  import GeometricalEntity
-from util                               import getRandomString
+from Kernel.GeoEntity.geometricalentity       import GeometricalEntity
+from Kernel.GeoUtil.util                      import getRandomString
 
 class Style(GeometricalEntity):
         """
@@ -40,17 +40,16 @@ class Style(GeometricalEntity):
             
             if self.has_key('STYLE_1'):
                 if self['STYLE_1'] ==None:
-                    from Generic.Kernel.initsetting import getDefaultStyle
+                    from Kernel.initsetting import getDefaultStyle
                     self.__styleProperty=getDefaultStyle()
             else:
-                from Generic.Kernel.initsetting import getDefaultStyle
+                from Kernel.initsetting import getDefaultStyle
                 self['STYLE_1']=getDefaultStyle()
             if self.has_key('STYLE_0'):
                 if self['STYLE_0'] ==None:
                     self.name=getRandomString()       
             else:
                 self['STYLE_0']=getRandomString()       
-                
         def setName(self, name):
             """
                 set the name of the style
@@ -78,8 +77,8 @@ class Style(GeometricalEntity):
             """
                 set the style property 
             """
-            from Generic.Kernel.initsetting         import PYTHONCAD_STYLE_ATTRIBUTES
-            from Generic.Kernel.exception           import EntityMissing
+            from Kernel.initsetting         import PYTHONCAD_STYLE_ATTRIBUTES
+            from Kernel.exception           import EntityMissing
             if name in PYTHONCAD_STYLE_ATTRIBUTES:
                 self['STYLE_1'][name]=value
             else:

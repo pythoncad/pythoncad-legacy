@@ -28,11 +28,11 @@ from __future__ import generators
 import math
 
 
-from geometricalentity  import *
-from tolerance          import *
-from util               import *
-from point              import Point
-from pygeolib           import Vector
+from Kernel.GeoEntity.geometricalentity    import *
+from Kernel.GeoUtil.tolerance              import *
+from Kernel.GeoUtil.util                   import *
+from Kernel.GeoEntity.point                import Point
+from Kernel.GeoUtil.geolib             import Vector
 
 class ACLine(GeometricalEntity):
     """

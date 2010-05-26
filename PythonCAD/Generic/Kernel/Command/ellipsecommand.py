@@ -20,9 +20,9 @@
 #
 #This module provide a class for the ellipse command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.ellipse          import Ellipse
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.ellipse          import Ellipse
 
 class EllipseCommand(BaseCommand):
     """

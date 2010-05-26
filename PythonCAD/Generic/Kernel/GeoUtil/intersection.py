@@ -27,15 +27,12 @@
 
 import math
 
-from Generic.Kernel.Entity.point    import Point
-from Generic.Kernel.Entity.segment  import Segment
-from Generic.Kernel.Entity.arc      import Arc
-from Generic.Kernel.Entity.hcline   import HCLine
-from Generic.Kernel.Entity.vcline   import VCLine
-from Generic.Kernel.Entity.acline   import ACLine
-from Generic.Kernel.Entity.cline    import CLine
-from Generic.Kernel.Entity.ccircle  import CCircle
-from Generic.Kernel.Entity.polyline import Polyline
+from Kernel.GeoEntity.point        import Point
+from Kernel.GeoEntity.segment      import Segment
+from Kernel.GeoEntity.arc         import Arc
+from Kernel.GeoEntity.acline      import ACLine
+from Kernel.GeoEntity.ccircle     import CCircle
+from Kernel.GeoEntity.polyline    import Polyline
 
 #
 # common constants

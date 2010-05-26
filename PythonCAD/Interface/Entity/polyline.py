@@ -61,7 +61,6 @@ class Polyline(QtGui.QGraphicsItem):
         r, g, b=self.style.getStyleProp("entity_color") 
         painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #Create poliline Object
-        
         pol=QtGui.QPolygonF(self.qtPoints)
         painter.drawPolyline(pol)
 

@@ -27,7 +27,7 @@ import string
 from math import fmod, pi
 import types
 
-from tolerance      import TOL
+from Kernel.GeoUtil.tolerance      import TOL
 
 
 def get_float(val):
@@ -312,8 +312,8 @@ def getNearestPoint(obj, p):
     """
         return the segment end point nearest of p
     """
-    from segment        import Segment
-    from acline         import ACLine   
+    from Kernel.GeoEntity.segment        import Segment
+    from Kernel.GeoEntity.acline         import ACLine   
     if isinstance(obj, Segment):
        return getSegmentNearestPoint(obj, p)
     if isinstance(obj, ACline):

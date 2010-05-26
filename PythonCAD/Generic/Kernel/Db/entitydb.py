@@ -23,13 +23,12 @@
 
 import cPickle as pickle
 
-from Generic.Kernel.entity              import *
-from Generic.Kernel.basedb              import BaseDb
-from Generic.Kernel.initsetting         import *
-from Generic.Kernel.exception           import EmptyDbSelect
+from Kernel.entity              import *
+from Kernel.Db.basedb           import BaseDb
+from Kernel.initsetting         import *
+from Kernel.exception           import EmptyDbSelect
 
-
-class EntDb(BaseDb):
+class EntityDb(BaseDb):
     """
         this class provide the besic operation for the entity
     """

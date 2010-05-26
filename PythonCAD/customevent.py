@@ -1,8 +1,8 @@
 from PyQt4 import QtCore, QtGui
-from Generic.Kernel.document     import *
-from Generic.Kernel.exception    import *
-from Generic.Kernel.Entity.point    import Point
-from Generic.Kernel.Command.basecommand import BaseCommand
+from Kernel.document     import *
+from Kernel.exception    import *
+from Kernel.GeoEntity.point         import Point
+from Kernel.Command.basecommand     import BaseCommand
 
 class testCmdLine(object):
     def __init__(self, dialog, scene):

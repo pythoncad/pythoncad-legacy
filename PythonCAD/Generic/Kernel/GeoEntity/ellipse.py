@@ -29,10 +29,10 @@
 import math
 
 
-from tolerance          import *
-from util               import *
-from point              import Point
-from geometricalentity  import *
+from Kernel.GeoUtil.tolerance              import *
+from Kernel.GeoUtil.util                   import *
+from Kernel.GeoEntity.point                import Point
+from Kernel.GeoEntity.geometricalentity    import *
 
 class Ellipse(GeometricalEntity):
     """

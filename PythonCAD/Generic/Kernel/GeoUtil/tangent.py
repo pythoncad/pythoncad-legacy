@@ -1,8 +1,6 @@
 #
 # Copyright (c) 2003, 2004 Art Haas
 #
-# Copyright (c) 2010 Matteo Boscolo
-#
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -25,15 +23,9 @@
 
 import math
 
-from Generic.Kernel.Entity.point    import Point
-from Generic.Kernel.Entity.segment  import Segment
-from Generic.Kernel.Entity.arc      import Arc
-from Generic.Kernel.Entity.hcline   import HCLine
-from Generic.Kernel.Entity.vcline   import VCLine
-from Generic.Kernel.Entity.acline   import ACLine
-from Generic.Kernel.Entity.cline    import CLine
-from Generic.Kernel.Entity.ccircle  import CCircle
-from Generic.Kernel.Entity.polyline import Polyline
+
+from Kernel.GeoEntity import acline
+from Kernel.GeoEntity import ccircle
 
 #
 # common constants

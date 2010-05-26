@@ -25,16 +25,16 @@
 
 from math import hypot, fmod, atan2, sin, cos, pi
 
-from Generic.Kernel.Entity.util     import *
-from Generic.Kernel.Entity.point    import Point
-from Generic.Kernel.Entity.segment  import Segment
-from Generic.Kernel.Entity.arc      import Arc
-from Generic.Kernel.Entity.hcline   import HCLine
-from Generic.Kernel.Entity.vcline   import VCLine
-from Generic.Kernel.Entity.acline   import ACLine
-from Generic.Kernel.Entity.cline    import CLine
-from Generic.Kernel.Entity.ccircle  import CCircle
-from Generic.Kernel.Entity.polyline import Polyline
+from Kernel.Entity.util     import *
+from Kernel.Entity.point    import Point
+from Kernel.Entity.segment  import Segment
+from Kernel.Entity.arc      import Arc
+from Kernel.Entity.hcline   import HCLine
+from Kernel.Entity.vcline   import VCLine
+from Kernel.Entity.acline   import ACLine
+from Kernel.Entity.cline    import CLine
+from Kernel.Entity.ccircle  import CCircle
+from Kernel.Entity.polyline import Polyline
 
 
 #from PythonCAD.Generic.segjoint import Chamfer, Fillet

@@ -25,14 +25,14 @@ from __future__ import generators
 
 import math
 
-from geometricalentity  import *
-from util               import *
+from Kernel.GeoEntity.geometricalentity  import *
+from Kernel.GeoUtil.util               import *
 
 class Point(GeometricalEntity):
     """
         A 2-D point Class.
     """
-    def __init__(self, x, y=None, **kw):
+    def __init__(self, x, y=None):
         """
             Initialize a Point.
             There are Tree ways to initialize a Point:
@@ -40,6 +40,7 @@ class Point(GeometricalEntity):
             Point((xc,yc)) - A single tuple containing two float objects
             Point(Point) - A single Point Object
         """
+        GeometricalEntity.__init__(self, None, None)
         if isinstance(x, tuple):
             if y is not None:
                 raise SyntaxError, "Invalid call to Point()"

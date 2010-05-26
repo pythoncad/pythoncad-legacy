@@ -20,11 +20,12 @@
 #
 #This module provide a class for the champfer command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.segjoint         import Chamfer
-from Generic.Kernel.Entity.segment          import Segment
-from Generic.Kernel.composedentity          import ComposedEntity
+from Kernel.exception                      import *
+from Kernel.composedentity                 import ComposedEntity
+from Kernel.Command.basecommand            import *
+from Kernel.GeoComposedEntity.objoint      import Chamfer
+from Kernel.GeoEntity.segment              import Segment
+
 
 class ChamferCommand(BaseCommand):
     """

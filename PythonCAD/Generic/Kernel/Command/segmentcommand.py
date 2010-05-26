@@ -20,9 +20,9 @@
 #
 #This module provide a class for the segment command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.segment          import Segment
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.segment          import Segment
 
 class SegmentCommand(BaseCommand):
     """

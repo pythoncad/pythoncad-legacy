@@ -26,7 +26,7 @@ import sys
 import tempfile
 import sqlite3 as sql
 
-from exception import *
+from Kernel.exception import *
 
 class BaseDb(object):
     """
