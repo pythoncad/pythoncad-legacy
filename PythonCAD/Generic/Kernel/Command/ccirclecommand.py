@@ -20,9 +20,9 @@
 #
 #This module provide a class for the arc command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.ccircle          import CCircle
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.ccircle          import CCircle
 
 class CCircleCommand(BaseCommand):
     """
@@ -35,5 +35,9 @@ class CCircleCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        ccircle=CCircle(self.value[0], self.value[1])
+        arg={
+             "CCIRCLE_0":self.value[0], 
+             "CCIRCLE_1":self.value[1]
+             }
+        ccircle=CCircle(arg)
         self.document.saveEntity(ccircle)

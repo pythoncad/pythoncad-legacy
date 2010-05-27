@@ -20,11 +20,12 @@
 #
 #This module provide a class for the champfer command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.segjoint         import Chamfer
-from Generic.Kernel.Entity.segment          import Segment
-from Generic.Kernel.composedentity          import ComposedEntity
+from Kernel.exception                      import *
+from Kernel.composedentity                 import ComposedEntity
+from Kernel.Command.basecommand            import *
+from Kernel.GeoComposedEntity.objoint      import Chamfer
+from Kernel.GeoEntity.segment              import Segment
+
 
 class ChamferCommand(BaseCommand):
     """
@@ -44,34 +45,29 @@ class ChamferCommand(BaseCommand):
                         "Give Me the seconf Lenght", 
                         "Give me the first point near the first entity",
                         "Give me the second point near the second entity"]
-    def applyCommand(self):
+    def getEntsToSave(self):
         """
-            apply the champfer command
+            get the chamfer segments
         """
-        if len(self.value)!=6:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
-        
-        #objId,constructionElements, eType, style, childEnt=[]
-
+        objEnt=[]
         ent1=self.document.getEntity(self.value[0].getId())
         ent2=self.document.getEntity(self.value[1].getId())
         
         cel1=ent1.getConstructionElements()
-        p1=cel1["SEGMENT_0"]
-        p2=cel1["SEGMENT_1"]
-        seg1=Segment(p1, p2)
+        seg1=Segment(cel1)
         
         cel2=ent2.getConstructionElements()
-        p1=cel2["SEGMENT_0"]
-        p2=cel2["SEGMENT_1"]
-        seg2=Segment(p1, p2)
+        seg2=Segment(cel2)
+        arg={
+             "CHAMFER_0":seg1,
+             "CHAMFER_1":seg2,  
+             "CHAMFER_2":self.value[2], 
+             "CHAMFER_3":self.value[3], 
+             "CHAMFER_4":self.value[4], 
+             "CHAMFER_5":self.value[5]
+             }
 
-        cmf=Chamfer(seg1,
-                    seg2,  
-                    self.value[2], 
-                    self.value[3], 
-                    self.value[4], 
-                    self.value[5])
+        cmf=Chamfer(arg)
         seg1Mod, seg2Mod, chamferSegment = cmf.getReletedComponent()
         
         _cElements1, entityType=self.document._getCelements(seg1Mod)
@@ -80,8 +76,22 @@ class ChamferCommand(BaseCommand):
         ent1.setConstructionElements(_cElements1)
         ent2.setConstructionElements(_cElements2)
         
-        self.document.saveEntity(ent1)
-        self.document.saveEntity(ent2)
-        ent3=self.document.saveEntity(chamferSegment)
+        objEnt.append(ent1)
+        objEnt.append(ent2)
+        objEnt.append(chamferSegment)
+        return objEnt
         
+    def applyCommand(self):
+        """
+            apply the champfer command
+        """
+        if len(self.value)!=6:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        
+        try:
+            self.document.startMassiveCreation()
+            for _ent in self.getEntsToSave():
+                self.document.saveEntity(_ent)
+        finally:
+            self.document.stopMassiveCreation()
        

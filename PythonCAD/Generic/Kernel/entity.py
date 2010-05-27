@@ -20,16 +20,17 @@
 #
 # This module provide basic DB class for storing entity in pythoncad
 #
-from Generic.Kernel.Entity.pycadobject      import *
 
-from Generic.Kernel.Entity.point            import Point
+from Kernel.Db.pycadobject      import *
+
+from Kernel.GeoEntity.point            import Point
 
 class Entity(PyCadObject):
     """
         basic PythonCad entity structure
     """
     def __init__(self,entType,constructionElements,style,objId):
-        from Generic.Kernel.initsetting             import PY_CAD_ENT
+        from Kernel.initsetting             import PY_CAD_ENT
         if not entType in PY_CAD_ENT:
             raise TypeError,'entType not supported'
         if not isinstance(constructionElements,dict):

@@ -21,9 +21,10 @@
 #This module provide a class for the polyline command
 #
 
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.polyline         import Polyline
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.polyline         import Polyline
+from Kernel.GeoEntity.point            import Point
 
 class PolylineCommand(BaseCommand):
     """
@@ -47,7 +48,7 @@ class PolylineCommand(BaseCommand):
         """
             overwrite the command to perform the stop operation
         """
-        if value:
+        if isinstance(value, Point):
             self.value.append(value)    
         else:
            self.raiseStop=True 
@@ -55,5 +56,10 @@ class PolylineCommand(BaseCommand):
         """
             perform the write of the entity
         """
-        pline=Polyline(self.value)
+        i=0
+        args={}
+        for k in self.value:
+           args["POLYLINE_%s"%str(i)]=k
+           i+=1 
+        pline=Polyline(args)
         self.document.saveEntity(pline)

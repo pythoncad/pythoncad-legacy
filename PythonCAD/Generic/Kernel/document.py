@@ -27,29 +27,34 @@ import sys
 import cPickle as pickle
 import logging
 import time
+
+
 #***************************************************Kernel Import
-from Generic.Kernel.initsetting             import *
-from Generic.Kernel.extformat               import *
-from Generic.Kernel.exception               import *
-from Generic.Kernel.settings                import *
-from Generic.Kernel.undodb                  import UndoDb
-from Generic.Kernel.entdb                   import EntDb
-from Generic.Kernel.entity                  import Entity
-from Generic.Kernel.composedentity          import ComposedEntity
-from Generic.Kernel.basedb                  import BaseDb
-from Generic.Kernel.relation                import RelationDb
-from Generic.Kernel.layertree               import LayerTree
-from Generic.Kernel.layer                   import Layer
+from Kernel.initsetting             import *
+from Kernel.ExternalFormat.externalformat          import ExtFormat
+from Kernel.ExternalFormat.Dxf.dxf  import Dxf
+from Kernel.exception               import *
+from Kernel.settings                import *
+from Kernel.entity                  import Entity
+from Kernel.composedentity          import ComposedEntity
+from Kernel.layertree               import LayerTree
+from Kernel.layer                   import Layer
+
+#***************************************************Db Import
+from Kernel.Db.undodb               import UndoDb
+from Kernel.Db.entitydb             import EntityDb
+from Kernel.Db.basedb               import BaseDb
+from Kernel.Db.relationdb           import RelationDb
 
 
 #****************************************************Entity Import
-from Generic.Kernel.Entity.geometricalentity       import GeometricalEntity, GeometricalEntityComposed
-from Generic.Kernel.Entity.point        import Point
-from Generic.Kernel.Entity.segment      import Segment
-from Generic.Kernel.Entity.arc          import Arc
-from Generic.Kernel.Entity.ellipse      import Ellipse
-from Generic.Kernel.Entity.polyline     import Polyline
-from Generic.Kernel.Entity.style        import Style
+from Kernel.GeoEntity.geometricalentity       import GeometricalEntity, GeometricalEntityComposed
+from Kernel.GeoEntity.point        import Point
+from Kernel.GeoEntity.segment      import Segment
+from Kernel.GeoEntity.arc          import Arc
+from Kernel.GeoEntity.ellipse      import Ellipse
+from Kernel.GeoEntity.polyline     import Polyline
+from Kernel.GeoEntity.style        import Style
 
 #   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
@@ -77,14 +82,16 @@ class Document(BaseDb):
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadEvent()
         self.deleteEntityEvent=PyCadEvent()
-        self.showEnt=PyCadEvent()
-        self.hideEnt=PyCadEvent()
-        self.handledError=PyCadEvent()
+        self.showEntEvent=PyCadEvent()
+        self.hideEntEvent=PyCadEvent()
+        self.updateShowEntEvent=PyCadEvent()
+        self.undoRedoEvent=PyCadEvent()
+        self.handledErrorEvent=PyCadEvent()
         #create Connection
         self.createConnection(dbPath)
         # inizialize extentionObject
         self.__UndoDb=UndoDb(self.getConnection())
-        self.__EntityDb=EntDb(self.getConnection())
+        self.__EntityDb=EntityDb(self.getConnection())
         self.__RelationDb=RelationDb(self.getConnection())
         # Some inizialization parameter
         self.__bulkCommit=False
@@ -119,7 +126,7 @@ class Document(BaseDb):
                     return styleEntity
                     break
         else:
-            style=Style("Main")
+            style=Style({"STYLE_0":"Main"})
             return self.saveEntity(style) 
         
     def getDbSettingsObject(self):
@@ -166,10 +173,16 @@ class Document(BaseDb):
     def getEntityFromType(self,entityType):
         """
             get all the entity from a specifie type
+            imput :
+            type as string "SEGMENT"
+            type as list ["SEGMENT","ARC",...   ]
         """
         self.__logger.debug('getEntityFromType')
-        return self.__EntityDb.getEntityFromType(entityType)
-
+        if isinstance(entityType,list):
+            return self.__EntityDb.getEntityFromTypeArray(entityType)
+        else:
+            return self.__EntityDb.getEntityFromType(entityType)
+        
     def getAllDrawingEntity(self):
         """
             get all drawing entity from the db
@@ -186,6 +199,19 @@ class Document(BaseDb):
             Remarks if entityTypeArray is not None entityType is ignored
         """
         return self.__EntityDb.getMultiFilteredEntity(visible,entityType , entityTypeArray)
+
+    def convertToGeometricalEntity(self, entity):
+        """
+            Convert an entity into a geometrical entity
+        """ 
+        geoEnt=None
+        cObjecs=entity.getConstructionElements()
+        cType=entity.getEntityType()
+        for key in DRAWIN_ENTITY:
+            if DRAWIN_ENTITY[key]==cType:
+                geoEnt=key(cObjecs)
+                break
+        return geoEnt
         
     def haveDrawingEntitys(self):
         """
@@ -290,13 +316,7 @@ class Document(BaseDb):
             if isinstance(entity, t):
                 entityType=DRAWIN_ENTITY[t]
                 break
-        cElements={}
-        i=0
-        for _p in entity.getConstructionElements():
-            _key='%s_%s'%(str(entityType),str(i))
-            cElements[_key]=_p
-            i+=1
-        return cElements, entityType
+        return entity.getConstructionElements(), entityType
         
     def _saveSettings(self,settingsObj):
         """
@@ -320,7 +340,7 @@ class Document(BaseDb):
         _newDbEnt=Entity('STYLE',_cElements,None,self.__entId)
         self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
-        self.showEnt(self,_newDbEnt)
+        self.showEntEvent(self,_newDbEnt)
         return _newDbEnt
         
     def _saveLayer(self,layerObj):
@@ -346,18 +366,30 @@ class Document(BaseDb):
             save the DbEnt to db
         """
         self.__logger.debug('_saveDbEnt')
+        updateEvent=False
         if entity==None:
             _newDbEnt=Entity(entType,constructorElements,self.__activeStyleObj,self.__entId)
         else:
+            if self.entityExsist(entity.getId()):
+                updateEvent=True
             _newDbEnt=entity
         if self.__bulkUndoIndex>=0:
             self.__EntityDb.saveEntity(_newDbEnt,self.__bulkUndoIndex)
         else:
             self.__EntityDb.saveEntity(_newDbEnt,self.__UndoDb.getNewUndo())
         self.saveEntityEvent(self,_newDbEnt)
-        self.showEnt(self,_newDbEnt)
+        if updateEvent:
+            self.updateShowEntEvent(self,_newDbEnt)
+        else:
+            self.showEntEvent(self,_newDbEnt)
         return _newDbEnt
 
+    def entityExsist(self, id):
+        """
+            check id the entity exsist in the database
+        """
+        return self.__EntityDb.exsisting(id)
+        
     def getStyle(self, id=None, name=None):
         """
             get the style object
@@ -417,8 +449,9 @@ class Document(BaseDb):
             self.__EntityDb.markUndoVisibility(self.__UndoDb.getActiveUndoId(),0)
             _newUndo=self.__UndoDb.dbUndo()
             self.__EntityDb.performCommit()
+            self.undoRedoEvent(self, None)
         except UndoDb:
-            raise
+            raise UndoDb, "Generical problem to perform undo"
 
     def reDo(self):
         """
@@ -429,8 +462,9 @@ class Document(BaseDb):
             _activeRedo=self.__UndoDb.dbRedo()
             self.__EntityDb.markUndoVisibility(_activeRedo, 1)
             self.__EntityDb.performCommit()
+            self.undoRedoEvent(self, None)
         except UndoDb:
-            raise
+            raise UndoDb, "Generical problem to perform reDo"
 
     def clearUnDoHistory(self):
         """
@@ -477,21 +511,21 @@ class Document(BaseDb):
         entity=self.__EntityDb.getEntityEntityId(entityId)
         entity.delete()
         self.saveEntity(entity)
-        self.deleteEntityEvent(entity)
+        self.deleteEntityEvent(self,entity)
 
     def hideEntity(self, entity=None, entityId=None):
         """
             Hide an entity
         """
         self._hide(entity, entityId, 0)
-        self.hideEnt(self, entity) # Event
+        self.hideEntEvent(self, entity) # Event
 
     def unHideEntity(self, entity=None, entityId=None):
         """
             Unhide an entity
         """
         self._hide(entity, entityId, 1)
-        self.showEnt(self, entity) #Event
+        self.showEntEvent(self, entity) #Event
 
     def _hide(self,entity=None, entityId=None,  visible=0):
         """
@@ -518,11 +552,11 @@ class Document(BaseDb):
         except DxfReport:
             self.__logger.error('DxfReport')
             _err={'object':extFormat, 'error':DxfReport}
-            self.handledError(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
         except DxfUnsupportedFormat:
             self.__logger.error('DxfUnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
-            self.handledError(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
 
     def getTreeLayer(self):
         """
@@ -541,6 +575,12 @@ class Document(BaseDb):
             getRelationObject
         """
         return self.__RelationDb
+    
+    def getName(self):
+        """
+            get the name of the active document
+        """
+        return self.dbPath
 
 class PyCadEvent(object):
     """

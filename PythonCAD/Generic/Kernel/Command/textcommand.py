@@ -20,9 +20,9 @@
 #
 #This module provide a class for the segment command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.text             import Text
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.text             import Text
 
 class TextCommand(BaseCommand):
     """
@@ -35,5 +35,6 @@ class TextCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=4:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        text=Text(self.value[0], self.value[1], self.value[2], self.value[3])
+        textArgs={"TEXT_0":self.value[0], "TEXT_1":self.value[1], "TEXT_2":self.value[2], "TEXT_3":self.value[3]}
+        text=Text(textArgs)
         self.document.saveEntity(text)

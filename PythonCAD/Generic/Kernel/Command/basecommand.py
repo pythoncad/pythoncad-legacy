@@ -20,7 +20,7 @@
 #
 #This module provide basic command function
 #
-from Generic.Kernel.exception           import *
+from Kernel.exception           import *
 
 class BaseCommand(object):
     """
@@ -37,6 +37,9 @@ class BaseCommand(object):
         self.document=document
     def __iter__(self):
         return self
+    def reset(self):
+        self.index=-1
+        self.value=[]
     def next(self):
         """
             performe iteration

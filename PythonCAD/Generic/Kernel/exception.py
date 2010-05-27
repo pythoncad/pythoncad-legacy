@@ -173,6 +173,23 @@ class ExcText(Exception):
     def __str__(self):
         return repr(self.value)
 
+class ExcInt(Exception):
+    """
+        when this exception is trown it means that the command need an Integer
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class ExcBool(Exception):
+    """
+        when this exception is trown it means that the command need an Boolean
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 class ExcEntity(Exception):
     """
         when this exception is trown it means that the command need an dbEnity

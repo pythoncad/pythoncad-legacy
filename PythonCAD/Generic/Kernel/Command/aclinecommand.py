@@ -20,9 +20,9 @@
 #
 #This module provide a class for the segment command
 #
-from Generic.Kernel.exception               import *
-from Generic.Kernel.Command.basecommand     import *
-from Generic.Kernel.Entity.acline           import ACLine
+from Kernel.exception               import *
+from Kernel.Command.basecommand     import *
+from Kernel.GeoEntity.acline           import ACLine
 
 class ACLineCommand(BaseCommand):
     """
@@ -35,5 +35,6 @@ class ACLineCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        acline=ACLine(self.value[0], self.value[1])
+        arg={"ACLINE_0":self.value[0],"ACLINE_0":self.value[1] }
+        acline=ACLine(arg)
         self.document.saveEntity(acline)

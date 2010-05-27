@@ -26,9 +26,13 @@ from PyQt4 import QtCore, QtGui
 
 
 from Interface.globals import *
-from Interface.segment  import Segment
-from Interface.arc      import Arc
-from Interface.text     import Text
+from Generic.application import Application
+
+from Interface.Entity.segment   import Segment
+from Interface.Entity.arc       import Arc
+from Interface.Entity.text      import Text
+from Interface.Entity.ellipse   import Ellipse
+from Interface.cadinitsetting   import *
 
 
 class CadScene(QtGui.QGraphicsScene):
@@ -39,7 +43,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.__filename = None
         # drawing limits
         self.__limits = None
-        
 
     def __getLimits(self):
         return self.__limits
@@ -58,25 +61,36 @@ class CadScene(QtGui.QGraphicsScene):
             create an empty document in temop file
         """
         self.__application.newDocument()
+        self.documentEvent()
         
     def openDocument(self, filename):
         if (filename != None) and (len(filename) > 0):
             # Clear the scene
             self.clear()
-            # todo: check filename
+            # Todo : check filename
             self.__filename = filename
             # open a new kernel
             application = Application()
             if not application is None:
                 application.openDocument(self.__filename)
                 document = application.getActiveDocument()
-                #if self._cadkernel.getEntityFromType('SEGMENT'):
+                self.documentEvent()
                 if document.haveDrawingEntitys():
                     # add entities to scene
                     self.populateScene(document)
-        return
-    
-            
+
+                
+    def documentEvent(self):
+        """
+            set the document event
+        """
+        document = self.__application.getActiveDocument()
+        document.showEntEvent+=self.eventShow
+        document.updateShowEntEvent+=self.eventUpdate
+        document.deleteEntityEvent+=self.eventDelete
+        document.undoRedoEvent+=self.eventUndoRedo
+        
+
     def importDocument(self, filename):        
         """
             import a doc in the file
@@ -97,6 +111,16 @@ class CadScene(QtGui.QGraphicsScene):
         return
               
                 
+    def saveAs(self, fileName):            
+        """
+            save in a different location the current file
+        """
+        document=self.__application.saveAs(fileName)
+        self.documentEvent()
+        if document.haveDrawingEntitys():
+            # add entities to scene
+            self.populateScene(document)
+            
     def closeDocument(self):
         if self.__filename != None:
             # close document from kernel
@@ -119,26 +143,55 @@ class CadScene(QtGui.QGraphicsScene):
 
             
     def populateScene(self, document):
-        for entName in ("SEGMENT", "ARC", "TEXT"):
-            entities = document.getEntityFromType(entName)
-            for entity in entities:
-                newQtEnt=None
-                if entity.getEntityType()=="SEGMENT":
-                    # add segment to scene port
-                    newQtEnt= Segment(entity)
-                elif entity.getEntityType()=="ARC":
-                    # add arc to scene port
-                    newQtEnt = Arc(entity)
-                elif entity.getEntityType()=="TEXT":
-                    # add Text to scene port
-                    newQtEnt = Text(entity)
-                if newQtEnt:
-                    self.addItem(newQtEnt)
-                # adjust drawing limits
-                self.updateLimits(newQtEnt.boundingRect())
-        return
+        entities = document.getEntityFromType(SCENE_SUPPORTED_TYPE)
+        for entity in entities:
+            self.addGraficalObject(entity)
+ 
+    def addGraficalObject(self, entity):                
+        """
+            add the single object
+        """
+        newQtEnt=None
+        entityType=entity.getEntityType()
+        if entityType in SCENE_SUPPORTED_TYPE:
+            newQtEnt=SCANE_OBJECT_TYPE[entityType](entity)
+            self.addItem(newQtEnt)
+            # adjust drawing limits
+            self.updateLimits(newQtEnt.boundingRect())  
     
-                    
+    def eventUndoRedo(self, document, entity):
+        """
+            manage the undo redo event
+        """
+        self.clear()
+        self.populateScene(document)
+
+    def eventShow(self, document, entity):        
+        """
+            manage the show entity event
+        """
+        self.addGraficalObject(entity)
+    
+    def eventUpdate(self, document, entity):    
+        """
+            manage the Update entity event  
+        """
+        self.updateItemsFromID([entity])
+    def eventDelete(self, document, entity):    
+        """
+            manage the Delete entity event
+        """
+        self.deleteEntity([entity])
+        
+    def deleteEntity(self, entitys):
+        """
+            delete the entity from the scene
+        """
+        dicItems=dict([( item.ID, item)for item in self.items()])
+        for ent in entitys:
+            self.removeItem(dicItems[ent.getId()])
+            
+
     def updateLimits(self, rect):
         # init size
         if self.__limits == None:
@@ -158,3 +211,13 @@ class CadScene(QtGui.QGraphicsScene):
             self.__limits.setTop(rect.top())
         return
             
+    
+    def updateItemsFromID(self,entitys):
+        """
+            update the scene from the Entity []
+        """
+        dicItems=dict([( item.ID, item)for item in self.items()])
+        for ent in entitys:
+            if ent.getId() in dicItems:
+                self.removeItem(dicItems[ent.getId()])
+                self.addGraficalObject(ent)

@@ -24,43 +24,41 @@
 #
 # Command List
 #
-from Generic.Kernel.Command                 import *
-from Generic.Kernel.Command.segmentcommand  import SegmentCommand
-from Generic.Kernel.Command.arccommand      import ArcCommand
-from Generic.Kernel.Command.pointcommand    import PointCommand
-from Generic.Kernel.Command.ellipsecommand  import EllipseCommand
-from Generic.Kernel.Command.polylinecommand import PolylineCommand
-from Generic.Kernel.Command.aclinecommand   import ACLineCommand
-from Generic.Kernel.Command.clinecommand    import CLineCommand
-from Generic.Kernel.Command.vclinecommand   import VCLineCommand
-from Generic.Kernel.Command.hclinecommand   import HCLineCommand
-from Generic.Kernel.Command.ccirclecommand  import CCircleCommand
-from Generic.Kernel.Command.textcommand     import TextCommand
-from Generic.Kernel.Command.chamfercommand  import ChamferCommand
 
+from Kernel.Command                     import *
+from Kernel.Command.segmentcommand      import SegmentCommand
+from Kernel.Command.arccommand          import ArcCommand
+from Kernel.Command.pointcommand        import PointCommand
+from Kernel.Command.ellipsecommand      import EllipseCommand
+from Kernel.Command.polylinecommand     import PolylineCommand
+from Kernel.Command.aclinecommand       import ACLineCommand
+from Kernel.Command.ccirclecommand      import CCircleCommand
+from Kernel.Command.textcommand         import TextCommand
+from Kernel.Command.chamfercommand      import ChamferCommand
+from Kernel.Command.rectanglecommand    import RectangleCommand
+from Kernel.Command.polygoncommand      import PolygonCommand
+from Kernel.Command.movecommand         import MoveCommand
 #
 # Entity List
 #
-from Generic.Kernel.Entity.point        import Point
-from Generic.Kernel.Entity.segment      import Segment
-from Generic.Kernel.Entity.arc          import Arc
-from Generic.Kernel.Entity.ellipse      import Ellipse
-from Generic.Kernel.Entity.polyline     import Polyline
-from Generic.Kernel.Entity.style        import Style 
-from Generic.Kernel.Entity.acline       import ACLine
-from Generic.Kernel.Entity.cline        import CLine
-from Generic.Kernel.Entity.vcline       import VCLine
-from Generic.Kernel.Entity.hcline       import HCLine
-from Generic.Kernel.Entity.ccircle      import CCircle
-from Generic.Kernel.Entity.segjoint     import Fillet, Chamfer
-from Generic.Kernel.Entity.text         import Text
+from Kernel.GeoEntity.point        import Point 
+from Kernel.GeoEntity.segment      import Segment 
+from Kernel.GeoEntity.arc          import Arc
+from Kernel.GeoEntity.ellipse      import Ellipse
+from Kernel.GeoEntity.polyline     import Polyline
+from Kernel.GeoEntity.style        import Style 
+from Kernel.GeoEntity.acline       import ACLine
+from Kernel.GeoEntity.ccircle      import CCircle
+from Kernel.GeoEntity.text         import Text
+
+from Kernel.GeoComposedEntity.objoint import Fillet, Chamfer
 #
 # db Ent
 #
-from Generic.Kernel.settings            import *
-from Generic.Kernel.entity              import Entity
-from Generic.Kernel.layer               import Layer
-from Generic.Kernel.composedentity      import ComposedEntity
+from Kernel.settings            import *
+from Kernel.entity              import Entity
+from Kernel.layer               import Layer
+from Kernel.composedentity      import ComposedEntity
 #
 # Default LAyer
 # 
@@ -81,9 +79,6 @@ PY_CAD_ENT=['POINT',
             'ELLIPSE', 
             'POLYLINE', 
             'ACLINE', 
-            'CLINE', 
-            'VCLINE',
-            'HCLINE', 
             'CCIRCLE', 
             'TEXT', 
             'COMPOSED_ENTITY' ]
@@ -98,12 +93,12 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand, 
                         'ACLINE':ACLineCommand, 
-                        'CLINE':CLineCommand, 
-                        'VCLINE':VCLineCommand, 
-                        'HCLINE':HCLineCommand, 
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
-                        'CHAMFER':ChamferCommand}
+                        'CHAMFER':ChamferCommand, 
+                        'RECTANGLE':RectangleCommand, 
+                        'POLYGON':PolygonCommand, 
+                        'MOVE':MoveCommand}
 #
 # Match object Name
 #
@@ -113,9 +108,6 @@ DRAWIN_ENTITY={ Point:'POINT',
                 Ellipse:'ELLIPSE', 
                 Polyline:'POLYLINE', 
                 ACLine:'ACLINE', 
-                CLine:'CLINE', 
-                VCLine:'VCLINE', 
-                HCLine:'HCLINE', 
                 CCircle:'CCIRCLE', 
                 Text:'TEXT', 
                 ComposedEntity:'COMPOSED_ENTITY'}

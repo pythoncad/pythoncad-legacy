@@ -22,9 +22,9 @@
 # entity such as Chamfer Fillet Blocks
 #
 
-from Generic.Kernel.Entity.pycadobject      import *
-from Generic.Kernel.Entity.style            import Style
-from Generic.Kernel.Entity.point            import Point
+from Kernel.Db.pycadobject      import *
+from Kernel.GeoEntity.style            import Style
+from Kernel.GeoEntity.point            import Point
 
 class ComposedEntity(PyCadObject):
     """
@@ -35,7 +35,7 @@ class ComposedEntity(PyCadObject):
         """
             Inizialize a composed entity
         """
-        from Generic.Kernel.initsetting             import PY_CAD_COMPOSED_ENT 
+        from Kernel.initsetting             import PY_CAD_COMPOSED_ENT 
         if not eType in PY_CAD_COMPOSED_ENT:
             raise TypeError,'entType not supported'
         PyCadObject.__init__(self,eType=eType, objId=objId,style=style)
@@ -52,7 +52,7 @@ class ComposedEntity(PyCadObject):
         """
             set all the child entitys
         """
-        from Generic.Kernel.initsetting             import PY_CAD_ENT   
+        from Kernel.initsetting             import PY_CAD_ENT   
         for ent in childEnt:
             if not ent.eType in PY_CAD_ENT:
                 raise TypeError,'entType with id: %s not supported as child ent'%(str(ent.getId()))
