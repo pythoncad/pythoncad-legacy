@@ -1,15 +1,40 @@
+#
+# Copyright (c) 2010 Matteo Boscolo, Gertwin Groen
+#
+# This file is part of PythonCAD.
+#
+# PythonCAD is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PythonCAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with PythonCAD; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#
+# This module the graphics scene class
+#
+#
 
 from PyQt4 import QtCore, QtGui
-from Generic.Kernel.application import Application
+
+
+from Interface.globals import *
 from Interface.segment  import Segment
 from Interface.arc      import Arc
 from Interface.text     import Text
+
 
 class CadScene(QtGui.QGraphicsScene):
     
     def __init__(self, parent=None):
         super(CadScene, self).__init__(parent)
-        self.__application = Application()
         # current file
         self.__filename = None
         # drawing limits
@@ -20,11 +45,13 @@ class CadScene(QtGui.QGraphicsScene):
         return self.__limits
     
     Limits = property(__getLimits, None, None, "Gets the drawing limits")
-    def getApplication(self):
-        """
-            get The application object 
-        """
-        return self.__application
+    
+    
+#    def getApplication(self):
+#        """
+#            get The application object 
+#        """
+#        return self.__application
         
     def newDocument(self):
         """
@@ -39,40 +66,57 @@ class CadScene(QtGui.QGraphicsScene):
             # todo: check filename
             self.__filename = filename
             # open a new kernel
-            self.__application.openDocument(self.__filename)
-            document = self.__application.getActiveDocument()
-            #if self._cadkernel.getEntityFromType('SEGMENT'):
-            if document.haveDrawingEntitys():
-                # add entities to scene
-                self.populateScene(document)
+            application = Application()
+            if not application is None:
+                application.openDocument(self.__filename)
+                document = application.getActiveDocument()
+                #if self._cadkernel.getEntityFromType('SEGMENT'):
+                if document.haveDrawingEntitys():
+                    # add entities to scene
+                    self.populateScene(document)
+        return
+    
             
     def importDocument(self, filename):        
         """
-            import a document in the file
+            import a doc in the file
         """
         if (filename != None) and (len(filename) > 0):
-            document = self.__application.getActiveDocument()
-            document.importExternalFormat(filename)
-            if document.haveDrawingEntitys():
-                # add entities to scene
-                self.populateScene(document)
+            appl = Application()
+            if not appl is None:
+                doc = appl.getActiveDocument()
+                if doc:
+                    doc.importExternalFormat(filename)
+                    if doc.haveDrawingEntitys():
+                        # add entities to scene
+                        self.populateScene(doc)
+                else:
+                    critical("No document open.")
+            else:
+                critical("No application constructed.")
+        return
+              
                 
     def closeDocument(self):
         if self.__filename != None:
             # close document from kernel
-            self.__application.closeDocument(self.__filename)
-            # remove all items from the scene
-            self.clear()
-            # reset filename
-            self.__filename = None
-            #looking if there is other document in the application
-            document=self.__application.getActiveDocument()
-            if document:
-                if document.haveDrawingEntitys():
-                    # add entities to scene
-                    self.populateScene(document) 
+            appl = Application()
+            if appl:
+                appl.closeDocument(self.__filename)
+                # remove all items from the scene
+                self.clear()
+                # reset filename
+                self.__filename = None
+                #looking if there is other document in the appl
+                document=appl.getActiveDocument()
+                if document:
+                    if document.haveDrawingEntitys():
+                        # add entities to scene
+                        self.populateScene(document) 
         else:
-            self.clear()    
+            self.clear()
+        return
+
             
     def populateScene(self, document):
         for entName in ("SEGMENT", "ARC", "TEXT"):
@@ -91,7 +135,9 @@ class CadScene(QtGui.QGraphicsScene):
                 if newQtEnt:
                     self.addItem(newQtEnt)
                 # adjust drawing limits
-                self.updateLimits(newQtEnt.boundingRect())   
+                self.updateLimits(newQtEnt.boundingRect())
+        return
+    
                     
     def updateLimits(self, rect):
         # init size
@@ -110,5 +156,5 @@ class CadScene(QtGui.QGraphicsScene):
         # top side
         if rect.top() > self.__limits.top():
             self.__limits.setTop(rect.top())
-
+        return
             

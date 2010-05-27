@@ -388,7 +388,7 @@ class ioKernel(object):
         """
         try:
             print ">>** Layer Tree ****"
-            layersTree=self.__kr.getTreeLayer().getLayerTree()
+            layersTree=self.__kr.getLayerTree().getLayerTree()
             printTree(layersTree, 1)
             print "<<** Layer Tree ****"
         except:
@@ -399,10 +399,10 @@ class ioKernel(object):
         """
         layerName=raw_input("-->Insert LayerName :")
         try:
-            activeLayer=self.__kr.getTreeLayer().getActiveLater()
+            activeLayer=self.__kr.getLayerTree().getActiveLater()
             newLayer=Layer(layerName)
             dbLayer=self.__kr.saveEntity(newLayer)
-            self.__kr.getTreeLayer().insert(dbLayer,activeLayer)
+            self.__kr.getLayerTree().insert(dbLayer,activeLayer)
             
         except:
             print "----<<Err>>Unable to create the layer : %s "%layerName
@@ -413,7 +413,7 @@ class ioKernel(object):
         """
         LayerName=raw_input("-->Layer Id :")
         try:
-            self.__kr.getTreeLayer().setActiveLayer(LayerName)
+            self.__kr.getLayerTree().setActiveLayer(LayerName)
         except:
             print "----<<Err>>Unable to create the layer : %s "%LayerName
             
@@ -422,8 +422,8 @@ class ioKernel(object):
             get the current layer name
         """
         try:
-            activeLayer=self.__kr.getTreeLayer().getActiveLater()
-            ce=self.__kr.getTreeLayer()._getLayerConstructionElement(activeLayer)
+            activeLayer=self.__kr.getLayerTree().getActiveLater()
+            ce=self.__kr.getLayerTree()._getLayerConstructionElement(activeLayer)
             print "Layer Name", ce.name
         except:
             print "----<<Err>>unable to get the current layer name "
@@ -444,7 +444,7 @@ class ioKernel(object):
         """
         layerId=raw_input("-->insert The id layer to delete :")
         try:
-            self.__kr.getTreeLayer().delete(layerId)
+            self.__kr.getLayerTree().delete(layerId)
         except:
             print "----<<Err>> deleteLayer id : %s we get en error "%layerId
     
