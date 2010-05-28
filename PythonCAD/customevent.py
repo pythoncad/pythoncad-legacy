@@ -511,8 +511,9 @@ class EasyTest(BaseCommand):
 
     def applyCommand(self):
         self.outputMsg("*********** Start Test ******************")
-        #self.easyTest()
-        self.MassiveDelete()
+        self.easyTest()
+        
+        #self.MassiveDelete()
         self.outputMsg("*********** End   Test ******************")    
     def MassiveDelete(self):
         try:

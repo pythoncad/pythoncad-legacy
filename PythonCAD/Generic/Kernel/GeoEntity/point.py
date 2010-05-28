@@ -120,8 +120,15 @@ class Point(GeometricalEntity):
         """
             Get the construction element of entity..
         """
-        return {"POINT_1":self.__x, "POINT_2":self.__y}
+        return {"POINT_0":self.__x, "POINT_1":self.__y}
     
+    def setConstructionElements(self, p1, p2):
+        """
+            Set the construction element of entity..
+        """
+        self__x=p1
+        self__y=p2
+        
     def getx(self):
         """
             Return the x-coordinate of a Point.

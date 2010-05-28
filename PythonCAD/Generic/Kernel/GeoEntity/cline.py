@@ -107,7 +107,7 @@ class CLine(GeometricalEntity):
         """
         _sp1=self.p1.getSympy()
         _sp2=self.p2.getSympy()
-        return geoSympy.Segment(_sp1, _sp2)
+        return geoSympy.Line(_sp1, _sp2)
         
     def setFromSympy(self, sympySegment):    
         """

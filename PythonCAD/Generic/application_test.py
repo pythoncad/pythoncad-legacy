@@ -7,6 +7,7 @@ from Kernel.GeoEntity.arc           import Arc
 from Kernel.GeoEntity.ellipse       import Ellipse
 from Kernel.GeoEntity.cline         import CLine
 
+from Kernel.GeoUtil.intersection    import *
 def testSympySegment():
     print "++ Sympy Segment ++"
     p1=Point(0, 1)
@@ -65,4 +66,62 @@ def TestSympy():
     testSympyCline()
     testSympyCircle()
     testSympyEllipse()
+#*****************************************************************
+#Test Intersection
+#*****************************************************************
+def segment_segmet():
+    print "++ segment_segmet ++"
+    p1=Point(0,0)
+    p2=Point(0, 1)
+    arg={"SEGMENT_0":p1, "SEGMENT_1":p2}
+    seg1=Segment(arg)
+    p3=Point(0, 0)
+    p4=Point(-1,0)
+    arg={"SEGMENT_0":p3, "SEGMENT_1":p4}
+    seg2=Segment(arg)
     
+    print find_intersections(seg1, seg2)
+    print "-- segment_segmet --"
+
+def segment_cline():
+    print "++ segment_cline ++"
+    p1=Point(0,0)
+    p2=Point(0, 1)
+    arg={"CLINE_0":p1, "CLINE_1":p2}
+    seg1=CLine(arg)
+    p3=Point(0, 0)
+    p4=Point(-1,0)
+    arg={"SEGMENT_0":p3, "SEGMENT_1":p4}
+    seg2=Segment(arg)
+    
+    print find_intersections(seg1, seg2)
+    print "-- segment_cline --"
+
+def segment_circle():
+    print "++ segment_circle ++"
+    p1=Point(0, 0)
+    arg={"ARC_0":p1, "ARC_1":5, "ARC_2":0, "ARC_3":6.2831}
+    arc=Arc(arg)
+    p2=Point(0, 0)
+    p3=Point(-1,0)
+    arg={"CLINE_0":p2, "CLINE_1":p3}
+    seg1=CLine(arg)
+    print find_intersections(arc, seg1)
+    print "-- segment_circle --"
+def segment_ellipse():
+    print "++ segment_ellipse ++"
+    p1=Point(0, 0)
+    arg={"ELLIPSE_0":p1, "ELLIPSE_1":300, "ELLIPSE_2":100}
+    eli=Ellipse(arg)
+    p2=Point(0, 0)
+    p3=Point(-1,0)
+    arg={"CLINE_0":p2, "CLINE_1":p3}
+    seg1=CLine(arg)
+    print find_intersections(eli, seg1)
+    print "-- segment_ellipse --"
+    
+def TestIntersection():
+    segment_segmet()
+    segment_cline()
+    segment_circle()
+    segment_ellipse()
