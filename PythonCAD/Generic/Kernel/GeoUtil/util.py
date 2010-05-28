@@ -318,6 +318,42 @@ def getNearestPoint(obj, p):
        return getSegmentNearestPoint(obj, p)
     if isinstance(obj, ACline):
         pass
+
+
+
+
+def getSympyPoint(point):
+    """
+        return the sympy Point
+    """
+    x, y=point.getCoords()
+    return geoSympy.Point(x, y)
     
+def getSympySegment(segment):
+    """
+        Return the sympy Segment
+    """
+    p1, p2=segment.getEndpoints()
+    
+    return geoSympy.Segment()
+    
+def getSipPyObject(geoEnt):
+    """
+        return the sympy object from a pythoncad object
+    """
+    _sympyObj=None
+    if isinstance(geoEnt, Point):
+        _sympyObj = getSympyPoint(geoEnt)
+    elif isinstance(geoEnt, Segment):
+        _sympyObj = getSympySegment(geoEnt)
+    elif isinstance(geoEnt,  ACLine):
+        _sympyObj = getSympyLine(geoEnt)
+    elif isinstance(geoEnt, (Arc, CCircle)):
+        _sympyObj = getSympyCircle(geoEnt)
+    elif isinstance(geoEnt, Polyline):
+        _sympyObj = getSympyPolyline(geoEnt)
+    elif isinstance(geoEnt, Ellipse):
+        _sympyObj = getSympyEllipse(geoEnt)
+    return _sympyObj
     
     

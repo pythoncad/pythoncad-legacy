@@ -123,6 +123,16 @@ class Vector:
             dot=1
         ang=math.acos(dot)
         return ang
+        
+    def absAng(self):
+        """
+            return the angle from the cartesian reference
+        """
+        p1=Point(0, 0)
+        p2=Point(1, 0)
+        ortoVect=Vector(p1, p2)
+        return self.ang(ortoVect)
+        
     def mult(self,scalar):
         """
             Multiplae the vector for a scalar value

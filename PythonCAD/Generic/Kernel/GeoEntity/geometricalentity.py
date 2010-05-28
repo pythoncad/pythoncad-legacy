@@ -22,6 +22,8 @@
 #
 import math
 
+import sympy            as mainSympy
+import sympy.geometry   as geoSympy
 
 class GeometricalEntity(dict):
     """
@@ -75,15 +77,31 @@ class GeometricalEntity(dict):
                 self[key]+=v.point()
         return v.point()
     
-    def rotate(self, rotationPoint, angle):
+    def rotate(self, rotationPoint, pointToMove, angle):
         """
             this method must be defined for rotation
         """
-        x, y=rotationPoint.getCoords()
+        from Kernel.GeoUtil.geolib import Vector
+        from Kernel.GeoEntity.point import Point
+        
+        v=Vector(rotationPoint,pointToMove )
+        
+        x, y=v.point().getCoords()
         x1=x*math.cos(angle)-y*math.sin(angle)
         y1=x*math.sin(angle)+y*math.cos(angle)
-        return Point(x1, y1)
+        return Point(x1, y1)+rotationPoint
+    
+    def getSympy(self):
+        """
+            get the sympy object
+        """
+        pass
         
+    def setFromSympy(self, sympyPoint):    
+        """
+            update the points cord from a sympyobject
+        """
+        pass   
     
 class GeometricalEntityComposed(dict):
     """
@@ -121,3 +139,4 @@ class GeometricalEntityComposed(dict):
             Get The releted object to be updated
         """
         pass
+    

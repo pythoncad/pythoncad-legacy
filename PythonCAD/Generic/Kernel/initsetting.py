@@ -47,7 +47,7 @@ from Kernel.GeoEntity.arc          import Arc
 from Kernel.GeoEntity.ellipse      import Ellipse
 from Kernel.GeoEntity.polyline     import Polyline
 from Kernel.GeoEntity.style        import Style 
-from Kernel.GeoEntity.acline       import ACLine
+from Kernel.GeoEntity.cline       import CLine
 from Kernel.GeoEntity.ccircle      import CCircle
 from Kernel.GeoEntity.text         import Text
 
@@ -78,7 +78,7 @@ PY_CAD_ENT=['POINT',
             'ARC', 
             'ELLIPSE', 
             'POLYLINE', 
-            'ACLINE', 
+            'CLINE', 
             'CCIRCLE', 
             'TEXT', 
             'COMPOSED_ENTITY' ]
@@ -92,7 +92,7 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand, 
-                        'ACLINE':ACLineCommand, 
+                        'CLINE':ACLineCommand, 
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
                         'CHAMFER':ChamferCommand, 
@@ -107,7 +107,7 @@ DRAWIN_ENTITY={ Point:'POINT',
                 Arc:'ARC', 
                 Ellipse:'ELLIPSE', 
                 Polyline:'POLYLINE', 
-                ACLine:'ACLINE', 
+                CLine:'CLINE', 
                 CCircle:'CCIRCLE', 
                 Text:'TEXT', 
                 ComposedEntity:'COMPOSED_ENTITY'}

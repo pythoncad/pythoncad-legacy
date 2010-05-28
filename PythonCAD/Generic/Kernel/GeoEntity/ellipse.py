@@ -141,7 +141,7 @@ class Ellipse(GeometricalEntity):
         else:
             self['ELLIPSE_2']=_val
             
-    minor_axis = property(getMinorAxis, setMinorAxis, None,
+    minor = property(getMinorAxis, setMinorAxis, None,
                           "Ellipse minor axis")
 
 
@@ -196,3 +196,22 @@ class Ellipse(GeometricalEntity):
         """
         return Ellipse(self.getConstructionElements())
 
+    def getSympy(self):
+        """
+            get the sympy object in this case a ellipse
+        """
+        _cp=self.center.getSympy()
+        return geoSympy.Ellipse(geoSympy.Point(0,0),self.major,self.minor)
+        
+    def setFromSympy(self, sympyEllipse):    
+        """
+            update the points cord from a sympyobject only avaiable for circle
+        """
+        self.center.setFromSympy(sympyEllipse[0])
+        self.major=float(sympyEllipse[1])
+        self.minor=float(sympyEllipse[2])
+        
+    def __str__(self):
+        msg="Ellipse: Center %s , Major Axi=%s, Mino Axi=%s"%(
+            str(self.center), str(self.major), str(self.minor))
+        return msg

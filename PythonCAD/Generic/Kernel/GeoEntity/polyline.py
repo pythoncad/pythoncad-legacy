@@ -181,6 +181,16 @@ class Polyline(GeometricalEntity):
             i+=1
         return Polyline(_cpts)
     
+    def getSympySegments(self):
+        """
+            return an array of sympy Segment
+        """
+        out=[]
+        
+        for s in self.getSegments():
+            out.append(s.getSympy())
+        return out
+        
     def getSegments(self):
         """
             return an array of segments that identifie the polyline

@@ -32,7 +32,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
             create an empty document in temop file
         """
-        self.__application.newDocument()
+        doc=self.__application.newDocument()
+        self.__filename=doc.dbPath
         self.documentEvent()
         
     def openDocument(self, filename):
@@ -57,6 +58,7 @@ class CadScene(QtGui.QGraphicsScene):
         document.showEntEvent+=self.eventShow
         document.updateShowEntEvent+=self.eventUpdate
         document.deleteEntityEvent+=self.eventDelete
+        document.massiveDeleteEvent+=self.eventMassiveDelete
         document.undoRedoEvent+=self.eventUndoRedo
         
     def importDocument(self, filename):        
@@ -91,6 +93,7 @@ class CadScene(QtGui.QGraphicsScene):
             #looking if there is other document in the application
             document=self.__application.getActiveDocument()
             if document:
+                self.__filename=document.dbPath
                 if document.haveDrawingEntitys():
                     # add entities to scene
                     self.populateScene(document) 
@@ -133,12 +136,26 @@ class CadScene(QtGui.QGraphicsScene):
             manage the Update entity event  
         """
         self.updateItemsFromID([entity])
+    
     def eventDelete(self, document, entity):    
         """
             manage the Delete entity event
         """
+        import time 
+        startTime=time.clock()
         self.deleteEntity([entity])
+        endTime=time.clock()-startTime
+        print "eventDelete in %s"%str(endTime)
         
+    def eventMassiveDelete(self, document,  entitys):
+        """
+            Massive delete of all entity event
+        """
+        import time 
+        startTime=time.clock()
+        self.deleteEntity(entitys)
+        endTime=time.clock()-startTime
+        print "eventDelete in %s"%str(endTime)    
     def deleteEntity(self, entitys):
         """
             delete the entity from the scene
@@ -146,7 +163,7 @@ class CadScene(QtGui.QGraphicsScene):
         dicItems=dict([( item.ID, item)for item in self.items()])
         for ent in entitys:
             self.removeItem(dicItems[ent.getId()])
-            
+
     def updateLimits(self, rect):
         # init size
         if self.__limits == None:
@@ -169,8 +186,21 @@ class CadScene(QtGui.QGraphicsScene):
         """
             update the scene from the Entity []
         """
+
         dicItems=dict([( item.ID, item)for item in self.items()])
         for ent in entitys:
             if ent.getId() in dicItems:
                 self.removeItem(dicItems[ent.getId()])
                 self.addGraficalObject(ent)
+        
+    def updateItemsFromID_2(self,entitys):
+        """
+            update the scene from the Entity []
+        """
+        ids=[ent.getId() for ent in entitys]
+        items=[item for item in self.items() if item.ID in ids]
+        for item in items:
+                self.removeItem(item)
+        for ent in entities:
+                self.addGraficalObject(ent)
+            

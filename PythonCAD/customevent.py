@@ -511,9 +511,33 @@ class EasyTest(BaseCommand):
 
     def applyCommand(self):
         self.outputMsg("*********** Start Test ******************")
-        self.easyTest()
+        #self.easyTest()
+        self.MassiveDelete()
         self.outputMsg("*********** End   Test ******************")    
-    
+    def MassiveDelete(self):
+        try:
+            import time 
+            startTime=time.clock()
+            newDoc=self.__pyCadApplication.getActiveDocument()
+            newDoc.startMassiveCreation()
+            for i in range(1000):
+                intPoint=Point(i, i)
+                args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
+                s1=Segment(args)    
+                newDoc.saveEntity(s1)
+            else:
+                newDoc.performCommit()    
+                newDoc.stopMassiveCreation()
+                endTime=time.clock()-startTime
+                print "Create 1000 entity in %s"%str(endTime)    
+        finally:
+            ents=newDoc.getAllDrawingEntity()
+            ids=[ent.getId() for ent in ents]
+            startTime=time.clock()
+            newDoc.massiveDelete(ids)
+            endTime=time.clock()-startTime
+            print "Delete 1000 entity in %s"%str(endTime)    
+            
     def easyTest(self):
         """
             this function is usefoul for short test

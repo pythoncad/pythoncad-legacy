@@ -301,47 +301,49 @@ class Dxf(DrawingFile):
         #_dxfLayer=Layer(_layerName)
         #self.__image.addLayer(_dxfLayer) # TODO : when we have the layer
         #self.__dxfLayer=_dxfLayer
-        self.__kernel.startMassiveCreation()
-        while True:
-            _k = self.readLine()
-            if not _k: break
-            else:
-                ##print  "debug: readline", _k # TODO : replace the dprint with the logging
-                #dPrint( "Debug: Read Line line = [%s]"%str(_k)) # TODO : replace the dprint with the logging
-                if _k[0:5] == 'TABLE':
-                    _k = self.readLine() # for tag "  2"
-                    _k = self.readLine() # for table name
-                    ##print "debug TABLE found" # TODO : replace the dprint with the logging
-                    if _k[0:5] == 'LAYER':
-                        self.readLayer()
-                        #print "debug LAYER found" # TODO : replace the dprint with the logging
-                    continue
-                if _k[0:4] == 'LINE':
-                    self.createLineFromDxf()
-                    ##print "debug line found" # TODO : replace the dprint with the logging
-                    continue
-                if _k[0:6] == 'CIRCLE':
-                    self.createCircleFromDxf()
-                    continue
-                if _k[0:5] == 'MTEXT':
-                    self.createTextFromDxf()
-                    continue
-                if _k[0:4] == 'TEXT':
-                    #self.createTextFromDxf()
-                    continue
-                if _k[0:3] == 'ARC':
-                    self.createArcFromDxf()
-                    ##print "debug arc found"
-                    continue
-                if _k[0:10] == 'LWPOLYLINE':
-                    #self.createPolylineFromDxf()
-                    continue
-                if _k[0:8] == 'POLYLINE':
-                    #self.createPolylineFromDxf()
-                    continue
-                if not _k : break
-        self.__kernel.performCommit()
-
+        try:
+            self.__kernel.startMassiveCreation()
+            while True:
+                _k = self.readLine()
+                if not _k: break
+                else:
+                    ##print  "debug: readline", _k # TODO : replace the dprint with the logging
+                    #dPrint( "Debug: Read Line line = [%s]"%str(_k)) # TODO : replace the dprint with the logging
+                    if _k[0:5] == 'TABLE':
+                        _k = self.readLine() # for tag "  2"
+                        _k = self.readLine() # for table name
+                        ##print "debug TABLE found" # TODO : replace the dprint with the logging
+                        if _k[0:5] == 'LAYER':
+                            self.readLayer()
+                            #print "debug LAYER found" # TODO : replace the dprint with the logging
+                        continue
+                    if _k[0:4] == 'LINE':
+                        self.createLineFromDxf()
+                        ##print "debug line found" # TODO : replace the dprint with the logging
+                        continue
+                    if _k[0:6] == 'CIRCLE':
+                        self.createCircleFromDxf()
+                        continue
+                    if _k[0:5] == 'MTEXT':
+                        self.createTextFromDxf()
+                        continue
+                    if _k[0:4] == 'TEXT':
+                        #self.createTextFromDxf()
+                        continue
+                    if _k[0:3] == 'ARC':
+                        self.createArcFromDxf()
+                        ##print "debug arc found"
+                        continue
+                    if _k[0:10] == 'LWPOLYLINE':
+                        #self.createPolylineFromDxf()
+                        continue
+                    if _k[0:8] == 'POLYLINE':
+                        #self.createPolylineFromDxf()
+                        continue
+                    if not _k : break
+            self.__kernel.performCommit()
+        finally:
+            self.__kernel.stopMassiveCreation()
     def readLayer(self):
         """
         Reading the data in the dxf file under TABLE section

@@ -106,14 +106,11 @@ class Arc(GeometricalEntity):
                 (abs(self.endAngle - obj.endAngle) > 1e-10))
                    
         
-    def rotate(self, rotationPoint, angle):
+    def rotate(self, centerRotationPoint, angle):
         """
             rotate the acline for a given angle
         """    
-        self.__keypoint=GeometricalEntity.rotate(rotationPoint,angle )
-        if self.startAngle!=self.endAngle:
-            self.startAngle=self.startAngle+angle
-            self.endAngle=self.endAngle+angle
+        self.center=GeometricalEntity.rotate(self, centerRotationPoint, self.center,angle )
         
     def getCenter(self):
         """
@@ -424,9 +421,24 @@ class Arc(GeometricalEntity):
             clone()
         """
         return Arc(self.getConstructionElements())
-#
-# static functions for Arc class
-#
+    
+    def getSympy(self):
+        """
+            get the sympy object in this case a circle
+        """
+        _cp=self.center.getSympy()
+        return geoSympy.Circle(_cp, self.radius)
+        
+    def setFromSympy(self, sympyCircle):    
+        """
+            update the points cord from a sympyobject only avaiable for circle
+        """
+        self.center.setFromSympy(sympyCircle[0])
+        self.radius=float(sympyCircle[1])
+    def __str__(self):
+        msg="Arc\Circle: Center %s , Radius %s , StartAngle=%s, EndAngle=%s"%(
+            str(self.center), str(self.radius), str(self.startAngle), str(self.endAngle))
+        return msg
     def test_angle(s, e, a):
         """
             Returns if an angle lies between the start and end angle of an arc.
@@ -442,5 +454,5 @@ class Arc(GeometricalEntity):
             _val = True
         return _val
 
-    test_angle = staticmethod(test_angle)
+    
 

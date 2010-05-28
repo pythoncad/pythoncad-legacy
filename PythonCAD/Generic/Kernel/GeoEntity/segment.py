@@ -32,7 +32,6 @@ from Kernel.GeoUtil.geolib                  import Vector
 from Kernel.GeoEntity.point                 import Point
 from Kernel.GeoEntity.geometricalentity     import *
 
-
 class Segment(GeometricalEntity):
     """
         A class representing a line segment.
@@ -332,3 +331,17 @@ class Segment(GeometricalEntity):
         args={"SEGMENT_0":_cp1, "SEGMENT_1":_cp2}
         return Segment(args)
 
+    def getSympy(self):
+        """
+            get the sympy object
+        """
+        _sp1=self.p1.getSympy()
+        _sp2=self.p2.getSympy()
+        return geoSympy.Segment(_sp1, _sp2)
+        
+    def setFromSympy(self, sympySegment):    
+        """
+            update the points cord from a sympyobject
+        """
+        self.p1.setFromSympy(sympySegment[0])
+        self.p2.setFromSympy(sympySegment[1])

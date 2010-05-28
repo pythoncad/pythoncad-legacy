@@ -27,13 +27,14 @@
 
 import math
 
-from Kernel.GeoEntity.point        import Point
-from Kernel.GeoEntity.segment      import Segment
+from Kernel.GeoEntity.point       import Point
+from Kernel.GeoEntity.segment     import Segment
 from Kernel.GeoEntity.arc         import Arc
 from Kernel.GeoEntity.acline      import ACLine
 from Kernel.GeoEntity.ccircle     import CCircle
 from Kernel.GeoEntity.polyline    import Polyline
-
+from Kernel.GeoEntity.ellipse     import Ellipse
+from Kernel.GeoUtil.geolib        import Vector
 #
 # common constants
 #
@@ -259,76 +260,6 @@ def _seg_arc_intersection(ipts, obja, objb):
             _angle = _angle + 360.0
         if _arc.throughAngle(_angle):
             ipts.append(_ip)
-
-#
-# segment - horizontal construction line intersection
-#
-
-def _seg_hcl_intersection(ipts, obja, objb):
-    if isinstance(obja, Segment):
-        _seg = obja
-        _hcl = objb
-    else:
-        _seg = objb
-        _hcl = obja
-    _p1, _p2 = _seg.getEndpoints()
-    _hp = _hcl.getLocation()
-    _hx, _hy = _hp.getCoords()
-    _xi = _yi = None
-    if _hp == _p1:
-        _p2x, _p2y = _p2.getCoords()
-        if abs(_hy - _p2y) > 1e-10:
-            _xi, _yi = _p1.getCoords()
-    elif _hp == _p2:
-        _p1x, _p1y = _p1.getCoords()
-        if abs(_hy - _p1y) > 1e-10:
-            _xi, _yi = _p2.getCoords()
-    else:
-        _p1x, _p1y = _p1.getCoords()
-        _p2x, _p2y = _p2.getCoords()
-        _miny = min(_p1y, _p2y)
-        _maxy = max(_p1y, _p2y)
-        if abs(_p1y - _p2y) > 1e-10 and _miny < _hy < _maxy:
-            _xi = _p1x + ((_hy - _p1y)*(_p2x - _p1x))/(_p2y - _p1y)
-            _yi = _hy
-    if _xi is not None and _yi is not None:
-        ipts.append((_xi, _yi))
-
-#
-# segment - vertical construction line intersection
-#
-
-def _seg_vcl_intersection(ipts, obja, objb):
-    if isinstance(obja, Segment):
-        _seg = obja
-        _vcl = objb
-    else:
-        _seg = objb
-        _vcl = obja
-    _p1, _p2 = _seg.getEndpoints()
-    _vp = _vcl.getLocation()
-    _vx, _vy = _vp.getCoords()
-    _xi = _yi = None
-    if _vp == _p1:
-        _p2x, _p2y = _p2.getCoords()
-        if abs(_vx - _p2x) > 1e-10:
-            _xi, _yi = _p1.getCoords()
-    elif _vp == _p2:
-        _p1x, _p1y = _p1.getCoords()
-        if abs(_vx - _p1x) > 1e-10:
-            _xi, _yi = _p2.getCoords()
-    else:
-        _p1x, _p1y = _p1.getCoords()
-        _p2x, _p2y = _p2.getCoords()
-        _vx, _vy = _vp.getCoords()
-        _minx = min(_p1x, _p2x)
-        _maxx = max(_p1x, _p2x)
-        if abs(_p1x - _p2x) > 1e-10 and _minx < _vx < _maxx:
-            _xi = _vx
-            _yi = _p1y + ((_p2y - _p1y)*(_vx - _p1x))/(_p2x - _p1x)
-    if _xi is not None and _yi is not None:
-        ipts.append((_xi, _yi))
-
 #
 # segment - angled construction line intersection
 #
@@ -370,41 +301,7 @@ def _seg_acl_intersection(ipts, obja, objb):
     if _xi is not None and _yi is not None:
         ipts.append((_xi, _yi))
 
-#
-# segment - 2-point construction line intersection
-#
 
-def _seg_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, Segment):
-        _seg = obja
-        _cl = objb
-    else:
-        _seg = objb
-        _cl = obja
-    _p1, _p2 = _seg.getEndpoints()
-    _p3, _p4 = _cl.getKeypoints()
-    _xi = _yi = None
-    if _p1 == _p3 or _p1 == _p4:
-        _x, _y = _p2.getCoords()
-        _px, _py = _cl.getProjection(_x, _y)
-        if math.hypot((_px - _x), (_py - _y)) > 1e-10:
-            _xi, _yi = _p1.getCoords()
-    elif _p2 == _p3 or _p2 == _p4:
-        _x, _y = _p1.getCoords()
-        _px, _py = _cl.getProjection(_x, _y)
-        if math.hypot((_px - _x), (_py - _y)) > 1e-10:
-            _xi, _yi = _p2.getCoords()
-    else:
-        _d = denom(_p1, _p2, _p3, _p4)
-        if abs(_d) > 1e-10: # NOT parallel
-            _r = rnum(_p1, _p2, _p3, _p4)/_d
-            if not (_r < _zero or _r > _one):
-                _p1x, _p1y = _p1.getCoords()
-                _p2x, _p2y = _p2.getCoords()
-                _xi = _p1x + _r * (_p2x - _p1x)
-                _yi = _p1y + _r * (_p2y - _p1y)
-    if _xi is not None and _yi is not None:
-        ipts.append((_xi, _yi))
 
 #
 # circle - circle intersection
@@ -465,70 +362,8 @@ def _circ_arc_intersection(ipts, obja, objb):
             if _arc.throughAngle(_angle):
                 ipts.append(_ip)
 
-#
-# circle - horizontal contruction line intersection
-#
 
-def _circ_hcl_intersection(ipts, obja, objb):
-    if isinstance(obja, (Arce, CCircle)):
-        _circ = obja
-        _hcl = objb
-    else:
-        _circ = objb
-        _hcl = obja
-    _cp = _circ.getCenter()
-    _r = _circ.getRadius()
-    _hp = _hcl.getLocation()
-    _hx, _hy = _hp.getCoords()
-    if _hp == _cp:
-        ipts.append(((_hx - _r), _hy))
-        ipts.append(((_hx + _r), _hy))
-    else:
-        _cx, _cy = _circ.getCenter().getCoords()
-        _ymin = _cy - _r
-        _ymax = _cy + _r
-        if abs(_ymin - _hy) < 1e-10:
-            ipts.append((_cx, _ymin))
-        elif abs(_ymax - _hy) < 1e-10:
-            ipts.append((_cx, _ymax))
-        elif _ymin < _hy < _ymax:
-            _offset = math.sqrt(pow(_r, 2) - pow((_cy - _hy), 2))
-            ipts.append(((_cx - _offset), _hy))
-            ipts.append(((_cx + _offset), _hy))
-        else:
-            pass
-#
-# circle - vertical contruction line intersection
-#
 
-def _circ_vcl_intersection(ipts, obja, objb):
-    if isinstance(obja, (Arc, CCircle)):
-        _circ = obja
-        _vcl = objb
-    else:
-        _circ = objb
-        _vcl = obja
-    _cp = _circ.getCenter()
-    _r = _circ.getRadius()
-    _vp = _vcl.getLocation()
-    _vx, _vy = _vp.getCoords()
-    if _vp == _cp:
-        ipts.append((_vx, (_vy - _r)))
-        ipts.append((_vx, (_vy + _r)))
-    else:
-        _cx, _cy = _circ.getCenter().getCoords()
-        _xmin = _cx - _r
-        _xmax = _cx + _r
-        if abs(_xmin - _vx) < 1e-10:
-            ipts.append((_xmin, _cy))
-        elif abs(_xmax - _vx) < 1e-10:
-            ipts.append((_xmax, _cy))
-        elif _xmin < _vx < _xmax:
-            _offset = math.sqrt(pow(_r, 2) - pow((_vx - _cx), 2))
-            ipts.append((_vx, (_cy - _offset)))
-            ipts.append((_vx, (_cy + _offset)))
-        else:
-            pass
 
 #
 # circle - angled construction line intersection
@@ -551,26 +386,7 @@ def _circ_acl_intersection(ipts, obja, objb):
             ipts.append(_ip)
     else:
         _arc_hcl_intersection(ipts, obja, objb)
-
-#
-# circle - 2-point construction line intersection
-#
-
-def _circ_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, (Arc, ccircle.CCircle)):
-        _circ = obja
-        _cl = objb
-    else:
-        _circ = objb
-        _cl = obja
-    if _circ.isCircle:
-        _p1, _p2 = _cl.getKeypoints()
-        _p1x, _p1y = _p1.getCoords()
-        _p2x, _p2y = _p2.getCoords()
-        for _ip in sc_intersection(_p1x, _p1y, _p2x, _p2y, _circ, True):
-            ipts.append(_ip)
-    else:
-        _arc_cl_intersection(ipts, obja, objb)    
+ 
 #
 # arc - arc intersection
 #
@@ -592,51 +408,6 @@ def _arc_arc_intersection(ipts, arc1, arc2):
                     _angle = _angle + 360.0
                 if arc2.throughAngle(_angle):
                     ipts.append(_ip)
-#
-# arc - horizontal construction line intersection
-#
-
-def _arc_hcl_intersection(ipts, obja, objb):
-    if isinstance(obja, Arc):
-        _arc = obja
-        _hcl = objb
-    else:
-        _arc = objb
-        _hcl = obja
-    _ipts = []
-    _circ_hcl_intersection(_ipts, _arc, _hcl)
-    if len(_ipts): # may have intersection points ...
-        _cx, _cy = _cp.getCoords()
-        for _ip in _ipts:
-            _x, _y = _ip
-            _angle = math.atan2((_y - _cy),(_x - _cx)) * _rtd
-            if _angle < 0.0:
-                _angle = _angle + 360.0
-            if _arc.throughAngle(_angle):
-                ipts.append(_ip)
-
-#
-# arc - vertical construction line intersection
-#
-
-def _arc_vcl_intersection(ipts, obja, objb):
-    if isinstance(obja, Arc):
-        _arc = obja
-        _vcl = objb
-    else:
-        _arc = objb
-        _vcl = obja
-    _ipts = []
-    _circ_vcl_intersection(_ipts, _arc, _vcl)
-    if len(_ipts): # may have intersection points ...
-        _cx, _cy = _cp.getCoords()
-        for _ip in _ipts:
-            _x, _y = _ip
-            _angle = math.atan2((_y - _cy),(_x - _cx)) * _rtd
-            if _angle < 0.0:
-                _angle = _angle + 360.0
-            if _arc.throughAngle(_angle):
-                ipts.append(_ip)
 
 #
 # arc - angled construction line intersection
@@ -660,169 +431,6 @@ def _arc_acl_intersection(ipts, obja, objb):
                 _angle = _angle + 360.0
             if _arc.throughAngle(_angle):
                 ipts.append(_ip)
-
-#
-# arc - 2-point construction line intersection
-#
-
-def _arc_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, Arc):
-        _arc = obja
-        _cl = objb
-    else:
-        _arc = objb
-        _cl = obja
-    _ipts = []
-    _circ_cl_intersection(_ipts, _arc, _cl)
-    if len(_ipts): # may have intersection points ...
-        _cx, _cy = _cp.getCoords()
-        for _ip in _ipts:
-            _x, _y = _ip
-            _angle = math.atan2((_y - _cy),(_x - _cx)) * _rtd
-            if _angle < 0.0:
-                _angle = _angle + 360.0
-            if _arc.throughAngle(_angle):
-                ipts.append(_ip)
-
-#
-# horizontal construction line - vertical construction line intersection
-#
-
-def _hcl_vcl_intersection(ipts, obja, objb):
-    if isinstance(obja, HCLine):
-        _hcl = obja
-        _vcl = objb
-    else:
-        _hcl = objb
-        _vcl = obja
-    _hx, _hy = _hcl.getLocation().getCoords()
-    _vx, _vh = _vcl.getLocation().getCoords()
-    ipts.append((_vx, _hy))
-
-#
-# horizontal construction line - angled construction line intersection
-#
-
-def _hcl_acl_intersection(ipts, obja, objb):
-    if isinstance(obja, HCLine):
-        _hcl = obja
-        _acl = objb
-    else:
-        _hcl = objb
-        _acl = obja
-    _angle = _acl.getAngle()
-    if abs(_angle) > 1e-10: # acl is NOT horizontal
-        _xi = _yi = None
-        _hp = _hcl.getLocation()
-        _ap = _acl.getLocation()
-        if _hp == _ap:
-            _xi, _yi = _hp.getCoords()
-        else:
-            _hx, _hy = _hp.getCoords()
-            _yi = _hy
-            _ax, _ay = _ap.getCoords()
-            if abs(abs(_angle) - 90.0) < 1e-10: # acl is vertical
-                _xi = _ax
-            else:
-                _slope = math.tan(_angle * _dtr)
-                _yint = _ay - _slope*_ax
-                _xi = (_hy - _yint)/_slope
-        ipts.append((_xi, _yi))
-
-#
-# horizontal construction line - 2-point construction line intersection
-#
-
-def _hcl_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, HCLine):
-        _hcl = obja
-        _cl = objb
-    else:
-        _hcl = objb
-        _cl = obja
-    _p1, _p2 = _cl.getKeypoints()
-    _p1x, _p1y = _p1.getCoords()
-    _p2x, _p2y = _p2.getCoords()
-    _ydiff = _p2y - _p1y
-    if abs(_ydiff) > 1e-10: # cline is NOT horizontal
-        _xi = _yi = None
-        _hp = _hcl.getLocation()
-        if _hp == _p1:
-            _xi, _yi = _p1.getCoords()
-        elif _hp == _p2:
-            _xi, _yi = _p2.getCoords()
-        else:
-            _hx, _hy = _hp.getCoords()
-            _yi = _hy
-            _xdiff = _p2x - _p1x
-            if abs(_xdiff) < 1e-10: # cline is vertical
-                _xi = _p1x
-            else:
-                _slope = _ydiff/_xdiff
-                _yint = _p1y - _slope*_p1x
-                _xi = (_hy - _yint)/_slope
-        ipts.append((_xi, _yi))
-
-#
-# vertical construction line - angled construction line intersection
-#
-
-def _vcl_acl_intersection(ipts, obja, objb):
-    if isinstance(obja, VCLine):
-        _vcl = obja
-        _acl = objb
-    else:
-        _vcl = objb
-        _acl = obja
-    _angle = _acl.getAngle()
-    if abs(abs(_angle) - 90.0) > 1e-10: # acl is NOT vertical
-
-        _vp = _vcl.getLocation()
-        _ap = _acl.getLocation()
-        if _vp == _ap:
-            _xi, _yi = _vp.getCoords()
-        else:
-            _vx, _vy = _vp.getCoords()
-            _xi = _vx
-            _ax, _ay = _ap.getCoords()
-            _slope = math.tan(_angle * _dtr)
-            _yint = _ay - _slope*_ax
-            _yi = _slope*_vx + _yint
-        ipts.append((_xi, _yi))
-
-#
-# vertical construction line - 2-point construction line intersection
-#
-
-def _vcl_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, VCLine):
-        _vcl = obja
-        _cl = objb
-    else:
-        _vcl = objb
-        _cl = obja
-    _p1, _p2 = _cl.getKeypoints()
-    _p1x, _p1y = _p1.getCoords()
-    _p2x, _p2y = _p2.getCoords()
-    _xdiff = _p2x - _p1x
-    if abs(_xdiff) > 1e-10: # cline is NOT vertical
-        _xi = _yi = None
-        _vp = _vcl.getLocation()
-        if _vp == _p1:
-            _xi, _yi = _p1.getCoords()
-        elif _vp == _p2:
-            _xi, _yi = _p2.getCoords()
-        else:
-            _vx, _vy = _vp.getCoords()
-            _xi = _vx
-            _ydiff = _p2y - _p1y
-            if abs(_ydiff) < 1e-10: # cline is horizontal
-                _yi = _p1y
-            else:
-                _slope = _ydiff/_xdiff
-                _yint = _p1y - _slope*_p1x
-                _yi = _slope*_vx + _yint
-        ipts.append((_xi, _yi))
 
 #
 # angled construction line - angled construction line intersection
@@ -854,249 +462,66 @@ def _acl_acl_intersection(ipts, acl1, acl2):
                 _yi = _ap1y + _r * (_yt1 - _ap1y)
         if _xi is not None and _yi is not None:
             ipts.append((_xi, _yi))
-
 #
-# angled construction line - 2-point construction line intersection
+# Ellipse intersection function
 #
-
-def _acl_cl_intersection(ipts, obja, objb):
-    if isinstance(obja, ACLine):
-        _acl = obja
-        _cl = objb
-    else:
-        _acl = objb
-        _cl = obja
-    _ap = _acl.getLocation()
-    _apx, _apy = _ap.getCoords()
-    _angle = _acl.getAngle() * _dtr
-    _xt = _apx + math.cos(_angle)
-    _yt = _apy + math.sin(_angle)
-    _t1 = point.Point(_xt, _yt)
-    _p1, _p2 = _cl.getKeypoints()
-    _d = denom(_ap, _t1, _p1, _p2)
-    if abs(_d) > 1e-10: # NOT parallel
-        _xi = _yi = None
-        if _ap == _p1:
-            _xi, _yi = _p1.getCoords()
-        elif _ap == _p2:
-            _xi, _yi = _p2.getCoords()
-        else:
-            _rn = rnum(_ap, _t1, _p1, _p2)
-            if abs(_rn) > 1e-10: # NOT colinear
-                _r = _rn/_d
-                _xi = _apx + _r * (_xt - _apx)
-                _yi = _apy + _r * (_yt - _apy)
-        if _xi is not None and _yi is not None:
-            ipts.append((_xi, _yi))
-
+def _seg_eli_intersection(ipts, pol, seg):
+    """
+        calculate the intersection beteen polyline and segment
+    """
+    #TODO: Calculate the ellipse segment intersection
+    pass
+    tempIpts=[]
+    ipts=tempIpts
+def _arc_eli_intersection(ipts,eli, arc):
+    """
+        calculate the intersection beteen polyline and arc
+    """
+    pass
+    #TODO: Calculate the ellipse arc intersection
+    tempIpts=[]
+    ipts=tempIpts
+def _circ_eli_intersection(ipts,eli, cci):
+    """
+        calculate the intersection beteen polyline and construction circle
+    """
+    pass
+    #TODO:  Calculate the ellipse ccircle intersection 
+    tempIpts=[]
+    ipts=tempIpts
+def _acl_eli_intersection(ipts, eli, acl):
+    """
+        calculate the intersection beteen polyline and angular construction line
+    """
+    pass
+    #TODO: calculate the ellipse acline intersection
+    tempIpts=[]
+    ipts=tempIpts
+def _pol_eli_intersection(ipts, pol, eli):
+    """
+        calculate the intersection beteen polyline and ellipse
+    """
+    for seg in pol.getSegments():
+        tempIpts=[]
+        _seg_eli_intersection(tempipts,  seg,  eli)
+        if len(tempIpts)>0: 
+            ipts=tempIpts
+            break
+def _eli_eli_intersection(ipts, eli1, eli2):
+    """
+        found an intersection between polyline and other object
+    """
+    pass
+    if isinstance(eli1, Ellipse):
+        if isinstance(eli2, Ellipse):
+            #todo:calculate the ellipse ellipse intersection
+            tempIpts=[]
+            if len(tempIpts)>0: 
+                ipts=tempIpts
 #
-# 2-point construction line - 2-point construction line intersection
+# Poliline intersect functions def _seg_pol_intersection(ipts, pol, seg):
 #
-
-def _cl_cl_intersection(ipts, cl1, cl2):
-    _p1, _p2 = cl1.getKeypoints()
-    _p3, _p4 = cl2.getKeypoints()
-    _d = denom(_p1, _p2, _p3, _p4)
-    if abs(_d) > 1e-10: # NOT parallel
-        _xi = _yi = None
-        if _p1 == _p3 or _p2 == _p3:
-            _xi, _yi = _p3.getCoords()
-        elif _p1 == _p4 or _p2 == _p4:
-            _xi, _yi = _p4.getCoords()
-        else:
-            _rn = rnum(_p1, _p2, _p3, _p4)
-            if abs(_rn) > 1e-10: # NOT colinear
-                _r = _rn/_d
-                _p1x, _p1y = _p1.getCoords()
-                _p2x, _p2y = _p2.getCoords()
-                _xi = _p1x + _r * (_p2x - _p1x)
-                _yi = _p1y + _r * (_p2y - _p1y)
-        if _xi is not None and _yi is not None:
-            ipts.append((_xi, _yi))
-#
-# set segment intersecting function
-#
-
-def _segment_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func = _seg_seg_intersection
-    elif isinstance(objb, Arc):
-        _func = _seg_arc_intersection
-    elif isinstance(objb, CCircle):
-        _func = _seg_circ_intersection
-    elif isinstance(objb, HCLine):
-        _func = _seg_hcl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _seg_vcl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _seg_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _seg_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# set circle intersecting function
-#
-
-def _circ_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func = _seg_circ_intersection
-    elif isinstance(objb, Arc):
-        _func = _circ_arc_intersection
-    elif isinstance(objb, CCircle):
-        _func = _circ_circ_intersection
-    elif isinstance(objb, HCLine):
-        _func = _circ_hcl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _circ_vcl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _circ_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _circ_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# set arc intersecting function
-#
-
-def _arc_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func  = _seg_arc_intersection
-    elif isinstance(objb, Arc):
-        _func = _arc_arc_intersection
-    elif isinstance(objb, ccircle.CCircle):
-        _func = _circ_arc_intersection
-    elif isinstance(objb, HCLine):
-        _func = _arc_hcl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _arc_vcl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _arc_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _arc_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# set hcline intersecting function
-#
-
-def _hcline_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func  = _seg_hcl_intersection
-    elif isinstance(objb, Arc):
-        _func = _arc_hcl_intersection
-    elif isinstance(objb,  ccircle.CCircle):
-        _func = _circ_hcl_intersection
-    elif isinstance(objb, HCLine):
-        _func = _non_intersecting
-    elif isinstance(objb, VCLine):
-        _func =_hcl_vcl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _hcl_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _hcl_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# set vcline intersecting function
-#
-
-def _vcline_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func  = _seg_vcl_intersection
-    elif isinstance(objb, Arc):
-        _func = _arc_vcl_intersection
-    elif isinstance(objb, ccircle.CCircle):
-        _func = _circ_vcl_intersection
-    elif isinstance(objb,HCLine):
-        _func = _hcl_vcl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _non_intersecting
-    elif isinstance(objb, ACLine):
-        _func = _vcl_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _vcl_cl_intersection
-    return _func
-
-#
-# set acline intersecting function
-#
-
-def _acline_intfuncs(objb):
-    if isinstance(objb, segment.Segment):
-        _func  = _seg_acl_intersection
-    elif isinstance(objb, Arc):
-        _func = _arc_acl_intersection
-    elif isinstance(objb, CCircle):
-        _func = _circ_acl_intersection
-    elif isinstance(objb, HCLine):
-        _func = _hcl_acl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _vcl_acl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _acl_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _acl_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# set cline intersecting function
-#
-
-def _cline_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func  = _seg_cl_intersection
-    elif isinstance(objb, Arc):
-        _func = _arc_cl_intersection
-    elif isinstance(objb, ccircle.CCircle):
-        _func = _circ_cl_intersection
-    elif isinstance(objb, HCLine):
-        _func = _hcl_cl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _vcl_cl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _acl_cl_intersection
-    elif isinstance(objb, CLine):
-        _func = _cl_cl_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-
-#
-# intersection functions for polylines
-#
-def  _polyline_intfuncs(objb):
-    if isinstance(objb, Segment):
-        _func = _pol_seg_intersection
-    elif isinstance(objb, Arc):
-        _func = _pol_arc_intersection
-    elif isinstance(objb, CCircle):
-        _func = _pol_circ_intersection
-    elif isinstance(objb, HCLine):
-        _func = _pol_hcl_intersection
-    elif isinstance(objb, VCLine):
-        _func = _pol_vcl_intersection
-    elif isinstance(objb, ACLine):
-        _func = _pol_acl_intersection
-    elif isinstance(objb, CLine):
-        _func = _pol_cl_intersection
-    elif isinstance(objb,Polyline):
-        _func = _pol_pol_intersection
-    else:
-        _func = _null_intfunc
-    return _func
-    
-def _pol_seg_intersection(ipts, pol, seg):
+def _seg_pol_intersection(ipts, pol, arc):
     """
         calculate the intersection beteen polyline and segment
     """
@@ -1106,7 +531,8 @@ def _pol_seg_intersection(ipts, pol, seg):
         if len(tempIpts)>0: 
             ipts=tempIpts
             break
-def _pol_arc_intersection(ipts, pol, arc):
+            
+def _arc_pol_intersection(ipts, pol, arc):
     """
         calculate the intersection beteen polyline and arc
     """
@@ -1116,7 +542,7 @@ def _pol_arc_intersection(ipts, pol, arc):
         if len(tempIpts)>0: 
             ipts=tempIpts
             break
-def _pol_circ_intersection(ipts, pol, cci):
+def _ccir_pol_intersection(ipts, pol, cci):
     """
         calculate the intersection beteen polyline and construction circle
     """
@@ -1126,28 +552,8 @@ def _pol_circ_intersection(ipts, pol, cci):
         if len(tempIpts)>0: 
             ipts=tempIpts
             break
-def _pol_hcl_intersection(ipts, pol, hcl):
-    """
-        calculate the intersection beteen polyline and horizontal construction line
-    """
-    for seg in pol.getSegments():
-        tempIpts=[]
-        _seg_hcl_intersection(tempipts,  seg, hcl)
-        if len(tempIpts)>0: 
-            ipts=tempIpts
-            break
     
-def _pol_vcl_intersection(ipts, pol, vcl):
-    """"
-        calculate the intersection beteen polyline and vertical construction line
-    """
-    for seg in pol.getSegments():
-        tempIpts=[]
-        _seg_vcl_intersection(tempipts,  seg,  vcl)
-        if len(tempIpts)>0: 
-            ipts=tempIpts
-            break
-def _pol_acl_intersection(ipts, pol, acl):
+def _acl_pol_intersection(ipts, pol, acl):
     """
         calculate the intersection beteen polyline and angular construction line
     """
@@ -1158,19 +564,17 @@ def _pol_acl_intersection(ipts, pol, acl):
             ipts=tempIpts
             break
 
-def _pol_cl_intersection(ipts, pol, cl):
+def _eli_pol_intersection(ipts, pol, eli):
     """
-        calculate the intersection beteen polyline and Construction line
+        calculate the intersection beteen polyline and ellipse
     """
     for seg in pol.getSegments():
         tempIpts=[]
-        _seg_cl_intersection(tempipts,  seg,  cl)
+        _seg_eli_intersection(tempipts,  seg,  eli)
         if len(tempIpts)>0: 
             ipts=tempIpts
             break
-    
 
-    
 def _pol_pol_intersection(ipts, pol1, pol2):
     """
         found an intersection between polyline and other object
@@ -1184,7 +588,128 @@ def _pol_pol_intersection(ipts, pol1, pol2):
                     if len(tempIpts)>0: 
                         ipts=tempIpts
                         break
+#
+# set segment intersecting function
+#
 
+def _segment_intfuncs(objb):
+    if isinstance(objb, Segment):
+        _func = _seg_seg_intersection
+    elif isinstance(objb, Arc):
+        _func = _seg_arc_intersection
+    elif isinstance(objb, CCircle):
+        _func = _seg_circ_intersection
+    elif isinstance(objb, ACLine):
+        _func = _seg_acl_intersection
+    elif isinstance(objb, Ellipse):
+        _func = _seg_eli_intersection
+    elif isinstance(objb, Polyline):
+        _func = _seg_pol_intersection
+    else:
+        _func = _null_intfunc
+    return _func
+
+#
+# set circle intersecting function
+#
+
+def _circ_intfuncs(objb):
+    if isinstance(objb, Segment):
+        _func = _seg_circ_intersection
+    elif isinstance(objb, Arc):
+        _func = _circ_arc_intersection
+    elif isinstance(objb, ACLine):
+        _func = _circ_acl_intersection
+    elif isinstance(objb, Ellipse):
+        _func = _circ_eli_intersection
+    elif isinstance(objb, Polyline):
+        _func = _circ_pol_intersection
+    elif isinstance(objb, CCircle):
+        _func = _circ_circ_intersection
+    else:
+        _func = _null_intfunc
+    return _func
+
+#
+# set arc intersecting function
+#
+
+def _arc_intfuncs(objb):
+    if isinstance(objb, Segment):
+        _func  = _seg_arc_intersection
+    elif isinstance(objb, ccircle.CCircle):
+        _func = _circ_arc_intersection
+    elif isinstance(objb, ACLine):
+        _func = _arc_acl_intersection
+    elif isinstance(objb, Ellipse):
+        _func = _arc_eli_intersection
+    elif isinstance(objb, Polyline):
+        _func = _arc_pol_intersection
+    elif isinstance(objb, Arc):
+        _func = _arc_arc_intersection
+    else:
+        _func = _null_intfunc
+    return _func
+
+#
+# set acline intersecting function
+#
+
+def _acline_intfuncs(objb):
+    if isinstance(objb, segment.Segment):
+        _func  = _seg_acl_intersection
+    elif isinstance(objb, Arc):
+        _func = _arc_acl_intersection
+    elif isinstance(objb, CCircle):
+        _func = _circ_acl_intersection
+    elif isinstance(objb, Ellipse):
+        _func = _acl_eli_intersection
+    elif isinstance(objb, Polyline):
+        _func = _acl_pol_intersection
+    elif isinstance(objb, ACLine):
+        _func = _acl_acl_intersection
+    else:
+        _func = _null_intfunc
+    return _func
+#
+# Intersection with ellipse
+#
+
+def  _ellipse_intfuncs(objb):
+    if isinstance(objb, Segment):
+        _func = _seg_eli_intersection
+    elif isinstance(objb, Arc):
+        _func = _arc_eli_intersection
+    elif isinstance(objb, CCircle):
+        _func = _circ_eli_intersection
+    elif isinstance(objb, ACLine):
+        _func = _acl_eli_intersection
+    elif isinstance(objb,Polyline):
+        _func = _pol_eli_intersection
+    elif isinstance(objb,Polyline):
+        _func = _eli_eli_intersection
+    else:
+        _func = _null_intfunc
+    return _func
+#
+# intersection functions for polylines
+#
+def  _polyline_intfuncs(objb):
+    if isinstance(objb, Segment):
+        _func = _seg_pol_intersection
+    elif isinstance(objb, Arc):
+        _func = _arc_pol_intersection
+    elif isinstance(objb, CCircle):
+        _func = _ccir_pol_intersection
+    elif isinstance(objb, ACLine):
+        _func = _acl_pol_intersection
+    elif isinstance(objb, Ellipse):
+        _func = _eli_pol_intersection
+    elif isinstance(objb,Polyline):
+        _func = _pol_pol_intersection
+    else:
+        _func = _null_intfunc
+    return _func
 
 def _get_intfunc(obja, objb):
     if isinstance(obja, Segment):
@@ -1193,16 +718,12 @@ def _get_intfunc(obja, objb):
         _intfunc = _arc_intfuncs(objb)
     elif isinstance(obja, CCircle):
         _intfunc = _circ_intfuncs(objb)
-    elif isinstance(obja, HCLine):
-        _intfunc = _hcline_intfuncs(objb)
-    elif isinstance(obja, VCLine):
-        _intfunc = _vcline_intfuncs(objb)
     elif isinstance(obja, ACLine):
         _intfunc = _acline_intfuncs(objb)
-    elif isinstance(obja, CLine):
-        _intfunc = _cline_intfuncs(objb)
     elif isinstance(obja, Polyline):
         _intfunc = _polyline_intfuncs(objb)
+    elif isinstance(obja, Ellipse):
+        _intfunc = _ellipse_intfuncs(objb)
     else:
         _intfunc = _null_intfunc
     return _intfunc
@@ -1223,8 +744,10 @@ def find_segment_extended_intersection(obja, objb):
     """
     if isinstance(obja, Segment):
         p1, p2=obja.getEndpoints()
-        obja=CLine(p1, p2)
+        v=Vector(p1, p2)
+        obja=ACLine(p1, v.ang())
     if isinstance(objb, Segment):
         p1, p2=objb.getEndpoints()
-        objb=CLine(p1, p2)
+        v=Vector(p1, p2)
+        objb=ACLine(p1, v.ang())
     return find_intersections(obja, objb)

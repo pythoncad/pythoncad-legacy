@@ -26,7 +26,7 @@ from __future__ import generators
 import math
 
 from Kernel.GeoEntity.geometricalentity  import *
-from Kernel.GeoUtil.util               import *
+from Kernel.GeoUtil.util                 import *
 
 class Point(GeometricalEntity):
     """
@@ -223,3 +223,16 @@ class Point(GeometricalEntity):
         xDist=x-self.__x
         yDist=y-self.__y
         return math.sqrt(pow(xDist,2)+pow(yDist,2))
+
+    def getSympy(self):
+        """
+            get the sympy object
+        """
+        return geoSympy.Point(self.__x, self.__y)
+        
+    def setFromSympy(self, sympyPoint):    
+        """
+            update the points cord from a sympyobject
+        """
+        self.__x=sympyPoint[0]
+        self.__y=sympyPoint[1]

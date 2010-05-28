@@ -15,9 +15,7 @@ sys.path.append(os.path.join(os.getcwd(), 'Generic'))
 from Interface.cadwindow import CadWindow
 
 if __name__ == '__main__':
-
     import sys
-
     app = QtGui.QApplication(sys.argv)
     mainWin = CadWindow()
     mainWin.show()
