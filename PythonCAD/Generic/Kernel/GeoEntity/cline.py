@@ -89,6 +89,12 @@ class CLine(GeometricalEntity):
         
     p2=property(getP2, setP2, None, "Set the location of the first point of the line")
 
+    def getKeypoints(self):
+        """
+            Return the 2 construction point 
+        """
+        return p1, p2
+        
     def getAngle(self):
         """
             get the getAngle 

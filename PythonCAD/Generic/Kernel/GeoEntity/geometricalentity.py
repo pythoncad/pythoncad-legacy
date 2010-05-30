@@ -115,7 +115,15 @@ class GeometricalEntityComposed(dict):
             raise TypeError, "Wrong number of items "
         for k in kw:
             if k in argNameType:
-                if isinstance(kw[k],argNameType[k]):
+                newTest=argNameType[k]
+                if isinstance(argNameType[k], tuple):
+                    if None in argNameType[k]:
+                        if kw[k] == None:
+                            self[k]=kw[k]
+                            continue
+                        else:
+                            newTest=tuple([x for x in argNameType[k] if x!=None])
+                if isinstance(kw[k],newTest):
                     self[k]=kw[k]
                 else:
                     raise TypeError, "Wrong Type for argument %s"%str(k)

@@ -1,6 +1,8 @@
 #
 # Copyright (c) 2003, 2004 Art Haas
 #
+# Copyright (c) 2010 Matteo Boscolo
+#
 # This file is part of PythonCAD.
 #
 # PythonCAD is free software; you can redistribute it and/or modify
@@ -23,9 +25,9 @@
 
 import math
 
-
-from Kernel.GeoEntity import acline
-from Kernel.GeoEntity import ccircle
+from Kernel.GeoEntity.cline import CLine
+from Kernel.GeoEntity.ccircle import CCircle
+from Kernel.exception import *
 
 #
 # common constants
@@ -34,12 +36,10 @@ from Kernel.GeoEntity import ccircle
 _dtr = math.pi/180.0
 _piover2 = math.pi/2.0
 
-#
-# find the projection point of point (x, y) on a line
-# from (x1, y1) to (x2, y2)
-#
-
 def _get_two_point_projection(x1, y1, x2, y2, x, y):
+    """
+        project a point to a segment 
+    """
     _sqlen = pow((x2 - x1), 2) + pow((y2 - y1), 2)
     _rn = ((x - x1) * (x2 - x1)) + ((y - y1) * (y2 - y1))
     _r = _rn/_sqlen
@@ -47,12 +47,11 @@ def _get_two_point_projection(x1, y1, x2, y2, x, y):
     _py = y1 + _r * (y2 - y1)
     return _px, _py
 
-#
-# find the projection point of point (x, y) on a line
-# defined by an angle and y intercept
-#
-
 def _get_angled_projection(angle, yint, x, y):
+    """
+        find the projection point of point (x, y) on a line
+        defined by an angle and y intercept
+    """
     _x1 = 0.0
     _y1 = yint
     _x2 = _x1 + math.cos(angle)
@@ -60,14 +59,12 @@ def _get_angled_projection(angle, yint, x, y):
     return _get_two_point_projection(_x1, _y1, _x2, _y2, x, y)
 
 def _two_line_tangent(x1, y1, x2, y2, x3, y3, x4, y4, x, y):
-    #
-    # this function calculates the apprpriate tangent circle
-    # for two lines (x1, y1)->(x2, y2) and (x3, y3)->(x4, y4)
-    # using a point (x, y) to determine which tangent circle
-    # should be defined
-    #
-    # test if lines are parallel
-    #
+    """
+        this function calculates the apprpriate tangent circle
+        for two lines (x1, y1)->(x2, y2) and (x3, y3)->(x4, y4)
+        using a point (x, y) to determine which tangent circle
+        should be defined
+    """
     _cx = _cy = _radius = None
     _denom = ((x2 - x1) * (y4 - y3)) - ((y2 - y1) * (x4 - x3))
     # print "denom: %g" % _denom
@@ -202,48 +199,6 @@ def _two_line_tangent(x1, y1, x2, y2, x3, y3, x4, y4, x, y):
     _radius = math.hypot((_px - _cx), (_py - _cy))
     return _cx, _cy, _radius
 
-#
-# horizontal construction line tangents
-#
-
-def _hcl_hcl_tangent(hcla, hclb, x, y):
-    _hx1, _hy1 = hcla.getLocation().getCoords()
-    _hx2, _hy2 = hclb.getLocation().getCoords()
-    if y < min(_hy1, _hy2) or y > max(_hy1, _hy2):
-        return None
-    _cx = x
-    _cy = (_hy1 + _hy2)/2.0
-    _radius = abs(_cy - _hy1)
-    return _cx, _cy, _radius
-
-def _hcl_vcl_tangent(hcl, vcl, x, y):
-    _hx, _hy = hcl.getLocation().getCoords()
-    _hx2 = _hx + 1.0
-    _vx, _vy = vcl.getLocation().getCoords()
-    _vy2 = _vy + 1.0
-    return _two_line_tangent(_hx, _hy, _hx2, _hy, _vx, _vy, _vx, _vy2, x, y)
-
-def _hcl_acl_tangent(hcl, acl, x, y):
-    _hx, _hy = hcl.getLocation().getCoords()
-    _hx2 = _hx + 1.0
-    _ax, _ay = acl.getLocation().getCoords()
-    _angle = acl.getAngle() * _dtr
-    _ax2 = _ax + math.cos(_angle)
-    _ay2 = _ay + math.sin(_angle)
-    return _two_line_tangent(_hx, _hy, _hx2, _hy, _ax, _ay, _ax2, _ay2, x, y)
-
-def _hcl_cl_tangent(hcl, cl, x, y):
-    _hx, _hy = hcl.getLocation().getCoords()
-    _hx2 = _hx + 1.0
-    _p1, _p2 = cl.getKeypoints()
-    _x1, _y1 = _p1.getCoords()
-    _x2, _y2 = _p2.getCoords()
-    return _two_line_tangent(_hx, _hy, _hx2, _hy, _x1, _y1, _x2, _y2, x, y)
-
-#
-# the HCLine-CCircle tangent circle problem has been generalized
-# to solve the {VCLine/ACLine/CLine}-CCircle tangent calculation
-#
 
 def _gen_cline_ccircle_tangent(radius, hy, x):
     #
@@ -284,148 +239,6 @@ def _gen_cline_ccircle_tangent(radius, hy, x):
     _cy = _num/_den
     _radius = abs(_cy - hy)
     return _cx, _cy, _radius
-
-def _hcl_cc_tangent(hcl, cc, x, y):
-    _hx, _hy = hcl.getLocation().getCoords()
-    # print "hy: %g" % _hy
-    _ccx, _ccy = cc.getCenter().getCoords()
-    _rad = cc.getRadius()
-    #
-    # transform the coords into system where circle center is (0,0)
-    #
-    _sep = _hy - _ccy
-    _xproj = x - _ccx
-    _tcx, _tcy, _tcrad = _gen_cline_ccircle_tangent(_rad, _sep, _xproj)
-    #
-    # transform result back into real coordinates
-    #
-    _cx = _tcx + _ccx
-    _cy = _tcy + _ccy
-    return _cx, _cy, _tcrad
-
-#
-# vertical construction line
-#
-
-def _vcl_vcl_tangent(vcl1, vcl2, x, y):
-    _vx1, _vy1 = vcl1.getLocation().getCoords()
-    _vx2, _vy2 = vcl2.getLocation().getCoords()
-    if x < min(_vx1, _vx2) or x > max(_vx1, _vx2):
-        return None
-    _cx = (_vx1 + _vx2)/2.0
-    _cy = y
-    _radius = abs(_cx - _vx1)
-    return _cx, _cy, _radius
-
-def _vcl_acl_tangent(vcl, acl, x, y):
-    _vx, _vy = vcl.getLocation().getCoords()
-    _vy2 = _vy + 1.0
-    _ax, _ay = acl.getLocation().getCoords()
-    _angle = acl.getAngle() * _dtr
-    _ax2 = _ax + math.cos(_angle)
-    _ay2 = _ay + math.sin(_angle)
-    return _two_line_tangent(_vx, _vy, _vx, _vy2, _ax, _ay, _ax2, _ay2, x, y)
-
-def _vcl_cl_tangent(hcl, cl, x, y):
-    _vx, _vy = hcl.getLocation().getCoords()
-    _vy2 = _vy + 1.0
-    _p1, _p2 = cl.getKeypoints()
-    _x1, _y1 = _p1.getCoords()
-    _x2, _y2 = _p2.getCoords()
-    return _two_line_tangent(_vx, _vy, _vx, _vy2, _x1, _y1, _x2, _y2, x, y)
-
-def _vcl_cc_tangent(vcl, cc, x, y):
-    _vx, _vy = vcl.getLocation().getCoords()
-    # print "vx: %g" % _vx
-    _ccx, _ccy = cc.getCenter().getCoords()
-    _rad = cc.getRadius()
-    #
-    # transform the coords into system where circle center is (0,0) and
-    # rotate 90 degrees
-    #
-    _sep = _vx - _ccx
-    _xproj = y - _ccy
-    _tcx, _tcy, _tcrad = _gen_cline_ccircle_tangent(_rad, _sep, _xproj)
-    #
-    # transform result back into real coordinates
-    #
-    _cx = _tcy + _ccx
-    _cy = _tcx + _ccy
-    return _cx, _cy, _tcrad
-
-#
-# angular construction line
-#
-
-def _acl_acl_tangent(acl1, acl2, x, y):
-    _ax1, _ay1 = acl1.getLocation().getCoords()
-    _angle1 = acl1.getAngle() * _dtr
-    _ax2 = _ax1 + math.cos(_angle1)
-    _ay2 = _ay1 + math.sin(_angle1)
-    _ax3, _ay3 = acl2.getLocation().getCoords()
-    _angle2 = acl2.getAngle() * _dtr
-    _ax4 = _ax3 + math.cos(_angle2)
-    _ay4 = _ay3 + math.sin(_angle2)
-    return _two_line_tangent(_ax1, _ay1, _ax2, _ay2, _ax3, _ay3, _ax4, _ay4,
-                             x, y)
-
-def _acl_cl_tangent(acl, cl, x, y):
-    _ax1, _ay1 = acl.getLocation().getCoords()
-    _angle = acl.getAngle() * _dtr
-    _ax2 = _ax1 + math.cos(_angle)
-    _ay2 = _ay1 + math.sin(_angle)
-    _p1, _p2 = cl.getKeypoints()
-    _x1, _y1 = _p1.getCoords()
-    _x2, _y2 = _p2.getCoords()
-    return _two_line_tangent(_ax1, _ay1, _ax2, _ay2, _x1, _y1, _x2, _y2, x, y)
-
-def _acl_cc_tangent(acl, cc, x, y):
-    _ax, _ay = acl.getLocation().getCoords()
-    # print "ax: %g; ay: %g" % (_ax, _ay)
-    _angle = acl.getAngle()
-    _ccx, _ccy = cc.getCenter().getCoords()
-    _rad = cc.getRadius()
-    #
-    # transform the coords into the system where the circle center is (0,0)
-    # and rotate so the ACLine is horizontal
-    #
-    _apx, _apy = acl.getProjection(_ccx, _ccy)
-    _sep = math.hypot((_apx - _ccx), (_apy - _ccy))
-    if abs(_angle) < 1e-10: # horizontal
-        _sine = 0.0
-        if _apy > _ccy: # system rotated 0.0
-            _cosine = 1.0
-        else: # system rotated 180.0
-            _cosine = -1.0
-    elif abs(abs(_angle) - 90.0) < 1e-10: # vertical
-        _cosine = 0.0
-        if _apx > _ccx: # system rotated 90.0
-            _sine = 1.0
-        else: # system rotated -90.0
-            _sine = -1.0
-    else:
-        _angle = _piover2 - math.atan2((_apy - _ccy), (_apx - _ccx))
-        _sine = math.sin(_angle)
-        _cosine = math.cos(_angle)
-    #
-    # transform (x, y)
-    #
-    _tx1 = x - _ccx
-    _ty1 = y - _ccy
-    #
-    # transform by rotating through _negative_ angle to
-    # map to horizontal line
-    #
-    _tx = (_tx1 * _cosine) - (_ty1 * _sine)
-    _ty = (_tx1 * _sine) + (_ty1 * _cosine)
-    _tcx, _tcy, _tcrad = _gen_cline_ccircle_tangent(_rad, _sep, _tx)
-    #
-    # transform result back into real coordinates
-    #
-    _cx = ((_tcx * _cosine) + (_tcy * _sine)) + _ccx
-    _cy = (-(_tcx * _sine) + (_tcy * _cosine)) + _ccy
-    return _cx, _cy, _tcrad
-
 #
 # two-point construction line
 #
@@ -445,9 +258,9 @@ def _cl_cc_tangent(cl, cc, x, y):
     # print "x1: %g; y1: %g" % (_x1, _y1)
     _x2, _y2 = _p2.getCoords()
     # print "x2: %g; y2: %g" % (_x2, _y2)
-    _ccx, _ccy = cc.getCenter().getCoords()
+    _ccx, _ccy = cc.center.getCoords()
     # print "ccx: %g; ccy: %g" % (_ccx, _ccy)
-    _rad = cc.getRadius()
+    _rad = cc.radius
     #
     # transform the coords into the system where the circle center is (0,0)
     # and rotate so the CLine is horizontal
@@ -509,61 +322,17 @@ def calc_tangent_circle(obja, objb, x, y):
     if not isinstance(_y, float):
         _y = float(y)
     _tandata = None
-    if isinstance(obja, hcline.HCLine):
-        if isinstance(objb, hcline.HCLine):
-            _tandata = _hcl_hcl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, vcline.VCLine):
-            _tandata = _hcl_vcl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, acline.ACLine):
-            _tandata = _hcl_acl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, cline.CLine):
-            _tandata = _hcl_cl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, ccircle.CCircle):
-            _tandata = _hcl_cc_tangent(obja, objb, _x, _y)
-    elif isinstance(obja, vcline.VCLine):
-        if isinstance(objb, hcline.HCLine):
-            _tandata = _hcl_vcl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, vcline.VCLine):
-            _tandata = _vcl_vcl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, acline.ACLine):
-            _tandata = _vcl_acl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, cline.CLine):
-            _tandata = _vcl_cl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, ccircle.CCircle):
-            _tandata = _vcl_cc_tangent(obja, objb, _x, _y)
-    elif isinstance(obja, acline.ACLine):
-        if isinstance(objb, hcline.HCLine):
-            _tandata = _hcl_acl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, vcline.VCLine):
-            _tandata = _vcl_acl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, acline.ACLine):
-            _tandata = _acl_acl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, cline.CLine):
-            _tandata = _acl_cl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, ccircle.CCircle):
-            _tandata = _acl_cc_tangent(obja, objb, _x, _y)
-    elif isinstance(obja, cline.CLine):
-        if isinstance(objb, hcline.HCLine):
-            _tandata = _hcl_cl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, vcline.VCLine):
-            _tandata = _vcl_cl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, acline.ACLine):
-            _tandata = _acl_cl_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, cline.CLine):
+    if isinstance(obja, CLine):
+        if isinstance(objb, CLine):
             _tandata = _cl_cl_tangent(obja, objb, _x, _y)
-        elif isinstance(objb, ccircle.CCircle):
+        elif isinstance(objb, CCircle):
             _cl_cc_tangent(obja, objb, _x, _y)
-    elif isinstance(obja, ccircle.CCircle):
-        if isinstance(objb, hcline.HCLine):
-            _tandata = _hcl_cc_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, vcline.VCLine):
-            _tandata = _vcl_cc_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, acline.ACLine):
-            _tandata = _acl_cc_tangent(objb, obja, _x, _y)
-        elif isinstance(objb, cline.CLine):
+    elif isinstance(obja, CCircle):
+        if isinstance(objb, CLine):
             _tandata = _cl_cc_tangent(objb, obja, _x, _y)
         else:
-            pass # CCircle/CCircle tangent circles to do later ...
+            raise NotImplementedError, "We must define the ccircle ccircle tangent"
+            # CCircle/CCircle tangent circles to do later ...
     return _tandata
 
 #

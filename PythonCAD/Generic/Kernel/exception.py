@@ -22,6 +22,24 @@
 # This  module Provide custom exception for the db module and kernel
 #
 
+class NotImplementedError(Exception):
+    """
+        Thi means that the followeing method is not yet implemented
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+        
+class DeprecatedError(Exception):
+    """
+        Thi means that the followeing method is no longer supported
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+        
 class StructuralError(Exception):
     """
         Very bad error that menans that the kernel has made somthing very bad 

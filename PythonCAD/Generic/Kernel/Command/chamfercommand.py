@@ -23,7 +23,7 @@
 from Kernel.exception                      import *
 from Kernel.composedentity                 import ComposedEntity
 from Kernel.Command.basecommand            import *
-from Kernel.GeoComposedEntity.objoint      import Chamfer
+from Kernel.GeoComposedEntity.chamfer      import Chamfer
 from Kernel.GeoEntity.segment              import Segment
 
 
@@ -38,13 +38,15 @@ class ChamferCommand(BaseCommand):
                         ExcLenght, 
                         ExcLenght, 
                         ExcPoint, 
-                        ExcPoint ]
-        self.message=[  "Give Me the first  Entity ID", 
-                        "Give Me the second Entity ID", 
-                        "Give Me the first Lenght", 
-                        "Give Me the seconf Lenght", 
+                        ExcPoint, 
+                        ExcText ]
+        self.message=[  "Give me the first  Entity ID", 
+                        "Give me the second Entity ID", 
+                        "Give me the first Lenght", 
+                        "Give me the seconf Lenght", 
                         "Give me the first point near the first entity",
-                        "Give me the second point near the second entity"]
+                        "Give me the second point near the second entity", 
+                        "Give me trim Mode"]
     def getEntsToSave(self):
         """
             get the chamfer segments
@@ -64,7 +66,8 @@ class ChamferCommand(BaseCommand):
              "CHAMFER_2":self.value[2], 
              "CHAMFER_3":self.value[3], 
              "CHAMFER_4":self.value[4], 
-             "CHAMFER_5":self.value[5]
+             "CHAMFER_5":self.value[5], 
+             "CHAMFER_6":self.value[6]
              }
 
         cmf=Chamfer(arg)
@@ -85,7 +88,7 @@ class ChamferCommand(BaseCommand):
         """
             apply the champfer command
         """
-        if len(self.value)!=6:
+        if len(self.value)!=7:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         
         try:

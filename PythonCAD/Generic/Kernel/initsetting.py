@@ -47,11 +47,12 @@ from Kernel.GeoEntity.arc          import Arc
 from Kernel.GeoEntity.ellipse      import Ellipse
 from Kernel.GeoEntity.polyline     import Polyline
 from Kernel.GeoEntity.style        import Style 
-from Kernel.GeoEntity.cline       import CLine
+from Kernel.GeoEntity.cline        import CLine
 from Kernel.GeoEntity.ccircle      import CCircle
 from Kernel.GeoEntity.text         import Text
 
-from Kernel.GeoComposedEntity.objoint import Fillet, Chamfer
+from Kernel.GeoComposedEntity.chamfer   import Chamfer
+from Kernel.GeoComposedEntity.fillet    import Fillet
 #
 # db Ent
 #

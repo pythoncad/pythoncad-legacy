@@ -562,4 +562,5 @@ class EasyTest(BaseCommand):
         cObject[keys[3]]=2
         cObject[keys[4]]=None
         cObject[keys[5]]=None
+        cObject[keys[6]]="FIRST"
         cObject.applyCommand()
