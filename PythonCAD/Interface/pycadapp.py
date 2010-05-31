@@ -91,7 +91,8 @@ class PyCadApp(object):
         '''
         if not PyCadApp.__application is None:
             PyCadApp.__application.newDocument()
-        return
+            return PyCadApp.__application.getActiveDocument()
+        return None
     
 
     @staticmethod

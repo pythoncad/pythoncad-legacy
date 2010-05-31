@@ -25,16 +25,13 @@
 
 from math import hypot, fmod, atan2, sin, cos, pi
 
-from Kernel.Entity.util     import *
-from Kernel.Entity.point    import Point
-from Kernel.Entity.segment  import Segment
-from Kernel.Entity.arc      import Arc
-from Kernel.Entity.hcline   import HCLine
-from Kernel.Entity.vcline   import VCLine
-from Kernel.Entity.acline   import ACLine
-from Kernel.Entity.cline    import CLine
-from Kernel.Entity.ccircle  import CCircle
-from Kernel.Entity.polyline import Polyline
+from Kernel.GeoEntity.util     import *
+from Kernel.GeoEntity.point    import Point
+from Kernel.GeoEntity.segment  import Segment
+from Kernel.GeoEntity.arc      import Arc
+from Kernel.GeoEntity.cline    import CLine
+from Kernel.GeoEntity.ccircle  import CCircle
+from Kernel.GeoEntity.polyline import Polyline
 
 
 #from PythonCAD.Generic.segjoint import Chamfer, Fillet
@@ -127,93 +124,14 @@ def _used_by(obj, plist):
     return _objpt
     
 def _can_move(obj, objdict):
+    raise DeprecatedError,"The can move have no more relevance from Version R38"
     for _user in obj.getUsers():
         if id(_user) not in objdict:
             return False
     return True
 
-def _rotate_acline(obj, objdict, cx, cy, ra):
-    _layer = obj.getParent()
-    if _layer is None:
-        raise RuntimeError, "ACLine parent is None"
-    _lp = obj.getLocation()
-    if _lp.getParent() is not _layer:
-        raise RuntimeError, "ACLine/Point parent object conflict!"
-    _x, _y = _calc_coords(_lp, cx, cy, ra)
-    _pts = _layer.find('point', _x, _y)
-    if len(_pts) == 0:
-        _np = Point(_x, _y)
-        _layer.addObject(_np)
-    else:
-        _np = _most_used(_pts)
-    _racl = (obj.getAngle() * _dtr) + ra
-    obj.setLocation(_np)
-    obj.setAngle(_racl/_dtr)
-    if _adjust_dimension(_lp, _np):
-        _layer.delObject(_lp)
-    _pid = id(_lp)
-    if objdict.get(_pid) is not False:
-        objdict[_pid] = False
 
-def _rotate_vcline(obj, objdict, cx, cy, ra):
-    _layer = obj.getParent()
-    if _layer is None:
-        raise RuntimeError, "VCLine parent is None"
-    _lp = obj.getLocation()
-    if _lp.getParent() is not _layer:
-        raise RuntimeError, "VCLine/Point parent object conflict!"
-    _x, _y = _calc_coords(_lp, cx, cy, ra)
-    _pts = _layer.find('point', _x, _y)
-    if len(_pts) == 0:
-        _np = Point(_x, _y)
-        _layer.addObject(_np)
-    else:
-        _np = _most_used(_pts)
-    _da = ra/_dtr
-    if abs(fmod(_da, 180)) < 1e-10:
-        obj.setLocation(_np)
-        if _adjust_dimension(_lp, _np):
-            _layer.delObject(_lp)
-    elif abs(fmod(_da, 90.0)) < 1e-10:
-        _layer.addObject(HCLine(_np))
-        if _adjust_dimension(_lp, _np):
-            _layer.delObject(obj)
-    else:
-        _layer.addObject(ACLine(_np, _da))
-        _layer.delObject(obj)
-    _pid = id(_lp)
-    if objdict.get(_pid) is not False:
-        objdict[_pid] = False
 
-def _rotate_hcline(obj, objdict, cx, cy, ra):
-    _layer = obj.getParent()
-    if _layer is None:
-        raise RuntimeError, "HCLine parent is None"
-    _lp = obj.getLocation()
-    if _lp.getParent() is not _layer:
-        raise RuntimeError, "HCLine/Point parent object conflict!"
-    _x, _y = _calc_coords(_lp, cx, cy, ra)
-    _pts = _layer.find('point', _x, _y)
-    if len(_pts) == 0:
-        _np = Point(_x, _y)
-        _layer.addObject(_np)
-    else:
-        _np = _most_used(_pts)
-    _da = ra/_dtr
-    if abs(fmod(_da, 180.0)) < 1e-10:
-        obj.setLocation(_np)
-        if _adjust_dimension(_lp, _np):
-            _layer.delObject(_lp)
-    elif abs(fmod(_da, 90.0)) < 1e-10:
-        _layer.addObject(VCLine(_np))
-        if _adjust_dimension(_lp, _np):
-            _layer.delObject(obj)
-    else:
-        _layer.addObject(ACLine(_np, _da))
-        _layer.delObject(obj)
-    _pid = id(_lp)
-    if objdict.get(_pid) is not False:
-        objdict[_pid] = False
 
 def _rotate_polyline(obj, objdict, cx, cy, ra):
     _pts = obj.getPoints()

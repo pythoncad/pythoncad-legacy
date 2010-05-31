@@ -35,6 +35,7 @@ from Kernel.exception           import *
 from Kernel.document            import *
 from Kernel.Command             import *
 
+
 class Application(object):
     """
         this class provide the real pythoncad api interface ..
@@ -201,15 +202,17 @@ class Application(object):
         """
         apObj=self.kernel.getApplicationSetting()
         apObj.setConstructionElement(settingObj)
-        self.kernel.savePyCadEnt(apObj)
-    
-    
+        self.kernel.savePyCadEnt(apObj)  
+
 if __name__=='__main__':
+    import application_test  as test
     app= Application()
     doc=app.newDocument()
-    doc.importExternalFormat('C:\Users\mboscolo\Desktop\jettrainer.dxf')
-    segments=doc.getEntityFromType("SEGMENT")
-    print len(segments)
-    
+    #doc.importExternalFormat('C:\Users\mboscolo\Desktop\jettrainer.dxf')
+    #segments=doc.getEntityFromType("SEGMENT")
+    #print len(segments)
+    #test.TestSympy()
+    test.TestIntersection()
+ 
     
     

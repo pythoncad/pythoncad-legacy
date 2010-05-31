@@ -22,19 +22,19 @@
 #
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.acline           import ACLine
+from Kernel.GeoEntity.cline           import CLine
 
-class ACLineCommand(BaseCommand):
+class CLineCommand(BaseCommand):
     """
         this class rappresent the segment command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcPoint, ExcAngle]
-        self.message=["Give Me the first Point","Give Me The angle"]
+        self.exception=[ExcPoint, ExcPoint]
+        self.message=["Give Me the first Point","Give Me the first Point"]
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        arg={"ACLINE_0":self.value[0],"ACLINE_0":self.value[1] }
-        acline=ACLine(arg)
-        self.document.saveEntity(acline)
+        arg={"CLINE_0":self.value[0],"CLINE_0":self.value[1] }
+        cline=CLine(arg)
+        self.document.saveEntity(cline)

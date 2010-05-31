@@ -26,7 +26,7 @@ from __future__ import generators
 import math
 
 from Kernel.GeoEntity.geometricalentity  import *
-from Kernel.GeoUtil.util               import *
+from Kernel.GeoUtil.util                 import *
 
 class Point(GeometricalEntity):
     """
@@ -120,8 +120,15 @@ class Point(GeometricalEntity):
         """
             Get the construction element of entity..
         """
-        return {"POINT_1":self.__x, "POINT_2":self.__y}
+        return {"POINT_0":self.__x, "POINT_1":self.__y}
     
+    def setConstructionElements(self, p1, p2):
+        """
+            Set the construction element of entity..
+        """
+        self__x=p1
+        self__y=p2
+        
     def getx(self):
         """
             Return the x-coordinate of a Point.
@@ -223,3 +230,16 @@ class Point(GeometricalEntity):
         xDist=x-self.__x
         yDist=y-self.__y
         return math.sqrt(pow(xDist,2)+pow(yDist,2))
+
+    def getSympy(self):
+        """
+            get the sympy object
+        """
+        return geoSympy.Point(self.__x, self.__y)
+        
+    def setFromSympy(self, sympyPoint):    
+        """
+            update the points cord from a sympyobject
+        """
+        self.__x=sympyPoint[0]
+        self.__y=sympyPoint[1]

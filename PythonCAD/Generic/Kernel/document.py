@@ -82,6 +82,7 @@ class Document(BaseDb):
         self.__logger.debug('set events')
         self.saveEntityEvent=PyCadEvent()
         self.deleteEntityEvent=PyCadEvent()
+        self.massiveDeleteEvent=PyCadEvent()
         self.showEntEvent=PyCadEvent()
         self.hideEntEvent=PyCadEvent()
         self.updateShowEntEvent=PyCadEvent()
@@ -512,7 +513,26 @@ class Document(BaseDb):
         entity.delete()
         self.saveEntity(entity)
         self.deleteEntityEvent(self,entity)
-
+        
+    def massiveDelete(self, entityIds):
+        """
+            perform a massive delete more then one entity 
+        """
+        self.__logger.debug('massiveDelete')
+        _delEnity=[]
+        try:
+            self.startMassiveCreation()
+            for entityId in entityIds:
+                entity=self.__EntityDb.getEntityEntityId(entityId)
+                entity.delete()
+                self.saveEntity(entity)
+                _delEnity.append(entity)
+            else:    
+                self.performCommit()    
+        finally:
+            self.massiveDeleteEvent(self, _delEnity)
+            self.stopMassiveCreation()
+        
     def hideEntity(self, entity=None, entityId=None):
         """
             Hide an entity
@@ -554,7 +574,7 @@ class Document(BaseDb):
             _err={'object':extFormat, 'error':DxfReport}
             self.handledErrorEvent(self,_err)#todo : test it not sure it works
         except DxfUnsupportedFormat:
-            self.__logger.error('DxfUnsupportedFormat')
+            self.__logger.error('UnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledErrorEvent(self,_err)#todo : test it not sure it works
 

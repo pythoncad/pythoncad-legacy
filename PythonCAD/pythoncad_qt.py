@@ -20,9 +20,7 @@ from Interface.pycadapp import PyCadApp
 
 
 if __name__ == '__main__':
-
     import sys
-
     app = QtGui.QApplication(sys.argv)
     # global_cad_window is from globals
     PyCadApp.SetApplication(Application())
