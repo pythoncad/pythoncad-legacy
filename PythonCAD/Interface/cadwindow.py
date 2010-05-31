@@ -29,7 +29,7 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
-from Generic.Kernel.application     import Application
+from Generic.application     import Application
 from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView

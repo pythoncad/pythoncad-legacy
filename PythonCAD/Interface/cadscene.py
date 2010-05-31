@@ -25,7 +25,7 @@
 from PyQt4 import QtCore, QtGui
 
 
-from Interface.globals import *
+from Interface.pycadapp import PyCadApp
 from Generic.application import Application
 
 from Interface.Entity.segment   import Segment
@@ -49,107 +49,113 @@ class CadScene(QtGui.QGraphicsScene):
     
     Limits = property(__getLimits, None, None, "Gets the drawing limits")
     
-    
-#    def getApplication(self):
-#        """
-#            get The application object 
-#        """
-#        return self.__application
         
     def newDocument(self):
         """
             create an empty document in temop file
         """
-        self.__application.newDocument()
+        PyCadApp.CreateNewDocument()
         self.documentEvent()
         
+        
     def openDocument(self, filename):
+        '''
+        Open an existing drawing with name 'filename' and
+        Show this document in the graphical editor
+        '''
         if (filename != None) and (len(filename) > 0):
             # Clear the scene
             self.clear()
             # Todo : check filename
             self.__filename = filename
             # open a new kernel
-            application = Application()
-            if not application is None:
-                application.openDocument(self.__filename)
-                document = application.getActiveDocument()
+            document = PyCadApp.OpenDocument(self.__filename)
+            if not document is None:
                 self.documentEvent()
                 if document.haveDrawingEntitys():
                     # add entities to scene
                     self.populateScene(document)
-
+        
                 
     def documentEvent(self):
         """
-            set the document event
+        Initialize the document events.
         """
-        document = self.__application.getActiveDocument()
-        document.showEntEvent+=self.eventShow
-        document.updateShowEntEvent+=self.eventUpdate
-        document.deleteEntityEvent+=self.eventDelete
-        document.undoRedoEvent+=self.eventUndoRedo
+        document = PyCadApp.ActiveDocument()
+        if not document is None:
+            document.showEntEvent+=self.eventShow
+            document.updateShowEntEvent+=self.eventUpdate
+            document.deleteEntityEvent+=self.eventDelete
+            document.undoRedoEvent+=self.eventUndoRedo
         
 
     def importDocument(self, filename):        
         """
-            import a doc in the file
+        Import a doc in the file
         """
         if (filename != None) and (len(filename) > 0):
-            appl = Application()
-            if not appl is None:
-                doc = appl.getActiveDocument()
-                if doc:
-                    doc.importExternalFormat(filename)
-                    if doc.haveDrawingEntitys():
-                        # add entities to scene
-                        self.populateScene(doc)
-                else:
-                    critical("No document open.")
+            document = PyCadApp.ActiveDocument()
+            if not document is None:
+                document.importExternalFormat(filename)
+                if document.haveDrawingEntitys():
+                    # add entities to scene
+                    self.populateScene(document)
             else:
-                critical("No application constructed.")
+                PyCadApp.critical("No document open.")
         return
               
                 
-    def saveAs(self, fileName):            
+    def saveAs(self, filename):            
         """
-            save in a different location the current file
+        Save the current document under an different name.
         """
-        document=self.__application.saveAs(fileName)
-        self.documentEvent()
-        if document.haveDrawingEntitys():
-            # add entities to scene
-            self.populateScene(document)
+        application = PyCadApp.Application()
+        if not application is None:
+            document = application.saveAs(filename)
+            if not document is None:
+                self.documentEvent()
+                if document.haveDrawingEntitys():
+                    # add entities to scene
+                    self.populateScene(document)
+            
             
     def closeDocument(self):
+        '''
+        Close the current open document.
+        '''
         if self.__filename != None:
             # close document from kernel
-            appl = Application()
-            if appl:
-                appl.closeDocument(self.__filename)
+            application = PyCadApp.Application()
+            if not application is None:
+                application.closeDocument(self.__filename)
                 # remove all items from the scene
                 self.clear()
                 # reset filename
                 self.__filename = None
-                #looking if there is other document in the appl
-                document=appl.getActiveDocument()
+                # looking if there is other document in the application
+                document = PyCadApp.ActiveDocument()
                 if document:
                     if document.haveDrawingEntitys():
                         # add entities to scene
                         self.populateScene(document) 
         else:
+            # erase all entities
             self.clear()
         return
 
             
     def populateScene(self, document):
+        '''
+        Traverse all entities in the document and add these to the scene.
+        '''
         entities = document.getEntityFromType(SCENE_SUPPORTED_TYPE)
         for entity in entities:
             self.addGraficalObject(entity)
  
+ 
     def addGraficalObject(self, entity):                
         """
-            add the single object
+        Add the single object
         """
         newQtEnt=None
         entityType=entity.getEntityType()
@@ -158,30 +164,36 @@ class CadScene(QtGui.QGraphicsScene):
             self.addItem(newQtEnt)
             # adjust drawing limits
             self.updateLimits(newQtEnt.boundingRect())  
+ 
     
     def eventUndoRedo(self, document, entity):
         """
-            manage the undo redo event
+        Manage the undo redo event
         """
         self.clear()
         self.populateScene(document)
 
+
     def eventShow(self, document, entity):        
         """
-            manage the show entity event
+        Manage the show entity event
         """
         self.addGraficalObject(entity)
     
+    
     def eventUpdate(self, document, entity):    
         """
-            manage the Update entity event  
+        Manage the Update entity event  
         """
         self.updateItemsFromID([entity])
+    
+    
     def eventDelete(self, document, entity):    
         """
-            manage the Delete entity event
+        Manage the Delete entity event
         """
         self.deleteEntity([entity])
+ 
         
     def deleteEntity(self, entitys):
         """
@@ -214,10 +226,11 @@ class CadScene(QtGui.QGraphicsScene):
     
     def updateItemsFromID(self,entitys):
         """
-            update the scene from the Entity []
+        Update the scene from the Entity []
         """
         dicItems=dict([( item.ID, item)for item in self.items()])
         for ent in entitys:
             if ent.getId() in dicItems:
                 self.removeItem(dicItems[ent.getId()])
                 self.addGraficalObject(ent)
+                

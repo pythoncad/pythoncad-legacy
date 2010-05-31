@@ -5,8 +5,7 @@ import sip
 sip.setapi('QString', 2)
 
 from PyQt4 import QtCore, QtGui
-from Interface.globals import *
-from Interface.globals import Application
+from Interface.pycadapp import PyCadApp
 
 
 class LayerDock(QtGui.QDockWidget):
@@ -32,7 +31,7 @@ class LayerDock(QtGui.QDockWidget):
         Show all layers from the kernel in the control
         '''
         # application object from the kernel
-        appl = Application()
+        appl = getApplication()
         if appl:
             doc = appl.getActiveDocument()
             if doc:
@@ -51,7 +50,7 @@ class LayerDock(QtGui.QDockWidget):
                 parent, children = layers[layer]
                 # add parent to the tree
                 
-                print '.'*indent + 'Layer Id: %s Name : %s'%(str(l) , str(parent.name))
+                
                 # add child layers to the tree
                 self._populateLayerCtrl(item, children)        
         return
