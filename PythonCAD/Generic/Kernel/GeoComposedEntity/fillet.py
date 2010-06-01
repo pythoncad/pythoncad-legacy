@@ -25,6 +25,8 @@
 
 from Kernel.GeoComposedEntity.objoint import *
 
+_dtr = 180.0/pi
+
 class Fillet(ObjectJoint):
     """
         A fillet is a curved joining of two Entity Object. For a filleted
@@ -35,24 +37,18 @@ class Fillet(ObjectJoint):
     """
     def __init__(self, kw):
         """
-            "FILLET_0" obj1             :(Segment ,ACLine,Arc,CCircle)
-            "FILLET_1" obj2             :(Segment ,ACLine,Arc,CCircle)
-            "FILLET_2" radius           :Radius of the Fillet
-            "FILLET_3" pointClick1      :Clicked point from the u.i near the obj1
-            "FILLET_4" pointClick2      :Clicked point from the u.i near the obj2
-            "FILLET_5" str              :Filelt Trim Mode (FIRST,SECOND,BOTH,NO_TRIM)
+            "OBJECTJOINT_0" obj1             :(Segment ,ACLine,Arc,CCircle)
+            "OBJECTJOINT_1" obj2             :(Segment ,ACLine,Arc,CCircle)
+            "OBJECTJOINT_2" pointClick1      :Clicked point from the u.i near the obj1
+            "OBJECTJOINT_3" pointClick2      :Clicked point from the u.i near the obj2
+            "OBJECTJOINT_4" str              :Fillet Trim Mode (FIRST,SECOND,BOTH,NO_TRIM)
+            "OBJECTJOINT_5" radius           :Radius of the Fillet
         """
-        wkp={}
-        wkp["OBJECTJOINT_0"]=kw["FILLET_0"]
-        wkp["OBJECTJOINT_1"]=kw["FILLET_1"]        
-        wkp["OBJECTJOINT_3"]=kw["FILLET_5"]
-        wkp["OBJECTJOINT_4"]=kw["FILLET_4"]
-        wkp["OBJECTJOINT_5"]=kw["FILLET_5"]
-        ObjectJoint.__init__(self, wkp)
-        for k in kw:
-            self[k]=kw[k]
+        argDes={"OBJECTJOINT_5":(float, int)}
+        ObjectJoint.__init__(self, kw, argDes)
         self._calculateLimits()
         _rmin, _rmax = self.getRadialLimits()
+        _r=self.radius
         if _r < _rmin or _r > _rmax:
             raise ValueError, "Invalid radius: %g" % _r
         self.__center = (0.0, 0.0)
@@ -62,47 +58,47 @@ class Fillet(ObjectJoint):
         """
             Get The point to move
         """
-        if not isinstance(obj, (Segment, CLine)):
+        if not isinstance(obj, (Segment, CLine, )):
             raise ArithmeticError, "obj must be of CLine,Segment"
-        p1, p2  =   obj.getCoords()
+        p1, p2  =  obj.getKeypoints()
         if objP:
             if p1.dist(objP)>p2.dist(objP):
                 return p2
             else:
                 return p1
         else:
-            pi=self._intersectionPoints[0]
+            pi=self.getIntersection()[0]
             if p1.dist(pi)>p2.dist(pi):
                 return p2
             else:
                 return p1
 
-    def _getStaticPoint(selfself, obj, objP):
+    def _getStaticPoint(self, obj, objP):
         """
             Get The static point of the segment/Cline
         """
         if not isinstance(obj, (Segment, CLine)):
             raise ArithmeticError, "obj must be of CLine,Segment"
-        p1, p2  =   obj.getCoords()
+        p1, p2  =   obj.getKeypoints()
         if objP:
             if p1.dist(objP)<p2.dist(objP):
                 return p2
             else:
                 return p1
         else:
-            pi=self._intersectionPoints[0]
+            pi=self.getIntersection()[0]
             if p1.dist(pi)<p2.dist(pi):
                 return p2
             else:
                 return p1
-
-    def getRadius(self):
+    @property
+    def radius(self):
         """
             Return the Fillet radius.
         """
-        return self['FILLET_2']
-
-    def setRadius(self, r):
+        return self['OBJECTJOINT_5']
+    @radius.setter
+    def radius(self, r):
         """
             Set the Fillet radius.
             The radius should be a positive float value.
@@ -119,8 +115,6 @@ class Fillet(ObjectJoint):
             self.radius = _r
             self._calculateCenter()
             self._moveSegmentPoints()
-
-    radius = property(getRadius, setRadius, None, "Fillet radius.")
    
     def _calculateCenter(self):
         """
@@ -128,8 +122,10 @@ class Fillet(ObjectJoint):
             This method is private to the Fillet object.
         """
         _r = self.radius
-        _p1, _p3 = self.getMovingPoints()
-        _p2, _p4 = self.getFixedPoints()
+        _p1=self._getMovingPoint(self.obj1, self.pointClick1)
+        _p3=self._getMovingPoint(self.obj2, self.pointClick2)
+        _p2=self._getStaticPoint(self.obj1, self.pointClick1)
+        _p4=self._getStaticPoint(self.obj2, self.pointClick2)
         _as1 = atan2((_p2.y - _p1.y), (_p2.x - _p1.x)) # _as1 in radians
         _as2 = atan2((_p4.y - _p3.y), (_p4.x - _p3.x)) # _as2 in radians
         if abs(abs(_as1) - pi) < 1e-10:
@@ -159,7 +155,7 @@ class Fillet(ObjectJoint):
         #print "_acc: %g" % (_acc * _dtr)
         _rc = hypot((_r/tan(_acc)), _r)
         #print "_rc: %g" % _rc
-        _xi, _yi = self.getIntersection()
+        _xi, _yi = self._intersectionPoints[0].getCoords()
         _xc = _xi + _rc * cos(_acl)
         _yc = _yi + _rc * sin(_acl)
         self.__center = (_xc, _yc)
@@ -212,8 +208,9 @@ class Fillet(ObjectJoint):
                 _acc = ((pi - _amax) + (_amin + pi))/2.0
         #print "_acl: %g" % (_acl * _dtr)
         #print "_acc: %g" % (_acc * _dtr)
-        _xi, _yi = self._intersectionPoints[0]
-        _pf2=self._getStaticPoint(self.obj1, self.pointClick1)
+        _xi, _yi = self._intersectionPoints[0].getCoords()
+        _pf1=self._getStaticPoint(self.obj1, self.pointClick1)
+        _pf2=self._getStaticPoint(self.obj2, self.pointClick2)
         _p4=self._getStaticPoint(self.obj2, self.pointClick2)
         _d1 = hypot((_xi - _pf1.x), (_yi - _pf1.y))
         _d2 = hypot((_xi - _pf2.x), (_yi - _pf2.y))
@@ -242,8 +239,10 @@ class Fillet(ObjectJoint):
             Position the segment endpoints used in the Fillet.
             This method is private to the Fillet.
         """
-        _p1, _p3 = self.getMovingPoints()
-        _p2, _p4 = self.getFixedPoints()
+        _p1=self._getMovingPoint(self.obj1, self.pointClick1)
+        _p3=self._getMovingPoint(self.obj2, self.pointClick2)
+        _p2=self._getStaticPoint(self.obj1, self.pointClick1)
+        _p4=self._getStaticPoint(self.obj2, self.pointClick2)
         _xc, _yc = self.__center
         #
         # segment 1
@@ -273,7 +272,9 @@ class Fillet(ObjectJoint):
             This method returns a tuple of two floats, the first is the
             start angle of the fillet, and the second is the end angle.
         """
-        _ms1, _ms2 = self.getMovingPoints()
+        _ms1=self._getMovingPoint(self.obj1, self.pointClick1)
+        _ms2=self._getMovingPoint(self.obj2, self.pointClick2)
+
         _xc, _yc = self.__center
         _x, _y = _ms1.getCoords()
         _as1 = _dtr * atan2((_y - _yc), (_x - _xc))
@@ -322,6 +323,25 @@ class Fillet(ObjectJoint):
         #
         return in_region(_mx1, _my1, _mx2, _my2,
                               _xmin, _ymin, _xmax, _ymax)
-
+    
+    def getFilletArc(self):
+        """
+            return the fillet arc result of the filled command
+        """
+        sta, ena=self.getAngles()
+        x, y=self.__center
+        pc=Point(x, y)
+        _r=self.getRadius()
+        arg={"ARC_0":pc, "ARC_1":_r, "ARC_2":sta, "ARC_3":ena}
+        return Arc(arg)
+        
     def clone(self):
         return Fillet(self)
+    
+    def getReletedComponent(self):
+        """
+            get the releted componet from the fillet
+            usually the entity to save
+        """
+        return self.obj1, self.obj2, self.getFilletArc()
+        

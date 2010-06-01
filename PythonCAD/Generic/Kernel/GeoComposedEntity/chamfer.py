@@ -32,24 +32,18 @@ class Chamfer(ObjectJoint):
     def __init__(self, kw):
         """
             obj1, obj2, distance1, distance2, pointClick1=None, pointClick2=None
-            "CHAMFER_0" obj1        :(Segment ,ACLine)
-            "CHAMFER_1" obj2        :(Segment ,ACLine)
-            "CHAMFER_2" distance1   :Real distance from intersection point to chamfer
-            "CHAMFER_3" distance2   :Real distance from intersection point to chamfer
-            "CHAMFER_4" pointClick1 :Clicked point from the u.i near the obj1
-            "CHAMFER_5" pointClick2 :Clicked point from the u.i near the obj2
-            "CHAMFER_6" chamfer trim Mode :Trim Mode (FIRST,SECOND,BOTH,NO_TRIM)
+            "OBJECTJOINT_0" obj1        :(Segment ,ACLine)
+            "OBJECTJOINT_1" obj2        :(Segment ,ACLine)
+            "OBJECTJOINT_2" pointClick1 :Clicked point from the u.i near the obj1
+            "OBJECTJOINT_3" pointClick2 :Clicked point from the u.i near the obj2
+            "OBJECTJOINT_4" chamfer trim Mode :Trim Mode (FIRST,SECOND,BOTH,NO_TRIM)
+            "OBJECTJOINT_5" distance1   :Real distance from intersection point to chamfer
+            "OBJECTJOINT_6" distance2   :Real distance from intersection point to chamfer
         """
-        wkp={}
-        wkp["OBJECTJOINT_0"]=kw["CHAMFER_0"]
-        wkp["OBJECTJOINT_1"]=kw["CHAMFER_1"]        
-        wkp["OBJECTJOINT_3"]=kw["CHAMFER_6"]    
-        wkp["OBJECTJOINT_4"]=kw["CHAMFER_4"]
-        wkp["OBJECTJOINT_5"]=kw["CHAMFER_5"]
-
-        ObjectJoint.__init__(self, wkp)
-        for k in kw:
-            self[k]=kw[k]
+        argDes={"OBJECTJOINT_5":(float, int), 
+                "OBJECTJOINT_6":(float, int)}
+        ObjectJoint.__init__(self, kw, argDes)
+        
         for dis in (self.distance1, self.distance2):
             if dis<0.0:
                 raise StructuralError, "Distance parameter must be greater then 0"
@@ -60,23 +54,7 @@ class Chamfer(ObjectJoint):
             set the construction elements
         """
         for k in kw:
-            if k=='CHAMFER_0':
-                self["OBJECTJOINT_0"]=kw["CHAMFER_0"]
-            elif k=='CHAMFER_1':
-                self["OBJECTJOINT_1"]=kw["CHAMFER_1"]
-            else:
-                self[k]=kw[k]
-
-    def getConstructionElements(self):
-        """
-            get the constructionelement
-        """
-        newDic={}
-        i=0
-        for key in self:
-            newDic["CHAMFER_%s"%str(i)]=self[key]
-            i+=1
-        return newDic
+            self[k]=kw[k]
         
     def _UpdateChamferSegment(self):           
         """
@@ -167,7 +145,7 @@ class Chamfer(ObjectJoint):
         """
             return the distance from intersection point to chanfer start
         """
-        return self["CHAMFER_2"]
+        return self["OBJECTJOINT_2"]
         
     def setDistance2(self, distance):
         """
@@ -181,7 +159,7 @@ class Chamfer(ObjectJoint):
         """
             return the distance from intersection point to chanfer start
         """
-        return self["CHAMFER_3"]
+        return self["OBJECTJOINT_3"]
     distance1=property(getDistance1, setDistance1, None, "set the first distance") 
     distance2=property(getDistance2, setDistance2, None, "set the second distance") 
 

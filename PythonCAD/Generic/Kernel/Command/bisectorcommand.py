@@ -18,16 +18,16 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the champfer command
+#This module provide a class for the bisector command
 #
 from Kernel.exception                      import *
 from Kernel.composedentity                 import ComposedEntity
 from Kernel.Command.basecommand            import *
-from Kernel.GeoComposedEntity.chamfer      import Chamfer
+from Kernel.GeoComposedEntity.bisector     import Bisector
 from Kernel.GeoEntity.segment              import Segment
 
 
-class ChamferCommand(BaseCommand):
+class BisectorCommand(BaseCommand):
     """
         this class rappresent the champfer command
     """
@@ -36,19 +36,14 @@ class ChamferCommand(BaseCommand):
         self.exception=[ExcEntity,
                         ExcEntity, 
                         ExcPoint, 
-                        ExcPoint, 
-                        ExcText , 
-                        ExcLenght, 
-                        ExcLenght 
+                        ExcPoint,
+                        ExcLenght,  
                         ]
         self.message=[  "Give me the first  Entity ID", 
                         "Give me the second Entity ID", 
                         "Give me the first point near the first entity",
                         "Give me the second point near the second entity", 
-                        "Give me trim Mode", 
-                        "Give me the first Lenght", 
-                        "Give me the second Lenght", 
-                        ]
+                        "Give me the bisector lengh"]
     def getEntsToSave(self):
         """
             get the chamfer segments
@@ -67,22 +62,11 @@ class ChamferCommand(BaseCommand):
              "OBJECTJOINT_1":seg2,  
              "OBJECTJOINT_2":self.value[2], 
              "OBJECTJOINT_3":self.value[3], 
-             "OBJECTJOINT_4":self.value[4], 
-             "OBJECTJOINT_5":self.value[5], 
-             "OBJECTJOINT_6":self.value[6]
+             "OBJECTJOINT_5":self.value[4], 
              }
 
-        cmf=Chamfer(arg)
-        seg1Mod, seg2Mod, chamferSegment = cmf.getReletedComponent()
-        
-        _cElements1, entityType=self.document._getCelements(seg1Mod)
-        _cElements2, entityType=self.document._getCelements(seg2Mod)
-       
-        ent1.setConstructionElements(_cElements1)
-        ent2.setConstructionElements(_cElements2)
-        
-        objEnt.append(ent1)
-        objEnt.append(ent2)
+        cmf=Bisector(arg)
+        BisectorSegment = cmf.getReletedComponent()
         objEnt.append(chamferSegment)
         return objEnt
         
@@ -90,7 +74,7 @@ class ChamferCommand(BaseCommand):
         """
             apply the champfer command
         """
-        if len(self.value)!=7:
+        if len(self.value)!=5:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         
         try:

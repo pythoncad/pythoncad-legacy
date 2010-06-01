@@ -86,7 +86,13 @@ class Segment(GeometricalEntity):
             that are the endpoints of the segment.
         """
         return self.p1, self.p2
-
+        
+    def getKeypoints(self):
+        """
+            wrapper function for CLine compatibility
+        """
+        return self.getEndpoints()
+        
     def getP1(self):
         """
             Return the first endpoint Point of the Segment.
@@ -338,6 +344,14 @@ class Segment(GeometricalEntity):
         _sp1=self.p1.getSympy()
         _sp2=self.p2.getSympy()
         return geoSympy.Segment(_sp1, _sp2)
+    
+    def getSympyLine(self):    
+        """
+            Get The simpy line
+        """
+        _sp1=self.p1.getSympy()
+        _sp2=self.p2.getSympy()
+        return geoSympy.Line(_sp1, _sp2) 
         
     def setFromSympy(self, sympySegment):    
         """

@@ -18,16 +18,16 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the champfer command
+#This module provide a class for the fillet command
 #
 from Kernel.exception                      import *
 from Kernel.composedentity                 import ComposedEntity
 from Kernel.Command.basecommand            import *
-from Kernel.GeoComposedEntity.chamfer      import Chamfer
+from Kernel.GeoComposedEntity.fillet       import Fillet
 from Kernel.GeoEntity.segment              import Segment
 
 
-class ChamferCommand(BaseCommand):
+class FilletCommand(BaseCommand):
     """
         this class rappresent the champfer command
     """
@@ -37,17 +37,14 @@ class ChamferCommand(BaseCommand):
                         ExcEntity, 
                         ExcPoint, 
                         ExcPoint, 
-                        ExcText , 
-                        ExcLenght, 
-                        ExcLenght 
-                        ]
+                        ExcText, 
+                        ExcLenght]
         self.message=[  "Give me the first  Entity ID", 
                         "Give me the second Entity ID", 
                         "Give me the first point near the first entity",
                         "Give me the second point near the second entity", 
                         "Give me trim Mode", 
-                        "Give me the first Lenght", 
-                        "Give me the second Lenght", 
+                        "Give me the radius" 
                         ]
     def getEntsToSave(self):
         """
@@ -68,12 +65,11 @@ class ChamferCommand(BaseCommand):
              "OBJECTJOINT_2":self.value[2], 
              "OBJECTJOINT_3":self.value[3], 
              "OBJECTJOINT_4":self.value[4], 
-             "OBJECTJOINT_5":self.value[5], 
-             "OBJECTJOINT_6":self.value[6]
+             "OBJECTJOINT_5":self.value[5]
              }
 
-        cmf=Chamfer(arg)
-        seg1Mod, seg2Mod, chamferSegment = cmf.getReletedComponent()
+        fillet=Fillet(arg)
+        seg1Mod, seg2Mod, filletArc = fillet.getReletedComponent()
         
         _cElements1, entityType=self.document._getCelements(seg1Mod)
         _cElements2, entityType=self.document._getCelements(seg2Mod)
@@ -83,14 +79,15 @@ class ChamferCommand(BaseCommand):
         
         objEnt.append(ent1)
         objEnt.append(ent2)
-        objEnt.append(chamferSegment)
+        
+        objEnt.append(filletArc)
         return objEnt
         
     def applyCommand(self):
         """
             apply the champfer command
         """
-        if len(self.value)!=7:
+        if len(self.value)!=6:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         
         try:

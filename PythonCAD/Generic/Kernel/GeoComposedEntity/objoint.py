@@ -33,7 +33,6 @@ from Kernel.GeoEntity.arc                  import Arc
 from Kernel.GeoEntity.ccircle              import CCircle
 from Kernel.GeoUtil.geolib                 import Vector
 
-_dtr = 180.0/pi
 
 ALLOW_CHAMFER_ENTITY=(Segment, ACLine)
 
@@ -42,15 +41,19 @@ class ObjectJoint(GeometricalEntityComposed):
         A base class for chamfers and fillets
         A ObjectJoint object has the following methods:
     """
-    def __init__(self, kw):
+    def __init__(self, kw, argDes=None):
         from Kernel.initsetting import DRAWIN_ENTITY
         classNames=tuple(DRAWIN_ENTITY.keys())
         argDescription={"OBJECTJOINT_0":classNames, 
                         "OBJECTJOINT_1":classNames, 
-                        "OBJECTJOINT_3":str, 
-                        "OBJECTJOINT_4":(Point,None),  
-                        "OBJECTJOINT_5":(Point,None)
+                        "OBJECTJOINT_2":(Point,None), 
+                        "OBJECTJOINT_3":(Point,None), 
+                        "OBJECTJOINT_4":str
                         }
+        if argDes:
+            for k in argDes:
+                argDescription[k]=argDes[k]
+                
         self.trimModeKey={"FIRST":0, "SECOND":1, "BOTH":2, "NO_TRIM":3}
         GeometricalEntityComposed.__init__(self, kw, argDescription)
         self._externalIntersectio=False
@@ -59,50 +62,60 @@ class ObjectJoint(GeometricalEntityComposed):
             spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(self.obj1, self.obj2)]
             self._externalIntersectio=True
         self._intersectionPoints=spoolIntersection
-
-    def setTrimMode(self, value):
+    
+    @property
+    def trimMode(self):
         """
-            Set The trim mode
-        """    
+            trim mode for the entity
+        """
+        return self["OBJECTJOINT_4"]
+    @trimMode.setter
+    def trimMode(self, value):
         if value in self.trimModeKey:
-            self["OBJECTJOINT_3"]=value
+            self["OBJECTJOINT_4"]=value
         else:
             raise AttributeError, "Bad trim mode use FIRST SECOND BOTH NO_TRIM" 
-    def getTrimMode(self):
-        """
-            get the trim mode
-        """
-        return self["OBJECTJOINT_3"]
     
-    trimMode=property(getTrimMode, setTrimMode, None, "Trim mode for the surce entity")
-    
-    def getObj1(self):    
+    @property
+    def obj1(self):    
         """
-            get first object
+            First object
         """
         return self["OBJECTJOINT_0"]
-
-    def setObj1(self, value):
-        """
-            set the object 1
-        """
+    @obj1.setter
+    def obj1(self, value):
         self["OBJECTJOINT_0"]=value
-    
-    obj1=property(getObj1, setObj1, None, "Set/Get  The first object")
-    
-    def getObj2(self):    
+        
+    @property
+    def obj2(self):    
         """
-            get first object
+           second object
         """
         return self["OBJECTJOINT_1"]
-    def setObj2(self, value):
-        """
-            set the object 1
-        """
+    @obj2.setter
+    def obj2(self, value):
         self["OBJECTJOINT_1"]=value
-   
-    obj2=property(getObj2, setObj2, None, "Set/Get The Second object")   
-    
+        
+    @property    
+    def pointClick1(self):
+        """
+            get the clicked point
+        """
+        return self["OBJECTJOINT_2"]
+    @pointClick1.setter
+    def pointClick1(self, value):
+        self["OBJECTJOINT_2"]=value
+
+    @property  
+    def pointClick2(self):
+        """
+            get the clicked point
+        """
+        return self["OBJECTJOINT_3"]
+    @pointClick2.setter
+    def pointClick2(self, value):
+        self["OBJECTJOINT_3"]=value
+
     def getConstructionElements(self):
         """
             Return the two Entity Object joined by the ObjectJoint.
@@ -110,8 +123,8 @@ class ObjectJoint(GeometricalEntityComposed):
             by the ObjectJoint.
         """
         return self
-        
-    def getIntersection(self):
+    @property    
+    def intersection(self):
         """
             Return the intersection points of the ObjectJoint Entity Object.
 
@@ -125,27 +138,6 @@ class ObjectJoint(GeometricalEntityComposed):
             return the releted compont of the ObjectJoint
         """
         return self.getConstructionElements()
-    def getPointClick1(self):
-        """
-            get the clicked point
-        """
-        return self["OBJECTJOINT_4"]
-    def setPointClick1(self, value):
-        """
-            set the clicked point
-        """
-        self["OBJECTJOINT_4"]=value
-    def getPointClick2(self):
-        """
-            get the clicked point
-        """
-        return self["OBJECTJOINT_5"]
-    def setPointClick2(self, value):
-        """
-            set the clicked point
-        """
-        self["OBJECTJOINT_5"]=value
-    pointClick1=property(getPointClick1, setPointClick1, None, "Set\Get the clicked point")
-    pointClick2=property(getPointClick2, setPointClick2, None, "Set\Get the clicked point")
+
 
 

@@ -544,6 +544,52 @@ class EasyTest(BaseCommand):
             this function is usefoul for short test
             as soon it works copy the code into featureTest
         """
+        #self.testChamfer()
+        #self.testFillet()
+        self.testBisector()
+        
+    def testBisector(self):
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        intPoint=Point(2.0, 2.0)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
+        s1=Segment(args)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
+        s2=Segment(args)
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+        
+        cObject=self.__pyCadApplication.getCommand("BISECTOR")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=Point(1, 0)
+        cObject[keys[3]]=Point(0, 1)
+        cObject[keys[4]]=100
+        cObject.applyCommand()
+        
+    def testFillet(self):
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        intPoint=Point(2.0, 2.0)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
+        s1=Segment(args)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
+        s2=Segment(args)
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+        
+        cObject=self.__pyCadApplication.getCommand("FILLET")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=None
+        cObject[keys[3]]=None
+        cObject[keys[4]]="BOTH"
+        cObject[keys[5]]=4
+        cObject.applyCommand()
+        
+    def testChamfer(self):
         newDoc=self.__pyCadApplication.getActiveDocument()
         intPoint=Point(2.0, 2.0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
@@ -558,9 +604,10 @@ class EasyTest(BaseCommand):
         keys=cObject.keys()
         cObject[keys[0]]=ent1
         cObject[keys[1]]=ent2
-        cObject[keys[2]]=2
-        cObject[keys[3]]=2
-        cObject[keys[4]]=None
-        cObject[keys[5]]=None
-        cObject[keys[6]]="FIRST"
+        cObject[keys[2]]=None
+        cObject[keys[3]]=None
+        cObject[keys[4]]="FIRST"
+        cObject[keys[5]]=2
+        cObject[keys[6]]=2
+
         cObject.applyCommand()

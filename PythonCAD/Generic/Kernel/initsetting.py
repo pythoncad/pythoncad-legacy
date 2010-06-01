@@ -35,9 +35,12 @@ from Kernel.Command.aclinecommand       import ACLineCommand
 from Kernel.Command.ccirclecommand      import CCircleCommand
 from Kernel.Command.textcommand         import TextCommand
 from Kernel.Command.chamfercommand      import ChamferCommand
+from Kernel.Command.filletcommand       import FilletCommand
+from Kernel.Command.bisectorcommand     import BisectorCommand
 from Kernel.Command.rectanglecommand    import RectangleCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 from Kernel.Command.movecommand         import MoveCommand
+
 #
 # Entity List
 #
@@ -53,6 +56,7 @@ from Kernel.GeoEntity.text         import Text
 
 from Kernel.GeoComposedEntity.chamfer   import Chamfer
 from Kernel.GeoComposedEntity.fillet    import Fillet
+from Kernel.GeoComposedEntity.bisector  import Bisector
 #
 # db Ent
 #
@@ -84,7 +88,7 @@ PY_CAD_ENT=['POINT',
             'TEXT', 
             'COMPOSED_ENTITY' ]
 
-PY_CAD_COMPOSED_ENT=['CHAMFER']
+PY_CAD_COMPOSED_ENT=['CHAMFER', 'FILLET', 'BISECTOR']
 #
 # Command Supported by the application
 #
@@ -97,6 +101,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
                         'CHAMFER':ChamferCommand, 
+                        'FILLET':FilletCommand, 
+                        'BISECTOR':BisectorCommand, 
                         'RECTANGLE':RectangleCommand, 
                         'POLYGON':PolygonCommand, 
                         'MOVE':MoveCommand}
@@ -114,7 +120,8 @@ DRAWIN_ENTITY={ Point:'POINT',
                 ComposedEntity:'COMPOSED_ENTITY'}
                 
 DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
-                        Chamfer:'CHAMFER'}
+                        Chamfer:'CHAMFER', 
+                        Bisector:'BISECTOR'}
 
 
 
