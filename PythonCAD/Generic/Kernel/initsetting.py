@@ -31,7 +31,7 @@ from Kernel.Command.arccommand          import ArcCommand
 from Kernel.Command.pointcommand        import PointCommand
 from Kernel.Command.ellipsecommand      import EllipseCommand
 from Kernel.Command.polylinecommand     import PolylineCommand
-from Kernel.Command.aclinecommand       import ACLineCommand
+#from Kernel.Command.aclinecommand       import ACLineCommand
 from Kernel.Command.ccirclecommand      import CCircleCommand
 from Kernel.Command.textcommand         import TextCommand
 from Kernel.Command.chamfercommand      import ChamferCommand
@@ -97,7 +97,7 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand, 
-                        'CLINE':ACLineCommand, 
+#                        'CLINE':ACLineCommand, 
                         'CCIRCLE':CCircleCommand, 
                         'TEXT':TextCommand, 
                         'CHAMFER':ChamferCommand, 

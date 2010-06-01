@@ -5,7 +5,7 @@ import sip
 sip.setapi('QString', 2)
 
 from PyQt4 import QtCore, QtGui
-
+from Interface.pycadapp import PyCadApp
 
 
 class LayerDock(QtGui.QDockWidget):
@@ -22,24 +22,38 @@ class LayerDock(QtGui.QDockWidget):
         super(LayerDock, self).__init__('Layers', parent)
         # only dock at the bottom or top
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
-        self.__layer_ctrl = QtGui.QListWidget(self, itemDoubleClicked=self._itemActivated, itemActivated=self._itemActivated, itemSelectionChanged=self._itemSelectionChanged)
+        self.__layer_ctrl = QtGui.QTreeWidget(self, itemDoubleClicked=self._itemActivated, itemActivated=self._itemActivated, itemSelectionChanged=self._itemSelectionChanged)
         self.setWidget(self.__layer_ctrl)
-        # layer tree from the kernel
-        self.__layer_tree = None
+    
+    
+    def ShowAllLayers(self):
+        '''
+        Show all layers from the kernel in the control
+        '''
+        # application object from the kernel
+        appl = getApplication()
+        if appl:
+            doc = appl.getActiveDocument()
+            if doc:
+                layer_tree = doc.LayerTree
+                if layer_tree:
+                    self._populateLayerCtrl(self.__layer_ctrl.invisibleRootItem(), layer_tree)
+        return
 
 
-    #-------- properties -----------#
-    
-    def _getLayerTree(self):
-        return self.__layer_tree
-    
-    def _setLayerTree(self, layer_tree):
-        self.__layer_tree = layer_tree  
-    
-    LayerTree = property(_getLayerTree, _setLayerTree, None, 'get, set the layer tree object')
-    
-    
-    #-------- properties -----------#
+    def _populateLayerCtrl(self, item, layers):
+        '''
+        Show layers from the kernel in the layer list/tree/ctrl
+        '''
+        if layers:
+            for layer in layers:
+                parent, children = layers[layer]
+                # add parent to the tree
+                
+                
+                # add child layers to the tree
+                self._populateLayerCtrl(item, children)        
+        return
 
 
     def _itemActivated(self, item):

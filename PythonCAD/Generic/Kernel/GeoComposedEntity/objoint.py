@@ -28,13 +28,13 @@ from Kernel.GeoEntity.geometricalentity    import *
 from Kernel.GeoUtil.util                   import *
 from Kernel.GeoUtil.intersection           import *
 from Kernel.GeoEntity.segment              import Segment
-from Kernel.GeoEntity.acline               import ACLine
+#from Kernel.GeoEntity.acline               import ACLine
 from Kernel.GeoEntity.arc                  import Arc
 from Kernel.GeoEntity.ccircle              import CCircle
 from Kernel.GeoUtil.geolib                 import Vector
 
 
-ALLOW_CHAMFER_ENTITY=(Segment, ACLine)
+#ALLOW_CHAMFER_ENTITY=(Segment, ACLine)
 
 class ObjectJoint(GeometricalEntityComposed):
     """

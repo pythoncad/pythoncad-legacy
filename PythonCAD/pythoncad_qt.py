@@ -12,13 +12,22 @@ import sqlite3 as sqlite
 # this is needed for me to use unpickle objects
 sys.path.append(os.path.join(os.getcwd(), 'Generic'))
 
+from Generic.application import Application
 from Interface.cadwindow import CadWindow
+from Interface.pycadapp import PyCadApp
+
+
+
 
 if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)
-    mainWin = CadWindow()
-    mainWin.show()
+    # global_cad_window is from globals
+    PyCadApp.SetApplication(Application())
+    # global_cad_window is from globals
+    PyCadApp.SetCadWindow(CadWindow())
+    # show the main window and enter event loop
+    PyCadApp.CadWindow().show()
     sys.exit(app.exec_())
     
     

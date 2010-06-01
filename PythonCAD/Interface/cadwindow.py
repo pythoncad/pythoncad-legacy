@@ -29,7 +29,8 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
-from Interface.LayerIntf.layerdock import LayerDock
+from Generic.application     import Application
+from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Ui_TestWindow                  import Ui_TestDialog
@@ -47,11 +48,15 @@ class CadWindow(QtGui.QMainWindow):
         Create all user interface components
         '''
         super(CadWindow, self).__init__()
+        # application from the kernel
+        self.__application = Application()
         # graphics scene and view
         self.__scene = CadScene()
         self.__view = CadView(self.__scene, self)
         # the graphics view is the main/central component
         self.setCentralWidget(self.__view)
+        # layer tree dockable window
+        self.__layer_dock = None
         # create user input interface components
         # all user interface is done by commands
         # the menu-bar, tool-bars and palettes are created by the CmdIntf
@@ -67,6 +72,17 @@ class CadWindow(QtGui.QMainWindow):
         # register commands that are handled by the main window
         self._registerCommands()
         return
+        
+        
+    def _getApplication(self):
+        return self.__application
+    
+    Application = property(_getApplication, None, None, 'get the kernel application object')
+    
+    def _getLayerDock(self):
+        return self.__layer_dock
+    
+    LayerDock = property(_getLayerDock, None, None, 'get the layer tree dockable window')
         
         
     def _registerCommands(self):
@@ -170,8 +186,8 @@ class CadWindow(QtGui.QMainWindow):
         Creates all dockable windows for the application
         '''
         # layer list
-        layer_dock = LayerDock(self)
-        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, layer_dock)
+        self.__layer_dock = LayerDock(self)
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
         
         # commandline
         command_dock = self.__cmd_intf.Commandline
