@@ -66,8 +66,8 @@ class BisectorCommand(BaseCommand):
              }
 
         cmf=Bisector(arg)
-        BisectorSegment = cmf.getReletedComponent()
-        objEnt.append(chamferSegment)
+        bisectorSegment = cmf.getReletedComponent()
+        objEnt.append(bisectorSegment)
         return objEnt
         
     def applyCommand(self):

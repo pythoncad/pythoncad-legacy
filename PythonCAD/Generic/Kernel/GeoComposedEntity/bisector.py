@@ -43,7 +43,7 @@ class Bisector(ObjectJoint):
         ObjectJoint.__init__(self, kw, argDes)
         if not kw["OBJECTJOINT_5"]:
             self["OBJECTJOINT_5"]=self.getDefaultLeng()
-        self.bisector=self._UpdateBisector()
+        self._UpdateBisector()
     
     def _UpdateBisector(self):
         """
@@ -60,15 +60,16 @@ class Bisector(ObjectJoint):
         
         ppi=self.intersection[0].getSympy()
         import sympy.geometry   as geoSympy
-        t=geoSympy.Triangle(pp1,pp1,ppi)
+        t=geoSympy.Triangle(pp1,pp2,ppi)
         biSeg=t.bisectors[ppi]
         p0=Point(0, 0)
         p1=Point(0, 0)
-        p0.Sympy(biSeg[0])
-        p1.Sympy(biSeg[1])
+        p0.setFromSympy(biSeg[0])
+        p1.setFromSympy(biSeg[1])
         v=Vector(p0, p1)
         magv=v.mag()
-        newPoint=magv.mult(self.lengh).point()
+        magv.mult(self.lengh)
+        newPoint=magv.point()
         newPoint=self.intersection[0]+newPoint
         arg={"SEGMENT_0":self.intersection[0], "SEGMENT_1":newPoint}
         self.bisector=Segment(arg)
