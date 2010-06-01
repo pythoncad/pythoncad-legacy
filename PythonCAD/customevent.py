@@ -3,6 +3,7 @@ from Kernel.document     import *
 from Kernel.exception    import *
 from Kernel.GeoEntity.point         import Point
 from Kernel.Command.basecommand     import BaseCommand
+from Interface.pycadapp             import PyCadApp
 
 class testCmdLine(object):
     def __init__(self, dialog, scene):
@@ -18,7 +19,7 @@ class testCmdLine(object):
         """
         self.__command={}
         self.__applicationCommand={}
-        self.__pyCadApplication=self.scene.getApplication()
+        self.__pyCadApplication=PyCadApp.Application()
         # Application Command
         self.__applicationCommand['Documents']=GetDocuments(self.__pyCadApplication.getDocuments(), self.outputMsg)
         self.__applicationCommand['CreateStyle']=CreateStyle(self.__pyCadApplication.getActiveDocument())
