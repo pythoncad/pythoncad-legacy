@@ -547,14 +547,14 @@ class EasyTest(BaseCommand):
         """
         #self.testChamfer()
         #self.testFillet()
-        self.testBisector()
+        self.multitestBisector()
         
-    def testBisector(self):
+    def testBisector(self, p1, p2, p3, pp1, pp2):
         newDoc=self.__pyCadApplication.getActiveDocument()
-        intPoint=Point(2.0, 2.0)
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
+        intPoint=p1
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":p2}
         s1=Segment(args)
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":p3}
         s2=Segment(args)
         
         ent1=newDoc.saveEntity(s1)
@@ -564,11 +564,47 @@ class EasyTest(BaseCommand):
         keys=cObject.keys()
         cObject[keys[0]]=ent1
         cObject[keys[1]]=ent2
-        cObject[keys[2]]=Point(1, 0)
-        cObject[keys[3]]=Point(0, 1)
+        cObject[keys[2]]=pp1
+        cObject[keys[3]]=pp2
         cObject[keys[4]]=100
         cObject.applyCommand()
-        
+    
+    def multitestBisector(self):    
+        p1=Point(0, 0)
+        p2=Point(10, 0)
+        p3=Point(0, 10)
+        pp1=Point(1, 0)
+        pp2=Point(0, 3)
+        self.testBisector(p1, p2, p3, pp1, pp2)
+
+        p1=Point(0, 0)
+        p2=Point(-10, 0)
+        p3=Point(0, 10)
+        pp1=Point(-1,  0)
+        pp2=Point(0, 3)
+        self.testBisector(p1, p2, p3, pp1, pp2)
+
+        p1=Point(0, 0)
+        p2=Point(-10, 0)
+        p3=Point(0, -10)
+        pp1=Point(-1, 0)
+        pp2=Point(0, -3)
+        self.testBisector(p1, p2, p3, pp1, pp2)        
+
+        p1=Point(0, 0)
+        p2=Point(10, 0)
+        p3=Point(0, -10)
+        pp1=Point(1, 0)
+        pp2=Point(0, -3)
+        self.testBisector(p1, p2, p3, pp1, pp2)        
+
+        p1=Point(100, 0)
+        p2=Point(200, 0)
+        p3=Point(200, 100)
+        pp1=Point(110, -1)
+        pp2=Point(112, 30)
+        self.testBisector(p1, p2, p3, pp1, pp2)        
+
     def testFillet(self):
         newDoc=self.__pyCadApplication.getActiveDocument()
         intPoint=Point(2.0, 2.0)

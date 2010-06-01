@@ -24,7 +24,6 @@
 from Kernel.GeoComposedEntity.objoint import *
 from Kernel.GeoUtil.geolib import Vector
 
-
 class Bisector(ObjectJoint):
     """
         A Bisector class 
@@ -66,7 +65,11 @@ class Bisector(ObjectJoint):
         p1=Point(0, 0)
         p0.setFromSympy(biSeg[0])
         p1.setFromSympy(biSeg[1])
-        v=Vector(p0, p1)
+        if self.intersection[0].dist(p0)>self.intersection[0].dist(p1):
+            pEnd=p0
+        else:
+            pEnd=p1
+        v=Vector(self.intersection[0], pEnd)
         magv=v.mag()
         magv.mult(self.lengh)
         newPoint=magv.point()
