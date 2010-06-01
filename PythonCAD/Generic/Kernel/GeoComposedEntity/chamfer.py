@@ -139,13 +139,13 @@ class Chamfer(ObjectJoint):
         """
         if distance<=TOL:
             raise StructuralError, "Distance could be greater then 0"
-        self.distance1=distance
+        self["OBJECTJOINT_5"]=distance
         self._UpdateChamferSegment()
     def getDistance1(self):
         """
             return the distance from intersection point to chanfer start
         """
-        return self["OBJECTJOINT_2"]
+        return self["OBJECTJOINT_5"]
         
     def setDistance2(self, distance):
         """
@@ -153,13 +153,13 @@ class Chamfer(ObjectJoint):
         """
         if distance<=TOL:
             raise StructuralError, "Distance could be greater then 0"
-        self.distance2=distance
+        self["OBJECTJOINT_6"]=distance
         self._UpdateChamferSegment()
     def getDistance2(self):
         """
             return the distance from intersection point to chanfer start
         """
-        return self["OBJECTJOINT_3"]
+        return self["OBJECTJOINT_6"]
     distance1=property(getDistance1, setDistance1, None, "set the first distance") 
     distance2=property(getDistance2, setDistance2, None, "set the second distance") 
 

@@ -76,11 +76,6 @@ class BisectorCommand(BaseCommand):
         """
         if len(self.value)!=5:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        
-        try:
-            self.document.startMassiveCreation()
-            for _ent in self.getEntsToSave():
-                self.document.saveEntity(_ent)
-        finally:
-            self.document.stopMassiveCreation()
+        for _ent in self.getEntsToSave():
+            self.document.saveEntity(_ent)
        
