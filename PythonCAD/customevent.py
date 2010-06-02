@@ -570,10 +570,10 @@ class EasyTest(BaseCommand):
         """
         newDoc=self.__pyCadApplication.getActiveDocument()
         newDoc.startMassiveCreation()
-        #self.testChamfer()
+        self.testChamfer()
         #self.testFillet()
         #self.testFillet1()
-        self.multitestBisector()
+        #self.multitestBisector()
         newDoc.stopMassiveCreation()
         
     def testBisector(self, p1, p2, p3, pp1, pp2, L=100):
@@ -689,8 +689,8 @@ class EasyTest(BaseCommand):
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
         s2=Segment(args)
         
-        ent1=newDoc.saveEntity(s1)
-        ent2=newDoc.saveEntity(s2)
+        ent1=newDoc.saveEntity(s1).getId()
+        ent2=newDoc.saveEntity(s2).getId()
        
         cObject=self.__pyCadApplication.getCommand("CHAMFER")
         keys=cObject.keys()
