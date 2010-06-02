@@ -70,7 +70,7 @@ class Fillet(ObjectJoint):
             self.__center=p1
         else:
             self.__center=p2
-            
+        
     def _UpdateFilletArc(self):           
         """
             Recompute the Fillet segment
@@ -91,9 +91,35 @@ class Fillet(ObjectJoint):
         """
             update the Fillet arc angle
         """
-        v1=Vector(self.intersection[0], pc1)
-        v2=Vector(self.intersection[0], pc2)
-        self.startAngle=v1.absAng
+        v1=Vector(self.center, pc1)
+        v2=Vector(self.center, pc2)
+        ang1=v1.absAng
+        ang2=v2.absAng
+        if ang1==0 : 
+            if v2.point.y>0:
+                self.startAngle=ang2
+            else:
+                self.startAngle=ang1
+        elif ang1==math.pi:
+            if v2.point.y>0:
+                self.startAngle=ang1
+            else:
+                self.startAngle=ang2
+        elif ang2==0 :
+            if v1.point.y>0:
+                self.startAngle=ang2
+            else:
+                self.startAngle=ang1
+        elif ang2==math.pi:
+            if v1.point.y>0:
+                self.startAngle=ang1
+            else:
+                self.startAngle=ang2
+        elif ang2-ang1>0:
+            self.startAngle=ang1
+        else:
+            self.startAngle=ang2
+            
         self.endAngle=v1.ang(v2)
         
         
@@ -139,7 +165,7 @@ class Fillet(ObjectJoint):
             start fillet angle
         """
         return self.__EndAngle
-    @startAngle.setter
+    @endAngle.setter
     def endAngle(self, value):
         self.__EndAngle=value
     @property

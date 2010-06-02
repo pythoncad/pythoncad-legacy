@@ -89,7 +89,6 @@ class FilletCommand(BaseCommand):
         """
         if len(self.value)!=6:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        
         try:
             self.document.startMassiveCreation()
             for _ent in self.getEntsToSave():

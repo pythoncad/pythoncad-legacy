@@ -47,10 +47,7 @@ class Arc(QtGui.QGraphicsItem):
         # From pythoncad the angle are in radiant ..
         startAngle=(startAngle*180/math.pi)*16
         spanAngle=(spanAngle*180/math.pi)*16
-        if spanAngle==startAngle:
-            spanAngle=5760
-        else:
-           spanAngle=spanAngle
+        spanAngle=spanAngle
         self.startAngle=startAngle
         self.spanAngle=spanAngle
 

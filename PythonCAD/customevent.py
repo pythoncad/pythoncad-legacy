@@ -571,10 +571,30 @@ class EasyTest(BaseCommand):
         newDoc=self.__pyCadApplication.getActiveDocument()
         newDoc.startMassiveCreation()
         #self.testChamfer()
-        #self.testFillet()
-        self.testFillet1()
-        #self.multitestBisector()
+        #self.testFillet1()
+        #self.testFillet2()
+        self.multitest()
         newDoc.stopMassiveCreation()
+        
+    def testFillet(self, p1, p2, p3, pp1, pp2, R=100):
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        args={"SEGMENT_0":p1, "SEGMENT_1":p2}
+        s1=Segment(args)
+        args={"SEGMENT_0":p1, "SEGMENT_1":p3}
+        s2=Segment(args)
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+
+        cObject=self.__pyCadApplication.getCommand("FILLET")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=pp1
+        cObject[keys[3]]=pp2
+        cObject[keys[4]]="BOTH"
+        cObject[keys[5]]=R
+        cObject.applyCommand() 
         
     def testBisector(self, p1, p2, p3, pp1, pp2, L=100):
         newDoc=self.__pyCadApplication.getActiveDocument()
@@ -595,50 +615,56 @@ class EasyTest(BaseCommand):
         cObject[keys[4]]=L
         cObject.applyCommand()
     
-    def multitestBisector(self):    
+    def multitest(self):    
         p1=Point(0, 0)
         p2=Point(10, 0)
         p3=Point(0, 10)
         pp1=Point(1, 0)
         pp2=Point(0, 3)
         self.testBisector(p1, p2, p3, pp1, pp2)
-
+        self.testFillet(p1, p2, p3, pp1, pp2)
+        
         p1=Point(0, 0)
         p2=Point(-10, 0)
         p3=Point(0, 10)
         pp1=Point(-1,  0)
         pp2=Point(0, 3)
         self.testBisector(p1, p2, p3, pp1, pp2)
-
+        self.testFillet(p1, p2, p3, pp1, pp2)
+        
         p1=Point(0, 0)
         p2=Point(-10, 0)
         p3=Point(0, -10)
         pp1=Point(-1, 0)
         pp2=Point(0, -3)
-        self.testBisector(p1, p2, p3, pp1, pp2)        
+        self.testBisector(p1, p2, p3, pp1, pp2)
+        self.testFillet(p1, p2, p3, pp1, pp2)        
 
         p1=Point(0, 0)
         p2=Point(10, 0)
         p3=Point(0, -10)
         pp1=Point(1, 0)
         pp2=Point(0, -3)
-        self.testBisector(p1, p2, p3, pp1, pp2)        
-
+        self.testBisector(p1, p2, p3, pp1, pp2)   
+        self.testFillet(p1, p2, p3, pp1, pp2)     
+        
         p1=Point(100, 0)
         p2=Point(200, 0)
         p3=Point(200, 100)
         pp1=Point(110, -1)
         pp2=Point(112, 30)
         self.testBisector(p1, p2, p3, pp1, pp2)   
+        self.testFillet(p1, p2, p3, pp1, pp2)
    
         p1=Point(100, 100)
         p2=Point(200, 0)
         p3=Point(200, 100)
         pp1=Point(110, -1)
         pp2=Point(112, 30)
-        self.testBisector(p1, p2, p3, pp1, pp2, 30)    
+        self.testBisector(p1, p2, p3, pp1, pp2, 30) 
+        self.testFillet(p1, p2, p3, pp1, pp2, 30)   
 
-    def testFillet(self):
+    def testFillet1(self):
         newDoc=self.__pyCadApplication.getActiveDocument()
         intPoint=Point(0.0, 0.0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
@@ -660,7 +686,7 @@ class EasyTest(BaseCommand):
         cObject.applyCommand()
         
         
-    def testFillet1(self):    
+    def testFillet2(self):    
         newDoc=self.__pyCadApplication.getActiveDocument()
         intPoint=Point(0, 0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(1000, 1000)}
