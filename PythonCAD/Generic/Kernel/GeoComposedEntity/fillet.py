@@ -93,7 +93,7 @@ class Fillet(ObjectJoint):
         """
         v1=Vector(self.intersection[0], pc1)
         v2=Vector(self.intersection[0], pc2)
-        self.startAngle=v1.absAng()
+        self.startAngle=v1.absAng
         self.endAngle=v1.ang(v2)
         
         

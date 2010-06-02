@@ -570,9 +570,9 @@ class EasyTest(BaseCommand):
         """
         newDoc=self.__pyCadApplication.getActiveDocument()
         newDoc.startMassiveCreation()
-        self.testChamfer()
+        #self.testChamfer()
         #self.testFillet()
-        #self.testFillet1()
+        self.testFillet1()
         #self.multitestBisector()
         newDoc.stopMassiveCreation()
         
@@ -662,10 +662,10 @@ class EasyTest(BaseCommand):
         
     def testFillet1(self):    
         newDoc=self.__pyCadApplication.getActiveDocument()
-        intPoint=Point(100, 100)
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(110, 110)}
+        intPoint=Point(0, 0)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(1000, 1000)}
         s1=Segment(args)
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(100, 110)}
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(1000, 0)}
         s2=Segment(args)
         
         ent1=newDoc.saveEntity(s1)
@@ -677,8 +677,27 @@ class EasyTest(BaseCommand):
         cObject[keys[1]]=ent2
         cObject[keys[2]]=Point(101, 0)
         cObject[keys[3]]=Point(0, 103)
-        cObject[keys[4]]="BOTH"
-        cObject[keys[5]]=40
+        cObject[keys[4]]="NO_TRIM"
+        cObject[keys[5]]=20
+        cObject.applyCommand()
+
+        cObject=self.__pyCadApplication.getCommand("FILLET")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=Point(101, 0)
+        cObject[keys[3]]=Point(0, 103)
+        cObject[keys[4]]="NO_TRIM"
+        cObject[keys[5]]=100
+        cObject.applyCommand()        
+        
+        cObject=self.__pyCadApplication.getCommand("BISECTOR")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=Point(101, 0)
+        cObject[keys[3]]=Point(0, 103)
+        cObject[keys[4]]=1000
         cObject.applyCommand()
         
     def testChamfer(self):

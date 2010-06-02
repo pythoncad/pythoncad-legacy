@@ -163,14 +163,16 @@ class CadWindow(QtGui.QMainWindow):
         """
             debug dialog
         """
-    
-        TestDialog = QtGui.QDialog()
-        ui = Ui_TestDialog()
-        ui.setupUi(TestDialog)
-        testCmdLine(ui,self.__scene )
-        TestDialog.show()
-        TestDialog.exec_()
-   
+        from Interface.pycadapp import PyCadApp
+        if PyCadApp.ActiveDocument():
+            TestDialog = QtGui.QDialog()
+            ui = Ui_TestDialog()
+            ui.setupUi(TestDialog)
+            testCmdLine(ui,self.__scene )
+            TestDialog.show()
+            TestDialog.exec_()
+        else:
+            PyCadApp.critical("You must have a document open before use this function !!")
         return    
 
     def _createStatusBar(self):

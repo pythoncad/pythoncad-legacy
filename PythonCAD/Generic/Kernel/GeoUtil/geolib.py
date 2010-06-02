@@ -85,6 +85,7 @@ class Vector:
         for a, b in zip(v0, v1):
           som+=a*b
         return som  
+        
     def cross(self,vector):
         """
             Compute The Cross Product

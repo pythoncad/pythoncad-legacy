@@ -50,12 +50,7 @@ class Bisector(ObjectJoint):
         """
         v1=self.obj1.vector
         v2=self.obj2.vector
-        print "abgl 1",v1.absAng
-        print "point 1",v1.point.getCoords()
-        print "abgl 2",v2.absAng
-        print "point 2",v2.point.getCoords()
-        ang=v1.ang(v2)/2.0
-        print "angDif",ang        
+        ang=v1.ang(v2)/2.0     
         if v1.absAng==0 or v2.absAng==0:
             if v2.point.y<0:
                 bisecVector=v2.mag()
@@ -74,10 +69,7 @@ class Bisector(ObjectJoint):
             
         bisecVector.mult(self.lengh)
         bisecVector.rotate(ang)
-        print "rotate versor lengh ", bisecVector.norm
-        print "pos",bisecVector.point.getCoords()
         newPoint=self.intersection[0]+bisecVector.point
-        print "New Point pos", newPoint.getCoords()
         arg={"SEGMENT_0":self.intersection[0], "SEGMENT_1":newPoint}
         self.bisector=Segment(arg)
         
