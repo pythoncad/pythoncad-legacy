@@ -48,7 +48,7 @@ class FilletCommand(BaseCommand):
                         ]
     def getEntsToSave(self):
         """
-            get the chamfer segments
+            get the fillet segments
         """
         objEnt=[]
         ent1=self.document.getEntity(self.value[0].getId())

@@ -309,3 +309,16 @@ class CCircle(GeometricalEntity):
         """
         return CCircle(self.getConstructionElements())
 
+    def getSympy(self):
+        """
+            get the sympy object in this case a circle
+        """
+        _cp=self.center.getSympy()
+        return geoSympy.Circle(_cp, mainSympy.Rational(self.radius))
+        
+    def setFromSympy(self, sympyCircle):    
+        """
+            update the points cord from a sympyobject only avaiable for circle
+        """
+        self.center.setFromSympy(sympyCircle[0])
+        self.radius=float(sympyCircle[1])

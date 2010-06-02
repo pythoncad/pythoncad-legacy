@@ -201,7 +201,7 @@ class Ellipse(GeometricalEntity):
             get the sympy object in this case a ellipse
         """
         _cp=self.center.getSympy()
-        return geoSympy.Ellipse(geoSympy.Point(0,0),self.major,self.minor)
+        return geoSympy.Ellipse(geoSympy.Point(0,0),mainSympy.Rational(self.major),mainSympy.Rational(self.minor))
         
     def setFromSympy(self, sympyEllipse):    
         """

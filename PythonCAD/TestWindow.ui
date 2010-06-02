@@ -26,7 +26,17 @@
       <number>10</number>
      </property>
      <item>
-      <widget class="QPlainTextEdit" name="uiTextEditor"/>
+      <widget class="QPlainTextEdit" name="uiTextEditor">
+       <property name="cursor" stdset="0">
+        <cursorShape>IBeamCursor</cursorShape>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="centerOnScroll">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0">
@@ -61,6 +71,22 @@
     <hint type="destinationlabel">
      <x>304</x>
      <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ImputCmd</sender>
+   <signal>returnPressed()</signal>
+   <receiver>uiTextEditor</receiver>
+   <slot>centerCursor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>343</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>171</y>
     </hint>
    </hints>
   </connection>

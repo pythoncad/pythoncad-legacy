@@ -121,7 +121,13 @@ class CLine(GeometricalEntity):
         """
         self.p1.setFromSympy(sympySegment[0])
         self.p2.setFromSympy(sympySegment[1])
-
+    @property
+    def vector(self):
+        """
+            Get The vector of the CLine
+        """
+        return Vector(self.p1, self.p2)
+        
 
 def intersect_region(acl, xmin, ymin, xmax, ymax):
     if not isinstance(acl, CLine):

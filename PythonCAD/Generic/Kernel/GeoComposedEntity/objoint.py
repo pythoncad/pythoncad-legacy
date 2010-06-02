@@ -48,7 +48,7 @@ class ObjectJoint(GeometricalEntityComposed):
                         "OBJECTJOINT_1":classNames, 
                         "OBJECTJOINT_2":(Point,None), 
                         "OBJECTJOINT_3":(Point,None), 
-                        "OBJECTJOINT_4":str
+                        "OBJECTJOINT_4":(str, unicode)
                         }
         if argDes:
             for k in argDes:
@@ -62,7 +62,13 @@ class ObjectJoint(GeometricalEntityComposed):
             spoolIntersection=[Point(x, y) for x, y in find_segment_extended_intersection(self.obj1, self.obj2)]
             self._externalIntersectio=True
         self._intersectionPoints=spoolIntersection
-    
+    @property
+    def angle(self):
+        """
+            angle betwin the two entity
+        """
+        return float(self.obj1.getSympy().angle_between(self.obj2.getSympy()))
+        
     @property
     def trimMode(self):
         """

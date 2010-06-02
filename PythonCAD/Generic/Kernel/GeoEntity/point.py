@@ -235,11 +235,11 @@ class Point(GeometricalEntity):
         """
             get the sympy object
         """
-        return geoSympy.Point(self.__x, self.__y)
+        return geoSympy.Point(mainSympy.Rational(self.__x), mainSympy.Rational(self.__y))
         
     def setFromSympy(self, sympyPoint):    
         """
             update the points cord from a sympyobject
         """
-        self.__x=sympyPoint[0]
-        self.__y=sympyPoint[1]
+        self.__x=float(sympyPoint[0])
+        self.__y=float(sympyPoint[1])

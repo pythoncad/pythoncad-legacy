@@ -16,9 +16,6 @@ from Generic.application import Application
 from Interface.cadwindow import CadWindow
 from Interface.pycadapp import PyCadApp
 
-
-
-
 if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)

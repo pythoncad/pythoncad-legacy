@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\TestWindow.ui'
 #
-# Created: Mon May 17 17:39:09 2010
+# Created: Tue Jun 01 13:04:10 2010
 #      by: PyQt4 UI code generator 4.7
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,6 +21,9 @@ class Ui_TestDialog(object):
         self.verticalLayout.setMargin(10)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTextEditor = QtGui.QPlainTextEdit(TestDialog)
+        self.uiTextEditor.setProperty("cursor", QtCore.Qt.IBeamCursor)
+        self.uiTextEditor.setReadOnly(True)
+        self.uiTextEditor.setCenterOnScroll(True)
         self.uiTextEditor.setObjectName("uiTextEditor")
         self.verticalLayout.addWidget(self.uiTextEditor)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
@@ -35,6 +38,7 @@ class Ui_TestDialog(object):
 
         self.retranslateUi(TestDialog)
         QtCore.QObject.connect(self.uiTextEditor, QtCore.SIGNAL("textChanged()"), self.uiTextEditor.update)
+        QtCore.QObject.connect(self.ImputCmd, QtCore.SIGNAL("returnPressed()"), self.uiTextEditor.centerCursor)
         QtCore.QMetaObject.connectSlotsByName(TestDialog)
 
     def retranslateUi(self, TestDialog):

@@ -32,6 +32,7 @@ class testCmdLine(object):
         self.__applicationCommand['ReDo']=ReDo(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['T']=TestKernel(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['ET']=EasyTest(self.__pyCadApplication, self.outputMsg)
+        self.__applicationCommand['Info']=EntityInfo(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
         # Document Commandf
         for command in self.__pyCadApplication.getCommandList():
             self.__applicationCommand[command]=self.__pyCadApplication.getCommand(command)
@@ -50,6 +51,7 @@ class testCmdLine(object):
             imput dialog
         """
         text=self.dialog.ImputCmd.text()
+        self.outputMsg(">>> "+str(text))
         if self.activeCommand:
             try:
                 if not self.performCommand(self.activeCommand, text):
@@ -315,6 +317,24 @@ class DeleteEntity(BaseCommand):
         if self.document.entityExsist(entId):
             self.document.deleteEntity(entId)
 
+class EntityInfo(BaseCommand):
+    def __init__(self, document, msgFunction ):
+        BaseCommand.__init__(self, document)
+        self.outputMsg=msgFunction
+        self.exception=[ExcText]
+        self.message=["Give me the entity id"]
+    def applyCommand(self):
+        if len(self.value)!=1:
+            raise PyCadWrongImputData("Wrong number of imput parameter")
+        entId=self.value[0]
+        if self.document.entityExsist(entId):
+            ent=self.document.getEntity(entId)
+            geoEnt=self.document.convertToGeometricalEntity(ent)
+            self.outputMsg("Entity %s"%str(geoEnt))
+        else:
+            self.outputMsg("Wrong id Number")
+
+            
 class PrintHelp(BaseCommand):
     def __init__(self, commandArray, msgFunction):
         BaseCommand.__init__(self, None)
@@ -329,7 +349,8 @@ class PrintHelp(BaseCommand):
 
     def applyCommand(self):
         self.outputMsg("***********Command List******************")
-        for s in   self.commandNames:
+        self.commandNames.sort()
+        for s in self.commandNames:
             self.outputMsg(s)
             
 class TestKernel(BaseCommand):
@@ -425,9 +446,11 @@ class TestKernel(BaseCommand):
         p1=Point(0.0, 0.0)
         p2=Point(10.0, 0.0)
         p3=Point(0.0, 10.0)
+        
         s1=Segment(p1, p2)
         s2=Segment(p1, p3)
-        cmf=Chamfer(s1, s2, 2.0, 2.0)
+        
+        cmf=Chamfer(es1.getId(), s2, 2.0, 2.0)
         cl=cmf.getLength()
         self.outputMsg("Chamfer Lengh %s"%str(cl))
         s1, s2, s3=cmf.getReletedComponent()
@@ -545,16 +568,19 @@ class EasyTest(BaseCommand):
             this function is usefoul for short test
             as soon it works copy the code into featureTest
         """
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc.startMassiveCreation()
         #self.testChamfer()
         #self.testFillet()
+        #self.testFillet1()
         self.multitestBisector()
+        newDoc.stopMassiveCreation()
         
-    def testBisector(self, p1, p2, p3, pp1, pp2):
+    def testBisector(self, p1, p2, p3, pp1, pp2, L=100):
         newDoc=self.__pyCadApplication.getActiveDocument()
-        intPoint=p1
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":p2}
+        args={"SEGMENT_0":p1, "SEGMENT_1":p2}
         s1=Segment(args)
-        args={"SEGMENT_0":intPoint, "SEGMENT_1":p3}
+        args={"SEGMENT_0":p1, "SEGMENT_1":p3}
         s2=Segment(args)
         
         ent1=newDoc.saveEntity(s1)
@@ -566,7 +592,7 @@ class EasyTest(BaseCommand):
         cObject[keys[1]]=ent2
         cObject[keys[2]]=pp1
         cObject[keys[3]]=pp2
-        cObject[keys[4]]=100
+        cObject[keys[4]]=L
         cObject.applyCommand()
     
     def multitestBisector(self):    
@@ -603,11 +629,18 @@ class EasyTest(BaseCommand):
         p3=Point(200, 100)
         pp1=Point(110, -1)
         pp2=Point(112, 30)
-        self.testBisector(p1, p2, p3, pp1, pp2)        
+        self.testBisector(p1, p2, p3, pp1, pp2)   
+   
+        p1=Point(100, 100)
+        p2=Point(200, 0)
+        p3=Point(200, 100)
+        pp1=Point(110, -1)
+        pp2=Point(112, 30)
+        self.testBisector(p1, p2, p3, pp1, pp2, 30)    
 
     def testFillet(self):
         newDoc=self.__pyCadApplication.getActiveDocument()
-        intPoint=Point(2.0, 2.0)
+        intPoint=Point(0.0, 0.0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
         s1=Segment(args)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(0.0, 10.0)}
@@ -620,10 +653,32 @@ class EasyTest(BaseCommand):
         keys=cObject.keys()
         cObject[keys[0]]=ent1
         cObject[keys[1]]=ent2
-        cObject[keys[2]]=None
-        cObject[keys[3]]=None
+        cObject[keys[2]]=Point(1, 0)
+        cObject[keys[3]]=Point(0, 3)
         cObject[keys[4]]="BOTH"
         cObject[keys[5]]=4
+        cObject.applyCommand()
+        
+        
+    def testFillet1(self):    
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        intPoint=Point(100, 100)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(110, 110)}
+        s1=Segment(args)
+        args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(100, 110)}
+        s2=Segment(args)
+        
+        ent1=newDoc.saveEntity(s1)
+        ent2=newDoc.saveEntity(s2)
+        
+        cObject=self.__pyCadApplication.getCommand("FILLET")
+        keys=cObject.keys()
+        cObject[keys[0]]=ent1
+        cObject[keys[1]]=ent2
+        cObject[keys[2]]=Point(101, 0)
+        cObject[keys[3]]=Point(0, 103)
+        cObject[keys[4]]="BOTH"
+        cObject[keys[5]]=40
         cObject.applyCommand()
         
     def testChamfer(self):

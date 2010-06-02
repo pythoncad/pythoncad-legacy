@@ -45,27 +45,12 @@ class Vector:
         """
             Get the versor
         """
-        if(self.X==0 or self.Y==0):
-            if(self.X==0):
-                x=0
-                if(self.Y>0):
-                    y=1
-                else:
-                    y=-1
-            else:
-                y=0
-                if(self.X>0):
-                    x=1
-                else:
-                    x=-1
-        else:
-          module=self.norm()
-          y=self.Y/module
-          x=self.X/module
+        _a=self.absAng
         p1=Point(0,0)
-        p2=Point(x,y)
-        retVector=Vector(p1,p2)
-        return retVector
+        p2=Point(math.cos(_a), math.sin(_a))
+        return Vector(p1,p2)
+
+    @property    
     def norm(self):
         """
           Get The Norm Of the vector
@@ -81,19 +66,21 @@ class Vector:
             return True             
         else:
             return False
+    @property
     def point(self):
         """
               Return The Point 
         """
         return Point(self.X,self.Y)
+        
     def dot(self,vector):
         """
             Compute The Dot Product
         """
         if(not isinstance(vector,Vector)):
             raise TypeError,"Invalid Argument vector: Vector Required"  
-        v0=self.point().getCoords()
-        v1=vector.point().getCoords()
+        v0=self.point.getCoords()
+        v1=vector.point.getCoords()
         som=0
         for a, b in zip(v0, v1):
           som+=a*b
@@ -108,6 +95,7 @@ class Vector:
         x2,y2=vector.point().getCoords()
         cros=x1*y2 - y1*x2
         return cros
+        
     def ang(self,vector):
         """
             Calculate the angle Between the two vector
@@ -123,32 +111,45 @@ class Vector:
             dot=1
         ang=math.acos(dot)
         return ang
-        
+    @property    
     def absAng(self):
         """
             return the angle from the cartesian reference
         """
-        p1=Point(0, 0)
-        p2=Point(1, 0)
-        ortoVect=Vector(p1, p2)
-        return self.ang(ortoVect)
+        _x=self.point.x
+        _y=self.point.y
+
+        ang=math.atan2(float(self.point.y),float(self.point.x))
+        if _y<0:
+            ang=ang+2*math.pi
+        return ang
         
     def mult(self,scalar):
         """
             Multiplae the vector for a scalar value
         """
-        self.X=scalar*self.X
-        self.Y=scalar*self.Y
-    def map(self,x,y):
+        self.X=scalar*self.norm*math.cos(self.absAng)
+        self.Y=scalar*self.norm*math.sin(self.absAng)
+
+    
+    def map(self,pPro):
         """
             Get a vector for the mapping point
         """
         p0=Point(0,0)
-        pPro=Point(x,y)
         vProj=Vector(p0,pPro)
         ang=self.ang(vProj)
-        vProjNorm=vProj.norm()
+        vProjNorm=vProj.norm
         projectionUnitDistance=vProjNorm*math.cos(ang)
         vSelfMag=self.mag()
         vSelfMag.mult(projectionUnitDistance)
         return vSelfMag    
+    
+    def rotate(self, angle):
+        """
+            rotete the vector of a given angle
+        """
+        _a=self.absAng+angle
+        _norm=self.norm
+        self.X=_norm*math.cos(_a)
+        self.Y=_norm*math.sin(_a)

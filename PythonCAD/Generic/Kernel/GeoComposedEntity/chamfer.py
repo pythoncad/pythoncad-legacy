@@ -106,7 +106,7 @@ class Chamfer(ObjectJoint):
                     
             v=Vector(mvPoint,stPoint).mag()
             v.mult(distance)
-            ePoint=ip+v.point()
+            ePoint=ip+v.point
             arg={"SEGMENT_0":ePoint, "SEGMENT_1":stPoint}
             return Segment(arg), ePoint
             

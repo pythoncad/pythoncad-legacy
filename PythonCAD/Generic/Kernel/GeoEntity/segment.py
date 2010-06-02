@@ -49,7 +49,7 @@ class Segment(GeometricalEntity):
         GeometricalEntity.__init__(self,kw, argDescription)
 
     def __str__(self):
-        return "Segment: %s to %s" % (self.p1, self.p2)
+        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length())
 
     def __eq__(self, obj):
         """
@@ -172,24 +172,16 @@ class Segment(GeometricalEntity):
             retY=_y2+_deltay
         return retX,retY
 
-    def getProjection(self,x,y):
+    def getProjection(self,point):
         """
             get Projection of the point x,y in the line
         """
-        _x = get_float(x)
-        _y = get_float(y)
         p1=self.p1
         p2=self.p2
-        p3=Point(_x, _y)
         v=Vector(p1,p2)
-        v1=Vector(p1,p3)
-        xp,yp=v1.point().getCoords()
-        pjPoint=v.map(xp,yp).point()
-        x,y = pjPoint.getCoords()
-        _x1,_y1=p1.getCoords()
-        x=x+_x1
-        y=y+_y1
-        return x,y
+        v1=Vector(p1,point)
+        pjPoint=v.map(v1.point).point
+        return p1+pjPoint
 
     def mapCoords(self, x, y, tol=0.001):
         """
@@ -359,3 +351,9 @@ class Segment(GeometricalEntity):
         """
         self.p1.setFromSympy(sympySegment[0])
         self.p2.setFromSympy(sympySegment[1])
+    @property
+    def vector(self):
+        """
+            Get The vector of the Segment
+        """
+        return Vector(self.p1, self.p2)

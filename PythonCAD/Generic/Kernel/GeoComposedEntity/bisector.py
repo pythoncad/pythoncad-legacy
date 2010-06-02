@@ -48,32 +48,36 @@ class Bisector(ObjectJoint):
         """
             Update the segment base on the imput value
         """
-        if isinstance(self.obj1, Segment):
-            pp1=self.obj1.getSympyLine().projection(self.pointClick1.getSympy())
+        v1=self.obj1.vector
+        v2=self.obj2.vector
+        print "abgl 1",v1.absAng
+        print "point 1",v1.point.getCoords()
+        print "abgl 2",v2.absAng
+        print "point 2",v2.point.getCoords()
+        ang=v1.ang(v2)/2.0
+        print "angDif",ang        
+        if v1.absAng==0 or v2.absAng==0:
+            if v2.point.y<0:
+                bisecVector=v2.mag()
+            elif v1.point.y<0:
+                bisecVector=v1.mag()
+            else:
+                if v1.absAng>v2.absAng:
+                    bisecVector=v2.mag()
+                else:
+                    bisecVector=v1.mag()
         else:
-            pp1=self.obj1.getSympy().projection(self.pointClick1.getSympy())
-        if isinstance(self.obj2, Segment):
-            pp2=self.obj2.getSympyLine().projection(self.pointClick2.getSympy())
-        else:
-            pp2=self.obj2.getSympy().projection(self.pointClick2.getSympy())
-        
-        ppi=self.intersection[0].getSympy()
-        import sympy.geometry   as geoSympy
-        t=geoSympy.Triangle(pp1,pp2,ppi)
-        biSeg=t.bisectors[ppi]
-        p0=Point(0, 0)
-        p1=Point(0, 0)
-        p0.setFromSympy(biSeg[0])
-        p1.setFromSympy(biSeg[1])
-        if self.intersection[0].dist(p0)>self.intersection[0].dist(p1):
-            pEnd=p0
-        else:
-            pEnd=p1
-        v=Vector(self.intersection[0], pEnd)
-        magv=v.mag()
-        magv.mult(self.lengh)
-        newPoint=magv.point()
-        newPoint=self.intersection[0]+newPoint
+            if v1.absAng>v2.absAng:
+                bisecVector=v2.mag()
+            else:
+                bisecVector=v1.mag()
+            
+        bisecVector.mult(self.lengh)
+        bisecVector.rotate(ang)
+        print "rotate versor lengh ", bisecVector.norm
+        print "pos",bisecVector.point.getCoords()
+        newPoint=self.intersection[0]+bisecVector.point
+        print "New Point pos", newPoint.getCoords()
         arg={"SEGMENT_0":self.intersection[0], "SEGMENT_1":newPoint}
         self.bisector=Segment(arg)
         

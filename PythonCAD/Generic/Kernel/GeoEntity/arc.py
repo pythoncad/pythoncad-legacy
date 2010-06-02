@@ -427,7 +427,7 @@ class Arc(GeometricalEntity):
             get the sympy object in this case a circle
         """
         _cp=self.center.getSympy()
-        return geoSympy.Circle(_cp, self.radius)
+        return geoSympy.Circle(_cp, mainSympy.Rational(self.radius))
         
     def setFromSympy(self, sympyCircle):    
         """
