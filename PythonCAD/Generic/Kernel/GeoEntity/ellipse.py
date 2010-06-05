@@ -215,3 +215,12 @@ class Ellipse(GeometricalEntity):
         msg="Ellipse: Center %s , Major Axi=%s, Mino Axi=%s"%(
             str(self.center), str(self.major), str(self.minor))
         return msg
+        
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
+        #
+        self.center=self.center.mirror(mirrorRef)

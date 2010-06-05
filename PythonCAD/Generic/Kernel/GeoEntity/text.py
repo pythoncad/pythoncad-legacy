@@ -76,60 +76,54 @@ class Text(GeometricalEntity):
                 return False
         else:
             raise TypeError,"obj must be of type Text"
-                
-    def getText(self):
+    @property            
+    def text(self):
         """
             Get the current text within the Text.
         """
         return self['TEXT_1']
-
-    def setText(self, text):
+    @text.setter
+    def text(self, text):
         """
             Set the text within the Text.
         """
         if not isinstance(text, str):
             raise TypeError, "Invalid text data: " + str(text)
         self['TEXT_1'] = text
-
-    text = property(getText, setText, None, "Text text.")
-
-    def getLocation(self):
+    @property
+    def location(self):
         """
             Return the Text spatial position.
         """
         return self['TEXT_0']
-
-
-    def setLocation(self, x, y):
+    @location.setter
+    def location(self, x, y):
         """
             Store the spatial position of the Text.
         """
         _x = get_float(x)
         _y = get_float(y)
         self['TEXT_0'] = Point(_x, _y)
-
-    location = property(getLocation, None, None, "Text location")
-
-    def getAngle(self):
+    @property
+    def angle(self):
         """
             Return the angle at which the text is drawn.
         """
         return self['TEXT_2']
-
-    def setAngle(self, angle=None):
+    @angle.setter
+    def angle(self, angle=None):
         """
             Set the angle at which the text block should be drawn.
         """
         self['TEXT_2']= get_float(_angle)
-    angle = property(getAngle, setAngle, None, "Text angle.")
-
-    def getPointPosition(self):
+    @property
+    def pointPosition(self):
         """
             return the position of the textrefered to the point 
         """
         return self['TEXT_3']
-    
-    def setPointPosition(self, position):
+    @pointPosition.setter
+    def pointPosition(self, position):
         """
             set the position of the textrefered to the point 
         """
@@ -138,9 +132,6 @@ class Text(GeometricalEntity):
         if position in TEXT_POSITION:
             self['TEXT_3']=position
         raise TypeError,"bad Point position"    
-    
-    pointPosition=property(setPointPosition, getPointPosition, None, "Position of the text refered to the point")
-    
     def getLineCount(self):
         """
             Return the number of lines of text in the Text
@@ -150,7 +141,7 @@ class Text(GeometricalEntity):
         # so the temporary list would not need to be created ...
         #
         return len(self.text.splitlines())
-
+    
     def clone(self):
         """
             Return an identical copy of a Text.
@@ -162,5 +153,15 @@ class Text(GeometricalEntity):
         _tb.pointPosition=self.pointPosition
         return _tb
    
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        #TODO Look at the qt text implementation to understand better the text 
+        #mirror 
+        pass
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
 
-
+        pl=self.getLocation()
+        pl.mirror(mirrorRef)

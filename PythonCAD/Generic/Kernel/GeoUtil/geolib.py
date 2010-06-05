@@ -24,7 +24,6 @@ import math
 
 from Kernel.GeoEntity.point  import Point
 
-
 class Vector:
     """
         Provide a full 2d vector operation and definition
@@ -154,3 +153,15 @@ class Vector:
         _norm=self.norm
         self.X=_norm*math.cos(_a)
         self.Y=_norm*math.sin(_a)
+
+    def invert(self):
+        """
+            Invert the vector
+        """
+        self.rotate(math.pi)
+    def __str__(self):    
+        """
+            print the vector
+        """
+        msg="Vector :(%s,%s),Norm: %s"%(self.point.x, self.point.y, self.norm)
+        return msg

@@ -322,3 +322,13 @@ class CCircle(GeometricalEntity):
         """
         self.center.setFromSympy(sympyCircle[0])
         self.radius=float(sympyCircle[1])
+    
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
+        #
+        self.center=self.center.mirror(mirrorRef)
+        

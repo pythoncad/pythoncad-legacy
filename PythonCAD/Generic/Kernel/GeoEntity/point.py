@@ -28,6 +28,7 @@ import math
 from Kernel.GeoEntity.geometricalentity  import *
 from Kernel.GeoUtil.util                 import *
 
+
 class Point(GeometricalEntity):
     """
         A 2-D point Class.
@@ -243,3 +244,18 @@ class Point(GeometricalEntity):
         """
         self.__x=float(sympyPoint[0])
         self.__y=float(sympyPoint[1])
+        
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        from Kernel.GeoEntity.cline              import CLine
+        from Kernel.GeoEntity.segment              import Segment
+        from Kernel.GeoUtil.geolib               import Vector
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
+        #
+        centerMirror=mirrorRef.getProjection(self)
+        vCenter=Vector(self, centerMirror )
+        p=centerMirror+vCenter.point
+        self.__x, self.__y=p.getCoords()

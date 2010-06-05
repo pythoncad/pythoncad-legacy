@@ -40,7 +40,7 @@ from Kernel.Command.bisectorcommand     import BisectorCommand
 from Kernel.Command.rectanglecommand    import RectangleCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 from Kernel.Command.movecommand         import MoveCommand
-
+from Kernel.Command.mirrorcommand       import MirrorCommand
 #
 # Entity List
 #
@@ -105,7 +105,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'BISECTOR':BisectorCommand, 
                         'RECTANGLE':RectangleCommand, 
                         'POLYGON':PolygonCommand, 
-                        'MOVE':MoveCommand}
+                        'MOVE':MoveCommand, 
+                        'MIRROR':MirrorCommand}
 #
 # Match object Name
 #

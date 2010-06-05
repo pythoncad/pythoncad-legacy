@@ -573,8 +573,33 @@ class EasyTest(BaseCommand):
         #self.testChamfer()
         #self.testFillet1()
         #self.testFillet2()
-        self.multitest()
+        #self.multitest()
+        self.testMirror()
         newDoc.stopMassiveCreation()
+
+    def testMirror(self):    
+        """
+            perform a mirror operation of all the entity
+        """
+        #Circle mirror
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        centerPoint=Point(100, 100)
+        arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
+        arc=Arc(arg)
+        entArc=newDoc.saveEntity(arc)
+        
+        sArg={"SEGMENT_0":Point(-100, 0), "SEGMENT_1":Point(0, 100)}
+        _s=Segment(sArg)
+        
+        mirrorSeg=newDoc.saveEntity(_s)
+        arc.mirror(_s)
+        entArc=newDoc.saveEntity(arc)
+        
+        centerPoint=Point(100, 100)
+        dbPointEnt=newDoc.saveEntity(centerPoint)
+        newcenterPoint=centerPoint.clone()
+        newcenterPoint.mirror(_s)
+        dbPointEnt=newDoc.saveEntity(newcenterPoint)
         
     def testFillet(self, p1, p2, p3, pp1, pp2, R=100):
         newDoc=self.__pyCadApplication.getActiveDocument()

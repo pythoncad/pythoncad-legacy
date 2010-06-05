@@ -206,5 +206,10 @@ class Polyline(GeometricalEntity):
         else:
             return exitArray
         return []
-                
-                
+    
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror
+        """  
+        for k in self:        
+            self[k]=self[k].mirror(mirrorRef) 

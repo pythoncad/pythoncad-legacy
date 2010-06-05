@@ -27,6 +27,8 @@ from __future__ import generators
 import math
 
 from Kernel.GeoEntity.point                import Point
+from Kernel.GeoEntity.segment              import Segment
+from Kernel.GeoEntity.cline                import CLine
 from Kernel.GeoUtil.geolib                 import Vector
 from Kernel.GeoEntity.geometricalentity    import *
 from Kernel.GeoUtil.util                   import *
@@ -108,8 +110,9 @@ class Arc(GeometricalEntity):
         
     def rotate(self, centerRotationPoint, angle):
         """
-            rotate the acline for a given angle
+            rotate the circle for a given angle
         """    
+        #Check if the angle is ok in case of arc
         self.center=GeometricalEntity.rotate(self, centerRotationPoint, self.center,angle )
         
     def getCenter(self):
@@ -214,19 +217,20 @@ class Arc(GeometricalEntity):
     def getEndpoints(self):
         """
             Return where the two endpoints for the arc-segment lie.
-            This function returns two tuples, each containing the x-y coordinates
-            of the arc endpoints. The first tuple corresponds to the endpoint at
+            This function returns two Points, each containing the x-y coordinates
+            of the arc endpoints. The first Point corresponds to the endpoint at
             the startAngle, the second to the endpoint at the endAngle.
         """
         _cx, _cy = self.center.getCoords()
         _r = self.radius
         _sa = self.startAngle
-        _sax = _cx + _r * math.cos(_sa * _dtr)
-        _say = _cy + _r * math.sin(_sa * _dtr)
-        _ea = self.endAngle
-        _eax = _cx + _r * math.cos(_ea * _dtr)
-        _eay = _cy + _r * math.sin(_ea * _dtr)
-        return (_sax, _say), (_eax, _eay)
+        _sax = _cx + _r * math.cos(_sa )
+        _say = _cy + _r * math.sin(_sa)
+        _ea = self.endAngle+_sa
+        
+        _eax = _cx + _r * math.cos(_ea )
+        _eay = _cy + _r * math.sin(_ea )
+        return Point(_sax, _say), Point(_eax, _eay)
 
     def length(self):
         """
@@ -252,7 +256,7 @@ class Arc(GeometricalEntity):
         """
         firstPoint=Point(x,y)
         fromPoint=Point(outx,outy)
-        twoPointDistance=self.center.Dist(fromPoint)
+        twoPointDistance=self.center.dist(fromPoint)
         if(twoPointDistance<self.radius):
             return None,None
         originPoint=Point(0.0,0.0)
@@ -262,7 +266,7 @@ class Arc(GeometricalEntity):
         xPoint=Point(1.0,0.0)
         xVector=Vector(originPoint,xPoint)
         twoPointVector=Vector(fromPoint,self.center)
-        rightAngle=twoPointVector.Ang(xVector)
+        rightAngle=twoPointVector.ang(xVector)
         cx,cy=self.center.getCoords()
         if(outy>cy): # stupid situation
             rightAngle=-rightAngle
@@ -273,7 +277,7 @@ class Arc(GeometricalEntity):
         yCord=math.sin(posAngle)
         dirPoint=Point(xCord,yCord) # Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
-        ver.Mult(tanMod)
+        ver.mult(tanMod)
         tangVectorPoint=ver.Point()
         posPoint=Point(tangVectorPoint+(outx,outy))
         # Compute the Negative Tangent
@@ -281,10 +285,10 @@ class Arc(GeometricalEntity):
         yCord=math.sin(negAngle)
         dirPoint=Point(xCord,yCord)#Versor that point at the tangentPoint
         ver=Vector(originPoint,dirPoint)
-        ver.Mult(tanMod)
-        tangVectorPoint=ver.Point()
+        ver.mult(tanMod)
+        tangVectorPoint=ver.point()
         negPoint=Point(tangVectorPoint+(outx,outy))
-        if(firstPoint.Dist(posPoint)<firstPoint.Dist(negPoint)):
+        if(firstPoint.dist(posPoint)<firstPoint.dist(negPoint)):
             return posPoint.getCoords()
         else:
             return negPoint.getCoords()
@@ -298,11 +302,11 @@ class Arc(GeometricalEntity):
         centerPoint=Point(_cx,_cy)
         outPoint=Point(x,y)
         vector=Vector(outPoint,centerPoint)
-        vNorm=vector.Norm()
+        vNorm=vector.norm()
         newNorm=abs(vNorm-_r)
-        magVector=vector.Mag()
-        magVector.Mult(newNorm)
-        newPoint=magVector.Point()
+        magVector=vector.mag()
+        magVector.mult(newNorm)
+        newPoint=magVector.point()
         intPoint=Point(outPoint+newPoint)
         return intPoint.getCoords()
 
@@ -435,10 +439,12 @@ class Arc(GeometricalEntity):
         """
         self.center.setFromSympy(sympyCircle[0])
         self.radius=float(sympyCircle[1])
+        
     def __str__(self):
         msg="Arc\Circle: Center %s , Radius %s , StartAngle=%s, EndAngle=%s"%(
             str(self.center), str(self.radius), str(self.startAngle), str(self.endAngle))
         return msg
+        
     def test_angle(s, e, a):
         """
             Returns if an angle lies between the start and end angle of an arc.
@@ -453,6 +459,20 @@ class Arc(GeometricalEntity):
             (s <= a <= e)):
             _val = True
         return _val
-
     
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
+        #
+
+        self.center.mirror(mirrorRef)
+
+        startPoint, endPoint=self.getEndpoints()
+        endMirror=mirrorRef.getProjection(endPoint)
+        vEnd=Vector( endPoint, endMirror)
+        newStart=endMirror+vEnd.point
+        self.startAngle=Vector(self.center, newStart).absAng
 

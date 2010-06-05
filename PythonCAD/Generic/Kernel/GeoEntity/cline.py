@@ -127,7 +127,16 @@ class CLine(GeometricalEntity):
             Get The vector of the CLine
         """
         return Vector(self.p1, self.p2)
-        
+    
+    def mirror(self, mirrorRef):
+        """
+            perform the mirror of the line
+        """
+        if not isinstance(mirrorRef, (CLine, Segment)):
+            raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
+        #
+        self.p1=self.p1.mirror(mirrorRef)
+        self.p2=self.p2.mirror(mirrorRef)
 
 def intersect_region(acl, xmin, ymin, xmax, ymax):
     if not isinstance(acl, CLine):
