@@ -43,14 +43,16 @@ class MirrorCommand(BaseCommand):
         if self.raiseStop:
             raise StopIteration
         return (self.exception[0],self.message[0])
+        
     def __setitem__(self, key, value):
         """
             overwrite the command to perform the stop operation
         """
-        if isinstance(value, Point):
+        if value:
             self.value.append(value)    
         else:
            self.raiseStop=True 
+         
     def performMirror(self):
         """
             perform the mirror of all the entity selected
@@ -59,23 +61,24 @@ class MirrorCommand(BaseCommand):
         mirrorRef=self.document.getEntity(self.value[0])
         geoMirrorRef=self.document.convertToGeometricalEntity(mirrorRef)
         outEnt=[]
-        for i in renge(1, len(self.value)):
+        for i in range(1, len(self.value)):
             dbEnt=self.document.getEntity(self.value[i])
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
-            geoEnt.mirror(mirrorRef)
+            geoEnt.mirror(geoMirrorRef)
             dbEnt.setConstructionElements(geoEnt.getConstructionElements())
             outEnt.append(dbEnt)
+        return outEnt
         
     def applyCommand(self):
         """
             perform the write of the entity
         """
-        if len(self.value)>1:
+        if len(self.value)<1:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        
         try:
             self.document.startMassiveCreation()
             for _ent in self.performMirror():
                 self.document.saveEntity(_ent)
         finally:
+            self.raiseStop=False
             self.document.stopMassiveCreation()

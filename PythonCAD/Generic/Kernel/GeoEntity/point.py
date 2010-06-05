@@ -250,7 +250,7 @@ class Point(GeometricalEntity):
             perform the mirror of the line
         """
         from Kernel.GeoEntity.cline              import CLine
-        from Kernel.GeoEntity.segment              import Segment
+        from Kernel.GeoEntity.segment            import Segment
         from Kernel.GeoUtil.geolib               import Vector
         if not isinstance(mirrorRef, (CLine, Segment)):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"

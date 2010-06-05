@@ -18,24 +18,19 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-# qt arc class
+# qt pythoncad Point class
 #
 
-import math
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.pythoncadqtitem import *
 
-class Point(QtGui.QGraphicsItem):
+class Point(PythoncadQtItem):
     """
         this class define the arcQT object 
     """
     def __init__(self, entity):
-        super(Point, self).__init__()
-        # get the geometry
-        geometry = entity.getConstructionElements()
-        self.style=entity.getInnerStyle()
-        # Get Construction arc elements
-        self.xc=geometry["POINT_0"]
-        self.yc=geometry["POINT_1"]
+        super(Point, self).__init__(entity)
+        self.xc=self.geometry["POINT_0"]
+        self.yc=self.geometry["POINT_1"]
         self.yc=(-1.0*self.yc)
         return
        

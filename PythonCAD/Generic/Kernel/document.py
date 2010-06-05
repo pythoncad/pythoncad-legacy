@@ -210,7 +210,10 @@ class Document(BaseDb):
         cType=entity.getEntityType()
         for key in DRAWIN_ENTITY:
             if DRAWIN_ENTITY[key]==cType:
-                geoEnt=key(cObjecs)
+                if cType =="POINT":
+                    geoEnt=Point(cObjecs["POINT_0"], cObjecs["POINT_1"])
+                else:
+                    geoEnt=key(cObjecs)
                 break
         return geoEnt
         

@@ -247,7 +247,6 @@ class CadScene(QtGui.QGraphicsScene):
         """
         Update the scene from the Entity []
         """
-
         dicItems=dict([( item.ID, item)for item in self.items()])
         for ent in entitys:
             if ent.getId() in dicItems:
