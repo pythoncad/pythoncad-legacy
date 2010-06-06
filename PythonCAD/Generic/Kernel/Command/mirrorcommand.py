@@ -32,31 +32,39 @@ class MirrorCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcText,
+                        ExcText, 
                         ExcText]
         self.message=[  "Give Me Entity ID use , for more enitt ES: 4,10,5", 
-                        "Give me the reference line (Segmento or CLine)"]
+                        "Give me the reference line (Segmento or CLine)", 
+                        "Give me the Mode (M or None->Move,C->Copy)"]
                         
     def performMirror(self):
         """
             perform the mirror of all the entity selected
         """
+        move=True
+        if self.value[2]:
+            if self.value[2]=='C':
+                move=False
         mirrorRef=self.document.getEntity(self.value[1])
         geoMirrorRef=self.document.convertToGeometricalEntity(mirrorRef)
-        outEnt=[]
         updEnts=[]
         for id in str(self.value[0]).split(','):
             dbEnt=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.mirror(geoMirrorRef)
-            dbEnt.setConstructionElements(geoEnt.getConstructionElements())
-            outEnt.append(dbEnt)
-        return outEnt
+            if move:
+                dbEnt.setConstructionElements(geoEnt.getConstructionElements())
+                updEnts.append(dbEnt)
+            else:
+                updEnts.append(geoEnt)
+        return updEnts
         
     def applyCommand(self):
         """
             perform the write of the entity
         """
-        if len(self.value)!=2:
+        if len(self.value)!=3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         try:
             self.document.startMassiveCreation()

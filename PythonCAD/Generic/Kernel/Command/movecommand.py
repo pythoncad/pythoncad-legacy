@@ -49,12 +49,12 @@ class MoveCommand(BaseCommand):
                 move=False
         updEnts=[]
         for id in str(self.value[0]).split(','):
-            ent=self.document.getEntity(id)
-            geoEnt=self.document.convertToGeometricalEntity(ent)
+            dbEnt=self.document.getEntity(id)
+            geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.move(self.value[1], self.value[2])
             if move:
-                ent.setConstructionElements(geoEnt.getConstructionElements())
-                updEnts.append(ent)
+                dbEnt.setConstructionElements(geoEnt.getConstructionElements())
+                updEnts.append(dbEnt)
             else:
                 updEnts.append(geoEnt)
         return updEnts

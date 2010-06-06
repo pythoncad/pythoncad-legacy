@@ -33,30 +33,38 @@ class RotateCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcText,
                         ExcPoint, 
-                        ExcAngle]
+                        ExcAngle, 
+                        ExcText]
         self.message=[  "Give me Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the reference rotation point", 
-                        "Give me the rotation angle"]
+                        "Give me the rotation angle", 
+                        "Give me the Mode (M or None->Move,C->Copy)"]
                         
     def performRotation(self):
         """
             perform the mirror of all the entity selected
         """
-        outEnt=[]
+        move=True
+        if self.value[3]:
+            if self.value[3]=='C':
+                move=False
         updEnts=[]
         for id in str(self.value[0]).split(','):
             dbEnt=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.rotate(self.value[1], self.value[2])
-            dbEnt.setConstructionElements(geoEnt.getConstructionElements())
-            outEnt.append(dbEnt)
-        return outEnt
+            if move:
+                dbEnt.setConstructionElements(geoEnt.getConstructionElements())
+                updEnts.append(dbEnt)
+            else:
+                updEnts.append(geoEnt)
+        return updEnts
         
     def applyCommand(self):
         """
             perform the write of the entity
         """
-        if len(self.value)!=3:
+        if len(self.value)!=4:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         try:
             self.document.startMassiveCreation()
