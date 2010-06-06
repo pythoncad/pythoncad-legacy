@@ -27,7 +27,7 @@ from Kernel.GeoEntity.point            import Point
 
 class MirrorCommand(BaseCommand):
     """
-        this class rappresent the mirror command
+        This class rappresent the mirror command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)

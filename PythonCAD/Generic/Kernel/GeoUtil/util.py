@@ -27,7 +27,7 @@ import string
 from math import fmod, pi
 import types
 
-from Kernel.GeoUtil.tolerance      import TOL
+from Kernel.GeoUtil.tolerance       import TOL
 
 
 def get_float(val):
@@ -299,61 +299,35 @@ def getSegmentNearestPoint(segment, p):
         return ps2
     else:
         return ps1
+           
+def updateSegment(objSegment,objPoint, objInterPoint):
+        """
+            Return a segment with trimed to the intersection point
+        """
+        from Kernel.GeoEntity.segment       import Segment
+        from Kernel.GeoEntity.point         import Point
+        from Kernel.GeoUtil.geolib          import Vector
         
-def getACLineNearestPoint(acline, p):
-    """
-        Get ACLine point nearest
-    """
-    x, y=p.getCoords()
-    px, py=acline.getProjection(x, y)
-    return Point(px, py)
-    
-def getNearestPoint(obj, p):
-    """
-        return the segment end point nearest of p
-    """
-    from Kernel.GeoEntity.segment        import Segment
-    from Kernel.GeoEntity.acline         import ACLine   
-    if isinstance(obj, Segment):
-       return getSegmentNearestPoint(obj, p)
-    if isinstance(obj, ACline):
-        pass
+        objProjection=objSegment.getProjection(objPoint)
+        _p1 , _p2 = objSegment.getEndpoints()       
+        if not (_p1==objInterPoint or _p2==objInterPoint):
+            pickIntVect=Vector(objInterPoint,objProjection).mag()                    
+            p1IntVect=Vector(objInterPoint,_p1).mag() 
+            if(pickIntVect==p1IntVect):
+                arg={"SEGMENT_0":_p1,"SEGMENT_1":objInterPoint}
+                return Segment(arg)
+            p2IntVect=Vector(objInterPoint,_p2).mag()
+            if(pickIntVect==p2IntVect):
+                arg={"SEGMENT_0":objInterPoint,"SEGMENT_1":_p2}
+                return Segment(arg)
+        ldist=objProjection.dist(_p1)
+        if ldist>objProjection.dist(_p2):
+            arg={"SEGMENT_0":_p1,"SEGMENT_1":objInterPoint}
+            return Segment(arg)
+        else:
+            arg={"SEGMENT_0":objInterPoint,"SEGMENT_1":_p2}
+            return Segment(arg)
 
 
+    
 
-
-def getSympyPoint(point):
-    """
-        return the sympy Point
-    """
-    x, y=point.getCoords()
-    return geoSympy.Point(x, y)
-    
-def getSympySegment(segment):
-    """
-        Return the sympy Segment
-    """
-    p1, p2=segment.getEndpoints()
-    
-    return geoSympy.Segment()
-    
-def getSipPyObject(geoEnt):
-    """
-        return the sympy object from a pythoncad object
-    """
-    _sympyObj=None
-    if isinstance(geoEnt, Point):
-        _sympyObj = getSympyPoint(geoEnt)
-    elif isinstance(geoEnt, Segment):
-        _sympyObj = getSympySegment(geoEnt)
-    elif isinstance(geoEnt,  ACLine):
-        _sympyObj = getSympyLine(geoEnt)
-    elif isinstance(geoEnt, (Arc, CCircle)):
-        _sympyObj = getSympyCircle(geoEnt)
-    elif isinstance(geoEnt, Polyline):
-        _sympyObj = getSympyPolyline(geoEnt)
-    elif isinstance(geoEnt, Ellipse):
-        _sympyObj = getSympyEllipse(geoEnt)
-    return _sympyObj
-    
-    

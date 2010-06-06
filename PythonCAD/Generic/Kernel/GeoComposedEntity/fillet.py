@@ -132,12 +132,12 @@ class Fillet(ObjectJoint):
         _p1 , _p2 = objSegment.getEndpoints()       
         _objPoint=Point(objSegment.getProjection(objPoint))
         if not (_p1==objInterPoint or _p2==objInterPoint):
-            pickIntVect=pyGeoLib.Vector(objInterPoint,_objPoint).Mag()                    
-            p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).Mag()            
+            pickIntVect=pyGeoLib.Vector(objInterPoint,_objPoint).mag()                    
+            p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).mag()            
             if(pickIntVect==p1IntVect):
                 arg={"SEGMENT_0":_p1,"SEGMENT_1":objProjection}
                 return Segment(arg), objProjection
-            p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).Mag()
+            p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).mag()
             if(pickIntVect==p2IntVect):
                 arg={"SEGMENT_0":objProjection,"SEGMENT_1":_p2}
                 return Segment(arg), objProjection

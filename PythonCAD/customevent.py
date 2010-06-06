@@ -576,8 +576,31 @@ class EasyTest(BaseCommand):
         #self.multitest()
         #self.testMirror()
         #self.testMove()
-        self.rotate()
+        #self.rotate()
+        self.trim()
         newDoc.stopMassiveCreation()
+    def trim(self):    
+        """
+            test the trim command
+        """
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        
+        sArg1={"SEGMENT_0":Point(0, 0), "SEGMENT_1":Point(150, 0)}
+        _st1=Segment(sArg1)
+        newSeg1=newDoc.saveEntity(_st1)
+        
+        sArg2={"SEGMENT_0":Point(200, 0), "SEGMENT_1":Point(200, 150)}
+        _st2=Segment(sArg2)
+        newSeg2=newDoc.saveEntity(_st2)
+        trimCmd=self.__pyCadApplication.getCommand('TRIM')
+        
+        keys=trimCmd.keys()
+        trimCmd[keys[0]]=newSeg1.getId()
+        trimCmd[keys[1]]=newSeg2.getId()
+        trimCmd[keys[2]]=Point(140, 1)
+        trimCmd[keys[3]]=Point(210, 1)
+        trimCmd[keys[4]]="B"
+        trimCmd.applyCommand() 
         
     def rotate(self):
         """

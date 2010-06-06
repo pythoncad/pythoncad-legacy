@@ -166,14 +166,25 @@ def find_intersections(obja, objb):
             _sympy_intersection(_ipts, obja, objb)
     return _ipts
 
-def find_segment_extended_intersection(obja, objb):
+def findSegmentExtendedIntersection(obja, objb):
     """
         Extend the segment intersection on a cline intersection
+        Return an [(x,y),(x1,y1),...]
     """
     if isinstance(obja, Segment):
         p1, p2=obja.getEndpoints()
-        obja=CLine(p1, p2)
+        arg={"CLINE_0":p1, "CLINE_1":p2}
+        obja=CLine(arg)
     if isinstance(objb, Segment):
         p1, p2=objb.getEndpoints()
-        objb=CLine(p1, p2)
+        arg={"CLINE_0":p1, "CLINE_1":p2}
+        objb=CLine(arg)
     return find_intersections(obja, objb)
+
+def findSegmentExtendedIntersectionPoint(obja, objb):
+    """
+        xtend the segment intersection on a cline intersection
+        Return a [Point,Point,..]
+    """
+    return [Point(x, y) for x, y in findSegmentExtendedIntersection(obja, objb)]
+    

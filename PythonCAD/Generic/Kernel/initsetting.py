@@ -42,6 +42,7 @@ from Kernel.Command.polygoncommand      import PolygonCommand
 from Kernel.Command.movecommand         import MoveCommand
 from Kernel.Command.mirrorcommand       import MirrorCommand
 from Kernel.Command.rotatecommand       import RotateCommand
+from Kernel.Command.trimcommand         import TrimCommand
 #
 # Entity List
 #
@@ -108,7 +109,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'POLYGON':PolygonCommand, 
                         'MOVE':MoveCommand, 
                         'MIRROR':MirrorCommand, 
-                        'ROTATE':RotateCommand}
+                        'ROTATE':RotateCommand, 
+                        'TRIM':TrimCommand}
 #
 # Match object Name
 #

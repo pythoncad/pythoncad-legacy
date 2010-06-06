@@ -61,7 +61,7 @@ class Vector:
         """ 
         if(not isinstance(vector,Vector)):
           raise TypeError,"Invalid Argument vector: Vector Required"   
-        if(self.point()==vector.point()):
+        if(self.point==vector.point):
             return True             
         else:
             return False
@@ -91,8 +91,8 @@ class Vector:
         """
         if(not isinstance(vector,Vector)):
             raise TypeError,"Invalid Argument vector: Vector Required"  
-        x1,y1=self.point().getCoords()
-        x2,y2=vector.point().getCoords()
+        x1,y1=self.point.getCoords()
+        x2,y2=vector.point.getCoords()
         cros=x1*y2 - y1*x2
         return cros
         
