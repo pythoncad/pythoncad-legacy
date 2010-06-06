@@ -29,6 +29,7 @@ from Kernel.GeoEntity.geometricalentity  import *
 from Kernel.GeoUtil.util                 import *
 
 
+
 class Point(GeometricalEntity):
     """
         A 2-D point Class.
@@ -115,7 +116,7 @@ class Point(GeometricalEntity):
                 raise TypeError,"Invalid Argument obj: Point or tuple Required"
         else:
             x,y = obj.getCoords()
-        return Point(self.__x+x,self.__y+y)
+        return Point(self.__x+x, self.__y+y)
 
     def getConstructionElements(self):
         """
@@ -244,6 +245,26 @@ class Point(GeometricalEntity):
         """
         self.__x=float(sympyPoint[0])
         self.__y=float(sympyPoint[1])
+    
+    def move(self,fromPoint, toPoint):
+        """
+            perform the move operation
+        """
+        from Kernel.GeoUtil.geolib  import Vector
+        v=Vector(fromPoint, toPoint)
+        self+=v.point
+    
+    def rotate(self, rotationPoint, angle):
+        """
+            this method must be defined for rotation
+        """
+        from Kernel.GeoUtil.geolib import Vector
+        from Kernel.GeoEntity.point import Point
+        v=Vector(rotationPoint,self)
+        v.rotate(angle)
+        p=rotationPoint+v.point    
+        self.__x=p.x
+        self.__y=p.y
         
     def mirror(self, mirrorRef):
         """

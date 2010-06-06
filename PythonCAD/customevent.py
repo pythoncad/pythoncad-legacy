@@ -574,9 +574,81 @@ class EasyTest(BaseCommand):
         #self.testFillet1()
         #self.testFillet2()
         #self.multitest()
-        self.testMirror()
+        #self.testMirror()
+        #self.testMove()
+        self.rotate()
         newDoc.stopMassiveCreation()
-
+        
+    def rotate(self):
+        """
+            perform a rotate operation
+        """
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        ang=1.5707963267948966
+        cp=Point(0, 0)
+        newDoc.saveEntity(cp)
+        #Point 
+        centerPoint=Point(100,100)
+        dbPointEnt=newDoc.saveEntity(centerPoint)
+        centerPoint.rotate(cp, ang)
+        dbPointEnt=newDoc.saveEntity(centerPoint)
+        
+        #Arc 
+        centerPoint=Point(100, 100)
+        arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
+        arc=Arc(arg)
+        entArc=newDoc.saveEntity(arc)
+        arc.rotate(cp,ang)
+        entArc=newDoc.saveEntity(arc)
+        
+        #Segment
+        sArg={"SEGMENT_0":Point(100, 100), "SEGMENT_1":Point(150, 150)}
+        _st=Segment(sArg)
+        newSeg=newDoc.saveEntity(_st)
+        _st.rotate(cp, ang)
+        newDoc.saveEntity(_st)
+        #Ellipse
+        eArg={"ELLIPSE_0":Point(100, 0), "ELLIPSE_1":100, "ELLIPSE_2":50}
+        _e=Ellipse(eArg)
+        newE=newDoc.saveEntity(_e)
+        _e.rotate(cp, ang)
+        newDoc.saveEntity(_e)
+        
+    def testMove(self):
+        """
+            perform a move operation
+        """
+        #Arc 
+        newDoc=self.__pyCadApplication.getActiveDocument()
+        centerPoint=Point(100, 100)
+        arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
+        arc=Arc(arg)
+        entArc=newDoc.saveEntity(arc)
+        
+        sp=Point(0, 0)
+        ep=Point(100, 100)
+       
+        arc.move(sp, ep)
+        entArc=newDoc.saveEntity(arc)
+        #Point 
+        centerPoint=Point(100, 0)
+        dbPointEnt=newDoc.saveEntity(centerPoint)
+        centerPoint.move(sp, ep)
+        dbPointEnt=newDoc.saveEntity(centerPoint)
+        #Segment
+        sArg={"SEGMENT_0":Point(100, 100), "SEGMENT_1":Point(150, 150)}
+        _st=Segment(sArg)
+        newSeg=newDoc.saveEntity(_st)
+        _st.move(sp, ep)
+        newDoc.saveEntity(_st)
+        #Ellipse
+        eArg={"ELLIPSE_0":Point(100, 0), "ELLIPSE_1":100, "ELLIPSE_2":50}
+        _e=Ellipse(eArg)
+        newE=newDoc.saveEntity(_e)
+        _e.move(sp, ep)
+        newDoc.saveEntity(_e)
+        
+        
     def testMirror(self):    
         """
             perform a mirror operation of all the entity

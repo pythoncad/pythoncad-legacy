@@ -74,22 +74,22 @@ class GeometricalEntity(dict):
         v=Vector(fromPoint, toPoint)
         for key in self:
             if isinstance(self[key] , Point):
-                self[key]+=v.point()
-        return v.point()
+                self[key]+=v.point
+        return v.point
     
-    def rotate(self, rotationPoint, pointToMove, angle):
+    def rotate(self, rotationPoint, angle):
         """
             this method must be defined for rotation
         """
         from Kernel.GeoUtil.geolib import Vector
         from Kernel.GeoEntity.point import Point
         
-        v=Vector(rotationPoint,pointToMove )
+        for key in self:
+            if isinstance(self[key] , Point):
+                v=Vector(rotationPoint,self[key] )
+                v.rotate(angle)
+                self[key]=rotationPoint+v.point
         
-        x, y=v.point().getCoords()
-        x1=x*math.cos(angle)-y*math.sin(angle)
-        y1=x*math.sin(angle)+y*math.cos(angle)
-        return Point(x1, y1)+rotationPoint
     
     def getSympy(self):
         """

@@ -105,15 +105,8 @@ class Arc(GeometricalEntity):
         return ((self.center != obj.center) or
                 (abs(self.radius - obj.radius) > 1e-10) or
                 (abs(self.startAngle - obj.startAngle) > 1e-10) or
-                (abs(self.endAngle - obj.endAngle) > 1e-10))
-                   
+                (abs(self.endAngle - obj.endAngle) > 1e-10))                   
         
-    def rotate(self, centerRotationPoint, angle):
-        """
-            rotate the circle for a given angle
-        """    
-        #Check if the angle is ok in case of arc
-        self.center=GeometricalEntity.rotate(self, centerRotationPoint, self.center,angle )
         
     def getCenter(self):
         """
@@ -460,6 +453,14 @@ class Arc(GeometricalEntity):
             _val = True
         return _val
     
+    def rotate(self, rotationPoint, angle):
+        """
+            rotate the arc
+        """
+        self.startAngle+=angle
+        self.center.rotate(rotationPoint, angle)
+        
+        
     def mirror(self, mirrorRef):
         """
             perform the mirror of the line
@@ -468,10 +469,7 @@ class Arc(GeometricalEntity):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
         #
         startPoint, endPoint=self.getEndpoints()
-
         self.center.mirror(mirrorRef)
-
-        
         endMirror=mirrorRef.getProjection(endPoint)
         vEnd=Vector( endPoint, endMirror)
         newStart=endMirror+vEnd.point
