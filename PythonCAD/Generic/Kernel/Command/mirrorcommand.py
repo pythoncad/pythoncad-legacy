@@ -31,38 +31,21 @@ class MirrorCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcEntity, ExcEntity]
-        self.message=["Give me the reference line (Segmento or CLine)"]
-        self.raiseStop=False
-    def next(self):
-        """
-            performe iteration
-            overwrite the default next into an infinite loop
-            we do not know how mani entity the user whant to mirror
-        """
-        if self.raiseStop:
-            raise StopIteration
-        return (self.exception[0],self.message[0])
-        
-    def __setitem__(self, key, value):
-        """
-            overwrite the command to perform the stop operation
-        """
-        if value:
-            self.value.append(value)    
-        else:
-           self.raiseStop=True 
-         
+        self.exception=[ExcText,
+                        ExcText]
+        self.message=[  "Give Me Entity ID use , for more enitt ES: 4,10,5", 
+                        "Give me the reference line (Segmento or CLine)"]
+                        
     def performMirror(self):
         """
             perform the mirror of all the entity selected
-            First entity is the reference mirror line
         """
-        mirrorRef=self.document.getEntity(self.value[0])
+        mirrorRef=self.document.getEntity(self.value[1])
         geoMirrorRef=self.document.convertToGeometricalEntity(mirrorRef)
         outEnt=[]
-        for i in range(1, len(self.value)):
-            dbEnt=self.document.getEntity(self.value[i])
+        updEnts=[]
+        for id in str(self.value[0]).split(','):
+            dbEnt=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.mirror(geoMirrorRef)
             dbEnt.setConstructionElements(geoEnt.getConstructionElements())
@@ -73,12 +56,11 @@ class MirrorCommand(BaseCommand):
         """
             perform the write of the entity
         """
-        if len(self.value)<1:
+        if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         try:
             self.document.startMassiveCreation()
             for _ent in self.performMirror():
                 self.document.saveEntity(_ent)
         finally:
-            self.raiseStop=False
             self.document.stopMassiveCreation()

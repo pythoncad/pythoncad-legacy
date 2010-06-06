@@ -18,48 +18,49 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the move command
+#This module provide a class for the polyline command
 #
+
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.arc import Arc
+from Kernel.GeoEntity.point         import Point
 
-class MoveCommand(BaseCommand):
+class RotateCommand(BaseCommand):
     """
-        this class rappresent the Move command
+        this class rappresent the rotate command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcText,
                         ExcPoint, 
-                        ExcPoint ]
-        self.message=[  "Give Me the Entity ID use , for more enitt ES: 4,10,5", 
-                        "Give me the from point",
-                        "Give me the to point"]
-
-    def getEntsToSave(self):
+                        ExcAngle]
+        self.message=[  "Give me Entity ID use , for more enitt ES: 4,10,5", 
+                        "Give me the reference rotation point", 
+                        "Give me the rotation angle"]
+                        
+    def performRotation(self):
         """
-            get the chamfer segments
+            perform the mirror of all the entity selected
         """
+        outEnt=[]
         updEnts=[]
         for id in str(self.value[0]).split(','):
-            ent=self.document.getEntity(id)
-            geoEnt=self.document.convertToGeometricalEntity(ent)
-            geoEnt.move(self.value[1], self.value[2])
-            ent.setConstructionElements(geoEnt.getConstructionElements())
-            updEnts.append(ent)
-        return updEnts
+            dbEnt=self.document.getEntity(id)
+            geoEnt=self.document.convertToGeometricalEntity(dbEnt)
+            geoEnt.rotate(self.value[1], self.value[2])
+            dbEnt.setConstructionElements(geoEnt.getConstructionElements())
+            outEnt.append(dbEnt)
+        return outEnt
         
     def applyCommand(self):
         """
-            apply the champfer command
+            perform the write of the entity
         """
         if len(self.value)!=3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         try:
             self.document.startMassiveCreation()
-            for _ent in self.getEntsToSave():
+            for _ent in self.performRotation():
                 self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
-       

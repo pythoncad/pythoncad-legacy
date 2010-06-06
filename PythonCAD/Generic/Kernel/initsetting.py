@@ -41,6 +41,7 @@ from Kernel.Command.rectanglecommand    import RectangleCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 from Kernel.Command.movecommand         import MoveCommand
 from Kernel.Command.mirrorcommand       import MirrorCommand
+from Kernel.Command.rotatecommand       import RotateCommand
 #
 # Entity List
 #
@@ -106,7 +107,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'RECTANGLE':RectangleCommand, 
                         'POLYGON':PolygonCommand, 
                         'MOVE':MoveCommand, 
-                        'MIRROR':MirrorCommand}
+                        'MIRROR':MirrorCommand, 
+                        'ROTATE':RotateCommand}
 #
 # Match object Name
 #
