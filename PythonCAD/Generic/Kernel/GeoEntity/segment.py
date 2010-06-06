@@ -30,6 +30,7 @@ import math
 from Kernel.GeoUtil.util                    import *
 from Kernel.GeoUtil.geolib                  import Vector
 from Kernel.GeoEntity.point                 import Point
+from Kernel.GeoEntity.cline                 import CLine
 from Kernel.GeoEntity.geometricalentity     import *
 
 class Segment(GeometricalEntity):
@@ -365,5 +366,5 @@ class Segment(GeometricalEntity):
         if not isinstance(mirrorRef, (CLine, Segment)):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
         #
-        self.p1=self.p1.mirror(mirrorRef)
-        self.p2=self.p2.mirror(mirrorRef)
+        self.p1.mirror(mirrorRef)
+        self.p2.mirror(mirrorRef)

@@ -581,7 +581,7 @@ class EasyTest(BaseCommand):
         """
             perform a mirror operation of all the entity
         """
-        #Circle mirror
+        #Arc mirror
         newDoc=self.__pyCadApplication.getActiveDocument()
         centerPoint=Point(100, 100)
         arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
@@ -594,12 +594,25 @@ class EasyTest(BaseCommand):
         mirrorSeg=newDoc.saveEntity(_s)
         arc.mirror(_s)
         entArc=newDoc.saveEntity(arc)
-        
-        centerPoint=Point(100, 100)
+        #Point 
+        centerPoint=Point(100, 0)
         dbPointEnt=newDoc.saveEntity(centerPoint)
         newcenterPoint=centerPoint.clone()
         newcenterPoint.mirror(_s)
         dbPointEnt=newDoc.saveEntity(newcenterPoint)
+        #Segment
+        sArg={"SEGMENT_0":Point(100, 100), "SEGMENT_1":Point(150, 150)}
+        _st=Segment(sArg)
+        newSeg=newDoc.saveEntity(_st)
+        _st.mirror(_s)
+        newDoc.saveEntity(_st)
+        #Ellipse
+        eArg={"ELLIPSE_0":Point(100, 0), "ELLIPSE_1":100, "ELLIPSE_2":50}
+        _e=Ellipse(eArg)
+        newE=newDoc.saveEntity(_e)
+        _e.mirror(_s)
+        newDoc.saveEntity(_e)
+        
         
     def testFillet(self, p1, p2, p3, pp1, pp2, R=100):
         newDoc=self.__pyCadApplication.getActiveDocument()

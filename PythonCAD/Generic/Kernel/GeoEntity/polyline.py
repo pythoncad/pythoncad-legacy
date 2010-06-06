@@ -28,6 +28,8 @@ import math
 
 from Kernel.GeoUtil.tolerance              import *
 from Kernel.GeoEntity.point                import Point
+from Kernel.GeoEntity.segment              import Segment
+from Kernel.GeoEntity.cline                import CLine
 from Kernel.GeoEntity.geometricalentity    import *
 
 class Polyline(GeometricalEntity):
@@ -212,4 +214,4 @@ class Polyline(GeometricalEntity):
             perform the mirror
         """  
         for k in self:        
-            self[k]=self[k].mirror(mirrorRef) 
+            self[k].mirror(mirrorRef) 

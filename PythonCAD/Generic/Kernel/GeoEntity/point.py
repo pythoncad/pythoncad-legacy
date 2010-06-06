@@ -59,7 +59,7 @@ class Point(GeometricalEntity):
         self.__y = _y
 
     def __str__(self):
-        return "(%g,%g)" % (self.__x, self.__y)
+        return "Point : (%g,%g)" % (self.__x, self.__y)
 
     def __sub__(self, p):
         """

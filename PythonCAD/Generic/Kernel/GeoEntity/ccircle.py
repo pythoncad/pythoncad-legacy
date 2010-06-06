@@ -31,7 +31,9 @@ from Kernel.GeoUtil.tolerance              import *
 from Kernel.GeoUtil.util                   import *
 from Kernel.GeoEntity.geometricalentity    import *
 from Kernel.GeoEntity.point                import Point
-from Kernel.GeoUtil.geolib             import Vector
+from Kernel.GeoEntity.segment              import Segment
+from Kernel.GeoEntity.cline                import CLine
+from Kernel.GeoUtil.geolib                 import Vector
 
 class CCircle(GeometricalEntity):
     """
@@ -330,5 +332,5 @@ class CCircle(GeometricalEntity):
         if not isinstance(mirrorRef, (CLine, Segment)):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
         #
-        self.center=self.center.mirror(mirrorRef)
+        self.center.mirror(mirrorRef)
         

@@ -37,7 +37,8 @@ class Entity(PyCadObject):
             raise TypeError,'type error in dictionary'
         PyCadObject.__init__(self,eType=entType, objId=objId,style=style)
         self.setConstructionElements(constructionElements)
-
+    def __str__(self):
+        return 'Entity : %s'%self.eType
     def getBBox(self):
         """
             get the bounding Box Of the entity

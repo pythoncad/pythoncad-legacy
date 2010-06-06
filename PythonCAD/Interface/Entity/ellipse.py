@@ -29,17 +29,14 @@ class Ellipse(QtGui.QGraphicsItem):
         super(Ellipse, self).__init__()
         pt_begin = None
         pt_end = None
-        # get the geometry
         geometry = entity.getConstructionElements()
         self.style=entity.getInnerStyle()
-        # Get Construction arc elements
-        #self.__center, self.__major,self.__minor
         pCenter=geometry["ELLIPSE_0"]
         major=geometry["ELLIPSE_1"]
         minor=geometry["ELLIPSE_2"]
         self.ID=entity.getId()
         self.xc,self.yc=pCenter.getCoords()
-       
+        self.yc=self.yc*-1.0
         self.h=major
         self.w=minor
         
@@ -49,7 +46,7 @@ class Ellipse(QtGui.QGraphicsItem):
         """
             overloading of the qt bounding rectangle
         """
-        return QtCore.QRectF(self.xc,self.yc ,self.h ,self.w )
+        return QtCore.QRectF(self.xc-(self.h/2.0),self.yc- (self.w/2.0) ,self.h ,self.w )
         
     def paint(self, painter,option,widget):
         """
@@ -59,5 +56,5 @@ class Ellipse(QtGui.QGraphicsItem):
         r, g, b=self.style.getStyleProp("entity_color") 
         painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #   Create Ellipse
-        painter.drawEllipse(self.xc-(self.h/2.0),self.yc- (self.w/2.0),self.h ,self.w)
+        painter.drawEllipse(self.xc-(self.h/2.0),self.yc-(self.w/2.0),self.h ,self.w)
 

@@ -72,8 +72,8 @@ class Arc(GeometricalEntity):
         if not get_float(self.radius) > 0.0:
             raise ValueError, "Invalid radius" 
         
-        self.startAngle = make_c_angle(self.startAngle)
-        self.endAngle= make_c_angle(self.endAngle)
+        self.startAngle = self.startAngle
+        self.endAngle= self.endAngle
         
     def isCircle(self):
         """
@@ -467,10 +467,11 @@ class Arc(GeometricalEntity):
         if not isinstance(mirrorRef, (CLine, Segment)):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
         #
+        startPoint, endPoint=self.getEndpoints()
 
         self.center.mirror(mirrorRef)
 
-        startPoint, endPoint=self.getEndpoints()
+        
         endMirror=mirrorRef.getProjection(endPoint)
         vEnd=Vector( endPoint, endMirror)
         newStart=endMirror+vEnd.point
