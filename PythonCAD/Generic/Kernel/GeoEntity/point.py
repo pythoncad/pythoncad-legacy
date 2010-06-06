@@ -252,7 +252,9 @@ class Point(GeometricalEntity):
         """
         from Kernel.GeoUtil.geolib  import Vector
         v=Vector(fromPoint, toPoint)
-        self+=v.point
+        p=self+v.point
+        self.__x=p.x
+        self.__x=p.y
     
     def rotate(self, rotationPoint, angle):
         """

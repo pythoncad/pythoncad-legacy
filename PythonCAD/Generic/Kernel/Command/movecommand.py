@@ -32,29 +32,38 @@ class MoveCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcText,
                         ExcPoint, 
-                        ExcPoint ]
+                        ExcPoint, 
+                        ExcText]
         self.message=[  "Give Me the Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the from point",
-                        "Give me the to point"]
+                        "Give me the to point", 
+                        "Give me the Mode (M or None->Move,C->Copy)"]
 
     def getEntsToSave(self):
         """
             get the chamfer segments
         """
+        move=True
+        if self.value[3]:
+            if self.value[3]=='C':
+                move=False
         updEnts=[]
         for id in str(self.value[0]).split(','):
             ent=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(ent)
             geoEnt.move(self.value[1], self.value[2])
-            ent.setConstructionElements(geoEnt.getConstructionElements())
-            updEnts.append(ent)
+            if move:
+                ent.setConstructionElements(geoEnt.getConstructionElements())
+                updEnts.append(ent)
+            else:
+                updEnts.append(geoEnt)
         return updEnts
         
     def applyCommand(self):
         """
             apply the champfer command
         """
-        if len(self.value)!=3:
+        if len(self.value)!=4:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         try:
             self.document.startMassiveCreation()
