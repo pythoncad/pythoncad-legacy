@@ -30,6 +30,7 @@ import time
 
 
 #***************************************************Kernel Import
+from Kernel.pycadevent              import PyCadEvent
 from Kernel.initsetting             import *
 from Kernel.ExternalFormat.externalformat          import ExtFormat
 from Kernel.ExternalFormat.Dxf.dxf  import Dxf
@@ -55,6 +56,7 @@ from Kernel.GeoEntity.arc          import Arc
 from Kernel.GeoEntity.ellipse      import Ellipse
 from Kernel.GeoEntity.polyline     import Polyline
 from Kernel.GeoEntity.style        import Style
+
 
 #   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
@@ -605,34 +607,6 @@ class Document(BaseDb):
         """
         return self.dbPath
 
-class PyCadEvent(object):
-    """
-        this class fire the envent from the python kernel
-    """
-    def __init__(self):
-        self.handlers = set()
 
-    def handle(self, handler):
-        self.handlers.add(handler)
-        return self
-
-    def unhandle(self, handler):
-        try:
-            self.handlers.remove(handler)
-        except:
-            raise ValueError("PythonCad Handler is not handling this event.")
-        return self
-
-    def fire(self, *args, **kargs):
-        for handler in self.handlers:
-            handler(*args, **kargs)
-
-    def getHandlerCount(self):
-        return len(self.handlers)
-
-    __iadd__ = handle
-    __isub__ = unhandle
-    __call__ = fire
-    __len__  = getHandlerCount
 
 

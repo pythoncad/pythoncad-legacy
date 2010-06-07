@@ -36,7 +36,8 @@ from Interface.cadview              import CadView
 from Ui_TestWindow                  import Ui_TestDialog
 from customevent                    import testCmdLine
 from Interface.CmdIntf.cmdintf      import CmdIntf
-
+from Kernel.exception               import *
+    
 
 class CadWindow(QtGui.QMainWindow):
     '''
@@ -72,7 +73,9 @@ class CadWindow(QtGui.QMainWindow):
         # register commands that are handled by the main window
         self._registerCommands()
         return
-        
+    @property    
+    def view(self):    
+        return self.__view
         
     def _getApplication(self):
         return self.__application
@@ -104,13 +107,17 @@ class CadWindow(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'quit', '&Quit PyCAD', self.close)
         
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
+        
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Point', '&Point', self._onPoint)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Segment', '&Segment', self._onSegment)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Arc', '&Arc', self._onArc)
+        
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
         
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Debug, 'Debug', '&Debug PyCAD', self._onDebug)
         
         return
         
-
     def _onNewDrawing(self):
         '''
         Create a new drawing 
@@ -153,7 +160,21 @@ class CadWindow(QtGui.QMainWindow):
         self.statusBar().showMessage("Ready", 2000)
         return
 
-
+    def _onPoint(self):
+        self.callDocumentCommand('POINT')
+        
+    def _onSegment(self):        
+        self.callDocumentCommand('SEGMENT')
+    def _onArc(self):        
+        self.callDocumentCommand('ARC')        
+        
+    def callDocumentCommand(self, commandName):
+        try:
+            from Interface.pycadapp import PyCadApp
+            pointCmd=PyCadApp.Application().getCommand(commandName)
+            self.__cmd_intf.evaluateInnerCommand(pointCmd)
+        except EntityMissing:
+            PyCadApp.critical("You need to have an active document to perform this command")
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
                 "<b>PythonCAD</b> is a 2D CAD system.")
@@ -190,15 +211,12 @@ class CadWindow(QtGui.QMainWindow):
         # layer list
         self.__layer_dock = LayerDock(self)
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
-        
         # commandline
         command_dock = self.__cmd_intf.Commandline
         # if the commandline exists, add it
         if not command_dock is None:
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
-            
         return
-        
         
 
 

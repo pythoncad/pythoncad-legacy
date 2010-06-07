@@ -19,13 +19,33 @@ class CmdlineDock(QtGui.QDockWidget):
         Evaluation of expressions is done by the FunctionHandler object.
         '''
         super(CmdlineDock, self).__init__(title, parent)
+        self.setMinimumHeight(100)
         # only dock at the bottom or top
         self.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea | QtCore.Qt.TopDockWidgetArea)
+        self.dockWidgetContents = QtGui.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Ignored)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dockWidgetContents.sizePolicy().hasHeightForWidth())
+        self.dockWidgetContents.setSizePolicy(sizePolicy)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.dockWidgetContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.textEditOutput = QtGui.QTextEdit(self.dockWidgetContents)
+        self.textEditOutput.setObjectName("textEditOutput") 
+        self.textEditOutput.setReadOnly(True) 
+        self.textEditOutput.ensureCursorVisible()
+        self.verticalLayout_2.addWidget(self.textEditOutput)
         self.__edit_ctrl = QtGui.QLineEdit(self, returnPressed=self._returnPressed)
-        self.setWidget(self.__edit_ctrl)
-        # function handler to evaluate actions
-        self.__function_handler = FunctionHandler(self.__edit_ctrl)
-
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.textEditOutput.sizePolicy().hasHeightForWidth())
+        self.__edit_ctrl.setSizePolicy(sizePolicy)
+        self.verticalLayout_2.addWidget(self.__edit_ctrl)
+        self.setWidget(self.dockWidgetContents)
+        self.__function_handler = FunctionHandler(self.__edit_ctrl,self.textEditOutput )
+        #QtCore.QObject.connect(self.__edit_ctrl, QtCore.SIGNAL("returnPressed()"), self.textEditOutput.centerCursor)
 
     #-------- properties -----------#
     

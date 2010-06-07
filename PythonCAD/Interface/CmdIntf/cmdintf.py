@@ -33,6 +33,8 @@ class CmdIntf(object):
         self.__category = CmdCategory(self.__main_window) 
         # icons search path
         self.__icon_dir = os.path.join(os.getcwd(), 'icons')
+        #add custom event
+        parent.view.pyCadViewPressEvent+=self.evaluateMouseImput
         return
         
     #-------- properties -----------#
@@ -125,8 +127,20 @@ class CmdIntf(object):
         '''    
         self.__edit_ctrl.FunctionHandler.evaluate(expression)
         return
+        
+    def evaluateInnerCommand(self, kernelCommand):
+        '''
+            evaluate a kernel command
+        '''
+        self.__edit_ctrl.FunctionHandler.evaluateInnerCommand(kernelCommand)
+     
+    def evaluateMouseImput(self,view,event):
+        '''
+            get imput from viewport
+        '''
+        self.__edit_ctrl.FunctionHandler.evaluateMouseImput(event)
     
-    
+        
     @QtCore.pyqtSlot(str)
     def _actionHandler(self, expression):
         '''
