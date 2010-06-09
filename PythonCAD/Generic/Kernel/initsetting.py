@@ -43,6 +43,7 @@ from Kernel.Command.movecommand         import MoveCommand
 from Kernel.Command.mirrorcommand       import MirrorCommand
 from Kernel.Command.rotatecommand       import RotateCommand
 from Kernel.Command.trimcommand         import TrimCommand
+from Kernel.Command.deletecommand       import DeleteCommand
 #
 # Entity List
 #
@@ -110,7 +111,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'MOVE':MoveCommand, 
                         'MIRROR':MirrorCommand, 
                         'ROTATE':RotateCommand, 
-                        'TRIM':TrimCommand}
+                        'TRIM':TrimCommand, 
+                        'DELETE':DeleteCommand}
 #
 # Match object Name
 #

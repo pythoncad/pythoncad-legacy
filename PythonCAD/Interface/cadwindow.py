@@ -110,8 +110,11 @@ class CadWindow(QtGui.QMainWindow):
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotare', '&Rotare', self._onRotate)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
@@ -221,7 +224,22 @@ class CadWindow(QtGui.QMainWindow):
         self.callDocumentCommand('MOVE')
         self.statusBar().showMessage("Ready", 2000)
         return
-
+    def _onDelete(self):
+        self.statusBar().showMessage("CMD:Delete", 2000)
+        self.callDocumentCommand('DELETE')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onMirror(self):
+        self.statusBar().showMessage("CMD:Mirror", 2000)
+        self.callDocumentCommand('MIRROR')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onRotate(self):
+        self.statusBar().showMessage("CMD:Rotate", 2000)
+        self.callDocumentCommand('ROTATE')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    
     def _onPrint(self):
         printer=QtGui.QPrinter()
         printDialog=QtGui.QPrintDialog(printer)

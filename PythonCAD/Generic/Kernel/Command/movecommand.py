@@ -41,7 +41,7 @@ class MoveCommand(BaseCommand):
 
     def getEntsToSave(self):
         """
-            get the chamfer segments
+           get entity to save
         """
         move=True
         if self.value[3]:
