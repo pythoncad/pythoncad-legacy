@@ -91,19 +91,22 @@ class FunctionHandler(object):
                 elif type(exception )==type(ExcEntity):
                     value=str(entity.getId())
                 if value:
-                    self.printOutput(value)    
                     self.performCommand(self.evaluateInner, value)
                     if self.evaluateInner.index==len(self.evaluateInner.exception)-1:
                         self.evaluateInner.applyCommand()
                         self.evaluateInner=None
         except:
             self.evaluateInner=None
-            
+        if self.evaluateInner:
+            self.printOutput(str(self.evaluateInner.getActiveMessage()))
+    
+    
     def performCommand(self,cObject, text):
         """
             Perform a Command
             cObject is the command object
         """
+        self.printOutput(text) 
         from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity, PyCadWrongCommand
         try:
             iv=cObject.next()
@@ -136,7 +139,7 @@ class FunctionHandler(object):
         except PyCadWrongCommand:
             self.printOutput("Wrong Command")
             self.evaluateInner=None
-            
+        
     def printCommand(self, msg):
         """
             print message
