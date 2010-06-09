@@ -59,10 +59,12 @@ class Ellipse(GeometricalEntity):
         _major=kw['ELLIPSE_1']
         _minor=kw['ELLIPSE_2']
         if _minor > _major:
-            kw['ELLIPSE_2']=get_float(major)
-            kw['ELLIPSE_1']=get_float(minor)
+            kw['ELLIPSE_2']=get_float(_major)
+            kw['ELLIPSE_1']=get_float(_minor)
         GeometricalEntity.__init__(self,kw, argDescription)
-            
+    @property
+    def info(self):
+        return "Ellipse: Center: %s, Major: %s, Minor:%s "%(str(self.center), str(self.major), str(self.minor))        
     def __eq__(self, obj):
         """
             Compare one ellipse to another for equality.

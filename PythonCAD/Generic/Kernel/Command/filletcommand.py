@@ -51,8 +51,8 @@ class FilletCommand(BaseCommand):
             get the fillet segments
         """
         objEnt=[]
-        ent1=self.document.getEntity(self.value[0].getId())
-        ent2=self.document.getEntity(self.value[1].getId())
+        ent1=self.document.getEntity(self.value[0])
+        ent2=self.document.getEntity(self.value[1])
         
         cel1=ent1.getConstructionElements()
         seg1=Segment(cel1)

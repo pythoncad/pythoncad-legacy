@@ -20,26 +20,19 @@
 #
 # qt ellipse class
 #
-import math
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.baseentity import *
 
-class Ellipse(QtGui.QGraphicsItem):
+class Ellipse(BaseEntity):
     
     def __init__(self, entity):
-        super(Ellipse, self).__init__()
-        pt_begin = None
-        pt_end = None
-        geometry = entity.getConstructionElements()
-        self.style=entity.getInnerStyle()
-        pCenter=geometry["ELLIPSE_0"]
-        major=geometry["ELLIPSE_1"]
-        minor=geometry["ELLIPSE_2"]
-        self.ID=entity.getId()
-        self.xc,self.yc=pCenter.getCoords()
+        super(Ellipse, self).__init__(entity)
+        geoEnt=self.geoItem
+        major=geoEnt.major
+        minor=geoEnt.minor
+        self.xc,self.yc=geoEnt.center.getCoords()
         self.yc=self.yc*-1.0
         self.h=major
         self.w=minor
-        
         return
         
     def boundingRect(self):
@@ -48,13 +41,10 @@ class Ellipse(QtGui.QGraphicsItem):
         """
         return QtCore.QRectF(self.xc-(self.h/2.0),self.yc- (self.w/2.0) ,self.h ,self.w )
         
-    def paint(self, painter,option,widget):
+    def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
-        #   Set pen accoording to layer
-        r, g, b=self.style.getStyleProp("entity_color") 
-        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #   Create Ellipse
         painter.drawEllipse(self.xc-(self.h/2.0),self.yc-(self.w/2.0),self.h ,self.w)
 

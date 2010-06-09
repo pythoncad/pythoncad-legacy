@@ -34,7 +34,7 @@ class CmdIntf(object):
         # icons search path
         self.__icon_dir = os.path.join(os.getcwd(), 'icons')
         #add custom event
-        parent.view.pyCadViewPressEvent+=self.evaluateMouseImput
+        parent.scene.pyCadViewPressEvent+=self.evaluateMouseImput
         return
         
     #-------- properties -----------#

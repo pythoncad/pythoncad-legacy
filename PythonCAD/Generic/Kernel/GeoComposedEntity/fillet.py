@@ -78,6 +78,8 @@ class Fillet(ObjectJoint):
         self._calculateCenter()
         obj1, pc1=self._updateSegment(self.obj1, self.pointClick1 )
         obj2, pc2=self._updateSegment(self.obj2, self.pointClick2 )
+        if not self.trimMode:
+            self.trimMode="BOTH"    
         if self.trimModeKey[self.trimMode]!=self.trimModeKey["NO_TRIM"]:
             if self.trimModeKey[self.trimMode]==self.trimModeKey["FIRST"] or self.trimModeKey[self.trimMode]==self.trimModeKey["BOTH"]:
                 self.obj1=obj1
@@ -132,12 +134,12 @@ class Fillet(ObjectJoint):
         _p1 , _p2 = objSegment.getEndpoints()       
         _objPoint=Point(objSegment.getProjection(objPoint))
         if not (_p1==objInterPoint or _p2==objInterPoint):
-            pickIntVect=pyGeoLib.Vector(objInterPoint,_objPoint).mag()                    
-            p1IntVect=pyGeoLib.Vector(objInterPoint,_p1).mag()            
+            pickIntVect=Vector(objInterPoint,_objPoint).mag()                    
+            p1IntVect=Vector(objInterPoint,_p1).mag()            
             if(pickIntVect==p1IntVect):
                 arg={"SEGMENT_0":_p1,"SEGMENT_1":objProjection}
                 return Segment(arg), objProjection
-            p2IntVect=pyGeoLib.Vector(objInterPoint,_p2).mag()
+            p2IntVect=Vector(objInterPoint,_p2).mag()
             if(pickIntVect==p2IntVect):
                 arg={"SEGMENT_0":objProjection,"SEGMENT_1":_p2}
                 return Segment(arg), objProjection

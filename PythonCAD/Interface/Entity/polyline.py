@@ -21,17 +21,16 @@
 # qt arc class
 #
 
-import math
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.baseentity import *
 
-class Polyline(QtGui.QGraphicsItem):
+class Polyline(BaseEntity):
     """
         this class define the polyline object 
     """
     def __init__(self, entity):
-        super(Polyline, self).__init__()
+        super(Polyline, self).__init__(entity)
         # get the geometry
-        geometry = entity.getConstructionElements()
+        geometry = self.entity.getConstructionElements()
         geoPoints=[geometry[k] for k in geometry]
         coordPoints=[point.getCoords() for point in geoPoints]
         self.qtPoints=[QtCore.QPointF(x, y) for x, y in coordPoints]
@@ -41,10 +40,9 @@ class Polyline(QtGui.QGraphicsItem):
         Y=[y for x,y in coordPoints]
         max_y=max(Y)
         min_y=min(Y)
-        h=abs(max_y-min_y)
-        w=abs(max_x-min_x)
+        w=abs(max_y-min_y)
+        h=abs(max_x-min_x)
         self.bbox=QtCore.QRectF(min_x,min_y ,h ,w )
-        self.style=entity.getInnerStyle()
         return
         
     def boundingRect(self):
@@ -53,17 +51,14 @@ class Polyline(QtGui.QGraphicsItem):
         """
         return self.bbox
         
-    def paint(self, painter,option,widget):
+    def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
-        # set pen accoording to layer
-        r, g, b=self.style.getStyleProp("entity_color") 
-        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #Create poliline Object
         pol=QtGui.QPolygonF(self.qtPoints)
         painter.drawPolyline(pol)
-
+        #painter.drawRect(self.boundingRect())
     
     
     

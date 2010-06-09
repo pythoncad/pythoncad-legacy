@@ -21,8 +21,7 @@
 # This module provide basic DB class for storing entity in pythoncad
 #
 
-from Kernel.Db.pycadobject      import *
-
+from Kernel.Db.pycadobject              import *
 from Kernel.GeoEntity.point            import Point
 
 class Entity(PyCadObject):
@@ -82,7 +81,23 @@ class Entity(PyCadObject):
         """
         self._constructionElements=constructionElements
         self.updateBBox()
-
+    
+    def toGeometricalEntity(self):
+        """
+            Convert an entity into a geometrical entity
+        """ 
+        from Kernel.initsetting             import DRAWIN_ENTITY
+        geoEnt=None
+        cObjecs=self.getConstructionElements()
+        cType=self.getEntityType()
+        for key in DRAWIN_ENTITY:
+            if DRAWIN_ENTITY[key]==cType:
+                if cType =="POINT":
+                    geoEnt=Point(cObjecs["POINT_0"], cObjecs["POINT_1"])
+                else:
+                    geoEnt=key(cObjecs)
+                break
+        return geoEnt
 
 
 

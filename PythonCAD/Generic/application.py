@@ -18,11 +18,8 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 # This  module provide the main api interface of pythoncad
 #
-#
-
 #
 import sys
 import os

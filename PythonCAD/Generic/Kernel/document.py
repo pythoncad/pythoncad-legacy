@@ -207,17 +207,7 @@ class Document(BaseDb):
         """
             Convert an entity into a geometrical entity
         """ 
-        geoEnt=None
-        cObjecs=entity.getConstructionElements()
-        cType=entity.getEntityType()
-        for key in DRAWIN_ENTITY:
-            if DRAWIN_ENTITY[key]==cType:
-                if cType =="POINT":
-                    geoEnt=Point(cObjecs["POINT_0"], cObjecs["POINT_1"])
-                else:
-                    geoEnt=key(cObjecs)
-                break
-        return geoEnt
+        return entity.toGeometricalEntity()
         
     def haveDrawingEntitys(self):
         """

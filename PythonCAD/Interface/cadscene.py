@@ -33,7 +33,7 @@ from Interface.Entity.arc       import Arc
 from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
 from Interface.cadinitsetting   import *
-
+from Kernel.pycadevent              import PyCadEvent
 
 class CadScene(QtGui.QGraphicsScene):
     
@@ -43,12 +43,20 @@ class CadScene(QtGui.QGraphicsScene):
         self.__filename = None
         # drawing limits
         self.__limits = None
-
-    def __getLimits(self):
+        #scene custom event
+        self.pyCadViewPressEvent=PyCadEvent()
+    
+    def mousePressEvent(self, event):
+        qtItem=self.itemAt(event.scenePos())
+        pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItem)
+        print "mousePressEvent : ", pyCadEvent
+        self.pyCadViewPressEvent(self, pyCadEvent)
+    @property    
+    def Limits(self):
+        """
+        Gets the drawing limits
+        """
         return self.__limits
-    
-    Limits = property(__getLimits, None, None, "Gets the drawing limits")
-    
         
     def newDocument(self):
         """
@@ -77,7 +85,6 @@ class CadScene(QtGui.QGraphicsScene):
                 if document.haveDrawingEntitys():
                     # add entities to scene
                     self.populateScene(document)
-        
                 
     def initDocumentEvents(self):
         """
@@ -156,7 +163,6 @@ class CadScene(QtGui.QGraphicsScene):
         for entity in entities:
             self.addGraficalObject(entity)
  
- 
     def addGraficalObject(self, entity):                
         """
         Add the single object
@@ -201,7 +207,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.deleteEntity([entity])
         endTime=time.clock()-startTime
         print "eventDelete in %s"%str(endTime)
-
         
     def eventMassiveDelete(self, document,  entitys):
         """
@@ -212,7 +217,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.deleteEntity(entitys)
         endTime=time.clock()-startTime
         print "eventDelete in %s"%str(endTime)    
-
     
     def deleteEntity(self, entitys):
         """
@@ -221,7 +225,6 @@ class CadScene(QtGui.QGraphicsScene):
         dicItems=dict([( item.ID, item)for item in self.items()])
         for ent in entitys:
             self.removeItem(dicItems[ent.getId()])
-
 
     def updateLimits(self, rect):
         # init size
@@ -265,3 +268,17 @@ class CadScene(QtGui.QGraphicsScene):
         for ent in entities:
                 self.addGraficalObject(ent)
             
+    def undo(self):
+        """
+            perform the undo on the active document
+        """
+        activeDoc= PyCadApp.ActiveDocument()
+        activeDoc.unDo()
+
+    def redo(self):
+        """
+            perform the redo on the aactive document
+        """
+        activeDoc= PyCadApp.ActiveDocument()
+        activeDoc.reDo()
+        

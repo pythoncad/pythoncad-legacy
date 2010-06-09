@@ -136,6 +136,7 @@ KERNEL_ENTITY=(Style,Entity,Settings,Layer)
 #
 SUPPORTED_ENTITYS=KERNEL_ENTITY+tuple(DRAWIN_ENTITY.keys())+(ComposedEntity, )
 
+
 PYTHONCAD_COLOR={
     'aliceblue'             :(240,248,255),
     'antiquewhite'          :(250,235,215),
@@ -283,6 +284,7 @@ PYTHONCAD_COLOR={
     'whitesmok'             :(255,255,0),
     'yellowgreen'           :(154,205,050)}
 
+PYTHONCAD_HIGLITGT_COLOR=PYTHONCAD_COLOR['tomato']
 
 PYTHONCAD_LINETYPE={
     'continue':             (1),

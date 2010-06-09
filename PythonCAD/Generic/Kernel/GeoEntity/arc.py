@@ -80,7 +80,9 @@ class Arc(GeometricalEntity):
             return if the arc isa circle
         """
         return self.__isCircle
-
+    @property
+    def info(self):
+        return "Arc: Center: %s, Radius:%s ,StartAngle: %s,EndAngle: %s"%(str(self.center), str(self.radius), str(self.startAngle), str(self.endAngle))
     def __eq__(self, obj):
         """
             Compare a Arc to another for equality.

@@ -51,7 +51,10 @@ class CLine(GeometricalEntity):
 
     def __str__(self):
         return "Construction line through point %s at %s " % (self.p1, self.p2)   
-        
+    @property
+    def info(self):
+        return "CLine: %s, %s"%(str(self.p1), str(self.p2))
+    
     def rotate(self, rotationPoint, angle):
         """
             rotate the acline for a given angle

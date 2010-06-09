@@ -21,16 +21,15 @@
 # qt pythoncad Point class
 #
 
-from Interface.Entity.pythoncadqtitem import *
+from Interface.Entity.baseentity import *
 
-class Point(PythoncadQtItem):
+class Point(BaseEntity):
     """
         this class define the arcQT object 
     """
     def __init__(self, entity):
         super(Point, self).__init__(entity)
-        self.xc=self.geometry["POINT_0"]
-        self.yc=self.geometry["POINT_1"]
+        self.xc,self.yc= self.geoItem.getCoords()
         self.yc=(-1.0*self.yc)
         return
        
@@ -40,13 +39,10 @@ class Point(PythoncadQtItem):
         """
         return QtCore.QRectF(self.xc-2,self.yc-2 ,4 ,4)
         
-    def paint(self, painter,option,widget):
+    def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
-        # set pen accoording to layer
-        r, g, b=self.style.getStyleProp("entity_color") 
-        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #Create Arc/Circle
         p=QtCore.QPoint(self.xc, self.yc)
         painter.drawRect(self.boundingRect())

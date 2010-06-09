@@ -1,26 +1,29 @@
 
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.baseentity import *
 
-class Segment(QtGui.QGraphicsLineItem):
+class Segment(BaseEntity):
     
     def __init__(self, entity):
-        super(Segment, self).__init__()
-        pt_begin = None
-        pt_end = None
-        # get the geometry
-        geometry = entity.getConstructionElements()
-        self.ID=entity.getId()
-        style=entity.getInnerStyle()
-        # get the begin and endpoint from the geometry
-        for key in geometry.keys():
-            if pt_begin == None:
-                pt_begin = geometry[key]
-            else:
-                pt_end = geometry[key]
-        # set the line
-        self.setLine(pt_begin.x, -1.0 * pt_begin.y, pt_end.x, -1.0 * pt_end.y)
-        # set pen 
-        r, g, b=style.getStyleProp("entity_color") 
-        self.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
+        super(Segment, self).__init__(entity)
+        p1, p2=self.geoItem.getEndpoints()
+        self.x, self.y=p1.getCoords()
+        self.x1, self.y1=p2.getCoords()
+        self.y=self.y*-1.0
+        self.y1=self.y1*-1.0
         return
+        
+    def boundingRect(self):
+        """
+            overloading of the qt bounding rectangle
+        """
+        x=min(self.x, self.x1)
+        y=min(self.y, self.y1)
+        deltax=abs(self.x-self.x1)
+        deltay=abs(self.y-self.y1)
+        return QtCore.QRectF(x,y ,deltax,deltay)
     
+    def drawGeometry(self, painter, option, widget):
+        #Create Segment
+        p1=QtCore.QPointF(self.x, self.y)
+        p2=QtCore.QPointF(self.x1, self.y1)
+        painter.drawLine(p1,p2)

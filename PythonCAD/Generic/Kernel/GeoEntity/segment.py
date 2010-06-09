@@ -51,7 +51,9 @@ class Segment(GeometricalEntity):
 
     def __str__(self):
         return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length())
-
+    @property
+    def info(self):
+        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length())    
     def __eq__(self, obj):
         """
             Compare a Segment to another for equality.

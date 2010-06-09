@@ -21,12 +21,12 @@
 #
 # This  module PROVIDE ALL GLOBAL VARIABLE NEEDE TO THE SCENE
 #
-from Interface.Entity.point   import Point
+from Interface.Entity.point     import Point
 from Interface.Entity.segment   import Segment
 from Interface.Entity.arc       import Arc
 from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
-from Interface.Entity.polyline   import Polyline
+from Interface.Entity.polyline  import Polyline
 
 SCENE_SUPPORTED_TYPE=["SEGMENT",
                       "POINT", 

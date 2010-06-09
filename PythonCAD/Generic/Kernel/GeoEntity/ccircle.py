@@ -56,7 +56,9 @@ class CCircle(GeometricalEntity):
         
         if not get_float(self.radius) > 0.0:
             raise ValueError, "Invalid radius" 
-
+    @property
+    def info(self):
+        return "CCircle: Center: %s, Radius:%ss"%(str(self.center), str(self.radius))
     def __eq__(self, obj):
         """
             Compare a CCircle to another for equality.

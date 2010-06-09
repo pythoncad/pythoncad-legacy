@@ -21,28 +21,22 @@
 # qt arc class
 #
 
-import math
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.baseentity import *
 
-class Arc(QtGui.QGraphicsItem):
+class Arc(BaseEntity):
     """
         this class define the arcQT object 
     """
     def __init__(self, entity):
-        super(Arc, self).__init__()
+        super(Arc, self).__init__(entity)
         # get the geometry
-        geometry = entity.getConstructionElements()
-        self.style=entity.getInnerStyle()
-        # Get Construction arc elements
-        pCenter=geometry["ARC_0"]
-        radius=geometry["ARC_1"]
-        startAngle=geometry["ARC_2"]
-        spanAngle=geometry["ARC_3"]
-        self.ID=entity.getId()
-        self.xc,self.yc=pCenter.getCoords()
-        self.yc=(-1.0*self.yc)- radius
-        self.xc=self.xc-radius
-        self.h=radius*2
+        geoEnt=self.geoItem
+        self.xc, self.yc=geoEnt.center.getCoords()
+        startAngle=geoEnt.startAngle
+        spanAngle=geoEnt.endAngle
+        self.yc=(-1.0*self.yc)- geoEnt.radius
+        self.xc=self.xc-geoEnt.radius
+        self.h=geoEnt.radius*2
         # By default, the span angle is 5760 (360 * 16, a full circle).
         # From pythoncad the angle are in radiant ..
         startAngle=(startAngle*180/math.pi)*16
@@ -50,7 +44,6 @@ class Arc(QtGui.QGraphicsItem):
         spanAngle=spanAngle
         self.startAngle=startAngle
         self.spanAngle=spanAngle
-
         return
         
     def boundingRect(self):
@@ -59,15 +52,13 @@ class Arc(QtGui.QGraphicsItem):
         """
         return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h )
         
-    def paint(self, painter,option,widget):
+    def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
-        # set pen accoording to layer
-        r, g, b=self.style.getStyleProp("entity_color") 
-        painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
         #Create Arc/Circle
         painter.drawArc(self.xc,self.yc ,self.h ,self.h ,self.startAngle,  self.spanAngle)
+        #painter.drawRect(self.boundingRect())
 
     
     

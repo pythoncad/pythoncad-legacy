@@ -61,7 +61,9 @@ class Point(GeometricalEntity):
 
     def __str__(self):
         return "Point : (%g,%g)" % (self.__x, self.__y)
-
+    @property
+    def info(self):
+        return "Point : (%g,%g)" % (self.__x, self.__y)
     def __sub__(self, p):
         """
             Return the separation between two points.

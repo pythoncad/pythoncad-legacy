@@ -49,12 +49,14 @@ class Polyline(GeometricalEntity):
         argDescription=dict([(key,Point) for key in kw])
         GeometricalEntity.__init__(self,kw, argDescription)
 
-    def __len__(self):
-        return len(self.points)
+    #def __len__(self):
+    #    return len(self.points)
 
     def __str__(self):
         return "Polyline" 
-
+    @property
+    def info(self):
+        return "Polyline" 
     def __eq__(self, obj):
         """
             Compare two Polyline objects for equality.

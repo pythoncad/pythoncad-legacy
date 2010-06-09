@@ -76,6 +76,9 @@ class Text(GeometricalEntity):
                 return False
         else:
             raise TypeError,"obj must be of type Text"
+    @property
+    def info(self):
+        return "Text: %s"%str(self.location) 
     @property            
     def text(self):
         """

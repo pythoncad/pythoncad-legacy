@@ -29,21 +29,19 @@ from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
 
-from Generic.application     import Application
+from Generic.application            import Application
 from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Ui_TestWindow                  import Ui_TestDialog
 from customevent                    import testCmdLine
 from Interface.CmdIntf.cmdintf      import CmdIntf
-from Kernel.exception               import *
-    
+from Kernel.exception               import *  
 
 class CadWindow(QtGui.QMainWindow):
     '''
     Main application window, contains the graphics view and user interface controls (menu, toolbars, palettes and commandline).
-    '''
-    
+    '''    
     def __init__(self):
         '''
         Create all user interface components
@@ -76,17 +74,21 @@ class CadWindow(QtGui.QMainWindow):
     @property    
     def view(self):    
         return self.__view
-        
-    def _getApplication(self):
+    @property    
+    def scene(self):    
+        return self.__scene        
+    @property
+    def Application(self):
+        """
+        get the kernel application object
+        """
         return self.__application
-    
-    Application = property(_getApplication, None, None, 'get the kernel application object')
-    
-    def _getLayerDock(self):
-        return self.__layer_dock
-    
-    LayerDock = property(_getLayerDock, None, None, 'get the layer tree dockable window')
-        
+    @property
+    def LayerDock(self):
+        """
+        get the layer tree dockable window
+        """
+        return self.__layer_dock      
         
     def _registerCommands(self):
         '''
@@ -105,17 +107,29 @@ class CadWindow(QtGui.QMainWindow):
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'quit', '&Quit PyCAD', self.close)
-        
+        # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
-        
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Point', '&Point', self._onPoint)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Segment', '&Segment', self._onSegment)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'Arc', '&Arc', self._onArc)
-        
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
+        # Draw
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'rectangle', '&Rectangle', self._onRectangle)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polyline', '&Polyline', self._onPolyline)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'arc', '&Arc', self._onArc)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'ellipse', '&Ellipse', self._onEllipse)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'poligon', '&Poligon', self._onPolygon)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'fillet', '&Fillet', self._onFillet)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'chamfer', '&Chamfer', self._onChamfer)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'biscect', '&Bisect', self._onBisect)
+        # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
-        
+        # Debug
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Debug, 'Debug', '&Debug PyCAD', self._onDebug)
-        
         return
         
     def _onNewDrawing(self):
@@ -124,7 +138,6 @@ class CadWindow(QtGui.QMainWindow):
         '''
         self.__scene.newDocument()
         return
-    
 
     def _onOpenDrawing(self):
         # ask the user to select an existing drawing
@@ -148,25 +161,91 @@ class CadWindow(QtGui.QMainWindow):
         self.__scene.closeDocument()
         return
     
+    def _onPoint(self):
+        self.statusBar().showMessage("CMD:Point", 2000)
+        self.callDocumentCommand('POINT')
+        self.statusBar().showMessage("Ready", 2000)
+        return    
+    def _onSegment(self):
+        self.statusBar().showMessage("CMD:Segment", 2000)
+        self.callDocumentCommand('SEGMENT')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onArc(self):
+        self.statusBar().showMessage("CMD:Arc", 2000)
+        self.callDocumentCommand('ARC')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onEllipse(self):
+        self.statusBar().showMessage("CMD:Ellipse", 2000)
+        self.callDocumentCommand('ELLIPSE')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onRectangle(self):
+        self.statusBar().showMessage("CMD:Rectangle", 2000)
+        self.callDocumentCommand('RECTANGLE')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onPolygon(self):
+        self.statusBar().showMessage("CMD:Polygon", 2000)
+        self.callDocumentCommand('POLYGON')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    def _onPolyline(self):
+        self.statusBar().showMessage("CMD:Polyline", 2000)
+        self.callDocumentCommand('POLYLINE')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+    
+    def _onFillet(self):
+        self.statusBar().showMessage("CMD:Fillet", 2000)
+        self.callDocumentCommand('FILLET')
+        self.statusBar().showMessage("Ready", 2000)
+        return
         
-    def _onPrint(self):
-        # TODO: printing
+    def _onChamfer(self):
+        self.statusBar().showMessage("CMD:Chamfer", 2000)
+        self.callDocumentCommand('CHAMFER')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+            
+    def _onBisect(self):
+        self.statusBar().showMessage("CMD:Bisect", 2000)
+        self.callDocumentCommand('BISECTOR')
+        self.statusBar().showMessage("Ready", 2000)
+        return
+        
+    # Edit
+    def _onMove(self):
+        self.statusBar().showMessage("CMD:Move", 2000)
+        self.callDocumentCommand('MOVE')
         self.statusBar().showMessage("Ready", 2000)
         return
 
+    def _onPrint(self):
+        printer=QtGui.QPrinter()
+        printDialog=QtGui.QPrintDialog(printer)
+        if (printDialog.exec_() == QtGui.QDialog.Accepted): 
+            painter=QtGui.QPainter(printer)
+            painter.setRenderHint(QtGui.QPainter.Antialiasing);
+            self.__scene.render(painter)  
+        self.statusBar().showMessage("Ready", 2000)
+        return
         
     def _onUndo(self):
-        # TODO: printing
+        try:
+            self.__scene.undo()
+        except UndoDb:
+            PyCadApp.critical("Unable To Perform Undo")
         self.statusBar().showMessage("Ready", 2000)
         return
-
-    def _onPoint(self):
-        self.callDocumentCommand('POINT')
         
-    def _onSegment(self):        
-        self.callDocumentCommand('SEGMENT')
-    def _onArc(self):        
-        self.callDocumentCommand('ARC')        
+    def _onRedo(self):
+        try:
+            self.__scene.redo()
+        except UndoDb:
+            PyCadApp.critical("Unable To Perform Redo")
+        self.statusBar().showMessage("Ready", 2000)
         
     def callDocumentCommand(self, commandName):
         try:

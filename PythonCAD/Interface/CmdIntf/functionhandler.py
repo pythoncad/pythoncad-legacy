@@ -86,10 +86,14 @@ class FunctionHandler(object):
                 value=None
                 point, entity=eventItem
                 exception=self.evaluateInner.exception[self.evaluateInner.index+1]
-                if type(exception )==type(ExcPoint):
+                try:
+                    raise exception(None)
+                except ExcPoint:
                     value="%s,%s"%(point)
-                elif type(exception )==type(ExcEntity):
-                    value=str(entity.getId())
+                except ExcEntity:
+                    value=str(entity.ID)
+                except:
+                    pass
                 if value:
                     self.performCommand(self.evaluateInner, value)
                     if self.evaluateInner.index==len(self.evaluateInner.exception)-1:
@@ -126,7 +130,7 @@ class FunctionHandler(object):
                 cObject[iv]=text
                 return cObject
             except (ExcEntity):
-                cObject[iv]=self.convertToInt(text)
+                cObject[iv]=str(text)
                 return cObject
             except:
                 msg="Error on command imput"
