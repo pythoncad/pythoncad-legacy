@@ -31,8 +31,8 @@ class MirrorCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcText,
-                        ExcText, 
+        self.exception=[ExcEntity,
+                        ExcEntity, 
                         ExcText]
         self.message=[  "Give Me Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the reference line (Segmento or CLine)", 

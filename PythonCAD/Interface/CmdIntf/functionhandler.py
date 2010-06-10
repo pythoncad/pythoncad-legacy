@@ -80,7 +80,7 @@ class FunctionHandler(object):
         """
             evaluate the mouse click
         """
-        from Kernel.exception import ExcPoint, ExcEntity
+        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint
         try:
             if self.evaluateInner:
                 value=None
@@ -91,7 +91,13 @@ class FunctionHandler(object):
                 except ExcPoint:
                     value="%s,%s"%(point)
                 except ExcEntity:
-                    value=str(entity.ID)
+                    if entity:
+                        value=str(entity.ID)
+                except (ExcEntityPoint):
+                    if entity:
+                        sPoint="%s,%s"%(point)
+                        id=str(entity.ID)
+                        value="%s@%s"%(str(id), str(sPoint))
                 except:
                     pass
                 if value:
@@ -111,7 +117,7 @@ class FunctionHandler(object):
             cObject is the command object
         """
         self.printOutput(text) 
-        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity, PyCadWrongCommand
+        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcEntityPoint,PyCadWrongCommand
         try:
             iv=cObject.next()
             exception,message=iv
@@ -130,6 +136,9 @@ class FunctionHandler(object):
                 cObject[iv]=text
                 return cObject
             except (ExcEntity):
+                cObject[iv]=str(text)
+                return cObject
+            except (ExcEntityPoint):
                 cObject[iv]=str(text)
                 return cObject
             except:

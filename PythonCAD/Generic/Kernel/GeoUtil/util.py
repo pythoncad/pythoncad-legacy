@@ -29,7 +29,6 @@ import types
 
 from Kernel.GeoUtil.tolerance       import TOL
 
-
 def get_float(val):
     _v = val
     if not isinstance(_v, float):
@@ -328,6 +327,13 @@ def updateSegment(objSegment,objPoint, objInterPoint):
             arg={"SEGMENT_0":objInterPoint,"SEGMENT_1":_p2}
             return Segment(arg)
 
-
-    
-
+def getIdPoint(value):
+    """
+        imput must be 10@0,0
+        return id,Point
+    """
+    from Kernel.GeoEntity.point         import Point
+    id, ps=value.split('@')
+    x, y=ps.split(',')    
+    p=Point(float(x), float(y))
+    return id, p

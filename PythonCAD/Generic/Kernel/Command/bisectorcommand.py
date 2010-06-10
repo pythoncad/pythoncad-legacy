@@ -25,7 +25,7 @@ from Kernel.composedentity                 import ComposedEntity
 from Kernel.Command.basecommand            import *
 from Kernel.GeoComposedEntity.bisector     import Bisector
 from Kernel.GeoEntity.segment              import Segment
-
+from Kernel.GeoUtil.util                    import getIdPoint
 
 class BisectorCommand(BaseCommand):
     """
@@ -33,24 +33,22 @@ class BisectorCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcEntity,
-                        ExcEntity, 
-                        ExcPoint, 
-                        ExcPoint,
+        self.exception=[ExcEntityPoint,
+                        ExcEntityPoint, 
                         ExcLenght,  
                         ]
-        self.message=[  "Give me the first  Entity ID", 
-                        "Give me the second Entity ID", 
-                        "Give me the first point near the first entity",
-                        "Give me the second point near the second entity", 
+        self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
+                        "Give me the second Entity ID,end a point Es(4@10,20)", 
                         "Give me the bisector lengh"]
     def getEntsToSave(self):
         """
             get the chamfer segments
         """
+        id0, p0=getIdPoint(self.value[0])
+        id1, p1=getIdPoint(self.value[1])
         objEnt=[]
-        ent1=self.document.getEntity(self.value[0])
-        ent2=self.document.getEntity(self.value[1])
+        ent1=self.document.getEntity(id0)
+        ent2=self.document.getEntity(id1)
         
         cel1=ent1.getConstructionElements()
         seg1=Segment(cel1)
@@ -60,9 +58,9 @@ class BisectorCommand(BaseCommand):
         arg={
              "OBJECTJOINT_0":seg1,
              "OBJECTJOINT_1":seg2,  
-             "OBJECTJOINT_2":self.value[2], 
-             "OBJECTJOINT_3":self.value[3], 
-             "OBJECTJOINT_5":self.value[4], 
+             "OBJECTJOINT_2":p0, 
+             "OBJECTJOINT_3":p1, 
+             "OBJECTJOINT_5":self.value[2], 
              }
 
         cmf=Bisector(arg)
@@ -74,7 +72,7 @@ class BisectorCommand(BaseCommand):
         """
             apply the champfer command
         """
-        if len(self.value)!=5:
+        if len(self.value)!=3:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         for _ent in self.getEntsToSave():
             self.document.saveEntity(_ent)
