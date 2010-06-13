@@ -27,8 +27,10 @@ from Kernel.initsetting import PYTHONCAD_HIGLITGT_COLOR
 class BaseEntity(QtGui.QGraphicsItem):
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
-        self.setAcceptsHoverEvents(True)
+        self.setAcceptsHoverEvents(True)    #Fire over events
+        #self.setSelected(True)              #Accept to be selected
         self.GraphicsItemFlags(QtGui.QGraphicsItem.ItemIsSelectable)
+        #self.setFlag(QtGui.QGraphicsItem.ItemClipsToShape, True)
         # get the geometry
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
@@ -38,13 +40,12 @@ class BaseEntity(QtGui.QGraphicsItem):
     
     def setColor(self):
         r, g, b=self.style.getStyleProp("entity_color")
-        self.color = QtGui.QColor.fromRgb(r, g, b)
-        #self.color =QtCore.Qt.black
+        self.color = QtGui.QColor.fromRgb(r, g, b)       
     
     def setHiglight(self):
         r, g, b=PYTHONCAD_HIGLITGT_COLOR
-        #self.color =QtCore.Qt.green
         self.color = QtGui.QColor.fromRgb(r, g, b)
+        
     @property
     def entity(self):
         return self.__entity 
@@ -64,13 +65,14 @@ class BaseEntity(QtGui.QGraphicsItem):
         return toolTipMessage
     
     def hoverEnterEvent(self, event):
+        self.setSelected(True)
         self.setHiglight()
         self.update()
     
     def hoverLeaveEvent(self, event):
+        self.setSelected(False)
         self.setColor()
         self.update()
-        
         
     def drawGeometry(self, painter, option, widget):
         """
@@ -78,11 +80,29 @@ class BaseEntity(QtGui.QGraphicsItem):
         """
         pass
         
+    def drawShape(self, painterPath):
+        """
+            overloading of the shape method 
+        """
+        pass
+        
+    def shape(self):            
+        """
+            overloading of the shape method 
+        """
+        painterStrock=QtGui.QPainterPathStroker()
+        path=QtGui.QPainterPath()
+        self.drawShape(path)
+        path1=painterStrock.createStroke(path)
+        return path1
+        
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
         """
+        
         painter.setPen(QtGui.QPen(self.color, 1))
         #draw geometry
+        #painter.drawPath(self.shape())
         self.drawGeometry(painter,option,widget)
     

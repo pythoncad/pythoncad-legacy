@@ -129,6 +129,8 @@ class CadWindow(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'fillet', '&Fillet', self._onFillet)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'chamfer', '&Chamfer', self._onChamfer)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'biscect', '&Bisect', self._onBisect)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
         # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
         # Debug
@@ -217,7 +219,11 @@ class CadWindow(QtGui.QMainWindow):
         self.callDocumentCommand('BISECTOR')
         self.statusBar().showMessage("Ready", 2000)
         return
-        
+    def _onText(self):
+        self.statusBar().showMessage("CMD:Bisect", 2000)
+        self.callDocumentCommand('TEXT')
+        self.statusBar().showMessage("Ready", 2000)
+        return      
     # Edit
     def _onMove(self):
         self.statusBar().showMessage("CMD:Move", 2000)

@@ -51,14 +51,20 @@ class Arc(BaseEntity):
             overloading of the qt bounding rectangle
         """
         return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h )
-        
+    
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.arcTo(self.boundingRect(),self.startAngle,self.spanAngle) 
+    
     def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
         #Create Arc/Circle
         painter.drawArc(self.xc,self.yc ,self.h ,self.h ,self.startAngle,  self.spanAngle)
-        #painter.drawRect(self.boundingRect())
+        #painter.drawRect(self.boundingRect()) #Used for debugging porpouse
 
     
     

@@ -21,27 +21,32 @@
 # qt text class
 #
 
-from PyQt4 import QtCore, QtGui
+from Interface.Entity.baseentity import *
 
-class Text(QtGui.QGraphicsTextItem):
-    
+class Text(BaseEntity):
     def __init__(self, entity):
-        super(Text, self).__init__()
-        pt_begin = None
-        pt_end = None
-        # get the geometry
-        geometry = entity.getConstructionElements()
-        keys=geometry.keys()
-        #text,geometry[keys[2]] 
-        #angle,geometry[keys[1]] 
-        #location,geometry[keys[0]]
-        #pointPosition,geometry[keys[3]]
-        self.ID=entity.getId()
-        self.setPlainText(geometry['TEXT_1'])#text
-        x, y=geometry['TEXT_0'].getCoords() #location
-        self.setPos(x, -1.0*y)
-       
-        # set pen accoording to layer
-        #self.setPen(QtGui.QPen(QtGui.QColor.fromRgb(255, 0, 0)))
+        super(Text, self).__init__(entity)
+        geoEnt=self.geoItem
+        self.text=geoEnt.text#QtCore.QString(geoEnt.text)
+        x, y=geoEnt.location.getCoords()
+        self.location=QtCore.QPointF(float(x), -1.0*y) 
+        self.font=QtGui.QFont() #This have to be derived from the geoent as son is implemented
         return
-    
+        
+    def boundingRect(self):
+        """
+            overloading of the qt bounding rectangle
+        """
+        return QtCore.QRectF(self.location.x(),self.location.y()  ,10.0,10.0)
+
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.addText(self.location, self.font, self.text)
+        
+    def drawGeometry(self, painter, option, widget):
+        #Create Segment
+        painter.drawText(self.location, self.text)
+        
+        

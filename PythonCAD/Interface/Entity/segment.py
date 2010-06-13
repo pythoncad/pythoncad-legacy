@@ -21,7 +21,14 @@ class Segment(BaseEntity):
         deltax=abs(self.x-self.x1)
         deltay=abs(self.y-self.y1)
         return QtCore.QRectF(x,y ,deltax,deltay)
-    
+
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.moveTo(self.x, self.y)
+        painterPath.lineTo(self.x1, self.y1)
+        
     def drawGeometry(self, painter, option, widget):
         #Create Segment
         p1=QtCore.QPointF(self.x, self.y)

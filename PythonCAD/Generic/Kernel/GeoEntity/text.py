@@ -58,10 +58,11 @@ class Text(GeometricalEntity):
             kw['TEXT_3'] = 'sw'
         else:
             if not kw['TEXT_3'] in TEXT_POSITION:
-                if kw['TEXT_3']=='':
-                    kw['TEXT_3'] = 'sw'
-                else:
-                    raise TypeError, "Argument for TEXT_3 not supported"
+                kw['TEXT_3'] = 'sw'
+                #if kw['TEXT_3']=='':
+                #    kw['TEXT_3'] = 'sw'
+                #else:
+                #    raise TypeError, "Argument for TEXT_3 not supported"
 
         GeometricalEntity.__init__(self,kw, argDescription)
         

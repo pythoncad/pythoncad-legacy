@@ -38,6 +38,12 @@ class Point(BaseEntity):
             overloading of the qt bounding rectangle
         """
         return QtCore.QRectF(self.xc-2,self.yc-2 ,4 ,4)
+    
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.addRect (QtCore.QRectF(self.xc-2,self.yc-2 ,4 ,4))   
         
     def drawGeometry(self, painter, option, widget):
         """

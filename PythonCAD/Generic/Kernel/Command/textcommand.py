@@ -31,7 +31,11 @@ class TextCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcText, ExcAngle,ExcText ]
-        self.message=["Give Me the first Point","Give Me The Text string","Give Me The angle", "Give me the position of the text referred to the point"]
+        self.message=["Give Me the first Point",
+                        "Give Me The Text string",
+                        "Give Me The angle", 
+                        "Give me the position of the text referred to the point"]
+                        
     def applyCommand(self):
         if len(self.value)!=4:
             raise PyCadWrongImputData("Wrong number of imput parameter")

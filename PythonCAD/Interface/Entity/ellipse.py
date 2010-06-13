@@ -40,7 +40,13 @@ class Ellipse(BaseEntity):
             overloading of the qt bounding rectangle
         """
         return QtCore.QRectF(self.xc-(self.h/2.0),self.yc- (self.w/2.0) ,self.h ,self.w )
-        
+    
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.addEllipse(self.xc-(self.h/2.0),self.yc-(self.w/2.0),self.h ,self.w)     
+    
     def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method

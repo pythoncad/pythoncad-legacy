@@ -31,7 +31,6 @@ from PyQt4 import QtGui
 class PyCadApp(object):
     '''
     PyCadApp contain static interface functions to the kernel application object.
-    
     '''
 
     # kernel application object

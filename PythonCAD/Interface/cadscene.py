@@ -33,7 +33,7 @@ from Interface.Entity.arc       import Arc
 from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
 from Interface.cadinitsetting   import *
-from Kernel.pycadevent              import PyCadEvent
+from Kernel.pycadevent          import PyCadEvent
 
 class CadScene(QtGui.QGraphicsScene):
     
@@ -45,12 +45,34 @@ class CadScene(QtGui.QGraphicsScene):
         self.__limits = None
         #scene custom event
         self.pyCadViewPressEvent=PyCadEvent()
+        #dinamic text editor
+        self.qtText=QtGui.QTextEdit()
+        #self.qtText.hide()
+        #self.addWidget(self.qtText)
     
     def mousePressEvent(self, event):
         qtItem=self.itemAt(event.scenePos())
+        p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
+        if qtItem:
+            print "item : ", qtItem.toolTipMessage, qtItem.zValue()
+        else:
+            print "No item selected"
+        
+        #items=self.items(p)
+        #ii=0
+        #for i in items:
+        #    print ii,"item : ", i.toolTipMessage
+        #    ii+=1
+            
         pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItem)
-        print "mousePressEvent : ", pyCadEvent
+       
         self.pyCadViewPressEvent(self, pyCadEvent)
+        #
+        #self.qtText.show()
+        
+    def mouseReleaseEvent(self, event):
+        #self.qtText.hide()#
+        pass
     @property    
     def Limits(self):
         """

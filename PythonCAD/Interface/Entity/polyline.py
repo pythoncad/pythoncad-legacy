@@ -33,11 +33,11 @@ class Polyline(BaseEntity):
         geometry = self.entity.getConstructionElements()
         geoPoints=[geometry[k] for k in geometry]
         coordPoints=[point.getCoords() for point in geoPoints]
-        self.qtPoints=[QtCore.QPointF(x, y) for x, y in coordPoints]
+        self.qtPoints=[QtCore.QPointF(x, y*-1.0 ) for x, y in coordPoints]
         X=[x for x,y in coordPoints]
         max_x=max(X)
         min_x=min(X)
-        Y=[y for x,y in coordPoints]
+        Y=[y*-1.0 for x,y in coordPoints]
         max_y=max(Y)
         min_y=min(Y)
         w=abs(max_y-min_y)
@@ -51,6 +51,14 @@ class Polyline(BaseEntity):
         """
         return self.bbox
         
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.moveTo(self.qtPoints[0])
+        for i in range(1,len(self.qtPoints)):
+            painterPath.lineTo(self.qtPoints[i])    
+    
     def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method

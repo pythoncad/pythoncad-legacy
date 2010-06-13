@@ -11,6 +11,7 @@ class CadView(QtGui.QGraphicsView):
     def __init__(self, scene, parent=None):
         super(CadView, self).__init__(scene, parent)
         self.scaleFactor=1
+        self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         
         
     def sizeHint(self):
@@ -33,7 +34,7 @@ class CadView(QtGui.QGraphicsView):
         #        QtGui.QToolTip.hideText()
         #        event.ignore()
         #    return True
-        
+
         return super(CadView, self).event(event) 
         
     def scaleView(self, factor):
