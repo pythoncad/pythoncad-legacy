@@ -75,7 +75,7 @@ class FunctionHandler(object):
         """
         self.evaluateInner=cObject
         self.printOutput(str(self.evaluateInner.getActiveMessage()))
-
+    
     def evaluateMouseImput(self, eventItem):
         """
             evaluate the mouse click
@@ -152,6 +152,14 @@ class FunctionHandler(object):
         except PyCadWrongCommand:
             self.printOutput("Wrong Command")
             self.evaluateInner=None
+            
+    def resetCommand(self):
+        """
+            reset the command if eny are set
+        """
+        print "reset"
+        self.evaluateInner=None
+        self.printOutput("Command Ended from the user")
         
     def printCommand(self, msg):
         """

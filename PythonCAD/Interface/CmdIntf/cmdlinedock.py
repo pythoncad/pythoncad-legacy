@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 from Interface.CmdIntf.functionhandler import FunctionHandler
 
 
-class CmdlineDock(QtGui.QDockWidget):
+class CmdLineDock(QtGui.QDockWidget):
     '''
     A dockable window containing a edit line object.
     The edit line is used to enter commands or expressions.
@@ -18,7 +18,7 @@ class CmdlineDock(QtGui.QDockWidget):
         Creates an edit line in which commands or expressions are evaluated.
         Evaluation of expressions is done by the FunctionHandler object.
         '''
-        super(CmdlineDock, self).__init__(title, parent)
+        super(CmdLineDock, self).__init__(title, parent)
         self.setMinimumHeight(100)
         self._remainder=[]
         self._remainderIndex=0

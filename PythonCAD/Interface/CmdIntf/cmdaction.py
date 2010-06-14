@@ -32,14 +32,28 @@ class CmdAction(QtGui.QAction):
         self.__command = command
         # function handler
         self.__function_handler = function_handler
+        # visible 
+        self.__visible=True
         return
     
-       
-    def _getCommand(self):
+    def show(self):
+        """
+            show the command 
+        """
+        self.setEnabled(True)
+        
+    def hide(self):
+        """
+            hide the command
+        """
+        self.setEnabled(False)
+        
+    @property   
+    def command(self):
+        """
+            get the command name
+        """
         return self.__command
-    
-    Command = property(_getCommand, None, None, 'Get the command name')
-    
     
     def _actionHandler(self):
         '''

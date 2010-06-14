@@ -1,4 +1,3 @@
-
 import os
 import sys
 
@@ -10,9 +9,7 @@ from PyQt4 import QtCore, QtGui
 
 from Interface.CmdIntf.cmdcategory import CmdCategory
 from Interface.CmdIntf.cmdaction import CmdAction
-from Interface.CmdIntf.cmdlinedock import CmdlineDock
-
-
+from Interface.CmdIntf.cmdlinedock import CmdLineDock
 
 class CmdIntf(object):
     '''
@@ -26,7 +23,7 @@ class CmdIntf(object):
         # parent is the main_window object
         self.__main_window = parent
         # command line window
-        self.__edit_ctrl = CmdlineDock('Command', self.__main_window)
+        self.__edit_ctrl = CmdLineDock('Command', self.__main_window)
         # dictionary with file action objects
         self.__actions = {}
         # categories in which commands are stored
@@ -34,11 +31,9 @@ class CmdIntf(object):
         # icons search path
         self.__icon_dir = os.path.join(os.getcwd(), 'icons')
         #add custom event
-        parent.scene.pyCadViewPressEvent+=self.evaluateMouseImput
         return
         
     #-------- properties -----------#
-
     def _getCommandline(self):
         return self.__edit_ctrl
 
@@ -139,7 +134,12 @@ class CmdIntf(object):
             get imput from viewport
         '''
         self.__edit_ctrl.FunctionHandler.evaluateMouseImput(event)
-    
+        
+    def resetCommand(self):
+        """
+            reset the active command 
+        """
+        self.__edit_ctrl.FunctionHandler.resetCommand()
         
     @QtCore.pyqtSlot(str)
     def _actionHandler(self, expression):
@@ -153,8 +153,32 @@ class CmdIntf(object):
             # command is found, evaluate it
             self.__edit_ctrl.FunctionHandler.evaluate(expression)
         return
+    
+    def hideAction(self, name):
+        """
+            hide the name action
+        """
+        if self.__actions.has_key(name):
+            self.__actions[name].hide()
+    
+    def showAction(self, name):
+        """
+            show the name action
+        """
+        if self.__actions.has_key(name):
+            self.__actions[name].show()
+    
+    def setVisible(self, name, value):
+        """
+            set the action name to visible value
+        """
+        if self.__actions.has_key(name):
+            if value:
+                self.__actions[name].show()
+            else:
+                self.__actions[name].hide()
         
-        
+
 
     
     

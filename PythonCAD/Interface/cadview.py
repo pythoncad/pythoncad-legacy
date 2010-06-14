@@ -17,6 +17,7 @@ class CadView(QtGui.QGraphicsView):
         return QtCore.QSize(800,600)
     
     def wheelEvent(self, event):
+        
         self.scaleFactor=math.pow(2.0, -event.delta() / 240.0)
         self.scaleView(self.scaleFactor)
 

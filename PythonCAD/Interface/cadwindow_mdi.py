@@ -31,52 +31,42 @@ import cadwindow_rc
 
 from Generic.application            import Application
 
+from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
-from Ui_TestWindow                  import Ui_TestDialog
-from customevent                    import testCmdLine
+from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
+
 from Kernel.exception               import *  
 
-class CadWindow(QtGui.QMainWindow):
-    '''
-    Main application window, contains the graphics view and user interface controls (menu, toolbars, palettes and commandline).
-    '''    
+class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
-        '''
-        Create all user interface components
-        '''
-        super(CadWindow, self).__init__()
-        # application from the kernel
+        super(CadWindowMdi, self).__init__()
+        self.mdiArea = QtGui.QMdiArea()
+        self.mdiArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setCentralWidget(self.mdiArea)
+        self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
+
+        self.readSettings() #make some studis on this 
+        self.setWindowTitle("PythonCad")
+        self.setUnifiedTitleAndToolBarOnMac(True)
+        #pythoncad kernel
         self.__application = Application()
-        # graphics scene and view
-        self.__scene = CadScene()
-        self.__view = CadView(self.__scene, self)
-        # the graphics view is the main/central component
-        self.setCentralWidget(self.__view)
-        # layer tree dockable window
-        self.__layer_dock = None
-        # create user input interface components
-        # all user interface is done by commands
-        # the menu-bar, tool-bars and palettes are created by the CmdIntf
         self.__cmd_intf = CmdIntf(self)
         # create all dock windows
         self._createDockWindows()
         # create status bar
         self._createStatusBar()
-        # initial window title
-        self.setWindowTitle("PythonCAD [empty]")
-        # show the menu and title in a correct way on the mac
         self.setUnifiedTitleAndToolBarOnMac(True)
-        # register commands that are handled by the main window
         self._registerCommands()
+        self.updateMenus()
         return
-    @property    
-    def view(self):    
-        return self.__view
-    @property    
-    def scene(self):    
-        return self.__scene        
+    @property
+    def scene(self):
+        if self.mdiArea.activeSubWindow():
+            return self.mdiArea.activeSubWindow().scene
+        
     @property
     def Application(self):
         """
@@ -88,8 +78,110 @@ class CadWindow(QtGui.QMainWindow):
         """
         get the layer tree dockable window
         """
-        return self.__layer_dock      
+        return self.__layer_dock   
         
+    def _createStatusBar(self):
+        '''
+        Creates the statusbar object.
+        '''
+        self.statusBar().showMessage("Ready")
+        return    
+    
+    def _createDockWindows(self):
+        '''
+        Creates all dockable windows for the application
+        '''
+        # commandline
+        command_dock = self.__cmd_intf.Commandline
+        # if the commandline exists, add it
+        if not command_dock is None:
+            self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
+        return    
+        
+    def closeEvent(self, event):
+        self.mdiArea.closeAllSubWindows()
+        if self.activeMdiChild():
+            event.ignore()
+        else:
+            self.writeSettings()
+            event.accept()
+            
+    def subWindowActivatedEvent(self):
+        """
+            sub windows activation
+        """
+        self.updateMenus()
+        self.resetCommand()
+        if self.mdiArea.activeSubWindow():
+            self.__application.setActiveDocument(self.mdiArea.activeSubWindow().document)   
+
+    def resetCommand(self):    
+        """
+            Resect the active command
+        """
+        print "Start Reset"
+        self.__cmd_intf.resetCommand()
+        
+        
+    def updateMenus(self):
+        hasMdiChild = (self.activeMdiChild() is not None)
+        #File
+        self.__cmd_intf.setVisible('import', hasMdiChild)
+        self.__cmd_intf.setVisible('saveas', hasMdiChild)
+        self.__cmd_intf.setVisible('close', hasMdiChild)
+        self.__cmd_intf.setVisible('print', hasMdiChild)
+        #Edit
+        self.__cmd_intf.setVisible('undo', hasMdiChild)
+        self.__cmd_intf.setVisible('redo', hasMdiChild)
+        self.__cmd_intf.setVisible('move', hasMdiChild)
+        self.__cmd_intf.setVisible('delete', hasMdiChild)
+        self.__cmd_intf.setVisible('mirror', hasMdiChild)
+        self.__cmd_intf.setVisible('rotare', hasMdiChild)
+        #Draw
+        self.__cmd_intf.setVisible('point', hasMdiChild)
+        self.__cmd_intf.setVisible('segment', hasMdiChild)
+        self.__cmd_intf.setVisible('rectangle', hasMdiChild)
+        self.__cmd_intf.setVisible('polyline', hasMdiChild)
+        self.__cmd_intf.setVisible('arc', hasMdiChild)
+        self.__cmd_intf.setVisible('ellipse', hasMdiChild)
+        self.__cmd_intf.setVisible('poligon', hasMdiChild)
+        self.__cmd_intf.setVisible('fillet', hasMdiChild)
+        self.__cmd_intf.setVisible('chamfer', hasMdiChild)
+        self.__cmd_intf.setVisible('biscect', hasMdiChild)
+        self.__cmd_intf.setVisible('text', hasMdiChild)
+        #window
+        self.__cmd_intf.setVisible('tile', hasMdiChild)
+        self.__cmd_intf.setVisible('cascade', hasMdiChild)
+        self.__cmd_intf.setVisible('next', hasMdiChild)
+        self.__cmd_intf.setVisible('previous', hasMdiChild)
+        
+    
+        #hasSelection = (self.activeMdiChild() is not None and
+        #                self.activeMdiChild().textCursor().hasSelection())
+        #self.cutAct.setEnabled(hasSelection)
+        #self.copyAct.setEnabled(hasSelection)
+        
+    def subWindowActivated(self, activeIDocument):    
+        """
+            event fired on change of the active document
+        """
+        print "document change"
+        
+    def createMdiChild(self, file=None):
+        """
+            Create new IDocument 
+        """
+        if file:
+            newDoc=self.__application.openDocument(file)
+        else:
+            newDoc=self.__application.newDocument()
+        child = IDocument(newDoc,self.__cmd_intf)
+        self.mdiArea.addSubWindow(child)
+
+        #child.copyAvailable.connect(self.cutAct.setEnabled)
+        #child.copyAvailable.connect(self.copyAct.setEnabled)
+        return child
+
     def _registerCommands(self):
         '''
         Register all commands that are handed by this object
@@ -97,7 +189,7 @@ class CadWindow(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'SaveAs', '&Save In A Different location...', self._onSaveAsDrawing)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save In A Different location...', self._onSaveAsDrawing)
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'close', '&Close', self._onCloseDrawing)
@@ -131,17 +223,23 @@ class CadWindow(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'biscect', '&Bisect', self._onBisect)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
+        # window
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'next', 'Ne&xt', self.mdiArea.activateNextSubWindow)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'previous', 'Pre&vious', self.mdiArea.activatePreviousSubWindow)
+
+        
         # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
-        # Debug
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Debug, 'Debug', '&Debug PyCAD', self._onDebug)
         return
         
     def _onNewDrawing(self):
         '''
         Create a new drawing 
         '''
-        self.__scene.newDocument()
+        child = self.createMdiChild()
+        child.show()
         return
 
     def _onOpenDrawing(self):
@@ -149,21 +247,25 @@ class CadWindow(QtGui.QMainWindow):
         drawing = QtGui.QFileDialog.getOpenFileName(self, "Open Drawing", "/home", "Drawings (*.pdr)");
         # open a document and load the drawing
         if drawing != None:
-            self.__scene.openDocument(drawing)
+            child = self.createMdiChild(drawing)
+            child.show()            
         return
     
     def _onImportDrawing(self):
         drawing = QtGui.QFileDialog.getOpenFileName(self, "Import Drawing", "/home", "Dxf (*.dxf)");
         # open a document and load the drawing
         if drawing != None:
-            self.__scene.importDocument(drawing)
+            self.mdiArea.activeSubWindow().importExternalFormat(drawing)
         return
+        
     def _onSaveAsDrawing(self):
         drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As Drawing", "/home", "Drawings (*.pdr)");
-        self.__scene.saveAs(drawing)
+        self.__application.saveAs(drawing)
             
     def _onCloseDrawing(self):
-        self.__scene.closeDocument()
+        path=self.mdiArea.activeSubWindow().fileName
+        self.__application.closeDocument(path)
+        self.mdiArea.closeActiveSubWindow()
         return
     
     def _onPoint(self):
@@ -252,75 +354,76 @@ class CadWindow(QtGui.QMainWindow):
         if (printDialog.exec_() == QtGui.QDialog.Accepted): 
             painter=QtGui.QPainter(printer)
             painter.setRenderHint(QtGui.QPainter.Antialiasing);
-            self.__scene.render(painter)  
+            #self.__scene.render(painter) 
+            self.mdiArea.activeSubWindow().renderCurrentScene(painter) 
         self.statusBar().showMessage("Ready", 2000)
         return
         
     def _onUndo(self):
         try:
-            self.__scene.undo()
+           self.mdiArea.activeSubWindow().unDo() 
         except UndoDb:
-            PyCadApp.critical("Unable To Perform Undo")
+            self.critical("Unable To Perform Undo")
         self.statusBar().showMessage("Ready", 2000)
         return
         
     def _onRedo(self):
         try:
-            self.__scene.redo()
+            self.mdiArea.activeSubWindow().redo()
         except UndoDb:
             PyCadApp.critical("Unable To Perform Redo")
         self.statusBar().showMessage("Ready", 2000)
         
-    def callDocumentCommand(self, commandName):
-        try:
-            pointCmd=PyCadApp.Application().getCommand(commandName)
-            self.__cmd_intf.evaluateInnerCommand(pointCmd)
-        except EntityMissing:
-            PyCadApp.critical("You need to have an active document to perform this command")
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
                 "<b>PythonCAD</b> is a 2D CAD system.")
         return
         
-    def _onDebug(self):
-        """
-            debug dialog
-        """
-        from Interface.pycadapp import PyCadApp
-        if PyCadApp.ActiveDocument():
-            TestDialog = QtGui.QDialog()
-            ui = Ui_TestDialog()
-            ui.setupUi(TestDialog)
-            testCmdLine(ui,self.__scene )
-            TestDialog.show()
-            TestDialog.exec_()
+    def callDocumentCommand(self, commandName):
+        try:
+            pointCmd=self.__application.getCommand(commandName)
+            self.__cmd_intf.evaluateInnerCommand(pointCmd)
+        except EntityMissing:
+            self.critical("You need to have an active document to perform this command")
+            
+    @staticmethod
+    def critical(text):
+        '''
+        Shows an critical message dialog
+        '''
+        dlg = QtGui.QMessageBox()
+        dlg.setText(text)
+        dlg.setIcon(QtGui.QMessageBox.Critical)
+        dlg.exec_()
+        return
+
+    def readSettings(self):
+        settings = QtCore.QSettings('Trolltech', 'MDI Example')
+        #settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
+        pos = settings.value('pos', QtCore.QPoint(200, 200))
+        size = settings.value('size', QtCore.QSize(400, 400))
+        #self.move(pos)
+        #self.resize(size)
+
+    def writeSettings(self):
+        settings = QtCore.QSettings('Trolltech', 'MDI Example')
+        settings.setValue('pos', self.pos())
+        settings.setValue('size', self.size())
+
+    def activeMdiChild(self):
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
+
+    def switchLayoutDirection(self):
+        if self.layoutDirection() == QtCore.Qt.LeftToRight:
+            QtGui.qApp.setLayoutDirection(QtCore.Qt.RightToLeft)
         else:
-            PyCadApp.critical("You must have a document open before use this function !!")
-        return    
-
-    def _createStatusBar(self):
-        '''
-        Creates the statusbar object.
-        '''
-        self.statusBar().showMessage("Ready")
-        return
+            QtGui.qApp.setLayoutDirection(QtCore.Qt.LeftToRight)
         
-
-    def _createDockWindows(self):
-        '''
-        Creates all dockable windows for the application
-        '''
-        # layer list
-        self.__layer_dock = LayerDock(self)
-        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
-        # commandline
-        command_dock = self.__cmd_intf.Commandline
-        # if the commandline exists, add it
-        if not command_dock is None:
-            self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
-        return
-        
-
-
+    def setActiveSubWindow(self, window):
+        if window:
+            self.mdiArea.setActiveSubWindow(window)
 
 
