@@ -13,7 +13,6 @@ class CadView(QtGui.QGraphicsView):
         self.scaleFactor=1
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         
-        
     def sizeHint(self):
         return QtCore.QSize(800,600)
     
@@ -21,21 +20,6 @@ class CadView(QtGui.QGraphicsView):
         self.scaleFactor=math.pow(2.0, -event.delta() / 240.0)
         self.scaleView(self.scaleFactor)
 
-        
-    def event(self, event):   
-        helpEvent = event
-        #if event.type() == QtCore.QEvent.ToolTip:
-        #    qtEntityItem = self.itemAt(helpEvent.pos())
-        #    print "toolTip", qtEntityItem
-        #    if qtEntityItem != None:
-        #        QtGui.QToolTip.showText(helpEvent.globalPos(),
-        #               qtEntityItem.toolTipMessage)
-        #    else:
-        #        QtGui.QToolTip.hideText()
-        #        event.ignore()
-        #    return True
-
-        return super(CadView, self).event(event) 
         
     def scaleView(self, factor):
 ##        factor = self.matrix().scale(factor, factor).mapRect(QtCore.QRectF(0, 0, 1, 1)).width()

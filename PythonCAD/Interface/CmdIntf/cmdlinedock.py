@@ -20,6 +20,8 @@ class CmdlineDock(QtGui.QDockWidget):
         '''
         super(CmdlineDock, self).__init__(title, parent)
         self.setMinimumHeight(100)
+        self._remainder=[]
+        self._remainderIndex=0
         # only dock at the bottom or top
         self.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea | QtCore.Qt.TopDockWidgetArea)
         self.dockWidgetContents = QtGui.QWidget()
@@ -37,6 +39,8 @@ class CmdlineDock(QtGui.QDockWidget):
         self.textEditOutput.ensureCursorVisible()
         self.verticalLayout_2.addWidget(self.textEditOutput)
         self.__edit_ctrl = QtGui.QLineEdit(self, returnPressed=self._returnPressed)
+        self.__edit_ctrl.keyPressEvent=self._keyPress
+        
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,6 +50,7 @@ class CmdlineDock(QtGui.QDockWidget):
         self.setWidget(self.dockWidgetContents)
         self.__function_handler = FunctionHandler(self.__edit_ctrl,self.textEditOutput )
         #QtCore.QObject.connect(self.__edit_ctrl, QtCore.SIGNAL("returnPressed()"), self.textEditOutput.centerCursor)
+        
 
     #-------- properties -----------#
     
@@ -62,9 +67,30 @@ class CmdlineDock(QtGui.QDockWidget):
         Text entered on the command line is accepted by the user by pressing the return button
         '''
         expression = self.__edit_ctrl.text()
+        self._remainder.append(expression)
+        self._remainderIndex=len(self._remainder)
         self.evaluate(expression)
         
-    
+        
+    def _keyPress(self, keyEvent):
+        """
+            keyPressEvent
+        """
+        if keyEvent==QtGui.QKeySequence.MoveToNextLine:
+            if self._remainderIndex<len(self._remainder)-1:
+                self._remainderIndex+=1
+                self.__edit_ctrl.clear()
+                self.__edit_ctrl.setText(self._remainder[self._remainderIndex])
+            
+        elif keyEvent==QtGui.QKeySequence.MoveToPreviousLine:
+            if self._remainderIndex>0:
+                self._remainderIndex-=1
+                self.__edit_ctrl.clear()
+                self.__edit_ctrl.setText(self._remainder[self._remainderIndex])
+        else:
+            QtGui.QLineEdit.keyPressEvent(self.__edit_ctrl, keyEvent)
+            
+
     def evaluate(self, expression):
         '''
         Let the function handler evaluate the expression.

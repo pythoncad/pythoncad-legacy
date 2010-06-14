@@ -35,6 +35,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
         r, g, b=self.style.getStyleProp("entity_color")
+        self.lineWith=1.0
         self.color = QtGui.QColor.fromRgb(r, g, b)
         return
     
@@ -93,6 +94,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         painterStrock=QtGui.QPainterPathStroker()
         path=QtGui.QPainterPath()
         self.drawShape(path)
+        painterStrock.setWidth(self.lineWith)
         path1=painterStrock.createStroke(path)
         return path1
         
@@ -101,7 +103,7 @@ class BaseEntity(QtGui.QGraphicsItem):
             overloading of the paint method
         """
         
-        painter.setPen(QtGui.QPen(self.color, 1))
+        painter.setPen(QtGui.QPen(self.color, self.lineWith))
         #draw geometry
         #painter.drawPath(self.shape())
         self.drawGeometry(painter,option,widget)

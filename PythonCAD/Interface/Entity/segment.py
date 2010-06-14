@@ -34,3 +34,4 @@ class Segment(BaseEntity):
         p1=QtCore.QPointF(self.x, self.y)
         p2=QtCore.QPointF(self.x1, self.y1)
         painter.drawLine(p1,p2)
+        #painter.drawRect(self.boundingRect()) #Used for debugging porpouse

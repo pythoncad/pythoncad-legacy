@@ -24,15 +24,15 @@
 
 from PyQt4 import QtCore, QtGui
 
-
-from Interface.pycadapp import PyCadApp
 from Generic.application import Application
 
+from Interface.pycadapp         import PyCadApp
 from Interface.Entity.segment   import Segment
 from Interface.Entity.arc       import Arc
 from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
 from Interface.cadinitsetting   import *
+
 from Kernel.pycadevent          import PyCadEvent
 
 class CadScene(QtGui.QGraphicsScene):
@@ -57,7 +57,6 @@ class CadScene(QtGui.QGraphicsScene):
             print "item : ", qtItem.toolTipMessage, qtItem.zValue()
         else:
             print "No item selected"
-        
         #items=self.items(p)
         #ii=0
         #for i in items:
@@ -65,14 +64,10 @@ class CadScene(QtGui.QGraphicsScene):
         #    ii+=1
             
         pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItem)
-       
         self.pyCadViewPressEvent(self, pyCadEvent)
         #
         #self.qtText.show()
-        
-    def mouseReleaseEvent(self, event):
-        #self.qtText.hide()#
-        pass
+
     @property    
     def Limits(self):
         """
