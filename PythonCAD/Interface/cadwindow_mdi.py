@@ -54,6 +54,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #pythoncad kernel
         self.__application = Application()
         self.__cmd_intf = CmdIntf(self)
+        self.__cmd_intf.FunctionHandler.commandExecuted+=self.commandExecuted
         # create all dock windows
         self._createDockWindows()
         # create status bar
@@ -61,6 +62,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self._registerCommands()
         self.updateMenus()
+        self.statusBar().showMessage("Ready")
         return
     @property
     def scene(self):
@@ -86,7 +88,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         '''
         self.statusBar().showMessage("Ready")
         return    
-    
+        
+    def commandExecuted(self):
+        self.statusBar().showMessage("Ready")
+        
     def _createDockWindows(self):
         '''
         Creates all dockable windows for the application
@@ -119,7 +124,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             Resect the active command
         """
-        print "Start Reset"
         self.__cmd_intf.resetCommand()
         
         
@@ -271,66 +275,54 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onPoint(self):
         self.statusBar().showMessage("CMD:Point", 2000)
         self.callDocumentCommand('POINT')
-        self.statusBar().showMessage("Ready", 2000)
         return    
     def _onSegment(self):
         self.statusBar().showMessage("CMD:Segment", 2000)
         self.callDocumentCommand('SEGMENT')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onArc(self):
         self.statusBar().showMessage("CMD:Arc", 2000)
         self.callDocumentCommand('ARC')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onEllipse(self):
         self.statusBar().showMessage("CMD:Ellipse", 2000)
         self.callDocumentCommand('ELLIPSE')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onRectangle(self):
         self.statusBar().showMessage("CMD:Rectangle", 2000)
         self.callDocumentCommand('RECTANGLE')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onPolygon(self):
         self.statusBar().showMessage("CMD:Polygon", 2000)
         self.callDocumentCommand('POLYGON')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onPolyline(self):
         self.statusBar().showMessage("CMD:Polyline", 2000)
         self.callDocumentCommand('POLYLINE')
-        self.statusBar().showMessage("Ready", 2000)
         return
     
     def _onFillet(self):
         self.statusBar().showMessage("CMD:Fillet", 2000)
         self.callDocumentCommand('FILLET')
-        self.statusBar().showMessage("Ready", 2000)
         return
         
     def _onChamfer(self):
         self.statusBar().showMessage("CMD:Chamfer", 2000)
         self.callDocumentCommand('CHAMFER')
-        self.statusBar().showMessage("Ready", 2000)
         return
             
     def _onBisect(self):
         self.statusBar().showMessage("CMD:Bisect", 2000)
         self.callDocumentCommand('BISECTOR')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onText(self):
         self.statusBar().showMessage("CMD:Bisect", 2000)
         self.callDocumentCommand('TEXT')
-        self.statusBar().showMessage("Ready", 2000)
         return      
     # Edit
     def _onMove(self):
         self.statusBar().showMessage("CMD:Move", 2000)
         self.callDocumentCommand('MOVE')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onDelete(self):
         self.statusBar().showMessage("CMD:Delete", 2000)
@@ -340,12 +332,10 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onMirror(self):
         self.statusBar().showMessage("CMD:Mirror", 2000)
         self.callDocumentCommand('MIRROR')
-        self.statusBar().showMessage("Ready", 2000)
         return
     def _onRotate(self):
         self.statusBar().showMessage("CMD:Rotate", 2000)
         self.callDocumentCommand('ROTATE')
-        self.statusBar().showMessage("Ready", 2000)
         return
     
     def _onPrint(self):

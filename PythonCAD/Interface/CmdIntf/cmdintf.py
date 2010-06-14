@@ -7,9 +7,10 @@ sip.setapi('QString', 2)
 
 from PyQt4 import QtCore, QtGui
 
-from Interface.CmdIntf.cmdcategory import CmdCategory
-from Interface.CmdIntf.cmdaction import CmdAction
-from Interface.CmdIntf.cmdlinedock import CmdLineDock
+from Interface.CmdIntf.cmdcategory  import CmdCategory
+from Interface.CmdIntf.cmdaction    import CmdAction
+from Interface.CmdIntf.cmdlinedock  import CmdLineDock
+
 
 class CmdIntf(object):
     '''

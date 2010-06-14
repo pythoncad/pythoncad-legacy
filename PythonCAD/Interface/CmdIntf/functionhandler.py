@@ -1,4 +1,5 @@
 
+from Kernel.pycadevent          import PyCadEvent
 
 class FunctionHandler(object):
     '''
@@ -23,6 +24,7 @@ class FunctionHandler(object):
         self._command_table = {}
         # Global inner command evaluation
         self.evaluateInner=None
+        self.commandExecuted=PyCadEvent()
 
     def registerCommand(self, name, callback):
         '''
@@ -105,6 +107,7 @@ class FunctionHandler(object):
                     if self.evaluateInner.index==len(self.evaluateInner.exception)-1:
                         self.evaluateInner.applyCommand()
                         self.evaluateInner=None
+                        self.commandExecuted()
         except:
             self.evaluateInner=None
         if self.evaluateInner:
@@ -157,7 +160,6 @@ class FunctionHandler(object):
         """
             reset the command if eny are set
         """
-        print "reset"
         self.evaluateInner=None
         self.printOutput("Command Ended from the user")
         
