@@ -25,6 +25,8 @@
 import sip
 sip.setapi('QString', 2)
 
+import os
+import sys
 from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
@@ -47,9 +49,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
-
+    
         self.readSettings() #make some studis on this 
         self.setWindowTitle("PythonCad")
+        self.setWindowIcon(self._getIcon('pythoncad'))
         self.setUnifiedTitleAndToolBarOnMac(True)
         #pythoncad kernel
         self.__application = Application()
@@ -417,3 +420,17 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.mdiArea.setActiveSubWindow(window)
 
 
+    def _getIcon(self, cmd):
+        '''
+        Create an QIcon object based on the command name.
+        The name of the icon is ':/images/' + cmd + '.png'.
+        If the cmd = 'Open', the name of the icon is ':/images/Open.png'.
+        '''
+        icon_name = cmd + '.png'
+        icon_path = os.path.join(os.path.join(os.getcwd(), 'icons'), icon_name)
+        # check if icon exist
+        if os.path.exists(icon_path):
+            icon = QtGui.QIcon(icon_path)
+            return icon
+        # icon not found, don't use an icon, return None
+        return None
