@@ -57,10 +57,12 @@ class FunctionHandler(object):
         elif self.evaluateInner:
             self.performCommand(self.evaluateInner, command)
             if self.evaluateInner:
-                self.printOutput(str(self.evaluateInner.getActiveMessage()))
+                self.printOutput(self.evaluateInner.getActiveMessage())
         else:
             try:
                 # let python evaluate expression
+                #exec(expression)
+                #self._value=""
                 self._value =eval(expression)
             except:
                 self._value ="*error*"
@@ -68,7 +70,7 @@ class FunctionHandler(object):
                 self.__edit_ctrl.clear()
         # show result
         if self._value :
-            self.printOutput(str(self._value))
+            self.printOutput(self._value)
         return self._value
     
     def evaluateInnerCommand(self, cObject):
@@ -111,7 +113,7 @@ class FunctionHandler(object):
         except:
             self.evaluateInner=None
         if self.evaluateInner:
-            self.printOutput(str(self.evaluateInner.getActiveMessage()))
+            self.printOutput(self.evaluateInner.getActiveMessage())
     
     
     def performCommand(self,cObject, text):
@@ -167,6 +169,7 @@ class FunctionHandler(object):
         """
             print message
         """
+        msg=str(msg)
         if len(msg)>0:
             msg=u"\r>>> "+msg
             self.__edit_output.insertPlainText(msg)
@@ -176,6 +179,7 @@ class FunctionHandler(object):
         """
             print a message in the output message windows
         """
+        msg=str(msg)
         if len(msg)>0:
             msg=u"\r<PythonCAD> : "+msg
             self.__edit_output.insertPlainText(msg)
