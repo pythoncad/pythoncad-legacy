@@ -20,34 +20,67 @@
 #
 # This module provide a parser for the imput interface
 #
-from sympy.physics  import units
-from sympy          import Rational
+from sympy.physics import units as u
 
-#from Generic.Kernel.GeoEntity.point import Point
+def decodePoint(value, previusPoint=None):
+    """
+        this static method decode an imput and return a point(mm,mm)
+    """
+    value=str(value).lower()
+    from Kernel.GeoEntity.point import Point
+    x, y=str(value).split(',')
+    return Point(convertLengh(x), convertLengh(y))
+    
+def convertAngle(value):
+    """
+        convert a angle in simpy units syntax into a rad float
+    """
+    value=str(value).lower()
+    retVal=None
+    try:
+        retVal=float(value)
+    except:
+        try:
+            retVal=sympyConvertAngle(value)
+        except:
+            print "Wrong formatting string"
+    finally:
+        return retVal
 
-class UnitParser(object):
-    cad_leng=units.Unit('cad_leng','mm')
-    converter={units.m: cad_leng*Rational(1000)}
-    @staticmethod
-    def decodePoint(self, value, previusPoint=None):
-        """
-            this static method decode an imput and return a point(mm,mm)
-        """
-        pass
-    @staticmethod
-    def decodeSingleValueLengh(value):
-        """
-            this static method decode an imput and return a value in mm
-        """
-        args, v=str(value).split(' ')
-        unitsValue=float(args)*units.m
-        if unitsValue:
-            cad_mm=unitsValue.subs(UnitParser.converter)
-            return_value=float(str(cad_mm.evalf()).split('*')[0])
-            return return_value
-        return None
+def sympyConvertAngle(value):
+    retVal=None
+    value='retVal='+value
+    exec(value)
+    retVal=retVal/u.rad
+    return float(retVal)
+    
+def convertLengh(value):
+    """
+        convert a lengh in simpy units syntax into a mm float
+        return : Float
+    """
+    value=str(value).lower()
+    retVal=None
+    try:
+        retVal=float(value)
+    except:
+        try:
+            retVal=sympyConvertLeng(value)
+        except:
+            print "Wrong formatting string"
+    finally:
+        return retVal
+
+def sympyConvertLeng(value):
+    retVal=None
+    value='retVal='+value
+    exec(value)
+    retVal=retVal/u.mm
+    return float(retVal.n())
 
 if __name__ == '__main__':
-    print UnitParser.decodeSingleValueLengh('10 m')
-    
+    print convertLengh('10*u.m+3.5*u.cm+10*u.ft')
+    print convertAngle('10')
+    print convertAngle('90*u.deg')
+    print sympyConvertAngle('10*u.rad+10*u.deg')
     

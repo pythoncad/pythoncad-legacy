@@ -1,4 +1,4 @@
-
+from Interface.unitparser import decodePoint, convertLengh, convertAngle
 from Kernel.pycadevent          import PyCadEvent
 
 class FunctionHandler(object):
@@ -61,9 +61,9 @@ class FunctionHandler(object):
         else:
             try:
                 # let python evaluate expression
-                #exec(expression)
-                #self._value=""
-                self._value =eval(expression)
+                exec(expression)
+                self._value=""
+                #self._value =eval(expression)
             except:
                 self._value ="*error*"
             finally:
@@ -131,9 +131,12 @@ class FunctionHandler(object):
             except ExcPoint:
                 cObject[iv]=self.convertToPoint(text)  
                 return cObject
-            except (ExcLenght, ExcAngle, ExcInt):
+            except (ExcLenght, ExcInt):
                 cObject[iv]=self.convertToFloat(text)
                 return cObject
+            except (ExcAngle):
+                cObject[iv]=self.convertToAngle(text)
+                return cObject                
             except (ExcBool):
                 cObject[iv]=self.convertToBool(text)
                 return cObject
@@ -206,7 +209,7 @@ class FunctionHandler(object):
             return an int from user
         """        
         if msg:
-            return int(msg)
+            return int(convertLengh(msg))
         return None
         
     def convertToFloat(self, msg):
@@ -214,17 +217,23 @@ class FunctionHandler(object):
             return a float number
         """
         if msg:
-            return float(msg)
+            return convertLengh(msg)
+        return None
+        
+    def convertToAngle(self, msg):
+        """
+            convert the angle using sympy
+        """
+        if msg:
+            p=convertAngle(msg)
+            return p
         return None
         
     def convertToPoint(self, msg):
         """
             ask at the user to imput a point 
         """
-        from Kernel.GeoEntity.point import Point
         if msg:
-            coords=msg.split(',')
-            x=float(coords[0])
-            y=float(coords[1])
-            return Point(x, y)
+            p=decodePoint(msg)
+            return p
         return None
