@@ -67,6 +67,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.updateMenus()
         self.statusBar().showMessage("Ready")
         return
+        
     @property
     def scene(self):
         if self.mdiArea.activeSubWindow():
@@ -374,7 +375,8 @@ class CadWindowMdi(QtGui.QMainWindow):
     def callDocumentCommand(self, commandName):
         try:
             pointCmd=self.__application.getCommand(commandName)
-            self.__cmd_intf.evaluateInnerCommand(pointCmd)
+            
+            self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
             

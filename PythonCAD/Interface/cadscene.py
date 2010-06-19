@@ -79,13 +79,14 @@ class CadScene(QtGui.QGraphicsScene):
                 self.clearSelection()
                 self.updateSelected()
         super(CadScene, self).keyPressEvent(event)
+    
     def updateSelected(self):
         """
             update all the selected items
         """
         for item in self.selectedItems():
             item.updateSelected()
-                
+
     @property    
     def Limits(self):
         """

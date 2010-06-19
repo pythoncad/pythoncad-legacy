@@ -76,10 +76,26 @@ class FunctionHandler(object):
             self.printOutput(self._value)
         return self._value
     
-    def evaluateInnerCommand(self, cObject):
+    def evaluateInnerCommand(self, cObject,selectedItems=None):
         """
             evaluate an inner command
         """
+        from Kernel.exception import ExcEntity
+        if len(selectedItems):
+            try:
+                raise cObject.exception[0](None)
+            except ExcEntity:
+                text=None
+                for ent in selectedItems:
+                    if not text:
+                        text=''
+                        text+=str(ent.ID)
+                    else:
+                        text+=","+str(ent.ID)
+                cObject.value.append(text)
+                cObject.next()
+            except:
+                pass
         self.evaluateInner=cObject
         self.printOutput(str(self.evaluateInner.getActiveMessage()))
     

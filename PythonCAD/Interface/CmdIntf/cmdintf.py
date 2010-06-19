@@ -124,11 +124,11 @@ class CmdIntf(object):
         self.__edit_ctrl.FunctionHandler.evaluate(expression)
         return
         
-    def evaluateInnerCommand(self, kernelCommand):
+    def evaluateInnerCommand(self, kernelCommand, selectedItems):
         '''
             evaluate a kernel command
         '''
-        self.__edit_ctrl.FunctionHandler.evaluateInnerCommand(kernelCommand)
+        self.__edit_ctrl.FunctionHandler.evaluateInnerCommand(kernelCommand, selectedItems)
      
     def evaluateMouseImput(self,view,event):
         '''
