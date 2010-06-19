@@ -15,7 +15,7 @@
    id="svg23624"
    version="1.1"
    inkscape:version="0.47 r22583"
-   sodipodi:docname="ICONS_PythonCAD_version_16_06_2010 (2).svg">
+   sodipodi:docname="ICONS_PythonCAD_version_15_06_2010.svg">
   <defs
      id="defs23626">
     <inkscape:perspective
@@ -24,7 +24,7 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_z="744.09448 : 526.18109 : 1"
        inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective228" />
+       id="perspective232" />
     <linearGradient
        id="linearGradient3912">
       <stop
@@ -297,6 +297,16 @@
        y1="52.362183"
        x2="400"
        y2="152.36218" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3721"
+       id="linearGradient4148"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(451.80162,300.00001)"
+       x1="500"
+       y1="52.362183"
+       x2="400"
+       y2="152.36218" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -305,9 +315,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.3484185"
-     inkscape:cx="620.55646"
-     inkscape:cy="634.78209"
+     inkscape:zoom="1.0397301"
+     inkscape:cx="499.05961"
+     inkscape:cy="674.53348"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -685,7 +695,10 @@
        width="100"
        height="100"
        x="400"
-       y="352.36218" />
+       y="352.36218"
+       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\polygon.png"
+       inkscape:export-xdpi="28.799999"
+       inkscape:export-ydpi="28.799999" />
     <rect
        y="202.36218"
        x="550"
@@ -755,40 +768,28 @@
        height="100"
        width="100"
        id="rect3101"
-       style="fill:url(#linearGradient3111);fill-opacity:1;stroke:none"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\chamfer.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:url(#linearGradient3111);fill-opacity:1;stroke:none" />
     <rect
        y="1130.3495"
        x="400"
        height="100"
        width="100"
        id="rect3113"
-       style="fill:url(#linearGradient3131);fill-opacity:1.0;stroke:none"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:url(#linearGradient3131);fill-opacity:1.0;stroke:none" />
     <rect
        style="fill:url(#linearGradient3945);fill-opacity:1;stroke:none"
        id="rect3931"
        width="100"
        height="100"
        x="550"
-       y="1130.3495"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       y="1130.3495" />
     <rect
        style="fill:url(#linearGradient3954);fill-opacity:1;stroke:none"
        id="rect3919"
        width="100"
        height="100"
        x="400"
-       y="1271.7454"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\mirror.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       y="1271.7454" />
     <rect
        y="1271.7454"
        x="550"
@@ -796,6 +797,13 @@
        width="100"
        id="rect3921"
        style="fill:url(#linearGradient3956);fill-opacity:1;stroke:none" />
+    <rect
+       y="352.36218"
+       x="851.80164"
+       height="100"
+       width="100"
+       id="rect4138"
+       style="fill:url(#linearGradient4148);fill-opacity:1;stroke:none" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -806,19 +814,13 @@
        inkscape:connector-curvature="0"
        d="M 625.58051,1205.93 588.5616,1168.9111"
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
-       id="path3933"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       id="path3933" />
     <path
        id="path3128"
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
        d="m 636.17633,1180.3495 -52.35264,0"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="cc" />
     <path
        id="path4165"
        style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.5,1.5;stroke-dashoffset:0"
@@ -1002,23 +1004,10 @@
        sodipodi:rx="9.5964489"
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.28656434,0,0,0.28656434,330.73329,391.13838)" />
-    <path
-       transform="matrix(0.28656434,0,0,0.28656434,396.4315,325.44017)"
-       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       sodipodi:ry="9.5964489"
-       sodipodi:rx="9.5964489"
-       sodipodi:cy="151.81119"
-       sodipodi:cx="303.55084"
-       id="path3181"
-       style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       d="m 417.72012,434.64206 0,-32.84911 32.84912,0 -10e-6,-32.8491 32.8491,0"
-       id="rect3183"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       transform="matrix(0.28656434,0,0,0.28656434,330.73329,391.13838)"
+       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\polygon.png"
+       inkscape:export-xdpi="28.799999"
+       inkscape:export-ydpi="28.799999" />
     <path
        transform="matrix(0.28656434,0,0,0.28656434,480.7333,241.13837)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1045,16 +1034,6 @@
        id="path3189"
        d="m 567.72015,284.64204 c 0,0 32.34456,-4.56187 36.42455,-6.42455 4.07999,-1.86268 8.13654,-5.7927 6.44788,-10.5951 -1.68865,-4.80241 -8.57292,-13.15334 -10.02333,-15.82946 -1.45041,-2.67612 -6.88427,-8.35092 -8.93552,-13.82236 -2.05126,-5.47144 1.28009,-10.73951 5.36008,-12.60219 4.07999,-1.86268 36.42455,-6.42455 36.42455,-6.42455"
        style="color:#000000;fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <path
-       sodipodi:type="arc"
-       style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3202"
-       sodipodi:cx="303.55084"
-       sodipodi:cy="151.81119"
-       sodipodi:rx="9.5964489"
-       sodipodi:ry="9.5964489"
-       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.28656434,0,0,0.28656434,363.58238,358.28929)" />
     <path
        transform="matrix(0.28656434,0,0,0.28656434,516.43151,193.44016)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1350,10 +1329,7 @@
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
        d="m 639.41836,980.76715 -38.84912,0 -1e-5,-38.8491"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\chamfer.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="ccc" />
     <path
        transform="matrix(0.28656434,0,0,0.28656434,513.58238,937.26349)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1363,28 +1339,19 @@
        sodipodi:cx="303.55084"
        id="path3105"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\chamfer.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:type="arc" />
     <path
        id="path3107"
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
        d="m 571.14467,961.0126 c 0,0 22.94971,0 29.42456,0 l 19.42457,19.42453 c 0,6.47484 0,29.42457 0,29.42457"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\chamfer.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="cccc" />
     <path
        id="path3117"
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
        d="m 475.67187,1179.7802 -52.35264,0"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="cc" />
     <path
        transform="matrix(0.28656434,0,0,0.28656434,333.58238,1136.2766)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1394,20 +1361,14 @@
        sodipodi:cx="303.55084"
        id="path3119"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:type="arc" />
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3918"
        width="33.5"
        height="33.5"
        x="403.81921"
-       y="1163.0303"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       y="1163.0303" />
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -1417,29 +1378,20 @@
        sodipodi:rx="9.5964489"
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.28656434,0,0,0.28656434,391.43502,1136.2766)"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       transform="matrix(0.28656434,0,0,0.28656434,391.43502,1136.2766)" />
     <rect
        y="1163.0303"
        x="461.67184"
        height="33.5"
        width="33.5"
        id="rect3922"
-       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.5,1.5;stroke-dashoffset:7.5"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.5,1.5;stroke-dashoffset:7.5" />
     <path
        style="fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        d="m 446.56921,1186.5303 8,-6.75 -8,-6.75"
        id="rect3928"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\move.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="ccc" />
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -1449,38 +1401,26 @@
        sodipodi:rx="9.5964489"
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.28656434,0,0,0.28656434,513.01315,1136.8458)"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       transform="matrix(0.28656434,0,0,0.28656434,513.01315,1136.8458)" />
     <rect
        y="1163.5995"
        x="583.25"
        height="33.5"
        width="33.5"
        id="rect3937"
-       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
     <path
        sodipodi:nodetypes="ccc"
        inkscape:connector-curvature="0"
        id="path3943"
        d="m 626.31391,1186.9099 2.58298,7.2035 6.41863,-4.167"
-       style="fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:#000000;fill-opacity:0;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
     <path
        style="fill:none;stroke:#ff0000;stroke-width:0.99999988;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:0.99999987, 0.99999987;stroke-dashoffset:0"
        d="m 630.85276,1171.8274 c 0.74781,2.7133 1.14726,5.571 1.14726,8.522 0,12.2307 -6.86167,22.8588 -16.94544,28.2448"
        id="path3130"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="csc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:nodetypes="csc" />
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.5, 1.5;stroke-dashoffset:0"
        id="rect3132"
@@ -1488,10 +1428,7 @@
        height="33.5"
        x="1242.1472"
        y="393.61905"
-       transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,0,0)"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,0,0)" />
     <path
        transform="matrix(0.28656434,0,0,0.28656434,545.01317,1136.8458)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1501,10 +1438,7 @@
        sodipodi:cx="303.55084"
        id="path3902"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       sodipodi:type="arc" />
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -1514,39 +1448,27 @@
        sodipodi:rx="9.5964489"
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.20263159,0.20263159,-0.20263159,0.20263159,591.88018,1110.7061)"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\rotate.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       transform="matrix(0.20263159,0.20263159,-0.20263159,0.20263159,591.88018,1110.7061)" />
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        d="m 449.74527,1282.4951 0,78.5005"
        style="fill:none;stroke:#ff0000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:0.99999999, 0.99999999;stroke-dashoffset:0"
-       id="path3927"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\mirror.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       id="path3927" />
     <rect
        y="1304.4261"
        x="403.81921"
        height="33.5"
        width="33.5"
        id="rect3932"
-       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\mirror.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.5, 1.5;stroke-dashoffset:7.5"
        id="rect3936"
        width="33.5"
        height="33.5"
        x="461.67184"
-       y="1304.4261"
-       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\mirror.png"
-       inkscape:export-xdpi="28.799999"
-       inkscape:export-ydpi="28.799999" />
+       y="1304.4261" />
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3942"
@@ -1566,5 +1488,50 @@
        d="m 573.96588,1295.7113 52.06824,52.0682"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+       d="m 418,370.36219 c 21.33333,0 42.66667,0 64,0 l 0,32.01794 -31.98204,0 0,31.98204 -32.01794,0 c 10e-6,-21.33333 -1e-5,-42.66665 -2e-5,-63.99998 z"
+       id="rect3367"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\polygon.png"
+       inkscape:export-xdpi="28.799999"
+       inkscape:export-ydpi="28.799999" />
+    <path
+       transform="matrix(0.28656434,0,0,0.28656434,782.53491,391.13838)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4140"
+       style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4142"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.28656434,0,0,0.28656434,848.23312,325.44017)" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4144"
+       d="m 869.52174,434.64206 0,-32.84911 32.84912,0 -10e-6,-32.8491 32.8491,0"
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
+    <path
+       transform="matrix(0.28656434,0,0,0.28656434,815.384,358.28929)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4146"
+       style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
   </g>
 </svg>

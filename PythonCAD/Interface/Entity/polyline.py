@@ -33,7 +33,10 @@ class Polyline(BaseEntity):
         geometry = self.entity.getConstructionElements()
         geoPoints=[geometry[k] for k in geometry]
         coordPoints=[point.getCoords() for point in geoPoints]
-        self.qtPoints=[QtCore.QPointF(x, y*-1.0 ) for x, y in coordPoints]
+        
+        #self.qtPoints=[QtCore.QPointF(x, y*-1.0 ) for x, y in coordPoints]
+        self.qtPoints=self.getQtPointF()
+        
         X=[x for x,y in coordPoints]
         max_x=max(X)
         min_x=min(X)
@@ -44,6 +47,15 @@ class Polyline(BaseEntity):
         h=abs(max_x-min_x)
         self.bbox=QtCore.QRectF(min_x,min_y ,h ,w )
         return
+        
+    def getQtPointF(self):
+        qtPoints=[]
+        geoPolyline=self.geoItem
+        for p in geoPolyline.points():
+            x, y=p.getCoords()
+            qtPointf=QtCore.QPointF(x, y*-1.0 )
+            qtPoints.append(qtPointf)
+        return qtPoints
         
     def boundingRect(self):
         """

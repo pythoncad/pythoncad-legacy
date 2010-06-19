@@ -143,7 +143,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('move', hasMdiChild)
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
-        self.__cmd_intf.setVisible('rotare', hasMdiChild)
+        self.__cmd_intf.setVisible('rotate', hasMdiChild)
         #Draw
         self.__cmd_intf.setVisible('point', hasMdiChild)
         self.__cmd_intf.setVisible('segment', hasMdiChild)
@@ -213,7 +213,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotare', '&Rotare', self._onRotate)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotate', '&Rotare', self._onRotate)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)

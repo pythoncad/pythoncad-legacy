@@ -29,24 +29,16 @@ class BaseEntity(QtGui.QGraphicsItem):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
         #self.setSelected(True)              #Accept to be selected
-        self.GraphicsItemFlags(QtGui.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
         #self.setFlag(QtGui.QGraphicsItem.ItemClipsToShape, True)
         # get the geometry
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
-        r, g, b=self.style.getStyleProp("entity_color")
-        self.lineWith=1.0
+        r, g, b= self.style.getStyleProp("entity_color")
         self.color = QtGui.QColor.fromRgb(r, g, b)
+        self.lineWith=1.0
         return
     
-    def setColor(self):
-        r, g, b=self.style.getStyleProp("entity_color")
-        self.color = QtGui.QColor.fromRgb(r, g, b)       
-    
-    def setHiglight(self):
-        r, g, b=PYTHONCAD_HIGLITGT_COLOR
-        self.color = QtGui.QColor.fromRgb(r, g, b)
-        
     @property
     def entity(self):
         return self.__entity 
@@ -64,16 +56,43 @@ class BaseEntity(QtGui.QGraphicsItem):
     def toolTipMessage(self):
         toolTipMessage=self.geoItem.info
         return toolTipMessage
+    def updateSelected(self):    
+        self.setColor()
+        self.update(self.boundingRect())
+        
+    def itemChange(self, change, value):
+        if change == QtGui.QGraphicsItem.ItemSelectedChange:
+            selected, spool=value.toUInt()
+            self.setColor(selected==True)
+            self.update(self.boundingRect())
+        return QtGui.QGraphicsItem.itemChange(self, change, value)
+        
+    def setColor(self, forceHilight=None):
+        if forceHilight==None:
+            if self.isSelected() or forceHilight:
+                r, g, b=PYTHONCAD_HIGLITGT_COLOR
+            else:
+                r, g, b=self.style.getStyleProp("entity_color")
+        else:
+            if forceHilight:
+                r, g, b=PYTHONCAD_HIGLITGT_COLOR
+            else:
+                r, g, b=self.style.getStyleProp("entity_color")
+        self.color = QtGui.QColor.fromRgb(r, g, b)       
+    
+    def setHiglight(self):
+        r, g, b=PYTHONCAD_HIGLITGT_COLOR
+        self.color = QtGui.QColor.fromRgb(r, g, b)
     
     def hoverEnterEvent(self, event):
-        self.setSelected(True)
         self.setHiglight()
-        self.update()
+        self.update(self.boundingRect())
+        super(BaseEntity, self).hoverEnterEvent(event)
     
     def hoverLeaveEvent(self, event):
-        self.setSelected(False)
         self.setColor()
-        self.update()
+        self.update(self.boundingRect())
+        super(BaseEntity, self).hoverLeaveEvent(event)
         
     def drawGeometry(self, painter, option, widget):
         """
@@ -102,7 +121,6 @@ class BaseEntity(QtGui.QGraphicsItem):
         """
             overloading of the paint method
         """
-        
         painter.setPen(QtGui.QPen(self.color, self.lineWith))
         #draw geometry
         #painter.drawPath(self.shape())

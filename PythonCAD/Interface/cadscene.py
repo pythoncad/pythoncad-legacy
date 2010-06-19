@@ -55,6 +55,8 @@ class CadScene(QtGui.QGraphicsScene):
         p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
         if qtItem:
             print "item : ", qtItem.toolTipMessage, qtItem.zValue()
+            qtItem.setSelected(True)
+            self.updateSelected()
         else:
             print "No item selected"
         #items=self.items(p)
@@ -65,9 +67,25 @@ class CadScene(QtGui.QGraphicsScene):
             
         pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItem)
         self.pyCadViewPressEvent(self, pyCadEvent)
-        #
-        #self.qtText.show()
+        super(CadScene, self).mousePressEvent(event)
 
+    def mouseReleaseEvent(self, event):
+        self.updateSelected()
+        super(CadScene, self).mouseReleaseEvent(event)
+    
+    
+    def keyPressEvent(self, event):
+        if event.key()==QtCore.Qt.Key_Escape:
+                self.clearSelection()
+                self.updateSelected()
+        super(CadScene, self).keyPressEvent(event)
+    def updateSelected(self):
+        """
+            update all the selected items
+        """
+        for item in self.selectedItems():
+            item.updateSelected()
+                
     @property    
     def Limits(self):
         """

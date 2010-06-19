@@ -171,7 +171,12 @@ class Polyline(GeometricalEntity):
         """
             return a list of point
         """
-        return [self[k] for k in self]
+        exit=[]
+        kk=self.keys()
+        kk.sort()
+        for k in kk:
+            exit.append(self[k])
+        return exit
 
     def clone(self):
         """

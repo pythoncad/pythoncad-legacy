@@ -1,5 +1,6 @@
-from Interface.unitparser import decodePoint, convertLengh, convertAngle
-from Kernel.pycadevent          import PyCadEvent
+from Interface.unitparser   import decodePoint, convertLengh, convertAngle
+from Kernel.pycadevent      import PyCadEvent
+from Interface.evaluator    import Evaluator
 
 class FunctionHandler(object):
     '''
@@ -7,7 +8,6 @@ class FunctionHandler(object):
     Commands are registered by "registerCommand" before the are available.
     Evaluation of commands or expressions is done by "evaluate"
     '''
-
     def __init__(self, edit_ctrl, edit_output):
         '''
         Defines an dictionary containing all known commands.
@@ -25,7 +25,9 @@ class FunctionHandler(object):
         # Global inner command evaluation
         self.evaluateInner=None
         self.commandExecuted=PyCadEvent()
-
+        #Evaluator
+        self._eval=Evaluator(self.printCommand)
+        
     def registerCommand(self, name, callback):
         '''
         Register a command with it's callback in the command table.
@@ -47,23 +49,24 @@ class FunctionHandler(object):
         '''
         # commands are always defined in upper case
         command = expression.upper()
-        # echo on the comand line
-        self.printCommand(command)
         # is it a command from the command table?
         self.__edit_ctrl.clear()
         if self._command_table.has_key(command):
             # call function
+            # echo on the comand line
+            self.printCommand(command)
             self._value = self._command_table[command]()
         elif self.evaluateInner:
+            self.printCommand(command)
+            # echo on the comand line
             self.performCommand(self.evaluateInner, command)
             if self.evaluateInner:
                 self.printOutput(self.evaluateInner.getActiveMessage())
         else:
             try:
                 # let python evaluate expression
-                exec(expression)
-                self._value=""
-                #self._value =eval(expression)
+                self.printCommand(expression)
+                self._value=self._eval.evaluate(expression)
             except:
                 self._value ="*error*"
             finally:

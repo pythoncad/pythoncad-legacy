@@ -4,15 +4,11 @@ from PyQt4 import QtCore, QtGui
 
 
 class CadView(QtGui.QGraphicsView):   
-    def __init__(self, parent=None):
-        super(CadView, self).__init__(parent)
-        self.scaleFactor=1
-                
+              
     def __init__(self, scene, parent=None):
         super(CadView, self).__init__(scene, parent)
         self.scaleFactor=1
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        
     def sizeHint(self):
         return QtCore.QSize(800,600)
     
