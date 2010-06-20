@@ -28,10 +28,8 @@ class BaseEntity(QtGui.QGraphicsItem):
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
-        #self.setSelected(True)              #Accept to be selected
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
-        #self.setFlag(QtGui.QGraphicsItem.ItemClipsToShape, True)
-        # get the geometry
+         # get the geometry
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
         r, g, b= self.style.getStyleProp("entity_color")

@@ -96,7 +96,7 @@ class EntityMissing(Exception):
     def __str__(self):
         return repr(self.value)    
     
-class UndoDb(Exception):
+class UndoDbExc(Exception):
     """
         This exception is used UndoDb class to manage is errors
     """
@@ -152,77 +152,66 @@ class PyCadWrongImputData(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value) 
+        
 #********************************
-#       imput exception
+#       imput command exception
 #********************************
-class ExcPoint(Exception):
+class CommandException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)   
+
+class ExcPoint(CommandException):
     """
         when this exception is trown it means that the command need a point
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-        
-class ExcLenght(Exception):
+    pass
+    
+class ExcLenght(CommandException):
     """
         when this exception is trown it means that the command need a lenght
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    pass
 
-class ExcAngle(Exception):
+class ExcAngle(CommandException):
     """
         when this exception is trown it means that the command need a deg angle
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    pass
 
-class ExcText(Exception):
+class ExcText(CommandException):
     """
         when this exception is trown it means that the command need text
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    pass
 
-class ExcInt(Exception):
+class ExcInt(CommandException):
     """
         when this exception is trown it means that the command need an Integer
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-
-class ExcBool(Exception):
+    pass
+    
+class ExcBool(CommandException):
     """
         when this exception is trown it means that the command need an Boolean
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-class ExcEntity(Exception):
+    pass
+    
+class ExcEntity(CommandException):
     """
         when this exception is trown it means that the command need an dbEnity
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-        
-class ExcEntityPoint(Exception):
+    pass
+
+class ExcMultiEntity(CommandException): 
+    """
+        when this exception is trown it means that the command need an array of id
+    """
+    pass  
+class ExcEntityPoint(CommandException):
     """
         when this exception is trown it means that the command need an a string
         like id@x,y
     """
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    pass

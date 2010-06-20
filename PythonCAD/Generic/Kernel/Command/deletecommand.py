@@ -32,7 +32,7 @@ class DeleteCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcEntity]
+        self.exception=[ExcMultiEntity]
         self.message=["Give Me the Entity ID use , for more enitt ES: 4,10,5"]
         
     def applyCommand(self):

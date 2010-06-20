@@ -23,7 +23,8 @@
 
 import sys
 
-from Kernel.Db.basedb            import BaseDb
+from Kernel.Db.basedb           import BaseDb
+from Kernel.exception           import UndoDbExc
 
 class UndoDb(BaseDb):
     """
@@ -92,7 +93,7 @@ class UndoDb(BaseDb):
             self.__activeUndo=_id
             return self.__activeUndo
         else:
-            raise UndoDb,"The undo are finished Unable to perform the undo"
+            raise UndoDbExc("The undo are finished Unable to perform the undo")
 
     def dbRedo(self):
         """
@@ -112,7 +113,7 @@ class UndoDb(BaseDb):
             self.__activeUndo=_id
             return self.__activeUndo
         else:
-            raise UndoDb,"The undo are finished Unable to perform the redo"
+            raise UndoDbExc("The undo are finished Unable to perform the redo")
 
     def undoIdExsist(self,undoId):
         """

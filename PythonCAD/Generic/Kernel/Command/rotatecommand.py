@@ -31,7 +31,7 @@ class RotateCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcEntity,
+        self.exception=[ExcMultiEntity,
                         ExcPoint, 
                         ExcAngle, 
                         ExcText]

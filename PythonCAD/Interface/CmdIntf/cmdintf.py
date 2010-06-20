@@ -135,6 +135,12 @@ class CmdIntf(object):
             get imput from viewport
         '''
         self.__edit_ctrl.FunctionHandler.evaluateMouseImput(event)
+    
+    def applyCommand(self):    
+        """
+            apply the command if possible
+        """
+        self.__edit_ctrl.FunctionHandler.applyCommand()
         
     def resetCommand(self):
         """

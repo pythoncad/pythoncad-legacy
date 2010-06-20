@@ -43,7 +43,8 @@ class CadScene(QtGui.QGraphicsScene):
         # drawing limits
         self.__limits = None
         #scene custom event
-        self.pyCadViewPressEvent=PyCadEvent()
+        self.pyCadScenePressEvent=PyCadEvent()
+        self.pyCadSceneApply=PyCadEvent()
         self.__document=document
         #dinamic text editor
         #self.qtText=QtGui.QTextEdit()
@@ -59,25 +60,26 @@ class CadScene(QtGui.QGraphicsScene):
             self.updateSelected()
         else:
             print "No item selected"
-        #items=self.items(p)
-        #ii=0
-        #for i in items:
-        #    print ii,"item : ", i.toolTipMessage
-        #    ii+=1
-            
-        pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItem)
-        self.pyCadViewPressEvent(self, pyCadEvent)
+        #re fire the event
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.updateSelected()
+        
+        qtItems=self.selectedItems()
+        pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItems)
+        self.pyCadScenePressEvent(self, pyCadEvent)
+        #re fire the event
         super(CadScene, self).mouseReleaseEvent(event)
     
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
-                self.clearSelection()
-                self.updateSelected()
+            self.clearSelection()
+            self.updateSelected()
+        elif event.key()==QtCore.Qt.Key_Return:
+            self.pyCadSceneApply()
+        
         super(CadScene, self).keyPressEvent(event)
     
     def updateSelected(self):

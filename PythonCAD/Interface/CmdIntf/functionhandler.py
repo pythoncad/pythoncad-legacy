@@ -80,18 +80,15 @@ class FunctionHandler(object):
         """
             evaluate an inner command
         """
-        from Kernel.exception import ExcEntity
-        if len(selectedItems):
+        from Kernel.exception import ExcEntity, ExcMultiEntity
+        if selectedItems and len(selectedItems)>0:
             try:
                 raise cObject.exception[0](None)
             except ExcEntity:
-                text=None
-                for ent in selectedItems:
-                    if not text:
-                        text=''
-                        text+=str(ent.ID)
-                    else:
-                        text+=","+str(ent.ID)
+                cObject.value.append(selectedItems[0].ID)
+                cObject.next()
+            except ExcMultiEntity:
+                text=self.getIdsString(selectedItems)
                 cObject.value.append(text)
                 cObject.next()
             except:
@@ -99,49 +96,69 @@ class FunctionHandler(object):
         self.evaluateInner=cObject
         self.printOutput(str(self.evaluateInner.getActiveMessage()))
     
+    def getIdsString(self, selectedItems):
+        """
+            get the selected entity in terms of ids
+        """
+        text=None
+        for ent in selectedItems:
+            if not text:
+                text=''
+                text+=str(ent.ID)
+            else:
+                text+=","+str(ent.ID)
+        return text
+        
     def evaluateMouseImput(self, eventItem):
         """
             evaluate the mouse click
         """
-        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint
+        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint, ExcMultiEntity
         try:
             if self.evaluateInner:
                 value=None
-                point, entity=eventItem
+                point, entitys=eventItem
                 exception=self.evaluateInner.exception[self.evaluateInner.index+1]
                 try:
                     raise exception(None)
                 except ExcPoint:
                     value="%s,%s"%(point)
                 except ExcEntity:
-                    if entity:
-                        value=str(entity.ID)
-                except (ExcEntityPoint):
-                    if entity:
+                    if entitys:
+                        value=str(entitys[0].ID)
+                except ExcMultiEntity:
+                    value=self.getIdsString(entitys)
+                except ExcEntityPoint:
+                    if entitys:
                         sPoint="%s,%s"%(point)
-                        id=str(entity.ID)
+                        id=str(entitys[0].ID)
                         value="%s@%s"%(str(id), str(sPoint))
                 except:
                     pass
                 if value:
                     self.performCommand(self.evaluateInner, value)
-                    if self.evaluateInner.index==len(self.evaluateInner.exception)-1:
-                        self.evaluateInner.applyCommand()
-                        self.evaluateInner=None
-                        self.commandExecuted()
+                    self.applyCommand()
         except:
             self.evaluateInner=None
         if self.evaluateInner:
             self.printOutput(self.evaluateInner.getActiveMessage())
     
-    
+    def applyCommand(self):
+        """
+            apply The Command 
+        """
+        if self.evaluateInner and self.evaluateInner.index==len(self.evaluateInner.exception)-1:
+            self.evaluateInner.applyCommand()
+            self.evaluateInner=None
+            self.commandExecuted()
+            
     def performCommand(self,cObject, text):
         """
             Perform a Command
             cObject is the command object
         """
         self.printOutput(text) 
-        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcEntityPoint,PyCadWrongCommand
+        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcMultiEntity, ExcEntityPoint,PyCadWrongCommand
         try:
             iv=cObject.next()
             exception,message=iv
@@ -162,7 +179,7 @@ class FunctionHandler(object):
             except (ExcText):
                 cObject[iv]=text
                 return cObject
-            except (ExcEntity):
+            except (ExcEntity, ExcMultiEntity):
                 cObject[iv]=str(text)
                 return cObject
             except (ExcEntityPoint):

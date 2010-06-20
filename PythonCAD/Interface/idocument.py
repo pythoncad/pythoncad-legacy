@@ -17,7 +17,8 @@ class IDocument(QtGui.QMdiSubWindow):
         # layer list
         self.__layer_dock = LayerDock(self)
         self.__scene = CadScene(document)
-        self.__scene.pyCadViewPressEvent+=self.__cmdInf.evaluateMouseImput
+        self.__scene.pyCadScenePressEvent+=self.__cmdInf.evaluateMouseImput
+        self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
         self.__view = CadView(self.__scene, self)
         # the graphics view is the main/central component
         innerWindows = QtGui.QMainWindow()
@@ -60,7 +61,7 @@ class IDocument(QtGui.QMdiSubWindow):
         """
             perform redo on the active document
         """
-        self.document.redo()
+        self.document.reDo()
     def importExternalFormat(self, file):
         """
             import an external document

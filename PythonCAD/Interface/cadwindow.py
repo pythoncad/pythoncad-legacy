@@ -355,16 +355,16 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onUndo(self):
         try:
            self.mdiArea.activeSubWindow().unDo() 
-        except UndoDb:
+        except UndoDbExc:
             self.critical("Unable To Perform Undo")
         self.statusBar().showMessage("Ready", 2000)
         return
         
     def _onRedo(self):
         try:
-            self.mdiArea.activeSubWindow().redo()
-        except UndoDb:
-            PyCadApp.critical("Unable To Perform Redo")
+            self.mdiArea.activeSubWindow().reDo()
+        except UndoDbExc:
+            self.critical("Unable To Perform Redo")
         self.statusBar().showMessage("Ready", 2000)
         
     def _onAbout(self):
@@ -375,8 +375,8 @@ class CadWindowMdi(QtGui.QMainWindow):
     def callDocumentCommand(self, commandName):
         try:
             pointCmd=self.__application.getCommand(commandName)
-            
             self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
+            #self.__cmd_intf.evaluateInnerCommand(pointCmd, None)
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
             
