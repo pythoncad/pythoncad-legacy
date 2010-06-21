@@ -33,10 +33,13 @@ class CmdLineDock(QtGui.QDockWidget):
         self.dockWidgetContents.setSizePolicy(sizePolicy)
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.textEditOutput = QtGui.QTextEdit(self.dockWidgetContents)
-        self.textEditOutput.setObjectName("textEditOutput") 
-        self.textEditOutput.setReadOnly(True) 
-        self.textEditOutput.ensureCursorVisible()
+        
+        #self.textEditOutput = QtGui.QTextEdit(self.dockWidgetContents)
+        #self.textEditOutput.setObjectName("textEditOutput") 
+        #self.textEditOutput.setReadOnly(True) 
+        #self.textEditOutput.ensureCursorVisible()
+        self.textEditOutput=PyCadTextView(self.dockWidgetContents)
+        
         self.verticalLayout_2.addWidget(self.textEditOutput)
         self.__edit_ctrl = QtGui.QLineEdit(self, returnPressed=self._returnPressed)
         self.__edit_ctrl.keyPressEvent=self._keyPress
@@ -102,3 +105,31 @@ class CmdLineDock(QtGui.QDockWidget):
         return result
     
     
+class PyCadTextView(QtGui.QTextEdit):
+    def __init__(self, parent):
+        super(PyCadTextView, self).__init__(parent)
+        self.setObjectName("textEditOutput") 
+        self.setReadOnly(True) 
+        self.ensureCursorVisible()
+        
+    def contextMenuEvent(self, event):
+        menu = self.createStandardContextMenu(event.pos());
+        clearAction=QtGui.QAction("Clear", self, triggered=self.clear)
+        menu.addAction(clearAction);
+        menu.exec_(event.globalPos())
+        del(menu)
+
+    def printMsg(self, msg):
+        """
+            print a message withouth formatting in the last row
+        """
+        self.append(msg)
+        self.scrollToBottom()
+
+    def scrollToBottom(self):    
+        """
+            scroll the qttext to the end
+        """
+        sb = self.verticalScrollBar()
+        sb.setValue(sb.maximum())
+        

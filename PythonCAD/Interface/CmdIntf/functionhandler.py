@@ -210,9 +210,8 @@ class FunctionHandler(object):
         """
         msg=str(msg)
         if len(msg)>0:
-            msg=u"\r>>> "+msg
-            self.__edit_output.insertPlainText(msg)
-            self.scrollToBottom(self.__edit_output)
+            msg=u">>> "+msg
+            self.__edit_output.printMsg(msg)
         
     def printOutput(self, msg):
         """
@@ -220,16 +219,24 @@ class FunctionHandler(object):
         """
         msg=str(msg)
         if len(msg)>0:
-            msg=u"\r<PythonCAD> : "+msg
-            self.__edit_output.insertPlainText(msg)
-            self.scrollToBottom(self.__edit_output)
+            msg=u"<PythonCAD> : "+msg
+            self.__edit_output.printMsg(msg)
             
-    def scrollToBottom(self, editText):    
-        """
-            scroll the qttext to the end
-        """
-        sb = editText.verticalScrollBar()
-        sb.setValue(sb.maximum())
+    #def printMsg(self, msg):
+    #    """
+    #        print a message withouth formatting in the last row
+    #    """
+    #    #self.__edit_output.insertPlainText(msg)
+    #    self.__edit_output.append(msg)
+    #    self.scrollToBottom(self.__edit_output)
+
+
+    #def scrollToBottom(self, editText):    
+    #    """
+    #        scroll the qttext to the end
+    #    """
+    #    sb = editText.verticalScrollBar()
+    #    sb.setValue(sb.maximum())
 
     def convertToBool(self, msg):   
         """
