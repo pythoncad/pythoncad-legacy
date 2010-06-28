@@ -29,7 +29,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
-         # get the geometry
+        #Get the geometry
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
         r, g, b= self.style.getStyleProp("entity_color")
@@ -119,8 +119,16 @@ class BaseEntity(QtGui.QGraphicsItem):
         """
             overloading of the paint method
         """
-        painter.setPen(QtGui.QPen(self.color, self.lineWith))
+        #painter.setPen(QtGui.QPen(self.color, self.lineWith))
+        painter.setPen(QtGui.QPen(self.color))
         #draw geometry
         #painter.drawPath(self.shape())
         self.drawGeometry(painter,option,widget)
-    
+
+    def getDistance(self, qtPointF_1, qtPointF_2):
+        """
+            calculate the distance betwing the two line
+        """
+        x=abs(qtPointF_1.x()-qtPointF_2.x())
+        y=abs(qtPointF_1.y()- qtPointF_2.y())
+        return math.sqrt(x**2+y**2)

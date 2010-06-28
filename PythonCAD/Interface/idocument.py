@@ -32,6 +32,9 @@ class IDocument(QtGui.QMdiSubWindow):
     @property
     def document(self):
         return self.__document
+    @property
+    def cmdInf(self):
+        return self.__cmdInf
     @property    
     def view(self):    
         return self.__view

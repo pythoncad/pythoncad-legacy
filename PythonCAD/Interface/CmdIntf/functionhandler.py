@@ -113,11 +113,11 @@ class FunctionHandler(object):
         """
             evaluate the mouse click
         """
-        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint, ExcMultiEntity
+        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint, ExcMultiEntity, ExcLenght, ExcInt
         try:
             if self.evaluateInner:
                 value=None
-                point, entitys=eventItem
+                point, entitys, distance=eventItem
                 exception=self.evaluateInner.exception[self.evaluateInner.index+1]
                 try:
                     raise exception(None)
@@ -133,6 +133,9 @@ class FunctionHandler(object):
                         sPoint="%s,%s"%(point)
                         id=str(entitys[0].ID)
                         value="%s@%s"%(str(id), str(sPoint))
+                except (ExcLenght, ExcInt):
+                    if distance:
+                        value=self.convertToFloat(distance)
                 except:
                     pass
                 if value:
@@ -191,12 +194,14 @@ class FunctionHandler(object):
                 self.evaluateInner=None
                 raise CommandImputError, msg
         except (StopIteration):
-            cObject.applyCommand()
+            self.evaluateInner.applyCommand()
             self.evaluateInner=None
+            self.commandExecuted()
         except PyCadWrongCommand:
             self.printOutput("Wrong Command")
             self.evaluateInner=None
-            
+        self.applyCommand()
+        
     def resetCommand(self):
         """
             reset the command if eny are set
@@ -222,22 +227,6 @@ class FunctionHandler(object):
             msg=u"<PythonCAD> : "+msg
             self.__edit_output.printMsg(msg)
             
-    #def printMsg(self, msg):
-    #    """
-    #        print a message withouth formatting in the last row
-    #    """
-    #    #self.__edit_output.insertPlainText(msg)
-    #    self.__edit_output.append(msg)
-    #    self.scrollToBottom(self.__edit_output)
-
-
-    #def scrollToBottom(self, editText):    
-    #    """
-    #        scroll the qttext to the end
-    #    """
-    #    sb = editText.verticalScrollBar()
-    #    sb.setValue(sb.maximum())
-
     def convertToBool(self, msg):   
         """
             return an int from user

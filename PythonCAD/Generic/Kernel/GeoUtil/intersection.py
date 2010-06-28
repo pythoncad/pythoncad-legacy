@@ -118,9 +118,11 @@ def _sympy_intersection(ipts, obj1, obj2):
     """
         calculate the intersection beteen polyline and segment
     """
+    from sympy.geometry import Point as sPoint
     sympySegment=obj1.getSympy()
     for p in sympySegment.intersection(obj2.getSympy()):
-        ipts.append((float(p[0]),float(p[1])))
+        if isinstance(p, sPoint):
+            ipts.append((float(p[0]),float(p[1])))
 
 def _pol_obj_intersection(ipts, pol, obj):
     """

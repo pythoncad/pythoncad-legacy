@@ -94,7 +94,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return    
         
     def commandExecuted(self):
-        self.statusBar().showMessage("Ready")
+        self.resetCommand()
         
     def _createDockWindows(self):
         '''
@@ -119,9 +119,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             sub windows activation
         """
-        self.updateMenus()
-        self.resetCommand()
         if self.mdiArea.activeSubWindow():
+            self.updateMenus()
+            self.resetCommand()
             self.__application.setActiveDocument(self.mdiArea.activeSubWindow().document)   
 
     def resetCommand(self):    
@@ -129,7 +129,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             Resect the active command
         """
         self.__cmd_intf.resetCommand()
-        
+        self.statusBar().showMessage("Ready")
         
     def updateMenus(self):
         hasMdiChild = (self.activeMdiChild() is not None)
@@ -376,7 +376,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         try:
             pointCmd=self.__application.getCommand(commandName)
             self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
-            #self.__cmd_intf.evaluateInnerCommand(pointCmd, None)
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
             
@@ -435,3 +434,9 @@ class CadWindowMdi(QtGui.QMainWindow):
             return icon
         # icon not found, don't use an icon, return None
         return None
+
+    def keyPressEvent(self, event):
+        if event.key()==QtCore.Qt.Key_Escape:
+            self.resetCommand()
+            
+        super(CadWindowMdi, self).keyPressEvent(event)

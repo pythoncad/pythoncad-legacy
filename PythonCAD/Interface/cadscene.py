@@ -22,18 +22,22 @@
 #
 #
 
+import math
+
 from PyQt4 import QtCore, QtGui
 
 from Generic.application import Application
 
-from Interface.pycadapp         import PyCadApp
-from Interface.Entity.segment   import Segment
-from Interface.Entity.arc       import Arc
-from Interface.Entity.text      import Text
-from Interface.Entity.ellipse   import Ellipse
-from Interface.cadinitsetting   import *
-
-from Kernel.pycadevent          import PyCadEvent
+from Interface.pycadapp             import PyCadApp
+from Interface.Entity.baseentity    import BaseEntity
+from Interface.Entity.segment       import Segment
+from Interface.Entity.arc           import Arc
+from Interface.Entity.text          import Text
+from Interface.Entity.ellipse       import Ellipse
+from Interface.cadinitsetting       import *
+from Interface.unitparser           import convertAngle
+from Interface.dinamicentryobject   import DinamicEntryLine
+from Kernel.pycadevent              import PyCadEvent
 
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
@@ -45,17 +49,42 @@ class CadScene(QtGui.QGraphicsScene):
         #scene custom event
         self.pyCadScenePressEvent=PyCadEvent()
         self.pyCadSceneApply=PyCadEvent()
+        self.updatePreview=PyCadEvent()
         self.__document=document
+        self.__oldClickPoint=None
+        self.needPreview=False
+        self.forceDirection=None
         #dinamic text editor
-        #self.qtText=QtGui.QTextEdit()
-        #self.qtText.hide()
-        #self.addWidget(self.qtText)
-    
+        self.qtInputPopUp=DinamicEntryLine()
+        self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
+        self.addWidget(self.qtInputPopUp)
+        #setGeometry 
+        self.mouseX=0.0
+        self.mouseY=0.0
+        
+    def _qtInputPopUpReturnPressed(self):
+        self.forceDirection="F"+self.qtInputPopUp.text
+        
+    def mouseMoveEvent(self, event):
+        """
+            mouse move event
+        """
+        if self.needPreview:
+            if self.__oldClickPoint:
+                deltaX=abs(self.__oldClickPoint.x()+event.scenePos().x())
+                deltaY=abs(self.__oldClickPoint.y()+event.scenePos().y())
+                distance=math.sqrt(deltaX**2+deltaY**2)
+                self.updatePreview(event.scenePos(), distance)
+        self.mouseX=event.scenePos().x()
+        self.mouseY=event.scenePos().y()
+        
+        super(CadScene, self).mouseMoveEvent(event)
+        
     def mousePressEvent(self, event):
         qtItem=self.itemAt(event.scenePos())
         p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
         if qtItem:
-            print "item : ", qtItem.toolTipMessage, qtItem.zValue()
+            print "item : ", qtItem
             qtItem.setSelected(True)
             self.updateSelected()
         else:
@@ -65,27 +94,62 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseReleaseEvent(self, event):
         self.updateSelected()
-        
-        qtItems=self.selectedItems()
-        pyCadEvent=((event.scenePos().x(), event.scenePos().y()*-1.0), qtItems)
+        qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
+        x, y=self.getPosition(event.scenePos())
+        distance=None
+        if self.__oldClickPoint:
+            deltaX=abs(self.__oldClickPoint.x()+x)
+            deltaY=abs(self.__oldClickPoint.y()+y)
+            distance=math.sqrt(deltaX**2+deltaY**2)
+        self.__oldClickPoint=QtCore.QPointF(x, y)
+        pyCadEvent=((x, y), qtItems, distance)
         self.pyCadScenePressEvent(self, pyCadEvent)
+        self.forceDirection=None
         #re fire the event
         super(CadScene, self).mouseReleaseEvent(event)
     
+    def getPosition(self, eventPos):
+        """
+            correct the mouse cords 
+        """
+        x=eventPos.x()
+        y=eventPos.y()
+        if self.forceDirection and  self.__oldClickPoint:
+            if self.forceDirection=="H":
+                y=self.__oldClickPoint.y()*-1.0
+            elif self.forceDirection=="V":
+                x=self.__oldClickPoint.x()
+            elif self.forceDirection.find("F")>=0:
+                angle=convertAngle(self.forceDirection.split("F")[1])
+                if angle:
+                    x=self.__oldClickPoint.x()+x
+                    y=self.__oldClickPoint.y()+math.cos(angle)*x
+        y=y*-1.0
+        return x, y
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
+            self.qtInputPopUp.hide()
             self.clearSelection()
             self.updateSelected()
+            self.forceDirection=None
         elif event.key()==QtCore.Qt.Key_Return:
             self.pyCadSceneApply()
-        
+        elif event.key()==QtCore.Qt.Key_H:
+            self.forceDirection='H'
+        elif event.key()==QtCore.Qt.Key_V:
+            self.forceDirection='V'
+        elif event.key()==QtCore.Qt.Key_F:
+            self.qtInputPopUp.setText('')
+            self.qtInputPopUp.setPos(self.mouseX, self.mouseY)
+            self.qtInputPopUp.show()
         super(CadScene, self).keyPressEvent(event)
     
     def updateSelected(self):
         """
             update all the selected items
         """
+        
         for item in self.selectedItems():
             item.updateSelected()
 
@@ -155,27 +219,27 @@ class CadScene(QtGui.QGraphicsScene):
         """
         Manage the Delete entity event
         """
-        import time 
-        startTime=time.clock()
+        #import time 
+        #startTime=time.clock()
         self.deleteEntity([entity])
-        endTime=time.clock()-startTime
-        print "eventDelete in %s"%str(endTime)
+        #endTime=time.clock()-startTime
+        #print "eventDelete in %s"%str(endTime)
         
     def eventMassiveDelete(self, document,  entitys):
         """
             Massive delete of all entity event
         """
-        import time 
-        startTime=time.clock()
+        #import time 
+        #startTime=time.clock()
         self.deleteEntity(entitys)
-        endTime=time.clock()-startTime
-        print "eventDelete in %s"%str(endTime)    
+        #endTime=time.clock()-startTime
+        #print "eventDelete in %s"%str(endTime)    
     
     def deleteEntity(self, entitys):
         """
             delete the entity from the scene
         """
-        dicItems=dict([( item.ID, item)for item in self.items()])
+        dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:
             self.removeItem(dicItems[ent.getId()])
 
@@ -203,7 +267,7 @@ class CadScene(QtGui.QGraphicsScene):
         """
         Update the scene from the Entity []
         """
-        dicItems=dict([( item.ID, item)for item in self.items()])
+        dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:
             if ent.getId() in dicItems:
                 self.removeItem(dicItems[ent.getId()])

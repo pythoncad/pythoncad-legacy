@@ -34,10 +34,6 @@ class CmdLineDock(QtGui.QDockWidget):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         
-        #self.textEditOutput = QtGui.QTextEdit(self.dockWidgetContents)
-        #self.textEditOutput.setObjectName("textEditOutput") 
-        #self.textEditOutput.setReadOnly(True) 
-        #self.textEditOutput.ensureCursorVisible()
         self.textEditOutput=PyCadTextView(self.dockWidgetContents)
         
         self.verticalLayout_2.addWidget(self.textEditOutput)
@@ -74,7 +70,7 @@ class CmdLineDock(QtGui.QDockWidget):
         self._remainderIndex=len(self._remainder)
         self.evaluate(expression)
         
-        
+    
     def _keyPress(self, keyEvent):
         """
             keyPressEvent
@@ -106,6 +102,9 @@ class CmdLineDock(QtGui.QDockWidget):
     
     
 class PyCadTextView(QtGui.QTextEdit):
+    """
+        this class rapresent the text view that pyCad use for rendering the output
+    """
     def __init__(self, parent):
         super(PyCadTextView, self).__init__(parent)
         self.setObjectName("textEditOutput") 

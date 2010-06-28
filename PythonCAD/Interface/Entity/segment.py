@@ -10,6 +10,7 @@ class Segment(BaseEntity):
         self.x1, self.y1=p2.getCoords()
         self.y=self.y*-1.0
         self.y1=self.y1*-1.0
+        self.snapItem=[QtCore.QPointF(self.x,self.y), QtCore.QPointF(self.x1,self.y1 )]
         return
         
     def boundingRect(self):

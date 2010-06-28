@@ -50,7 +50,7 @@ class Arc(BaseEntity):
         """
             overloading of the qt bounding rectangle
         """
-        return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h )
+        return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h)
     
     def drawShape(self, painterPath):    
         """
