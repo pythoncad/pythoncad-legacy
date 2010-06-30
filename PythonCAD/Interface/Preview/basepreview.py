@@ -20,22 +20,18 @@
 #
 #This module provide a class for the segment command
 #
-from Kernel.exception               import *
-from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.segment       import Segment
+from PyQt4 import QtCore, QtGui
 
-class SegmentCommand(BaseCommand):
-    """
-        this class rappresent the segment command
-    """
-    def __init__(self, document):
-        BaseCommand.__init__(self, document)
-        self.exception=[ExcPoint, ExcPoint]
-        self.message=["Give Me the first Point","Give Me The Second Point"]
-    def applyCommand(self):
-        if len(self.value)!=2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
-        segArg={"SEGMENT_0":self.value[0], "SEGMENT_1":self.value[1]}
-        seg=Segment(segArg)
-        self.document.saveEntity(seg)
-        
+class BasePreview(object):
+    def __init__(self, command):
+        """
+            inizialize base preview items
+        """
+        self._command=command
+        self._items=command.lenght
+    def getPreviewObject(self, point, value):
+        return None
+
+class BaseQtPreviewItem(QtGui.QGraphicsItem):
+    def __init__(self):
+        super(BaseQtPreviewItem, self).__init__()

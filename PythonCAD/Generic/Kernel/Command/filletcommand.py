@@ -39,7 +39,7 @@ class FilletCommand(BaseCommand):
                         ExcLenght]
         self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
                         "Give me the second Entity ID,end a point Es(4@10,20)", 
-                        "Give me trim Mode", 
+                        "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM)", 
                         "Give me the radius" 
                         ]
     def getEntsToSave(self):

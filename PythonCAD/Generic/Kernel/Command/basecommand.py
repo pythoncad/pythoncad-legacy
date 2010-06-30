@@ -60,7 +60,10 @@ class BaseCommand(object):
             set the value of the command
         """
         self.value.append(value)
-        
+    @property
+    def lenght(self):
+        return len(self.exception)
+    
     def applyCommand(self):
         """
             this method here must be defined

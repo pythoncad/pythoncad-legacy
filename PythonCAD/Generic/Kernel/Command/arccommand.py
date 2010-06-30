@@ -31,7 +31,10 @@ class ArcCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
-        self.message=["Give Me the center Point", "Give Me the radius", "Give Me the first Angle (Could Be None)", "Give Me the second Angle (Could Be None)"]
+        self.message=["Give Me the center Point", 
+                        "Give Me the radius", 
+                        "Give Me the first Angle (Could Be None)", 
+                        "Give Me the second Angle (Could Be None)"]
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

@@ -1,6 +1,13 @@
+
+
+
+
+from Kernel.pycadevent          import PyCadEvent
+from Kernel.GeoEntity.point     import Point
+
 from Interface.unitparser   import decodePoint, convertLengh, convertAngle
-from Kernel.pycadevent      import PyCadEvent
 from Interface.evaluator    import Evaluator
+from Interface.Preview.factory import getPreviewObject
 
 class FunctionHandler(object):
     '''
@@ -27,6 +34,10 @@ class FunctionHandler(object):
         self.commandExecuted=PyCadEvent()
         #Evaluator
         self._eval=Evaluator(self.printCommand)
+        #Preview
+        self._preview=None
+        self._previewItem=None
+        self.clearPreview=PyCadEvent()
         
     def registerCommand(self, name, callback):
         '''
@@ -78,7 +89,7 @@ class FunctionHandler(object):
     
     def evaluateInnerCommand(self, cObject,selectedItems=None):
         """
-            evaluate an inner command
+            evaluate an inner command from the application
         """
         from Kernel.exception import ExcEntity, ExcMultiEntity
         if selectedItems and len(selectedItems)>0:
@@ -94,6 +105,7 @@ class FunctionHandler(object):
             except:
                 pass
         self.evaluateInner=cObject
+        self._preview=getPreviewObject(cObject)
         self.printOutput(str(self.evaluateInner.getActiveMessage()))
     
     def getIdsString(self, selectedItems):
@@ -152,7 +164,7 @@ class FunctionHandler(object):
         """
         if self.evaluateInner and self.evaluateInner.index==len(self.evaluateInner.exception)-1:
             self.evaluateInner.applyCommand()
-            self.evaluateInner=None
+            self.resetCommand(False)
             self.commandExecuted()
             
     def performCommand(self,cObject, text):
@@ -195,19 +207,44 @@ class FunctionHandler(object):
                 raise CommandImputError, msg
         except (StopIteration):
             self.evaluateInner.applyCommand()
-            self.evaluateInner=None
+            self.resetCommand(False)
             self.commandExecuted()
         except PyCadWrongCommand:
             self.printOutput("Wrong Command")
             self.evaluateInner=None
         self.applyCommand()
         
-    def resetCommand(self):
+    def resetCommand(self, reflect=True):
         """
             reset the command if eny are set
         """
         self.evaluateInner=None
-        self.printOutput("Command Ended from the user")
+        self._previewItem=None
+        self._preview=None
+        self.clearPreview()
+        if reflect:
+            self.printOutput("Command Ended from the user")
+    
+    def updatePreview(self, scene, position, distance):
+        if self.evaluateInner:
+            if self._previewItem==None:
+                if position:
+                    geoPoint=Point(position.x(), position.y())
+                if self._preview:
+                    qtGItem=self._preview.getPreviewObject(geoPoint, distance)
+                    if qtGItem:
+                        scene.addItem(qtGItem)
+                        scene.updateLimits(qtGItem.boundingRect()) 
+                        self._previewItem=qtGItem 
+            else:
+                self.updatePreviwItem( position, distance)
+            
+    def updatePreviwItem(self, position, distance):
+        """
+            update the preview item on the scene
+        """
+        self._previewItem.secondPoint(position)
+        self._previewItem.update(self._previewItem.boundingRect())
         
     def printCommand(self, msg):
         """

@@ -34,9 +34,12 @@ from Interface.Entity.segment       import Segment
 from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
+from Interface.Entity.arrowitem     import ArrowItem
 from Interface.cadinitsetting       import *
 from Interface.unitparser           import convertAngle
 from Interface.dinamicentryobject   import DinamicEntryLine
+from Interface.Preview.basepreview  import BaseQtPreviewItem
+
 from Kernel.pycadevent              import PyCadEvent
 
 class CadScene(QtGui.QGraphicsScene):
@@ -46,7 +49,7 @@ class CadScene(QtGui.QGraphicsScene):
         #self.__filename = None
         # drawing limits
         self.__limits = None
-        #scene custom event
+        # scene custom event
         self.pyCadScenePressEvent=PyCadEvent()
         self.pyCadSceneApply=PyCadEvent()
         self.updatePreview=PyCadEvent()
@@ -54,13 +57,20 @@ class CadScene(QtGui.QGraphicsScene):
         self.__oldClickPoint=None
         self.needPreview=False
         self.forceDirection=None
-        #dinamic text editor
+        # dinamic text editor
         self.qtInputPopUp=DinamicEntryLine()
         self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
         self.addWidget(self.qtInputPopUp)
-        #setGeometry 
+        # setGeometry 
         self.mouseX=0.0
         self.mouseY=0.0
+        self.isInPan=False
+        # Create 0,0 arrows
+        self.addItem(ArrowItem())
+        secondArrow=ArrowItem()
+        secondArrow.setRotation(-90.0)
+        self.addItem(secondArrow)
+        
         
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
@@ -69,43 +79,46 @@ class CadScene(QtGui.QGraphicsScene):
         """
             mouse move event
         """
-        if self.needPreview:
-            if self.__oldClickPoint:
-                deltaX=abs(self.__oldClickPoint.x()+event.scenePos().x())
-                deltaY=abs(self.__oldClickPoint.y()+event.scenePos().y())
-                distance=math.sqrt(deltaX**2+deltaY**2)
-                self.updatePreview(event.scenePos(), distance)
+        if self.__oldClickPoint:
+            deltaX=abs(self.__oldClickPoint.x()+event.scenePos().x())
+            deltaY=abs(self.__oldClickPoint.y()+event.scenePos().y())
+            distance=math.sqrt(deltaX**2+deltaY**2)
+            x, y=self.getPosition(event.scenePos())
+            point=QtCore.QPointF(x, y*-1.0)
+            self.updatePreview(self,point, distance)
         self.mouseX=event.scenePos().x()
         self.mouseY=event.scenePos().y()
         
         super(CadScene, self).mouseMoveEvent(event)
-        
+    
     def mousePressEvent(self, event):
-        qtItem=self.itemAt(event.scenePos())
-        p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
-        if qtItem:
-            print "item : ", qtItem
-            qtItem.setSelected(True)
-            self.updateSelected()
-        else:
-            print "No item selected"
-        #re fire the event
+        if not self.isInPan:
+            qtItem=self.itemAt(event.scenePos())
+            p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
+            if qtItem:
+                print "item : ", qtItem
+                qtItem.setSelected(True)
+                self.updateSelected()
+            else:
+                print "No item selected"
+            #re fire the event
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
-        self.updateSelected()
-        qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
-        x, y=self.getPosition(event.scenePos())
-        distance=None
-        if self.__oldClickPoint:
-            deltaX=abs(self.__oldClickPoint.x()+x)
-            deltaY=abs(self.__oldClickPoint.y()+y)
-            distance=math.sqrt(deltaX**2+deltaY**2)
-        self.__oldClickPoint=QtCore.QPointF(x, y)
-        pyCadEvent=((x, y), qtItems, distance)
-        self.pyCadScenePressEvent(self, pyCadEvent)
-        self.forceDirection=None
-        #re fire the event
+        if not self.isInPan:
+            self.updateSelected()
+            qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
+            x, y=self.getPosition(event.scenePos())
+            distance=None
+            if self.__oldClickPoint:
+                deltaX=abs(self.__oldClickPoint.x()+x)
+                deltaY=abs(self.__oldClickPoint.y()+y)
+                distance=math.sqrt(deltaX**2+deltaY**2)
+            self.__oldClickPoint=QtCore.QPointF(x, y)
+            pyCadEvent=((x, y), qtItems, distance)
+            self.pyCadScenePressEvent(self, pyCadEvent)
+            self.forceDirection=None
+            #re fire the event
         super(CadScene, self).mouseReleaseEvent(event)
     
     def getPosition(self, eventPos):
@@ -149,10 +162,14 @@ class CadScene(QtGui.QGraphicsScene):
         """
             update all the selected items
         """
-        
         for item in self.selectedItems():
             item.updateSelected()
 
+    def clearPreview(self):
+        entitys=[item for item in self.items() if isinstance(item, BaseQtPreviewItem)]
+        for ent in entitys:
+            self.removeItem(ent)
+        
     @property    
     def Limits(self):
         """
@@ -166,11 +183,11 @@ class CadScene(QtGui.QGraphicsScene):
         Initialize the document events.
         """
         if not self.__document is None:
-            self.__document.showEntEvent += self.eventShow
-            self.__document.updateShowEntEvent += self.eventUpdate
-            self.__document.deleteEntityEvent += self.eventDelete
-            self.__document.massiveDeleteEvent += self.eventMassiveDelete
-            self.__document.undoRedoEvent += self.eventUndoRedo
+            self.__document.showEntEvent        += self.eventShow
+            self.__document.updateShowEntEvent  += self.eventUpdate
+            self.__document.deleteEntityEvent   += self.eventDelete
+            self.__document.massiveDeleteEvent  += self.eventMassiveDelete
+            self.__document.undoRedoEvent       += self.eventUndoRedo
 
     def populateScene(self, document):
         '''
@@ -188,10 +205,16 @@ class CadScene(QtGui.QGraphicsScene):
         entityType=entity.getEntityType()
         if entityType in SCENE_SUPPORTED_TYPE:
             newQtEnt=SCANE_OBJECT_TYPE[entityType](entity)
-            self.addItem(newQtEnt)
+            self.addGraficalItem(newQtEnt)
+    
+    def addGraficalItem(self, qtItem):
+        """
+            add item to the scene 
+        """
+        if qtItem:
+            self.addItem(qtItem)
             # adjust drawing limits
-            self.updateLimits(newQtEnt.boundingRect())  
- 
+            self.updateLimits(qtItem.boundingRect())  
     
     def eventUndoRedo(self, document, entity):
         """

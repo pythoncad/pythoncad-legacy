@@ -19,6 +19,8 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene = CadScene(document)
         self.__scene.pyCadScenePressEvent+=self.__cmdInf.evaluateMouseImput
         self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
+        self.__scene.updatePreview+=self.__cmdInf.updatePreview
+        self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
         self.__view = CadView(self.__scene, self)
         # the graphics view is the main/central component
         innerWindows = QtGui.QMainWindow()
@@ -53,7 +55,12 @@ class IDocument(QtGui.QMdiSubWindow):
         get the layer tree dockable window
         """
         return self.__layer_dock  
-        
+    @property
+    def fileName(self):
+        """
+            get the current file name 
+        """
+        return self.document.dbPath   
     def unDo(self):
         """
             perform undo on the active document
@@ -75,13 +82,11 @@ class IDocument(QtGui.QMdiSubWindow):
             render the current scene for the printer
         """
         self.view.render(painter) 
-    @property
-    def fileName(self):
-        """
-            get the current file name 
-        """
-        return self.document.dbPath
-        
+
+    
+    def wWellEWvent(self, event):
+        self.__view.scaleFactor=math.pow(2.0, -event.delta() / 240.0)
+        self.__view.scaleView(self.__view.scaleFactor)   
         
     #dovrebbe memorizzare gli ultimi file aperti
     #def strippedName(self, fullFileName):

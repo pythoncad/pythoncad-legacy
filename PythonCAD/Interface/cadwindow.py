@@ -27,6 +27,7 @@ sip.setapi('QString', 2)
 
 import os
 import sys
+
 from PyQt4 import QtCore, QtGui
 
 import cadwindow_rc
@@ -38,7 +39,7 @@ from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
-
+from Interface.Entity.baseentity    import BaseEntity
 from Kernel.exception               import *  
 
 class CadWindowMdi(QtGui.QMainWindow):
@@ -72,7 +73,10 @@ class CadWindowMdi(QtGui.QMainWindow):
     def scene(self):
         if self.mdiArea.activeSubWindow():
             return self.mdiArea.activeSubWindow().scene
-        
+    @property
+    def view(self):
+        if self.mdiArea.activeSubWindow():
+            return self.mdiArea.activeSubWindow().view 
     @property
     def Application(self):
         """
@@ -106,7 +110,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         if not command_dock is None:
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
         return    
-        
+    
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
         if self.activeMdiChild():
@@ -157,6 +161,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('chamfer', hasMdiChild)
         self.__cmd_intf.setVisible('bisect', hasMdiChild)
         self.__cmd_intf.setVisible('text', hasMdiChild)
+        #View
+        self.__cmd_intf.setVisible('fit', hasMdiChild)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -231,6 +237,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'bisect', '&Bisect', self._onBisect)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
+        # View
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
         # window
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
@@ -340,15 +348,21 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Rotate", 2000)
         self.callDocumentCommand('ROTATE')
         return
-    
+    # View
+    def _onFit(self):
+        self.view.fit()
+        
     def _onPrint(self):
+#       printer.setPaperSize(QPrinter.A4);
         printer=QtGui.QPrinter()
         printDialog=QtGui.QPrintDialog(printer)
         if (printDialog.exec_() == QtGui.QDialog.Accepted): 
-            painter=QtGui.QPainter(printer)
+            painter=QtGui.QPainter()
+            painter.begin(printer)
             painter.setRenderHint(QtGui.QPainter.Antialiasing);
-            #self.__scene.render(painter) 
-            self.mdiArea.activeSubWindow().renderCurrentScene(painter) 
+            #self.mdiArea.activeSubWindow().scene.render(painter)
+            self.mdiArea.activeSubWindow().view.render(painter)
+            painter.end()
         self.statusBar().showMessage("Ready", 2000)
         return
         

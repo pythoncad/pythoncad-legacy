@@ -35,6 +35,7 @@ class Fillet(ObjectJoint):
         point, and the two Entity Object must be extendable so they can
         share a common endpoint.
     """
+    DEFAULT_RADIUS=10.0
     def __init__(self, kw):
         """
             "OBJECTJOINT_0" obj1             :(Segment ,ACLine,Arc,CCircle)
@@ -184,7 +185,7 @@ class Fillet(ObjectJoint):
         """
         _r = get_float(r)
         if _r < 0.0:
-            raise ValueError, "Invalid fillet radius: %g" % _r
+            _r=Fillet.DEFAULT_RADIUS #TODO : THIS VALUE
         self._calculateLimits()
         _rmin, _rmax = self.getRadialLimits()
         if _r < _rmin or _r > _rmax:
