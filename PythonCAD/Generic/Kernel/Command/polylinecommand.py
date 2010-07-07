@@ -33,6 +33,7 @@ class PolylineCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint]
+        self.defaultValue=[None]
         self.message=["Give Me A Point"]
         self.raiseStop=False
     def next(self):
@@ -44,12 +45,14 @@ class PolylineCommand(BaseCommand):
         if self.raiseStop:
             raise StopIteration
         return (self.exception[0],self.message[0])
+        
     def __setitem__(self, key, value):
         """
             overwrite the command to perform the stop operation
         """
         if isinstance(value, Point):
-            self.value.append(value)    
+            self.value.append(value) 
+            self.defaultValue.append(None)
         else:
            self.raiseStop=True 
     def applyCommand(self):

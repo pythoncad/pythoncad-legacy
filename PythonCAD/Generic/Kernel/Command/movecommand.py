@@ -34,6 +34,7 @@ class MoveCommand(BaseCommand):
                         ExcPoint, 
                         ExcPoint, 
                         ExcText]
+        self.defaultValue=[None, None,None,"C"]
         self.message=[  "Give Me the Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the from point",
                         "Give me the to point", 

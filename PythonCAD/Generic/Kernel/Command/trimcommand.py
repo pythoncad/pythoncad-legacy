@@ -33,15 +33,14 @@ class TrimCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcText,
-                        ExcText, 
-                        ExcPoint, 
-                        ExcPoint, 
+                        ExcText,  
                         ExcText]
+        self.defaultValue=[None, None,"BOTH"]
         self.message=[  "Geve me the First entity", 
                         "Give me the Second entity",
                         "Give me a point near the First entity", 
                         "Give me a point near the Second entity", 
-                        "Give me The Trim Mode (F->first S->second B->Both{Default}"]
+                        "Give me The Trim Mode ((FIRST,SECOND,BOTH)"]
 
     def performTrim(self):
         """
@@ -62,10 +61,10 @@ class TrimCommand(BaseCommand):
         if dbEnt2.eType=="SEGMENT":     
             geoEntTrim2=updateSegment(geoEnt2, self.value[3], intPoint[0])
         
-        if self.value[4]=='F':
+        if self.value[4]=='FIRST':
             dbEnt1.setConstructionElements(geoEntTrim1.getConstructionElements())
             updEnts.append(dbEnt1)
-        elif self.value[4]=='S':
+        elif self.value[4]=='SECOND':
             dbEnt2.setConstructionElements(geoEntTrim2.getConstructionElements())
             updEnts.append(dbEnt2)            
         else:
@@ -77,7 +76,7 @@ class TrimCommand(BaseCommand):
         
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the trim command
         """
         if len(self.value)!=5:
             raise PyCadWrongImputData("Wrong number of imput parameter")

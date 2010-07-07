@@ -72,7 +72,7 @@ class BaseDb(object):
             _rows = _cursor.execute(statment)
         except sql.Error, _e:
             msg="Sql Phrase: %s"%str(statment)+"\nSql Error: %s"%str( _e.args[0] )
-            raise StructuralError, msg
+            raise StructuralError(msg)
         except :
             for s in sys.exc_info():
                 print "Generic Error: %s"%str(s)

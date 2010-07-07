@@ -21,10 +21,14 @@
 # This module provide a factory for the preview objects
 #
 from Kernel.Command.segmentcommand  import SegmentCommand
+from Kernel.Command.arccommand      import ArcCommand
 from Interface.Preview.segment      import Segment
+from Interface.Preview.arc          import Arc
 
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
         return Segment(command)
+    elif isinstance(command , ArcCommand):
+        return Arc(command)
     else:
         return None

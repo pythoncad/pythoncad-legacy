@@ -20,6 +20,8 @@
 #
 #This module provide a class for the arc command
 #
+import math
+
 from Kernel.exception                  import *
 from Kernel.Command.basecommand        import *
 from Kernel.GeoEntity.arc              import Arc
@@ -31,10 +33,12 @@ class ArcCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
+        self.defaultValue=[None, 10, 0, math.pi*2]
         self.message=["Give Me the center Point", 
                         "Give Me the radius", 
                         "Give Me the first Angle (Could Be None)", 
                         "Give Me the second Angle (Could Be None)"]
+        
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

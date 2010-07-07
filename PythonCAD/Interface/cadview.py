@@ -45,11 +45,12 @@ class CadView(QtGui.QGraphicsView):
                 qRect=bound
             else:
                 qRect=qRect.unite(bound)
-        qRect.setX(qRect.x()-2)
-        qRect.setY(qRect.y()-2)
-        qRect.setWidth(qRect.width()+2)
-        qRect.setHeight(qRect.height()+2)
-        self.fitInView(qRect,1) #KeepAspectRatioByExpanding
+        if qRect:
+            qRect.setX(qRect.x()-2)
+            qRect.setY(qRect.y()-2)
+            qRect.setWidth(qRect.width()+2)
+            qRect.setHeight(qRect.height()+2)
+            self.fitInView(qRect,1) #KeepAspectRatioByExpanding
         
     def scaleView(self, factor):
         self.scale(factor, factor)

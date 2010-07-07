@@ -37,6 +37,7 @@ class BisectorCommand(BaseCommand):
                         ExcEntityPoint, 
                         ExcLenght,  
                         ]
+        self.defaultValue=[None, None, 100]
         self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
                         "Give me the second Entity ID,end a point Es(4@10,20)", 
                         "Give me the bisector lengh"]

@@ -124,10 +124,10 @@ class CadWindowMdi(QtGui.QMainWindow):
             sub windows activation
         """
         if self.mdiArea.activeSubWindow():
-            self.updateMenus()
             self.resetCommand()
             self.__application.setActiveDocument(self.mdiArea.activeSubWindow().document)   
-
+        self.updateMenus()
+        
     def resetCommand(self):    
         """
             Resect the active command
@@ -136,7 +136,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("Ready")
         
     def updateMenus(self):
+        """
+            update menu status
+        """
+        print "update"
         hasMdiChild = (self.activeMdiChild() is not None)
+        print "status", hasMdiChild
         #File
         self.__cmd_intf.setVisible('import', hasMdiChild)
         self.__cmd_intf.setVisible('saveas', hasMdiChild)

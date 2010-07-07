@@ -101,7 +101,7 @@ class testCmdLine(object):
             except:
                 msg="Error on command imput"
                 self.outputMsg(msg)
-                raise CommandImputError, msg
+                raise CommandException, msg
             
         except (StopIteration):
             cObject.applyCommand()

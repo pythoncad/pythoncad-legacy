@@ -39,9 +39,10 @@ class ChamferCommand(BaseCommand):
                         ExcLenght, 
                         ExcLenght 
                         ]
+        self.defaultValue=[None, None, "BOTH", 10, 10]
         self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
                         "Give me the second Entity ID,end a point Es(4@10,20)", 
-                        "Give me trim Mode", 
+                        "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM)", 
                         "Give me the first Lenght", 
                         "Give me the second Lenght", 
                         ]

@@ -20,6 +20,7 @@
 #
 #This module provide a class for the polyline command
 #
+import math
 
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
@@ -35,6 +36,7 @@ class RotateCommand(BaseCommand):
                         ExcPoint, 
                         ExcAngle, 
                         ExcText]
+        self.defaultValue=[None, None, math.pi/2, "C"]
         self.message=[  "Give me Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the reference rotation point", 
                         "Give me the rotation angle", 

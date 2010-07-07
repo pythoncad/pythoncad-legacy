@@ -20,8 +20,8 @@
 #
 #This module provide a class for the ellipse command
 #
-from Kernel.exception               import *
-from Kernel.Command.basecommand     import *
+from Kernel.exception                   import *
+from Kernel.Command.basecommand         import *
 from Kernel.GeoEntity.ellipse          import Ellipse
 
 class EllipseCommand(BaseCommand):
@@ -31,6 +31,7 @@ class EllipseCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcLenght]
+        self.defaultValue=[None, 100, 50]
         self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius"]
     def applyCommand(self):
         if len(self.value)>3:

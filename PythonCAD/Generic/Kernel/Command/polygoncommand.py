@@ -25,10 +25,10 @@
 
 import math
 import array
-from Kernel.exception               import *
-from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.point            import Point
-from Kernel.GeoEntity.segment          import Segment
+from Kernel.exception                   import *
+from Kernel.Command.basecommand         import *
+from Kernel.GeoEntity.point             import Point
+from Kernel.GeoEntity.segment           import Segment
 
 class PolygonCommand(BaseCommand):
     """
@@ -44,10 +44,11 @@ class PolygonCommand(BaseCommand):
                         ExcPoint, 
                         ExcInt, 
                         ExcBool]
+        self.defaultValue=[None, None,6,"E"]
         self.message=["Give Me the first Point",
                         "Give Me The Second Point", 
                         "Give Me The Number of Segment", 
-                        "Give Me External or Internal"]
+                        "Give Me External or Internal (E/I)"]
         self.__xpts = array.array("d")
         self.__ypts = array.array("d")
         
@@ -85,7 +86,7 @@ class PolygonCommand(BaseCommand):
             circle. Invoking this method will created the polygon so that all
             sides are outside the circle.
         """
-        if value:
+        if value=="E":
             self.__external = True
         else:
             self.__external = False

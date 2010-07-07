@@ -38,7 +38,7 @@ from Interface.Entity.arrowitem     import ArrowItem
 from Interface.cadinitsetting       import *
 from Interface.unitparser           import convertAngle
 from Interface.dinamicentryobject   import DinamicEntryLine
-from Interface.Preview.basepreview  import BaseQtPreviewItem
+from Interface.Preview.base         import BaseQtPreviewItem
 
 from Kernel.pycadevent              import PyCadEvent
 
@@ -71,7 +71,6 @@ class CadScene(QtGui.QGraphicsScene):
         secondArrow.setRotation(-90.0)
         self.addItem(secondArrow)
         
-        
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
@@ -80,11 +79,12 @@ class CadScene(QtGui.QGraphicsScene):
             mouse move event
         """
         if self.__oldClickPoint:
-            deltaX=abs(self.__oldClickPoint.x()+event.scenePos().x())
-            deltaY=abs(self.__oldClickPoint.y()+event.scenePos().y())
+            deltaX=abs(self.__oldClickPoint.x()-event.scenePos().x())
+            deltaY=abs(self.__oldClickPoint.y()-event.scenePos().y())
             distance=math.sqrt(deltaX**2+deltaY**2)
             x, y=self.getPosition(event.scenePos())
             point=QtCore.QPointF(x, y*-1.0)
+            print "scene:mouseMoveEvent ", distance
             self.updatePreview(self,point, distance)
         self.mouseX=event.scenePos().x()
         self.mouseY=event.scenePos().y()
@@ -111,10 +111,11 @@ class CadScene(QtGui.QGraphicsScene):
             x, y=self.getPosition(event.scenePos())
             distance=None
             if self.__oldClickPoint:
-                deltaX=abs(self.__oldClickPoint.x()+x)
-                deltaY=abs(self.__oldClickPoint.y()+y)
+                deltaX=abs(self.__oldClickPoint.x()-x)
+                deltaY=abs(self.__oldClickPoint.y()-y)
                 distance=math.sqrt(deltaX**2+deltaY**2)
-            self.__oldClickPoint=QtCore.QPointF(x, y)
+                print "scene:mouseReleaseEvent ", distance
+            self.__oldClickPoint=event.scenePos()
             pyCadEvent=((x, y), qtItems, distance)
             self.pyCadScenePressEvent(self, pyCadEvent)
             self.forceDirection=None
@@ -129,7 +130,7 @@ class CadScene(QtGui.QGraphicsScene):
         y=eventPos.y()
         if self.forceDirection and  self.__oldClickPoint:
             if self.forceDirection=="H":
-                y=self.__oldClickPoint.y()*-1.0
+                y=self.__oldClickPoint.y()
             elif self.forceDirection=="V":
                 x=self.__oldClickPoint.x()
             elif self.forceDirection.find("F")>=0:
@@ -169,6 +170,7 @@ class CadScene(QtGui.QGraphicsScene):
         entitys=[item for item in self.items() if isinstance(item, BaseQtPreviewItem)]
         for ent in entitys:
             self.removeItem(ent)
+        self.__oldClickPoint=None
         
     @property    
     def Limits(self):

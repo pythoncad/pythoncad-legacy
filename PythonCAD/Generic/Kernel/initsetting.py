@@ -287,6 +287,7 @@ PYTHONCAD_COLOR={
     'yellowgreen'           :(154,205,050)}
 
 PYTHONCAD_HIGLITGT_COLOR=PYTHONCAD_COLOR['tomato']
+PYTHONCAD_PREVIEW_COLOR=PYTHONCAD_COLOR['steelblue']
 
 PYTHONCAD_LINETYPE={
     'continue':             (1),

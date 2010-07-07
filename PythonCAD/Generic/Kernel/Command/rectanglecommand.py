@@ -32,6 +32,7 @@ class RectangleCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcPoint]
+        self.defaultValue=[None, None]
         self.message=["Give Me the first Point","Give Me The second Point"]
     def getEntsToSave(self):
         """

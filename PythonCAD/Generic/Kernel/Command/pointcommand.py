@@ -31,6 +31,7 @@ class PointCommand(BaseCommand):
     def __init__(self, kernel):
         BaseCommand.__init__(self, kernel)
         self.exception=[ExcPoint]
+        self.defaultValue=[None]
         self.message=["Give Me the first Point"]
     def applyCommand(self):
         if len(self.value)!=1:

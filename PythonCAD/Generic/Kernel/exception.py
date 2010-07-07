@@ -33,7 +33,7 @@ class NotImplementedError(Exception):
         
 class DeprecatedError(Exception):
     """
-        Thi means that the followeing method is no longer supported
+        This means that the followeing method is no longer supported
     """
     def __init__(self, value):
         self.value = value

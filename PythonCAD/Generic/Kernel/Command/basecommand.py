@@ -20,8 +20,6 @@
 #
 #This module provide basic command function
 #
-from Kernel.exception           import *
-
 class BaseCommand(object):
     """
         this class provide a base command
@@ -33,22 +31,36 @@ class BaseCommand(object):
         self.exception=[]
         self.value=[]
         self.message=[]
+        self.defaultValue=[]
         self.index=-1
         self.document=document
+        
     def __iter__(self):
         return self
+        
     def reset(self):
         self.index=-1
         self.value=[]
+        
     def next(self):
         """
-            performe iteration
+            go on with the iteration
         """
         self.index+=1
         TotNIter=len(self.exception)
         if self.index>=TotNIter:
             raise StopIteration
         return (self.exception[self.index],self.message[self.index])
+    
+    def previus(selfself):
+        """
+            came back with the iteration
+        """
+        self.index-=1
+        if self.index<=0:
+            self.index=0
+        return (self.exception[self.index],self.message[self.index])       
+    
     def keys(self):
         """
             return all the exception key
@@ -59,7 +71,9 @@ class BaseCommand(object):
         """
             set the value of the command
         """
+        
         self.value.append(value)
+    
     @property
     def lenght(self):
         return len(self.exception)
@@ -69,6 +83,13 @@ class BaseCommand(object):
             this method here must be defined
         """
         pass
+        
+    def getActiveDefaultValue(self):
+        if self.index>=0 and self.index<=len(self.defaultValue)-1:
+            return self.defaultValue[self.index]
+        else:
+            return None
+            
     def getActiveMessage(self):
         """
             get Active message
