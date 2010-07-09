@@ -56,21 +56,26 @@ class QtArcItem(BaseQtPreviewItem):
             yc=self.center.y()-self.radius
             h=self.radius*2.0
             painter.drawArc(xc,yc ,h ,h ,startAngle,  spanAngle)
-
+    
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.arcTo(self.boundingRect(),self.startAngle,self.spanAngle) 
+    
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
         """
         if self.center and self.radius:
             _s=self.radius
-            
             xc=self.center.x()-_s
-            print self.center.x(), _s, xc
             yc=self.center.y()-_s
             _h=(_s*2.0)
-            print "boundingRect",self.center,xc,yc, _h
+            print "boundingRect ", xc,yc,_h ,_h
             return QtCore.QRectF(xc,yc,_h ,_h)
         return QtCore.QRectF(0,0 ,0.1,0.1)
+        
     @property
     def center(self):
         return self.value[0]

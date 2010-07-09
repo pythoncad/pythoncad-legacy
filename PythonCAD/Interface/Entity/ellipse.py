@@ -20,7 +20,7 @@
 #
 # qt ellipse class
 #
-from Interface.Entity.baseentity import *
+from Interface.Entity.base import *
 
 class Ellipse(BaseEntity):
     

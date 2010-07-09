@@ -21,7 +21,7 @@
 # qt text class
 #
 
-from Interface.Entity.baseentity import *
+from Interface.Entity.base import *
 
 class Text(BaseEntity):
     def __init__(self, entity):

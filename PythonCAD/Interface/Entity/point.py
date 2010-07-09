@@ -21,7 +21,7 @@
 # qt pythoncad Point class
 #
 
-from Interface.Entity.baseentity import *
+from Interface.Entity.base import *
 
 class Point(BaseEntity):
     """

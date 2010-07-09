@@ -21,7 +21,7 @@
 # qt arc class
 #
 
-from Interface.Entity.baseentity import *
+from Interface.Entity.base import *
 
 class Polyline(BaseEntity):
     """

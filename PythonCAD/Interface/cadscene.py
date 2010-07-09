@@ -29,7 +29,7 @@ from PyQt4 import QtCore, QtGui
 from Generic.application import Application
 
 from Interface.pycadapp             import PyCadApp
-from Interface.Entity.baseentity    import BaseEntity
+from Interface.Entity.base          import BaseEntity
 from Interface.Entity.segment       import Segment
 from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
@@ -53,6 +53,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.pyCadScenePressEvent=PyCadEvent()
         self.pyCadSceneApply=PyCadEvent()
         self.updatePreview=PyCadEvent()
+        self.zoomWindows=PyCadEvent()
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
@@ -66,10 +67,12 @@ class CadScene(QtGui.QGraphicsScene):
         self.mouseY=0.0
         self.isInPan=False
         # Create 0,0 arrows
-        self.addItem(ArrowItem())
-        secondArrow=ArrowItem()
-        secondArrow.setRotation(-90.0)
-        self.addItem(secondArrow)
+        #self.addItem(ArrowItem())
+        #secondArrow=ArrowItem()
+        #secondArrow.setRotation(-90.0)
+        #self.addItem(secondArrow)
+        #
+        self._cmdZoomWindow=None
         
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
@@ -79,16 +82,12 @@ class CadScene(QtGui.QGraphicsScene):
             mouse move event
         """
         if self.__oldClickPoint:
-            deltaX=abs(self.__oldClickPoint.x()-event.scenePos().x())
-            deltaY=abs(self.__oldClickPoint.y()-event.scenePos().y())
-            distance=math.sqrt(deltaX**2+deltaY**2)
+            distance=self.getDistance(event)
             x, y=self.getPosition(event.scenePos())
             point=QtCore.QPointF(x, y*-1.0)
-            print "scene:mouseMoveEvent ", distance
             self.updatePreview(self,point, distance)
         self.mouseX=event.scenePos().x()
         self.mouseY=event.scenePos().y()
-        
         super(CadScene, self).mouseMoveEvent(event)
     
     def mousePressEvent(self, event):
@@ -106,22 +105,28 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseReleaseEvent(self, event):
         if not self.isInPan:
+            x, y=self.getPosition(event.scenePos())
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
-            x, y=self.getPosition(event.scenePos())
-            distance=None
-            if self.__oldClickPoint:
-                deltaX=abs(self.__oldClickPoint.x()-x)
-                deltaY=abs(self.__oldClickPoint.y()-y)
-                distance=math.sqrt(deltaX**2+deltaY**2)
-                print "scene:mouseReleaseEvent ", distance
+            distance=self.getDistance(event)
             self.__oldClickPoint=event.scenePos()
             pyCadEvent=((x, y), qtItems, distance)
             self.pyCadScenePressEvent(self, pyCadEvent)
             self.forceDirection=None
             #re fire the event
+        if self._cmdZoomWindow:
+            self.zoomWindows(self.selectionArea().boundingRect())
+            self._cmdZoomWindow=None
         super(CadScene, self).mouseReleaseEvent(event)
-    
+        
+    def getDistance(self, event):
+        distance=None
+        if self.__oldClickPoint:
+            deltaX=abs(self.__oldClickPoint.x()-event.scenePos().x())
+            deltaY=abs(self.__oldClickPoint.y()-event.scenePos().y())
+            distance=math.sqrt(deltaX**2+deltaY**2)
+        return distance
+        
     def getPosition(self, eventPos):
         """
             correct the mouse cords 

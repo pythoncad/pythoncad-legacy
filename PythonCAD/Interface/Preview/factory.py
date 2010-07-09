@@ -22,13 +22,18 @@
 #
 from Kernel.Command.segmentcommand  import SegmentCommand
 from Kernel.Command.arccommand      import ArcCommand
+from Kernel.Command.rectanglecommand      import RectangleCommand
+
 from Interface.Preview.segment      import Segment
 from Interface.Preview.arc          import Arc
+from Interface.Preview.rectangle    import Rectangle
 
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
         return Segment(command)
     elif isinstance(command , ArcCommand):
         return Arc(command)
+    elif isinstance(command , RectangleCommand):
+        return Rectangle(command)
     else:
         return None

@@ -2,17 +2,16 @@
 import math
 from PyQt4 import QtCore, QtGui
 
-from Interface.Entity.baseentity import BaseEntity
+from Interface.Entity.base import *
+
 class CadView(QtGui.QGraphicsView):   
-              
     def __init__(self, scene, parent=None):
         super(CadView, self).__init__(scene, parent)
         self.scene=scene
         self.scaleFactor=1
         self.controlPress=False
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        self.setResizeAnchor(QtGui.QGraphicsView.NoAnchor)
-        
+        self.setResizeAnchor(QtGui.QGraphicsView.NoAnchor) 
 
     def sizeHint(self):
         return QtCore.QSize(800,600)
@@ -46,11 +45,18 @@ class CadView(QtGui.QGraphicsView):
             else:
                 qRect=qRect.unite(bound)
         if qRect:
-            qRect.setX(qRect.x()-2)
-            qRect.setY(qRect.y()-2)
-            qRect.setWidth(qRect.width()+2)
-            qRect.setHeight(qRect.height()+2)
-            self.fitInView(qRect,1) #KeepAspectRatioByExpanding
+            self.zoomWindows(qRect) 
+            
+    def zoomWindows(self, qRect):
+        """
+            perform a windows zoom
+        """
+        zb=self.scaleFactor
+        qRect.setX(qRect.x()-zb)
+        qRect.setY(qRect.y()-zb)
+        qRect.setWidth(qRect.width()+zb)
+        qRect.setHeight(qRect.height()+zb)
+        self.fitInView(qRect,1) #KeepAspectRatioByExpanding
         
     def scaleView(self, factor):
         self.scale(factor, factor)

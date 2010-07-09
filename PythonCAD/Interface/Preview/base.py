@@ -55,8 +55,10 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             update the data at the preview item
         """
+        print "updatePreview"
         #Assing command values
         for i in range(0, len(kernelCommand.value)):
+            print "Command value", i, self.convertToQTObject(kernelCommand.value[i])
             self.value[i]=self.convertToQTObject(kernelCommand.value[i])
         #Assing mouse keyboard values
         try:

@@ -39,7 +39,7 @@ from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
 from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
-from Interface.Entity.baseentity    import BaseEntity
+from Interface.Entity.base          import BaseEntity
 from Kernel.exception               import *  
 
 class CadWindowMdi(QtGui.QMainWindow):
@@ -53,7 +53,9 @@ class CadWindowMdi(QtGui.QMainWindow):
     
         self.readSettings() #make some studis on this 
         self.setWindowTitle("PythonCad")
-        self.setWindowIcon(self._getIcon('pythoncad'))
+        qIcon=self._getIcon('pythoncad')
+        if qIcon:
+            self.setWindowIcon(qIcon)
         self.setUnifiedTitleAndToolBarOnMac(True)
         #pythoncad kernel
         self.__application = Application()
@@ -139,9 +141,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             update menu status
         """
-        print "update"
         hasMdiChild = (self.activeMdiChild() is not None)
-        print "status", hasMdiChild
         #File
         self.__cmd_intf.setVisible('import', hasMdiChild)
         self.__cmd_intf.setVisible('saveas', hasMdiChild)
@@ -161,13 +161,14 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('polyline', hasMdiChild)
         self.__cmd_intf.setVisible('arc', hasMdiChild)
         self.__cmd_intf.setVisible('ellipse', hasMdiChild)
-        self.__cmd_intf.setVisible('poligon', hasMdiChild)
+        self.__cmd_intf.setVisible('polygon', hasMdiChild)
         self.__cmd_intf.setVisible('fillet', hasMdiChild)
         self.__cmd_intf.setVisible('chamfer', hasMdiChild)
         self.__cmd_intf.setVisible('bisect', hasMdiChild)
         self.__cmd_intf.setVisible('text', hasMdiChild)
         #View
         self.__cmd_intf.setVisible('fit', hasMdiChild)
+        self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -179,12 +180,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         #                self.activeMdiChild().textCursor().hasSelection())
         #self.cutAct.setEnabled(hasSelection)
         #self.copyAct.setEnabled(hasSelection)
-        
-    def subWindowActivated(self, activeIDocument):    
-        """
-            event fired on change of the active document
-        """
-        print "document change"
         
     def createMdiChild(self, file=None):
         """
@@ -235,7 +230,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'arc', '&Arc', self._onArc)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'ellipse', '&Ellipse', self._onEllipse)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'poligon', '&Poligon', self._onPolygon)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polygon', '&polygon', self._onPolygon)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'fillet', '&Fillet', self._onFillet)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'chamfer', '&Chamfer', self._onChamfer)
@@ -244,6 +239,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
         # View
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'zoom&Window', self._onZoomWindow)
+        
         # window
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
@@ -356,6 +353,10 @@ class CadWindowMdi(QtGui.QMainWindow):
     # View
     def _onFit(self):
         self.view.fit()
+        
+    def _onZoomWindow(self):
+        self.statusBar().showMessage("CMD:ZoomWindow", 2000)
+        self.scene._cmdZoomWindow=True
         
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);

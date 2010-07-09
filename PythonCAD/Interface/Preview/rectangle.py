@@ -21,43 +21,48 @@
 # SegmentPreview object
 #
 import math
-#
+
 from Interface.Preview.base         import *
 from Kernel.GeoEntity.segment       import Segment as geoSegment
-from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
-#
-class Segment(Base):
+
+class Rectangle(Base):
     def __init__(self, command):
-        super(Segment, self).__init__(command)
+        super(Rectangle, self).__init__(command)
         
     def getPreviewObject(self):
         """
-            Return the preview object
+            return the preview object
         """
         if len(self._command.value)>0:
-            return QtSegmentItem(self._command)
+            return QtRectangleItem(self._command)
         else:
             return None
 
-class QtSegmentItem(BaseQtPreviewItem):
+class QtRectangleItem(BaseQtPreviewItem):
     def __init__(self,command):
-        super(QtSegmentItem, self).__init__(command)
+        super(QtRectangleItem, self).__init__(command)
         
     def drawGeometry(self, painter,option,widget):
         """
             Overloading of the paint method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            painter.drawLine(self.value[0],self.value[1])
+            painter.drawRect(self.getRectangle())
         
     def boundingRect(self):
         """
             Overloading of the qt bounding rectangle
         """
-        if self.value[0]!=None and self.value[1]!=None:
-            x=min(self.value[0].x(), self.value[1].x())
-            y=min(self.value[0].y(), self.value[1].y())
-            d1=abs(self.value[0].x()-self.value[1].x())
-            d2=abs(self.value[0].y()-self.value[1].y())
-            return QtCore.QRectF(x,y ,d1,d2)
+        if self.value[0]!=None and self.value[1]!=None :
+            return self.getRectangle()
         return QtCore.QRectF(0.0,0.0 ,0.1,0.1)
+        
+    def getRectangle(self):
+        """
+            create the rectangle
+        """
+        x=min(self.value[0].x(), self.value[1].x())
+        y=min(self.value[0].y(), self.value[1].y())
+        d1=abs(self.value[0].x()-self.value[1].x())
+        d2=abs(self.value[0].y()-self.value[1].y())
+        return QtCore.QRectF(x,y ,d1,d2)

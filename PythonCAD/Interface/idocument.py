@@ -22,6 +22,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.updatePreview+=self.__cmdInf.updatePreview
         self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
         self.__view = CadView(self.__scene, self)
+        self.__scene.zoomWindows+=self.__view.zoomWindows
         # the graphics view is the main/central component
         innerWindows = QtGui.QMainWindow()
         innerWindows.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
