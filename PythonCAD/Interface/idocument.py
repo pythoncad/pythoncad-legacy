@@ -21,6 +21,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
         self.__scene.updatePreview+=self.__cmdInf.updatePreview
         self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
+        self.__scene.keySpace+=self.__cmdInf._getCommandline().setFocus
         self.__view = CadView(self.__scene, self)
         self.__scene.zoomWindows+=self.__view.zoomWindows
         # the graphics view is the main/central component

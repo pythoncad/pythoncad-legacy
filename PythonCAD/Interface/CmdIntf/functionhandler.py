@@ -26,7 +26,7 @@
 
 
 from Kernel.GeoEntity.point     import Point
-
+from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
 
 from Interface.unitparser       import decodePoint, convertLengh, convertAngle
@@ -140,7 +140,7 @@ class FunctionHandler(object):
     
     def applyCommand(self):
         """
-            apply The Command 
+            Apply The Command 
         """
         if self.evaluateInner and self.evaluateInner.index==len(self.evaluateInner.exception)-1:
             self.evaluateInner.applyCommand()
@@ -153,7 +153,10 @@ class FunctionHandler(object):
             cObject is the command object
         """
         self.printOutput(text) 
-        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcMultiEntity, ExcEntityPoint,PyCadWrongCommand, CommandException
+        from Kernel.exception import (ExcPoint, ExcLenght, ExcAngle, ExcInt,
+                                        ExcBool, ExcText, ExcEntity,
+                                        ExcMultiEntity,ExcEntityPoint,
+                                        PyCadWrongCommand,CommandException)
         try:
             iv=cObject.next()
             exception,message=iv
@@ -215,7 +218,8 @@ class FunctionHandler(object):
 
 class CommandEvaluator(object):
     def performMauseClick(self ,exception, point, entitys, distance):
-        from Kernel.exception import ExcPoint, ExcEntity, ExcEntityPoint, ExcMultiEntity, ExcLenght, ExcInt
+        from Kernel.exception import (ExcPoint, ExcEntity, ExcEntityPoint,
+                                ExcMultiEntity, ExcLenght, ExcInt, ExcAngle)
         value=None
         try:
             raise exception(None)
@@ -234,6 +238,11 @@ class CommandEvaluator(object):
         except (ExcLenght, ExcInt):
             if distance:
                 value=self.convertToFloat(distance)
+        except(ExcAngle):
+            p1=Point(0.0, 0.0)
+            x, y=point
+            p2=Point(x, y)
+            value=Vector(p1, p2).absAng
         except:
             pass
         finally: return value
@@ -269,7 +278,8 @@ class CommandEvaluator(object):
                 text+=str(ent.ID)
             else:
                 text+=","+str(ent.ID)
-        return text        
+        return text   
+        
     def performCommand(self,exception,cObject,text):
         """
             Perform a Command

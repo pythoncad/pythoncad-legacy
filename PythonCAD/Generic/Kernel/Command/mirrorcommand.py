@@ -38,7 +38,7 @@ class MirrorCommand(BaseCommand):
         self.message=[  "Give Me Entity ID use , for more enitt ES: 4,10,5", 
                         "Give me the reference line (Segmento or CLine)", 
                         "Give me the Mode (M or None->Move,C->Copy)"]
-                        
+        self.resetToDefault()                
     def performMirror(self):
         """
             perform the mirror of all the entity selected

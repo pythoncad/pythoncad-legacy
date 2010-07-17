@@ -41,6 +41,8 @@ class BisectorCommand(BaseCommand):
         self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
                         "Give me the second Entity ID,end a point Es(4@10,20)", 
                         "Give me the bisector lengh"]
+        self.resetToDefault()
+        
     def getEntsToSave(self):
         """
             get the chamfer segments

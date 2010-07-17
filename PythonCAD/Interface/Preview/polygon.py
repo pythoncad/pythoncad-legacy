@@ -23,10 +23,11 @@
 import math
 
 from Interface.Preview.base         import *
+from Kernel.GeoEntity.polygon       import Polygon as geoPolygon
 
-class Arc(Base):
+class Polygon(Base):
     def __init__(self, command):
-        super(Arc, self).__init__(command)
+        super(Polygon, self).__init__(command)
         
     def getPreviewObject(self):
         """
@@ -37,9 +38,9 @@ class Arc(Base):
         else:
             return None
 
-class QtArcItem(BaseQtPreviewItem):
+class QtPolygonItem(BaseQtPreviewItem):
     def __init__(self, command):
-        super(QtArcItem, self).__init__(command)
+        super(QtPolygonItem, self).__init__(command)
         # get the geometry
     
     def drawGeometry(self, painter,option,widget):
@@ -55,23 +56,11 @@ class QtArcItem(BaseQtPreviewItem):
             yc=self.center.y()-self.radius
             h=self.radius*2.0
             painter.drawArc(xc,yc ,h ,h ,startAngle,  spanAngle)
-            #first angle segment
-            x=self.center.x()
-            y=self.center.y()
-            xsP=self.radius*math.cos(self.startAngle)
-            ysP=self.radius*math.sin(self.startAngle)*-1.0
-            painter.drawLine(self.center, QtCore.QPointF(xsP+x, ysP+y))
-            #second angle segment
-            secondAngle=self.startAngle+self.spanAngle
-            xsP=self.radius*math.cos(secondAngle)
-            ysP=self.radius*math.sin(secondAngle)*-1.0
-            painter.drawLine(self.center, QtCore.QPointF(xsP+x, ysP+y))
-
+    
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
         """
-        
         painterPath.arcTo(self.boundingRect(),self.startAngle,self.spanAngle) 
     
     def boundingRect(self):
@@ -83,7 +72,7 @@ class QtArcItem(BaseQtPreviewItem):
             xc=self.center.x()-_s
             yc=self.center.y()-_s
             _h=(_s*2.0)
-            #print "boundingRect ", xc,yc,_h ,_h
+            print "boundingRect ", xc,yc,_h ,_h
             return QtCore.QRectF(xc,yc,_h ,_h)
         return QtCore.QRectF(0,0 ,0.1,0.1)
         

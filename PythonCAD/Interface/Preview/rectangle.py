@@ -59,7 +59,7 @@ class QtRectangleItem(BaseQtPreviewItem):
         
     def getRectangle(self):
         """
-            create the rectangle
+            Create the rectangle
         """
         x=min(self.value[0].x(), self.value[1].x())
         y=min(self.value[0].y(), self.value[1].y())

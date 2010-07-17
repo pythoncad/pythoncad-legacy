@@ -100,6 +100,12 @@ class CmdLineDock(QtGui.QDockWidget):
         result = self.__function_handler.evaluate(expression)
         return result
     
+    def setFocus(self, scene, event):
+        """
+            set the focus into the text imput
+        """
+        self.__edit_ctrl.clear()
+        self.__edit_ctrl.setFocus()
     
 class PyCadTextView(QtGui.QTextEdit):
     """

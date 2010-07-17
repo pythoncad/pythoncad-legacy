@@ -36,15 +36,6 @@ class PolylineCommand(BaseCommand):
         self.defaultValue=[None]
         self.message=["Give Me A Point"]
         self.raiseStop=False
-    def next(self):
-        """
-            performe iteration
-            overwrite the default next into an infinite loop
-            we do not know how mani points the user whant to insert
-        """
-        if self.raiseStop:
-            raise StopIteration
-        return (self.exception[0],self.message[0])
         
     def __setitem__(self, key, value):
         """
@@ -52,6 +43,8 @@ class PolylineCommand(BaseCommand):
         """
         if isinstance(value, Point):
             self.value.append(value) 
+            self.exception.append(ExcPoint)
+            self.message.append("Give Me A Point")
             self.defaultValue.append(None)
         else:
            self.raiseStop=True 

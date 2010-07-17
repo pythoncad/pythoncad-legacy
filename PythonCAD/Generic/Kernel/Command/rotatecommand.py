@@ -41,7 +41,7 @@ class RotateCommand(BaseCommand):
                         "Give me the reference rotation point", 
                         "Give me the rotation angle", 
                         "Give me the Mode (M or None->Move,C->Copy)"]
-                        
+        self.resetToDefault()                
     def performRotation(self):
         """
             perform the mirror of all the entity selected

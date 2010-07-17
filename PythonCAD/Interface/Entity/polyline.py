@@ -62,7 +62,8 @@ class Polyline(BaseEntity):
             overloading of the qt bounding rectangle
         """
         return self.bbox
-        
+    
+
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 

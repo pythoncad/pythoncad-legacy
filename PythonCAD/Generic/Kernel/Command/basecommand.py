@@ -34,14 +34,24 @@ class BaseCommand(object):
         self.defaultValue=[]
         self.index=-1
         self.document=document
-        
+    
+    def resetToDefault(self):    
+        self.value=[]
+        for val in self.defaultValue:
+            self.value.append(val)
+
     def __iter__(self):
         return self
         
     def reset(self):
         self.index=-1
         self.value=[]
-        
+    @property
+    def valueIndex(self):    
+        """
+            get the index of the insert value in the command
+        """
+        return len(self.value)
     def next(self):
         """
             go on with the iteration
@@ -52,6 +62,24 @@ class BaseCommand(object):
             raise StopIteration
         return (self.exception[self.index],self.message[self.index])
     
+    def activeException(self):
+        """
+            Return the active exception
+        """
+        return self.exception[self.index]
+        
+    def activeMessage(self):
+        """
+            return the active Message
+        """
+        return self.message[self.index]
+    
+    def activeDefaultValue(self):
+        """
+            Return the active default value
+        """
+        return self.defaultValue[self.index]
+        
     def previus(selfself):
         """
             came back with the iteration
@@ -71,7 +99,6 @@ class BaseCommand(object):
         """
             set the value of the command
         """
-        
         self.value.append(value)
     
     @property

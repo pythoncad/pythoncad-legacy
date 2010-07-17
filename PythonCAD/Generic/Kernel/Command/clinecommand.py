@@ -32,6 +32,7 @@ class CLineCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me the first Point"]
+        
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

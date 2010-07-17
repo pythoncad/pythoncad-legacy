@@ -20,13 +20,17 @@
 #
 # This module provide a factory for the preview objects
 #
-from Kernel.Command.segmentcommand  import SegmentCommand
-from Kernel.Command.arccommand      import ArcCommand
-from Kernel.Command.rectanglecommand      import RectangleCommand
+from Kernel.Command.segmentcommand      import SegmentCommand
+from Kernel.Command.arccommand          import ArcCommand
+from Kernel.Command.rectanglecommand    import RectangleCommand
+from Kernel.Command.ellipsecommand      import EllipseCommand
+from Kernel.Command.polylinecommand      import PolylineCommand
 
 from Interface.Preview.segment      import Segment
 from Interface.Preview.arc          import Arc
 from Interface.Preview.rectangle    import Rectangle
+from Interface.Preview.ellipse      import Ellipse
+from Interface.Preview.polyline      import Polyline
 
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
@@ -35,5 +39,9 @@ def getPreviewObject(command):
         return Arc(command)
     elif isinstance(command , RectangleCommand):
         return Rectangle(command)
+    elif isinstance(command , EllipseCommand):
+        return Ellipse(command)
+    elif isinstance(command , PolylineCommand):
+        return Polyline(command)
     else:
         return None

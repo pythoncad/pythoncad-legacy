@@ -31,7 +31,10 @@ class CCircleCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght]
+        self.defaultValue=[None, 10]
         self.message=["Give Me the center Point", "Give Me the radius"]
+        self.resetToDefault()
+        
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

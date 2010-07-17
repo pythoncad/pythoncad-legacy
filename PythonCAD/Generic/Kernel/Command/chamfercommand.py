@@ -46,6 +46,7 @@ class ChamferCommand(BaseCommand):
                         "Give me the first Lenght", 
                         "Give me the second Lenght", 
                         ]
+        self.resetToDefault()
     def getEntsToSave(self):
         """
             get the chamfer segments

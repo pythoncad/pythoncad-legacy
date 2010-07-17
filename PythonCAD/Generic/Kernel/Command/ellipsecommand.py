@@ -33,6 +33,7 @@ class EllipseCommand(BaseCommand):
         self.exception=[ExcPoint, ExcLenght, ExcLenght]
         self.defaultValue=[None, 100, 50]
         self.message=["Give Me the center Point", "Give Me the major radius", "Give Me the minor radius"]
+        
     def applyCommand(self):
         if len(self.value)>3:
             raise PyCadWrongImputData("Wrong number of imput parameter")

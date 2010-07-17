@@ -34,6 +34,7 @@ class SegmentCommand(BaseCommand):
         self.exception=[ExcPoint, ExcPoint]
         self.message=["Give Me the first Point","Give Me The Second Point"]
         self.defaultValue=[None, None]
+        
     def applyCommand(self):
         if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of imput parameter")

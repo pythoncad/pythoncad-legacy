@@ -51,7 +51,7 @@ class PolygonCommand(BaseCommand):
                         "Give Me External or Internal (E/I)"]
         self.__xpts = array.array("d")
         self.__ypts = array.array("d")
-        
+        self.resetToDefault()
         
     def setSideCount(self, count):
         """

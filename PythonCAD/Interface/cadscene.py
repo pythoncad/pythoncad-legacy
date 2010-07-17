@@ -54,6 +54,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.pyCadSceneApply=PyCadEvent()
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
+        self.keySpace=PyCadEvent()
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
@@ -154,6 +155,8 @@ class CadScene(QtGui.QGraphicsScene):
             self.forceDirection=None
         elif event.key()==QtCore.Qt.Key_Return:
             self.pyCadSceneApply()
+        elif event.key()==QtCore.Qt.Key_Space:
+            self.keySpace(self, event)
         elif event.key()==QtCore.Qt.Key_H:
             self.forceDirection='H'
         elif event.key()==QtCore.Qt.Key_V:

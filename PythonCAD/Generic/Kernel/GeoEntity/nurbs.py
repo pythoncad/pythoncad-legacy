@@ -22,7 +22,7 @@
 
 
 import array
-from geometricalentity  import *
+from Kernel.GeoEntity.geometricalentity  import *
 
 class Nurb(GeometricalEntity):
     def __init__(self, ctrlpts, knots, order):
