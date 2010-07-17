@@ -23,7 +23,8 @@
 import math
 
 from Interface.Preview.base         import *
-from Kernel.GeoEntity.polygon       import Polygon as geoPolygon
+from Kernel.GeoUtil.geolib          import Vector
+from Kernel.GeoEntity.point         import Point
 
 class Polygon(Base):
     def __init__(self, command):
@@ -34,46 +35,60 @@ class Polygon(Base):
             return the preview object
         """
         if len(self._command.value)>0:
-            return QtArcItem(self._command)
+            return QtPolygonItem(self._command)
         else:
             return None
 
 class QtPolygonItem(BaseQtPreviewItem):
     def __init__(self, command):
         super(QtPolygonItem, self).__init__(command)
+        self.command=command
         # get the geometry
-    
+    @property
+    def polygonPoint(self):
+        """
+            get the poligon points
+        """
+        deltaAngle=(math.pi*2)/self.side
+        cPoint=Point(self.center.x(), self.center.y())
+        vPoint=Point(self.vertex.x(), self.vertex.y())
+        vertexVector=Vector(cPoint, vPoint)
+        radius=vertexVector.norm
+        angle=vertexVector.absAng
+        pol=QtGui.QPolygonF()
+        pFirst=None
+        for i in range(0, int(self.side)):
+            angle=deltaAngle+angle
+            xsP=cPoint.x+radius*math.cos(angle)*-1.0
+            ysP=cPoint.y+radius*math.sin(angle)*-1.0
+            p=QtCore.QPointF(xsP,ysP)
+            pol.append(p)
+            if not pFirst:
+                pFirst=p
+        if pFirst:        
+            pol.append(pFirst)
+        return pol
+        
     def drawGeometry(self, painter,option,widget):
         """
             overloading of the paint method
         """
-        if self.center and self.radius:
-            # By default, the span angle is 5760 (360 * 16, a full circle).
-            # From pythoncad the angle are in radiant ..
-            startAngle=(self.startAngle*180.0/math.pi)*16.0
-            spanAngle=(self.spanAngle*180.0/math.pi)*16.0 
-            xc=self.center.x()-self.radius
-            yc=self.center.y()-self.radius
-            h=self.radius*2.0
-            painter.drawArc(xc,yc ,h ,h ,startAngle,  spanAngle)
+        if self.center and self.vertex:
+            painter.drawPolyline(self.polygonPoint)
     
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
         """
-        painterPath.arcTo(self.boundingRect(),self.startAngle,self.spanAngle) 
+        if self.center and self.vertex:
+            painter.drawPolyline(self.polygonPoint)
     
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
         """
-        if self.center and self.radius:
-            _s=self.radius
-            xc=self.center.x()-_s
-            yc=self.center.y()-_s
-            _h=(_s*2.0)
-            print "boundingRect ", xc,yc,_h ,_h
-            return QtCore.QRectF(xc,yc,_h ,_h)
+        if self.center and self.vertex:
+            return self.polygonPoint.boundingRect() 
         return QtCore.QRectF(0,0 ,0.1,0.1)
         
     @property
@@ -84,23 +99,13 @@ class QtPolygonItem(BaseQtPreviewItem):
         self.value[0]=value
         self.update(self.boundingRect())
     @property
-    def radius(self):    
+    def vertex(self):    
         return self.value[1]
-    @radius.setter
-    def radius(self, value):
+    @vertex.setter
+    def vertex(self, value):
         self.value[1]=value
         self.update(self.boundingRect())
     @property
-    def startAngle(self):
+    def side(self):
         return self.value[2]
-    @startAngle.setter
-    def startAngle(self, value):
-        self.value[2] =value
-        self.update(self.boundingRect())
-    @property
-    def spanAngle(self):
-        return self.value[3]
-    @spanAngle.setter
-    def spanAngle(self, value):
-        self.value[3]=value
-        self.update(self.boundingRect())
+        

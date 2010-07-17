@@ -51,35 +51,43 @@ class PolygonCommand(BaseCommand):
                         "Give Me External or Internal (E/I)"]
         self.__xpts = array.array("d")
         self.__ypts = array.array("d")
-        self.resetToDefault()
-        
-    def setSideCount(self, count):
-        """
-            Set the number of sides of the polygon to create.
-            Argument "count" should be an integer value greater than 2.
-        """
-        _count = count
-        if not isinstance(_count, int):
-            _count = int(count)
-        if _count < 3:
-            raise ValueError, "Invalid count: %d" % _count
-        self.__nsides = _count
-        self.__increment = (math.pi*2)/float(_count)
-        for _i in range(_count):
-            self.__xpts.insert(_i, 0.0)
-            self.__ypts.insert(_i, 0.0)
+        self.__increment=0.0 #default value
 
-    def getSideCount(self):
+    @property
+    def side(self):
         """
             Get the number of sides of the polygon to be created.
             A ValueError exception is raised if the side count has not been
             set with setSideCount()
         """
-        if self.__nsides is None:
+        if self.value[2] is None:
             raise ValueError, "No side count defined."
-        return self.__nsides
+        return int(self.value[2])
+    @side.setter
+    def side(self, value):
+        self.value[2]=value
+        
+    def updateSide(self):
+        """
+            Set the number of sides of the polygon to create.
+            Argument "count" should be an integer value greater than 2.
+        """
+        self.__increment = (math.pi*2)/float(self.side)
+        for i in range(self.side):
+            self.__xpts.insert(i, 0.0)
+            self.__ypts.insert(i, 0.0)
 
-    def setExternal(self, value):
+    @property
+    def external(self):
+        """
+            Test if the polygon will be created outside a circle.
+            If the setExternal() method has been called, this method will
+            return True. By default this method will return False.
+        """
+        return self.value[3]
+
+    @external.setter
+    def external(self, value):
         """
             Create the polygon on the outside of a reference circle.
             By default the polygon is drawing completely contained within a
@@ -87,36 +95,44 @@ class PolygonCommand(BaseCommand):
             sides are outside the circle.
         """
         if value=="E":
-            self.__external = True
+            self.value[3] = True
         else:
-            self.__external = False
+            self.value[3] = False
 
-    def getExternal(self):
+    @property  
+    def externalPick(self):
         """
-            Test if the polygon will be created outside a circle.
-            If the setExternal() method has been called, this method will
-            return True. By default this method will return False.
+            get user external pick
         """
-        return self.__external
-
-    def setCenter(self, p):
+        return self.value[1]
+    @externalPick.setter
+    def externalPick(self, value):
+        """
+            get user external pick
+        """
+        self.value[1]=value
+    @property
+    def center(self):
+        """
+            Retrieve the center of the polygon to be created.
+        """
+        if self.value[0] is None:
+            raise ValueError, "Center is undefined."
+        return self.value[0]
+    @center.setter
+    def center(self, p):
         """
             Define the center of the polygon.
             Arguments 'x' and 'y' should be float values.
         """
+        if self.value[0] and p ==None:
+            return
         if isinstance(p, Point):
-            self.__center = p
+            self.value[0] = p
         else:
             raise TypeError, "p must be a of type Point"
 
-    def getCenter(self):
-        """
-            Retrieve the center of the polygon to be created.
-        """
-        if self.__center is None:
-            raise ValueError, "Center is undefined."
-        return self.__center
-
+    
     def getCoord(self, i):
         """
             Get one of the coordinates of the polygon corners.
@@ -132,25 +148,25 @@ class PolygonCommand(BaseCommand):
             This method calculates the polygon
             points.
         """
-        _x, _y = self.__externalPoint.getCoords()
-        _count = self.__nsides
-        _inc = self.__increment
-        if self.__external:
-            _offset = _inc/2.0
+        if self.external:
+            _offset = self.__increment/2.0
         else:
             _offset = 0.0
-        _cx, _cy = self.__center.getCoords()
+        _cx, _cy = self.center.getCoords()
+        _x, _y = self.externalPick.getCoords()
         _xsep = _x - _cx
         _ysep = _y - _cy
         _angle = math.atan2(_ysep, _xsep) + _offset
         _rad = math.hypot(_xsep, _ysep)/math.cos(_offset)
         _xp = self.__xpts
         _yp = self.__ypts
-        for _i in range(_count):
+        for _i in range(self.side):
             _xp[_i] = _cx + (_rad * math.cos(_angle))
             _yp[_i] = _cy + (_rad * math.sin(_angle))
-            _angle = _angle + _inc
-
+            _angle = _angle + self.__increment
+        self.__xpts=_xp
+        self.__ypts=_yp
+        
     def getEntsToSave(self):
         """
             return a list of segment
@@ -158,41 +174,27 @@ class PolygonCommand(BaseCommand):
         objEnt=[]
         self.CalculatePoint()
         if len(self.__xpts):
-            _count = self.__nsides
-            _xp = self.__xpts
-            _yp = self.__ypts
-            _x = _xp[0]
-            _y = _yp[0]
-            #
             # find starting point ...
-            #
-            _p0 = Point(_x, _y)
-            #
+            _p0 = Point(self.__xpts[0],self.__ypts[0])
             # make segments for all the points ...
-            #
             _p1 = _p0
-            for _i in range(1, _count):
-                _x = _xp[_i]
-                _y = _yp[_i]
+            for _i in range(1, self.side):
+                _x = self.__xpts[_i]
+                _y = self.__ypts[_i]
                 _pi = Point(_x, _y)
                 segArg={"SEGMENT_0":_p1, "SEGMENT_1":_pi}
                 objEnt.append(Segment(segArg))
                 _p1 = _pi
-            #
             # now add closing segment ...
-            #
             segArg={"SEGMENT_0":_p1, "SEGMENT_1":_p0}
             objEnt.append(Segment(segArg))
         return  objEnt   
+        
     def applyCommand(self):
         """
             Create a Polygon from Segments and add it to the kernel.
         """
-                
-        self.setSideCount(self.value[2])
-        self.__externalPoint=self.value[1]
-        self.__external = self.value[3]
-        self.setCenter(self.value[0])
+        self.updateSide()
         try:
             self.document.startMassiveCreation()
             for _ent in self.getEntsToSave():

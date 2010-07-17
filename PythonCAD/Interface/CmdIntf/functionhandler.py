@@ -235,7 +235,7 @@ class CommandEvaluator(object):
                 sPoint="%s,%s"%(point)
                 id=str(entitys[0].ID)
                 value="%s@%s"%(str(id), str(sPoint))
-        except (ExcLenght, ExcInt):
+        except (ExcLenght):
             if distance:
                 value=self.convertToFloat(distance)
         except(ExcAngle):
