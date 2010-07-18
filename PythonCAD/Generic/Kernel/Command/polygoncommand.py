@@ -25,6 +25,7 @@
 
 import math
 import array
+
 from Kernel.exception                   import *
 from Kernel.Command.basecommand         import *
 from Kernel.GeoEntity.point             import Point

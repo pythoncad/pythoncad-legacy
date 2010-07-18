@@ -21,8 +21,10 @@
 # This module provide basic class for all  the qtitems to be displayed
 #
 import math
-from PyQt4 import QtCore, QtGui
-from Kernel.initsetting import PYTHONCAD_HIGLITGT_COLOR
+from PyQt4  import QtCore, QtGui
+
+from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR
+from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
     def __init__(self, entity):
@@ -37,6 +39,23 @@ class BaseEntity(QtGui.QGraphicsItem):
         self.lineWith=1.0
         return
     
+    def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromCommand=None):
+        """
+            compute the nearest point and return a qtPoint
+        """
+        pClick=Point(qtPointEvent.x(), qtPointEvent.y()*-1.0)
+        ePoint=None
+        for p in self.geoItem.snapPoints:
+            distance=p.dist(pClick)
+            if ePoint==None:
+                oldDistance=distance
+                ePoint=p
+            else:
+                if oldDistance>distance:
+                    oldDistance=distance
+                    ePoint=p
+        return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
+        
     @property
     def entity(self):
         return self.__entity 

@@ -46,7 +46,17 @@ class GeometricalEntity(dict):
             else:
                 raise TypeError, "Wrong argument %s "%str(k)
         self.arguments=argNameType
-    
+        self._snapPoints=[]
+    @property
+    def snapPoints(self):
+        """
+            return the snap points
+        """
+        return self._snapPoints
+    @snapPoints.setter
+    def snapPoints(self, value):
+        self._snapPoints=value
+        
     def getArgumentsName(self):
         """
             get the construction arguments Name

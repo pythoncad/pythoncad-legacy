@@ -84,7 +84,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
         if self.__oldClickPoint:
             distance=self.getDistance(event)
-            x, y=self.getPosition(event.scenePos())
+            qtItem=[self.itemAt(event.scenePos())]
+            x, y=self.getPosition(event.scenePos(), qtItem)
             point=QtCore.QPointF(x, y*-1.0)
             self.updatePreview(self,point, distance)
         self.mouseX=event.scenePos().x()
@@ -106,9 +107,10 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseReleaseEvent(self, event):
         if not self.isInPan:
-            x, y=self.getPosition(event.scenePos())
+            
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
+            x, y=self.getPosition(event.scenePos(), qtItems)
             distance=self.getDistance(event)
             self.__oldClickPoint=event.scenePos()
             pyCadEvent=((x, y), qtItems, distance)
@@ -128,12 +130,20 @@ class CadScene(QtGui.QGraphicsScene):
             distance=math.sqrt(deltaX**2+deltaY**2)
         return distance
         
-    def getPosition(self, eventPos):
+    def getPosition(self, eventPos, qtItems):
         """
             correct the mouse cords 
         """
         x=eventPos.x()
         y=eventPos.y()
+        for qtItem in qtItems:
+            if qtItem and isinstance(qtItem, BaseEntity):
+                p=qtItem.nearestSnapPoint(eventPos, None, None)
+                if p:
+                    x=p.x()
+                    y=p.y()
+                    break
+
         if self.forceDirection and  self.__oldClickPoint:
             if self.forceDirection=="H":
                 y=self.__oldClickPoint.y()

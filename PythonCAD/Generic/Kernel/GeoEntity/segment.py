@@ -48,12 +48,23 @@ class Segment(GeometricalEntity):
                         "SEGMENT_1":Point
                         }
         GeometricalEntity.__init__(self,kw, argDescription)
+        self.updateSnapPoint()
+    
+    def updateSnapPoint(self):
+        """
+            get segment snapPoints
+        """
+        self.snapPoints=[]
+        self.snapPoints.append(self.getMiddlePoint())
+        p1, p2=self.getEndpoints()
+        self.snapPoints.append(p1)
+        self.snapPoints.append(p2)
 
     def __str__(self):
-        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length())
+        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length)
     @property
     def info(self):
-        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length())    
+        return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length)    
     def __eq__(self, obj):
         """
             Compare a Segment to another for equality.
@@ -113,7 +124,7 @@ class Segment(GeometricalEntity):
         _pt = self.p1
         if _pt is not p:
             self["SEGMENT_0"] = p
-
+        self.updateSnapPoint()
     p1 = property(getP1, setP1, None, "First endpoint of the Segment.")
 
     def getP2(self):
@@ -133,9 +144,10 @@ class Segment(GeometricalEntity):
         _pt = self.p2
         if _pt is not p:
             self["SEGMENT_1"] = p
-
+        self.updateSnapPoint()
     p2 = property(getP2, setP2, None, "Second endpoint of the Segment.")
-
+    
+    @property
     def length(self):
         """
             Return the length of the Segment.
@@ -173,7 +185,7 @@ class Segment(GeometricalEntity):
             retY=_y1+_deltay
         else:
             retY=_y2+_deltay
-        return retX,retY
+        return Point(retX,retY)
 
     def getProjection(self,point):
         """

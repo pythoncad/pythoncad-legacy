@@ -48,7 +48,7 @@ class QtSegmentItem(BaseQtPreviewItem):
             Overloading of the paint method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            print "drawLine", self.value[0],self.value[1]
+            #print "drawLine", self.value[0],self.value[1]
             painter.drawLine(self.value[0],self.value[1])
         
     def boundingRect(self):
@@ -61,7 +61,7 @@ class QtSegmentItem(BaseQtPreviewItem):
             y=min(self.value[0].y(), self.value[1].y())
             d1=abs(self.value[0].x()-self.value[1].x())
             d2=abs(self.value[0].y()-self.value[1].y())
-            print "boundingRect", x, y, d1, d2
+            #print "boundingRect", x, y, d1, d2
             return QtCore.QRectF(x,y ,d1,d2)
-        print "not updated"
+        #print "not updated"
         return QtCore.QRectF(0.0,0.0 ,0.1,0.1)
