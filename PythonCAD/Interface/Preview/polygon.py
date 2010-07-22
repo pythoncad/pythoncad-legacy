@@ -49,6 +49,8 @@ class QtPolygonItem(BaseQtPreviewItem):
         """
             get the poligon points
         """
+        if self.side<=0:
+            self.side=6
         deltaAngle=(math.pi*2)/self.side
         cPoint=Point(self.center.x(), self.center.y())
         vPoint=Point(self.vertex.x(), self.vertex.y())

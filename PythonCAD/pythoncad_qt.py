@@ -25,4 +25,3 @@ if __name__ == '__main__':
     w=CadWindowMdi()
     w.show()
     sys.exit(app.exec_())
-    

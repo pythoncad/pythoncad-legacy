@@ -95,6 +95,9 @@ class CmdIntf(object):
 #            # add a separator to the tool-bar
 #            if not toolbar is None:
 #                toolbar.addSeparator()
+        elif cmd=='>':
+            #add subMenu
+            pass
         else:
             # register the command with the function handler
             self.__edit_ctrl.FunctionHandler.registerCommand(cmd, callback)
@@ -147,6 +150,7 @@ class CmdIntf(object):
             reset the active command 
         """
         self.__edit_ctrl.FunctionHandler.resetCommand()
+        
     def updatePreview(self, scene, position, distance):
         """
             pass the imput to the hendler
@@ -189,7 +193,13 @@ class CmdIntf(object):
                 self.__actions[name].show()
             else:
                 self.__actions[name].hide()
-        
+                
+    def updateText(self, name, text):
+        """
+            update the label text
+        """
+        if self.__actions.has_key(name):
+            self.__actions[name].setText(text)
 
 
     

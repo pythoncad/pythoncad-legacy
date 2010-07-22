@@ -72,6 +72,10 @@ from Kernel.composedentity      import ComposedEntity
 # 
 MAIN_LAYER="MAIN"
 #
+# Max Number of recent file 
+#
+MAX_RECENT_FILE=5
+#
 # Object workflow state of the entity
 #
 OBJECT_STATE=['MODIFIE','RELEASED', 'DELETE']
@@ -312,6 +316,13 @@ PYTHONCAD_STYLE_DEFAULT_VALUE=[(0, 0, 0),
 
 def getDefaultStyle():
     return dict(zip(PYTHONCAD_STYLE_ATTRIBUTES,PYTHONCAD_STYLE_DEFAULT_VALUE))
+#
+# Snap init settings
+#
+SNAP_POINT_ARRAY={"ALL":0, "END_POINT":1, "MID_POINT":2}
+
+ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["ALL"]
+
 #
 # Color table to define a match from Autocad external format and Pythoncad internal format
 #

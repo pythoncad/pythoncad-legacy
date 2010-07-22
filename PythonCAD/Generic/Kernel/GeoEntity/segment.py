@@ -26,12 +26,12 @@ from __future__ import generators
 
 import math
 
-
 from Kernel.GeoUtil.util                    import *
 from Kernel.GeoUtil.geolib                  import Vector
 from Kernel.GeoEntity.point                 import Point
 from Kernel.GeoEntity.cline                 import CLine
 from Kernel.GeoEntity.geometricalentity     import *
+
 
 class Segment(GeometricalEntity):
     """
@@ -50,15 +50,20 @@ class Segment(GeometricalEntity):
         GeometricalEntity.__init__(self,kw, argDescription)
         self.updateSnapPoint()
     
-    def updateSnapPoint(self):
+    def updateSnapPoint(self, force=None):
         """
             get segment snapPoints
         """
+        from Kernel.initsetting                     import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
         self.snapPoints=[]
-        self.snapPoints.append(self.getMiddlePoint())
-        p1, p2=self.getEndpoints()
-        self.snapPoints.append(p1)
-        self.snapPoints.append(p2)
+        if (SNAP_POINT_ARRAY["MID_POINT"] == ACTIVE_SNAP_POINT or
+                        SNAP_POINT_ARRAY["ALL"] == ACTIVE_SNAP_POINT):
+            self.snapPoints.append(self.getMiddlePoint())
+        if (SNAP_POINT_ARRAY["END_POINT"] == ACTIVE_SNAP_POINT or
+                        SNAP_POINT_ARRAY["ALL"]== ACTIVE_SNAP_POINT):
+            p1, p2=self.getEndpoints()
+            self.snapPoints.append(p1)
+            self.snapPoints.append(p2)
 
     def __str__(self):
         return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length)

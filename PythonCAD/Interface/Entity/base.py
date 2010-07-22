@@ -54,7 +54,10 @@ class BaseEntity(QtGui.QGraphicsItem):
                 if oldDistance>distance:
                     oldDistance=distance
                     ePoint=p
-        return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
+        if ePoint:
+            return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
+        else:
+            return qtPointEvent
         
     @property
     def entity(self):
@@ -103,12 +106,14 @@ class BaseEntity(QtGui.QGraphicsItem):
     
     def hoverEnterEvent(self, event):
         self.setHiglight()
-        self.update(self.boundingRect())
+        print "hoverEnterEvent"
+        #self.update(self.boundingRect())
         super(BaseEntity, self).hoverEnterEvent(event)
     
     def hoverLeaveEvent(self, event):
         self.setColor()
-        self.update(self.boundingRect())
+        #self.update(self.boundingRect())
+        print "hoverLeaveEvent"
         super(BaseEntity, self).hoverLeaveEvent(event)
         
     def drawGeometry(self, painter, option, widget):

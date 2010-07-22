@@ -32,30 +32,47 @@ class Settings(object):
         """
         self.__name=name
         self.__activeLayer="ROOT"
+        self.__property={}
         
-    def getName(self):
+    @property
+    def name(self):
         """
             get the settings Name
         """
         return self.__name
-    def setName(self,name):
+    @name.setter
+    def name(self,name):
         """
             set the settings name
         """
         self.__name=name
-    name=property(getName,setName,None,"get/set the name of the settings")
     
-    def getActiveLayer(self):
+    @property
+    def layerName(self):
         """
             get the anctive layer of the settings
         """
         return self.__activeLayer
     
-    def setActiveLayer(self,lName):
+    @layerName.setter
+    def layerName(self,lName):
         """
             set the active layer id
         """
         self.__activeLayer=lName
-        
-    layerName=property(getActiveLayer,setActiveLayer,None,"get/set the active layer name")
     
+    def getVariable(self, name):
+        """
+            Get The variable in the settings object
+        """
+        if self.__property and self.__property.has_key(name):
+            return self.__property[name]
+        
+            return None
+    
+    def setVariable(self, name, value):
+        """
+            Set The variable in the settings object
+        """
+        self.__property[name]=value
+        

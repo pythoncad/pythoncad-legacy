@@ -189,8 +189,13 @@ class CadWindowMdi(QtGui.QMainWindow):
             newDoc=self.__application.openDocument(file)
         else:
             newDoc=self.__application.newDocument()
-        child = IDocument(newDoc,self.__cmd_intf)
-        self.mdiArea.addSubWindow(child)
+        for mdiwind in self.mdiArea.subWindowList():
+            if mdiwind._IDocument__document.dbPath==file:
+                child=mdiwind
+                break
+        else:
+            child = IDocument(newDoc,self.__cmd_intf)
+            self.mdiArea.addSubWindow(child)
 
         #child.copyAvailable.connect(self.cutAct.setEnabled)
         #child.copyAvailable.connect(self.copyAct.setEnabled)
@@ -204,6 +209,17 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save In A Different location...', self._onSaveAsDrawing)
+        #
+        # Create recentFile structure
+        #
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
+        
+        i=0
+        for file in self.Application.getRecentFiles:
+            fileName=self.strippedName(file)
+            self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'file_'+str(i), fileName, self._onOpenRecent)    
+            i+=1
+        #
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'close', '&Close', self._onCloseDrawing)
@@ -250,21 +266,39 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
         return
         
+    def updateRecentFileList(self):
+        """
+            update the menu recent file list
+        """
+        i=0
+        for file in self.Application.getRecentFiles:
+            fileName=self.strippedName(file)
+            self.__cmd_intf.updateText('file_'+str(i), fileName)
+            i+=1
+            
+    def strippedName(self, fullFileName):
+        """
+            get only the name of the filePath
+        """
+        return QtCore.QFileInfo(fullFileName).fileName()    
+        
     def _onNewDrawing(self):
         '''
             Create a new drawing 
         '''
         child = self.createMdiChild()
         child.show()
+        self.updateRecentFileList()
         return
-
+        
     def _onOpenDrawing(self):
         # ask the user to select an existing drawing
         drawing = QtGui.QFileDialog.getOpenFileName(self, "Open Drawing", "/home", "Drawings (*.pdr)");
         # open a document and load the drawing
         if len(drawing)>0:
             child = self.createMdiChild(drawing)
-            child.show()            
+            child.show() 
+            self.updateRecentFileList()           
         return
     
     def _onImportDrawing(self):
@@ -272,6 +306,20 @@ class CadWindowMdi(QtGui.QMainWindow):
         # open a document and load the drawing
         if len(drawing)>0:
             self.mdiArea.activeSubWindow().importExternalFormat(drawing)
+        return
+        
+    def _onOpenRecent(self):
+        """
+            on open recent file
+        """
+        action = self.sender()
+        if action:
+            spool, index=action.command.split('_')
+            fileName=self.Application.getRecentFiles[int(index)]
+            if len(fileName)>0:
+                child = self.createMdiChild(fileName)
+                child.show() 
+                self.updateRecentFileList()
         return
         
     def _onSaveAsDrawing(self):

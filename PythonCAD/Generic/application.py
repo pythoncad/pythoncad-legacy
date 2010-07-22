@@ -41,10 +41,10 @@ class Application(object):
     def __init__(self, **args):
         #++
         #TODO: Improve the local directory for different os ..
-        #this file will be in the local setting os application folder
-        #W$     :   alluser\PythonCad\db
+        #this file will be in the local setting os user folder
+        #W$     :   user\PythonCad\db
         #mac    :   ask to Gertwin
-        #linux  :   /usr/local/etc 
+        #linux  :   /home/user/pythoncad/db
         baseDbName=os.path.join(os.getcwd(), 'Pythoncad_baseDb.pdr')
         #--
         self.kernel=Document(baseDbName)
@@ -64,7 +64,45 @@ class Application(object):
             self.__ActiveDocument=None
         # Fire the Application inizialization
         self.startUpEvent(self)
+            
+    @property
+    def getRecentFiles(self):    
+        """
+            read from application settings the recent files
+        """
+        objSettings=self.getApplicationSetting()
+        nFiles=objSettings.getVariable("MAX_RECENT_FILE")
+        if nFiles:
+            files=objSettings.getVariable("RECENT_FILE_ARRAY")
+            if files:
+                return files
+            else:
+                objSettings.setVariable("RECENT_FILE_ARRAY",[] )
+                self.updateApplicationSetting(objSettings)
+        else:
+            objSettings.setVariable("MAX_RECENT_FILE",MAX_RECENT_FILE )
+            objSettings.setVariable("RECENT_FILE_ARRAY",[] )
+            self.updateApplicationSetting(objSettings)
+        return []
     
+    def addRecentFiles(self, name):
+        """
+            add recent file into the application
+        """
+        objSettings=self.getApplicationSetting()
+        nFiles=objSettings.getVariable("MAX_RECENT_FILE")
+        if not nFiles:
+            objSettings.setVariable("MAX_RECENT_FILE",MAX_RECENT_FILE )
+        
+        files=objSettings.getVariable("RECENT_FILE_ARRAY")
+        if not files:
+            files=[]
+        while(len(files)>nFiles-1):
+            files.pop(0)
+        files.append(name)
+        objSettings.setVariable("RECENT_FILE_ARRAY", files)
+        self.updateApplicationSetting(objSettings)
+        
     def setActiveDocument(self, document):    
         """
             Set the document to active
@@ -106,6 +144,7 @@ class Application(object):
         self.__Docuemnts[fileName]=newDoc
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
+        self.addRecentFiles(fileName)
         return self.__Docuemnts[fileName]
         
     def openDocument(self, fileName):
@@ -117,6 +156,7 @@ class Application(object):
             self.__Docuemnts[fileName]=Document(fileName)
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
+        self.addRecentFiles(fileName)
         return self.__Docuemnts[fileName]
     
     def saveAs(self, newFileName):
@@ -127,6 +167,7 @@ class Application(object):
             oldFileName=self.__ActiveDocument.getName()
             self.closeDocument(oldFileName)
             shutil.copy2(oldFileName,newFileName)
+            self.addRecentFiles(newFileName)
             return self.openDocument(newFileName)
         raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
     
@@ -198,9 +239,9 @@ class Application(object):
         """
             update the application settingObj
         """
-        apObj=self.kernel.getApplicationSetting()
-        apObj.setConstructionElement(settingObj)
-        self.kernel.savePyCadEnt(apObj)  
+        #apObj=self.kernel.getDbSettingsObject()
+        #apObj.setConstructionElement(settingObj)
+        self.kernel.saveEntity(settingObj)  
 
 if __name__=='__main__':
     import application_test  as test
