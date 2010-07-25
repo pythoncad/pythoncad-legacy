@@ -41,6 +41,7 @@ from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
 from Interface.Entity.base          import BaseEntity
 from Kernel.exception               import *  
+from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
@@ -169,6 +170,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         #View
         self.__cmd_intf.setVisible('fit', hasMdiChild)
         self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
+        #snap
+        self.__cmd_intf.setVisible('endpoint', hasMdiChild)
+        self.__cmd_intf.setVisible('middlepoint', hasMdiChild)
+        self.__cmd_intf.setVisible('ortopoint', hasMdiChild)
+        self.__cmd_intf.setVisible('tangentpoint', hasMdiChild)
+        self.__cmd_intf.setVisible('autopoint', hasMdiChild)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -256,7 +263,13 @@ class CadWindowMdi(QtGui.QMainWindow):
         # View
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'zoom&Window', self._onZoomWindow)
-        
+        # Snap
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'endpoint', 'EndPoint', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'middlepoint', 'MiddlePoint', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'ortopoint', 'Ortogonal Point', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentpoint', 'Tangent Point', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'autopoint', 'Automatic Snap', self._onSnapCommand)
+
         # window
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
@@ -405,7 +418,24 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onZoomWindow(self):
         self.statusBar().showMessage("CMD:ZoomWindow", 2000)
         self.scene._cmdZoomWindow=True
-        
+    # Snap
+    def _onSnapCommand(self):
+        """
+            On snep Command action
+        """
+        action = self.sender()
+        if action:
+            if action.command=="endpoint":
+                self.scene.forceSnap= SNAP_POINT_ARRAY["END_POINT"] 
+            elif action.command=="middlepoint":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["MID_POINT"] 
+            elif action.command=="ortopoint":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["ORTO_POINT"] 
+            elif action.command=="tangentpoint":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["TANGENT_POINT"] 
+            elif action.command=="autopoint":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["ALL"] 
+
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
         printer=QtGui.QPrinter()
@@ -437,7 +467,13 @@ class CadWindowMdi(QtGui.QMainWindow):
         
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
-                "<b>PythonCAD</b> is a 2D CAD system.")
+                """<b>PythonCAD</b> is a CAD package written, surprisingly enough, in Python using the PyQt4 interface.<p>
+                   The PythonCAD project aims to produce a scriptable, open-source,
+                   easy to use CAD package for any Python/PyQt supported Platforms
+                   <p>
+                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.2)<b><P>
+                   <p>
+                   <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>""")
         return
         
     def callDocumentCommand(self, commandName):
@@ -459,12 +495,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
 
     def readSettings(self):
-        settings = QtCore.QSettings('Trolltech', 'MDI Example')
         #settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
-        pos = settings.value('pos', QtCore.QPoint(200, 200))
-        size = settings.value('size', QtCore.QSize(400, 400))
+        #pos = settings.value('pos', QtCore.QPoint(200, 200))
+        #size = settings.value('size', QtCore.QSize(400, 400))
         #self.move(pos)
         #self.resize(size)
+        pass
 
     def writeSettings(self):
         settings = QtCore.QSettings('Trolltech', 'MDI Example')

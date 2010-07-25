@@ -54,17 +54,28 @@ class Segment(GeometricalEntity):
         """
             get segment snapPoints
         """
-        from Kernel.initsetting                     import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
+        print ">>updateSnapPoint", force
+        from Kernel.initsetting  import SNAP_POINT_ARRAY
         self.snapPoints=[]
-        if (SNAP_POINT_ARRAY["MID_POINT"] == ACTIVE_SNAP_POINT or
-                        SNAP_POINT_ARRAY["ALL"] == ACTIVE_SNAP_POINT):
+        if SNAP_POINT_ARRAY["MID_POINT"] == force:
+            #
             self.snapPoints.append(self.getMiddlePoint())
-        if (SNAP_POINT_ARRAY["END_POINT"] == ACTIVE_SNAP_POINT or
-                        SNAP_POINT_ARRAY["ALL"]== ACTIVE_SNAP_POINT):
+            print "middle"
+            #
+        elif SNAP_POINT_ARRAY["END_POINT"] == force:
             p1, p2=self.getEndpoints()
             self.snapPoints.append(p1)
             self.snapPoints.append(p2)
-
+            print "end"
+        elif SNAP_POINT_ARRAY["ALL"]== force:
+            self.snapPoints.append(self.getMiddlePoint())
+            p1, p2=self.getEndpoints()
+            self.snapPoints.append(p1)
+            self.snapPoints.append(p2)
+            print "all"
+        else:
+            self.snapPoints=[]
+        print "<<updateSnapPoint"
     def __str__(self):
         return "Segment: %s to %s l=%s" % (self.p1, self.p2, self.length)
     @property

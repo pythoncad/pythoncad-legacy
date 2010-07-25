@@ -45,7 +45,8 @@ class BaseEntity(QtGui.QGraphicsItem):
         """
         pClick=Point(qtPointEvent.x(), qtPointEvent.y()*-1.0)
         ePoint=None
-        for p in self.geoItem.snapPoints:
+        print "nearestSnapPoint->snapForceType", snapForceType
+        for p in self.geoItem.getUpdatedSnapPoints(snapForceType):
             distance=p.dist(pClick)
             if ePoint==None:
                 oldDistance=distance
@@ -54,10 +55,10 @@ class BaseEntity(QtGui.QGraphicsItem):
                 if oldDistance>distance:
                     oldDistance=distance
                     ePoint=p
-        if ePoint:
-            return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
-        else:
+        if ePoint==None:
             return qtPointEvent
+        return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
+            
         
     @property
     def entity(self):

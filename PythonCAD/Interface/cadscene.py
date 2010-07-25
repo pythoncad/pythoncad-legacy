@@ -73,6 +73,7 @@ class CadScene(QtGui.QGraphicsScene):
         #secondArrow.setRotation(-90.0)
         #self.addItem(secondArrow)
         #
+        self.forceSnap=None
         self._cmdZoomWindow=None
         
     def _qtInputPopUpReturnPressed(self):
@@ -106,8 +107,8 @@ class CadScene(QtGui.QGraphicsScene):
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
+        print ">>mouseReleaseEvent"
         if not self.isInPan:
-            
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
             x, y=self.getPosition(event.scenePos(), qtItems)
@@ -120,6 +121,7 @@ class CadScene(QtGui.QGraphicsScene):
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
+        print "<<mouseReleaseEvent"
         super(CadScene, self).mouseReleaseEvent(event)
         
     def getDistance(self, event):
@@ -134,11 +136,13 @@ class CadScene(QtGui.QGraphicsScene):
         """
             correct the mouse cords 
         """
+        print ">>>     ---   getPosition"
         x=eventPos.x()
         y=eventPos.y()
         for qtItem in qtItems:
             if qtItem and isinstance(qtItem, BaseEntity):
-                p=qtItem.nearestSnapPoint(eventPos, None, None)
+                print ">>>     ---              >>", self.forceSnap
+                p=qtItem.nearestSnapPoint(eventPos, self.forceSnap, None)
                 if p:
                     x=p.x()
                     y=p.y()

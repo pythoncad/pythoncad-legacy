@@ -24,7 +24,6 @@
 #
 # Command List
 #
-
 from Kernel.Command                     import *
 from Kernel.Command.segmentcommand      import SegmentCommand
 from Kernel.Command.arccommand          import ArcCommand
@@ -319,7 +318,14 @@ def getDefaultStyle():
 #
 # Snap init settings
 #
-SNAP_POINT_ARRAY={"ALL":0, "END_POINT":1, "MID_POINT":2}
+global SNAP_POINT_ARRAY
+global ACTIVE_SNAP_POINT
+
+SNAP_POINT_ARRAY={"ALL":0, 
+                    "END_POINT":1,
+                    "MID_POINT":2, 
+                    "ORTO_POINT":3, 
+                    "TANGENT_POINT":4}
 
 ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["ALL"]
 
