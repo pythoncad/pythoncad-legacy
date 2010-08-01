@@ -171,18 +171,19 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('fit', hasMdiChild)
         self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
         #snap
-        self.__cmd_intf.setVisible('endpoint', hasMdiChild)
-        self.__cmd_intf.setVisible('middlepoint', hasMdiChild)
-        self.__cmd_intf.setVisible('ortopoint', hasMdiChild)
-        self.__cmd_intf.setVisible('tangentpoint', hasMdiChild)
-        self.__cmd_intf.setVisible('autopoint', hasMdiChild)
+        self.__cmd_intf.setVisible('autosnap', hasMdiChild)
+        self.__cmd_intf.setVisible('endsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('middlesnap', hasMdiChild)
+        self.__cmd_intf.setVisible('centersnap', hasMdiChild)
+        self.__cmd_intf.setVisible('ortosnap', hasMdiChild)
+        self.__cmd_intf.setVisible('tangentsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('originsnap', hasMdiChild)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
         self.__cmd_intf.setVisible('next', hasMdiChild)
         self.__cmd_intf.setVisible('previous', hasMdiChild)
-        
-    
         #hasSelection = (self.activeMdiChild() is not None and
         #                self.activeMdiChild().textCursor().hasSelection())
         #self.cutAct.setEnabled(hasSelection)
@@ -264,12 +265,14 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'zoom&Window', self._onZoomWindow)
         # Snap
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'endpoint', 'EndPoint', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'middlepoint', 'MiddlePoint', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'ortopoint', 'Ortogonal Point', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentpoint', 'Tangent Point', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'autopoint', 'Automatic Snap', self._onSnapCommand)
-
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'autosnap', 'Automatic Snap', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'endsnap', 'End', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'middlesnap', 'Middle', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'centersnap', 'Center', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'ortosnap', 'Ortogonal', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentsnap', 'Tangent', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'quadrantsnap', 'Quadrant', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'originsnap', 'Origin', self._onSnapCommand)
         # window
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
@@ -425,17 +428,26 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
         action = self.sender()
         if action:
-            if action.command=="endpoint":
-                self.scene.forceSnap= SNAP_POINT_ARRAY["END_POINT"] 
-            elif action.command=="middlepoint":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["MID_POINT"] 
-            elif action.command=="ortopoint":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["ORTO_POINT"] 
-            elif action.command=="tangentpoint":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["TANGENT_POINT"] 
-            elif action.command=="autopoint":
+            if action.command=="autosnap":
+                self.scene.forceSnap= SNAP_POINT_ARRAY["ALL"] 
+            elif action.command=="endsnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["END"] 
+            elif action.command=="middlesnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["MID"] 
+            elif action.command=="centersnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["CENTER"] 
+            elif action.command=="ortosnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["ORTO"] 
+            elif action.command=="tangentsnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["TANGENT"] 
+            elif action.command=="quadrantsnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["QUADRANT"] 
+            elif action.command=="originsnap":
+                self.scene.forceSnap=SNAP_POINT_ARRAY["ORIG"] 
+            else:
                 self.scene.forceSnap=SNAP_POINT_ARRAY["ALL"] 
-
+                
+        
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
         printer=QtGui.QPrinter()

@@ -87,7 +87,7 @@ class ICommand(object):
         self.updateMauseEvent( point, distance, entity, force)
         
     def updateMauseEvent(self, point, distance, entity, force):
-        snap=getClickedPoint(point, entity)
+        snap=getClickedPoint(point, entity, force)
         if len(self.__pointClick) <=self.index:
             self.__pointClick.append(point)
             self.__entClick.append(distance)
@@ -130,6 +130,7 @@ class ICommand(object):
             get the before clicked snap point
         """
         return self.getDummyBefore(self.getSnapClick)
+        
     def getLastForceSnap(self):    
         """
             get the before forced snap type
@@ -146,7 +147,6 @@ class ICommand(object):
         """
         if force==None:
             force=SNAP_POINT_ARRAY["ALL"]
-            
         snapPoint=None
         lastSnapType=self.getLastForceSnap()
         if SNAP_POINT_ARRAY["MID"] == force:
