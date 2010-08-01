@@ -1,4 +1,25 @@
-
+#
+# Copyright (c) 2009,2010 Matteo Boscolo
+#
+# This file is part of PythonCAD.
+#
+# PythonCAD is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PythonCAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with PythonCAD; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#
+# classes for interface segment
+#
 from Interface.Entity.base import *
 
 class Segment(BaseEntity):
@@ -21,7 +42,8 @@ class Segment(BaseEntity):
         y=min(self.y, self.y1)
         deltax=abs(self.x-self.x1)
         deltay=abs(self.y-self.y1)
-        return QtCore.QRectF(x,y ,deltax,deltay)
+        ret=QtCore.QRectF(x,y ,deltax,deltay)
+        return ret
 
     def drawShape(self, painterPath):    
         """
@@ -35,4 +57,5 @@ class Segment(BaseEntity):
         p1=QtCore.QPointF(self.x, self.y)
         p2=QtCore.QPointF(self.x1, self.y1)
         painter.drawLine(p1,p2)
+        
         #painter.drawRect(self.boundingRect()) #Used for debugging porpouse

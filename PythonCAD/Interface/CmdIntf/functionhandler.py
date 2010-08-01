@@ -87,12 +87,12 @@ class FunctionHandler(object):
         command = expression.upper()
         # is it a command from the command table?
         self.__edit_ctrl.clear()
-        if self._command_table.has_key(command):
+        if self._command_table.has_key(command):    # Interface command evaluation
             # call function
             # echo on the comand line
             self.printCommand(command)
             self._value = self._command_table[command]()
-        elif self.evaluateInner:
+        elif self.evaluateInner:                    # Inner Command evaluation
             self.printCommand(command)
             # echo on the comand line
             self.performCommand(self.evaluateInner, command)

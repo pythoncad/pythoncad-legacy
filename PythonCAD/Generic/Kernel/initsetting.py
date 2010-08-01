@@ -321,11 +321,15 @@ def getDefaultStyle():
 global SNAP_POINT_ARRAY
 global ACTIVE_SNAP_POINT
 
-SNAP_POINT_ARRAY={"ALL":0, 
-                    "END_POINT":1,
-                    "MID_POINT":2, 
-                    "ORTO_POINT":3, 
-                    "TANGENT_POINT":4}
+SNAP_POINT_ARRAY={'ALL':0, 
+                    'END':1,
+                    'MID':2, 
+                    'ORTO':3, 
+                    'TANGENT':4, 
+                    'CENTER':5,
+                    'QUADRANT':6,
+                    'ORIG':7  
+                    }
 
 ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["ALL"]
 

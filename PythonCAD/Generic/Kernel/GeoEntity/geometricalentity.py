@@ -48,14 +48,14 @@ class GeometricalEntity(dict):
         self.arguments=argNameType
         self._snapPoints=[]
     
-    def updateSnapPoint(self, force=None):
+    def updateSnapPoint(self, force=None, fromPoint=None, fromEnt=None):
         pass
     
-    def getUpdatedSnapPoints(self, force):
+    def getUpdatedSnapPoints(self, force, fromPoint=None,  fromEnt=None):
         """
             update the snappoint with force argument and return an array of geopoint
         """
-        self.updateSnapPoint(force)
+        self.updateSnapPoint(force, fromPoint, fromEnt)
         return self.snapPoints
     
     @property

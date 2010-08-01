@@ -73,13 +73,28 @@ class BaseCommand(object):
             return the active Message
         """
         return self.message[self.index]
-    
+
+    def getActiveMessage(self):
+        """
+            get Active message
+        """
+        _index=self.index+1
+        if len(self.message)>_index:
+            return self.message[_index]
+        else:
+            return "Press enter to ececute the command"
     def activeDefaultValue(self):
         """
             Return the active default value
         """
         return self.defaultValue[self.index]
-        
+    
+    def getActiveDefaultValue(self):
+        if self.index>=0 and self.index<=len(self.defaultValue)-1:
+            return self.defaultValue[self.index]
+        else:
+            return None   
+
     def previus(selfself):
         """
             came back with the iteration
@@ -110,19 +125,4 @@ class BaseCommand(object):
             this method here must be defined
         """
         pass
-        
-    def getActiveDefaultValue(self):
-        if self.index>=0 and self.index<=len(self.defaultValue)-1:
-            return self.defaultValue[self.index]
-        else:
-            return None
-            
-    def getActiveMessage(self):
-        """
-            get Active message
-        """
-        _index=self.index+1
-        if len(self.message)>_index:
-            return self.message[_index]
-        else:
-            return "Press enter to ececute the command"
+

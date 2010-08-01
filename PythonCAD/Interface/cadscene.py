@@ -59,6 +59,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.__oldClickPoint=None
         self.needPreview=False
         self.forceDirection=None
+        self.__lastPickedEntity=None
         # dinamic text editor
         self.qtInputPopUp=DinamicEntryLine()
         self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
@@ -83,31 +84,30 @@ class CadScene(QtGui.QGraphicsScene):
         """
             mouse move event
         """
-        if self.__oldClickPoint:
-            distance=self.getDistance(event)
-            qtItem=[self.itemAt(event.scenePos())]
-            x, y=self.getPosition(event.scenePos(), qtItem)
-            point=QtCore.QPointF(x, y*-1.0)
-            self.updatePreview(self,point, distance)
+#        if self.__oldClickPoint:
+#            distance=self.getDistance(event)
+#            qtItem=[self.itemAt(event.scenePos())]
+#            x, y=self.getPosition(event.scenePos(), qtItem)
+#            point=QtCore.QPointF(x, y*-1.0)
+#            self.updatePreview(self,point, distance)
         self.mouseX=event.scenePos().x()
         self.mouseY=event.scenePos().y()
         super(CadScene, self).mouseMoveEvent(event)
+        return 
     
     def mousePressEvent(self, event):
         if not self.isInPan:
             qtItem=self.itemAt(event.scenePos())
             p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
             if qtItem:
-                print "item : ", qtItem
                 qtItem.setSelected(True)
                 self.updateSelected()
-            else:
-                print "No item selected"
+            #else:
+            #    print "No item selected"
             #re fire the event
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
-        print ">>mouseReleaseEvent"
         if not self.isInPan:
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
@@ -117,11 +117,14 @@ class CadScene(QtGui.QGraphicsScene):
             pyCadEvent=((x, y), qtItems, distance)
             self.pyCadScenePressEvent(self, pyCadEvent)
             self.forceDirection=None
+            if len(qtItems)==1:
+                self.__lastPickedEntity=qtItems[0]
+            else:
+                self.__lastPickedEntity=None
             #re fire the event
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
-        print "<<mouseReleaseEvent"
         super(CadScene, self).mouseReleaseEvent(event)
         
     def getDistance(self, event):
@@ -136,13 +139,12 @@ class CadScene(QtGui.QGraphicsScene):
         """
             correct the mouse cords 
         """
-        print ">>>     ---   getPosition"
         x=eventPos.x()
         y=eventPos.y()
         for qtItem in qtItems:
             if qtItem and isinstance(qtItem, BaseEntity):
-                print ">>>     ---              >>", self.forceSnap
-                p=qtItem.nearestSnapPoint(eventPos, self.forceSnap, None)
+                #                           qtPointEvent, snapForceType, fromEntity
+                p=qtItem.nearestSnapPoint(eventPos, self.forceSnap, self.__lastPickedEntity)
                 if p:
                     x=p.x()
                     y=p.y()

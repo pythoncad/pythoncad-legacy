@@ -39,14 +39,13 @@ class BaseEntity(QtGui.QGraphicsItem):
         self.lineWith=1.0
         return
     
-    def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromCommand=None):
+    def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromEntity=None):
         """
             compute the nearest point and return a qtPoint
         """
         pClick=Point(qtPointEvent.x(), qtPointEvent.y()*-1.0)
         ePoint=None
-        print "nearestSnapPoint->snapForceType", snapForceType
-        for p in self.geoItem.getUpdatedSnapPoints(snapForceType):
+        for p in self.geoItem.getUpdatedSnapPoints(snapForceType, pClick,fromEntity):
             distance=p.dist(pClick)
             if ePoint==None:
                 oldDistance=distance
@@ -77,9 +76,11 @@ class BaseEntity(QtGui.QGraphicsItem):
     def toolTipMessage(self):
         toolTipMessage=self.geoItem.info
         return toolTipMessage
+    
     def updateSelected(self):    
         self.setColor()
         self.update(self.boundingRect())
+        return
         
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemSelectedChange:
@@ -100,22 +101,23 @@ class BaseEntity(QtGui.QGraphicsItem):
             else:
                 r, g, b=self.style.getStyleProp("entity_color")
         self.color = QtGui.QColor.fromRgb(r, g, b)       
-    
+        return
+        
     def setHiglight(self):
         r, g, b=PYTHONCAD_HIGLITGT_COLOR
         self.color = QtGui.QColor.fromRgb(r, g, b)
+        return
     
     def hoverEnterEvent(self, event):
         self.setHiglight()
-        print "hoverEnterEvent"
-        #self.update(self.boundingRect())
         super(BaseEntity, self).hoverEnterEvent(event)
-    
+        return
+        
     def hoverLeaveEvent(self, event):
         self.setColor()
         #self.update(self.boundingRect())
-        print "hoverLeaveEvent"
         super(BaseEntity, self).hoverLeaveEvent(event)
+        return
         
     def drawGeometry(self, painter, option, widget):
         """
@@ -149,7 +151,8 @@ class BaseEntity(QtGui.QGraphicsItem):
         #draw geometry
         #painter.drawPath(self.shape())
         self.drawGeometry(painter,option,widget)
-
+        return 
+        
     def getDistance(self, qtPointF_1, qtPointF_2):
         """
             calculate the distance betwing the two line
