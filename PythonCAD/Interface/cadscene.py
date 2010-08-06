@@ -41,6 +41,7 @@ from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
 
 from Kernel.pycadevent              import PyCadEvent
+from Kernel.GeoEntity.point         import Point
 
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
@@ -65,8 +66,8 @@ class CadScene(QtGui.QGraphicsScene):
         self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
         self.addWidget(self.qtInputPopUp)
         # setGeometry 
-        self.mouseX=0.0
-        self.mouseY=0.0
+        #self.mouseX=0.0
+        #self.mouseY=0.0
         self.isInPan=False
         # Create 0,0 arrows
         #self.addItem(ArrowItem())
@@ -76,7 +77,21 @@ class CadScene(QtGui.QGraphicsScene):
         #
         self.forceSnap=None
         self._cmdZoomWindow=None
-        
+        #
+        # new command implementation
+        #
+        self.__activeCommand=None
+        self.activeICommand=None
+    @property
+    def activeCommand(self):
+        """
+            return the active command
+        """
+        return self.__activeCommand
+    @activeCommand.setter
+    def activeCommand(self, value):
+        self.__activeCommand=value    
+
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
@@ -84,14 +99,15 @@ class CadScene(QtGui.QGraphicsScene):
         """
             mouse move event
         """
-#        if self.__oldClickPoint:
-#            distance=self.getDistance(event)
-#            qtItem=[self.itemAt(event.scenePos())]
-#            x, y=self.getPosition(event.scenePos(), qtItem)
-#            point=QtCore.QPointF(x, y*-1.0)
+        if self.activeICommand:
+            scenePos=event.scenePos()
+            distance=None
+            point=Point(scenePos.x(), scenePos.y()*-1.0)
+            qtItem=[self.itemAt(scenePos)]
+            if self.__oldClickPoint:
+                distance=self.getDistance(event)
+            self.activeICommand.updateMauseEvent(point, distance, qtItem)
 #            self.updatePreview(self,point, distance)
-        self.mouseX=event.scenePos().x()
-        self.mouseY=event.scenePos().y()
         super(CadScene, self).mouseMoveEvent(event)
         return 
     
@@ -111,12 +127,18 @@ class CadScene(QtGui.QGraphicsScene):
         if not self.isInPan:
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
-            x, y=self.getPosition(event.scenePos(), qtItems)
+            #x, y=self.getPosition(event.scenePos(), qtItems)
             distance=self.getDistance(event)
             self.__oldClickPoint=event.scenePos()
-            pyCadEvent=((x, y), qtItems, distance)
-            self.pyCadScenePressEvent(self, pyCadEvent)
-            self.forceDirection=None
+            #pyCadEvent=((x, y), qtItems, distance)
+            #self.pyCadScenePressEvent(self, pyCadEvent)
+            item=None
+            if len(qtItems)>0:
+                item=qtItems[0]
+            if self.activeICommand:
+                point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
+                self.activeICommand.addMauseEvent(point, distance,item )
+            self.forceDirection=None # reset force direction for the imput value
             if len(qtItems)==1:
                 self.__lastPickedEntity=qtItems[0]
             else:
@@ -135,33 +157,7 @@ class CadScene(QtGui.QGraphicsScene):
             distance=math.sqrt(deltaX**2+deltaY**2)
         return distance
         
-    def getPosition(self, eventPos, qtItems):
-        """
-            correct the mouse cords 
-        """
-        x=eventPos.x()
-        y=eventPos.y()
-        for qtItem in qtItems:
-            if qtItem and isinstance(qtItem, BaseEntity):
-                #                           qtPointEvent, snapForceType, fromEntity
-                p=qtItem.nearestSnapPoint(eventPos, self.forceSnap, self.__lastPickedEntity)
-                if p:
-                    x=p.x()
-                    y=p.y()
-                    break
 
-        if self.forceDirection and  self.__oldClickPoint:
-            if self.forceDirection=="H":
-                y=self.__oldClickPoint.y()
-            elif self.forceDirection=="V":
-                x=self.__oldClickPoint.x()
-            elif self.forceDirection.find("F")>=0:
-                angle=convertAngle(self.forceDirection.split("F")[1])
-                if angle:
-                    x=self.__oldClickPoint.x()+x
-                    y=self.__oldClickPoint.y()+math.cos(angle)*x
-        y=y*-1.0
-        return x, y
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
@@ -177,10 +173,10 @@ class CadScene(QtGui.QGraphicsScene):
             self.forceDirection='H'
         elif event.key()==QtCore.Qt.Key_V:
             self.forceDirection='V'
-        elif event.key()==QtCore.Qt.Key_F:
-            self.qtInputPopUp.setText('')
-            self.qtInputPopUp.setPos(self.mouseX, self.mouseY)
-            self.qtInputPopUp.show()
+        #elif event.key()==QtCore.Qt.Key_F:
+        #    self.qtInputPopUp.setText('')
+        #    self.qtInputPopUp.setPos(self.mouseX, self.mouseY)
+        #    self.qtInputPopUp.show()
         super(CadScene, self).keyPressEvent(event)
     
     def updateSelected(self):

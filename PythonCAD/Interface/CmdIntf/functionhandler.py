@@ -28,8 +28,8 @@
 from Kernel.GeoEntity.point     import Point
 from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
+from Kernel.unitparser          import decodePoint, convertLengh, convertAngle
 
-from Interface.unitparser       import decodePoint, convertLengh, convertAngle
 from Interface.evaluator        import Evaluator
 from Interface.Preview.factory  import getPreviewObject
 
@@ -92,12 +92,13 @@ class FunctionHandler(object):
             # echo on the comand line
             self.printCommand(command)
             self._value = self._command_table[command]()
-        elif self.evaluateInner:                    # Inner Command evaluation
-            self.printCommand(command)
+        #elif self.evaluateInner:                    # Inner Command evaluation
+        #    self.printCommand(command)
+            
             # echo on the comand line
-            self.performCommand(self.evaluateInner, command)
-            if self.evaluateInner:
-                self.printOutput(self.evaluateInner.getActiveMessage())
+            #self.performCommand(self.evaluateInner, command)
+            #if self.evaluateInner:
+            #    self.printOutput(self.evaluateInner.getActiveMessage())
         else:
             try:
                 # let python evaluate expression

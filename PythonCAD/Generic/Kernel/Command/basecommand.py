@@ -20,6 +20,9 @@
 #
 #This module provide basic command function
 #
+from Kernel.exception   import *
+from Kernel.unitparser  import *
+
 class BaseCommand(object):
     """
         this class provide a base command
@@ -34,16 +37,28 @@ class BaseCommand(object):
         self.defaultValue=[]
         self.index=-1
         self.document=document
-    
-    def resetToDefault(self):    
+    def __iter__(self):
+        return self
+    def __setitem__(self, key, value):
+        """
+            set the value of the command
+        """
+        if not isinstance(value, tuple) or len(value)!=3:
+            raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
+        value=self.translateCmdValue(value)
+        self.value.append(value)    
+    def resetToDefault(self): 
+        """
+            Reset the command to default value
+        """   
         self.value=[]
         for val in self.defaultValue:
             self.value.append(val)
-
-    def __iter__(self):
-        return self
-        
+    
     def reset(self):
+        """
+            reset the command 
+        """
         self.index=-1
         self.value=[]
     @property
@@ -83,6 +98,7 @@ class BaseCommand(object):
             return self.message[_index]
         else:
             return "Press enter to ececute the command"
+
     def activeDefaultValue(self):
         """
             Return the active default value
@@ -90,6 +106,9 @@ class BaseCommand(object):
         return self.defaultValue[self.index]
     
     def getActiveDefaultValue(self):
+        """
+            get the default value for the active command input
+        """
         if self.index>=0 and self.index<=len(self.defaultValue)-1:
             return self.defaultValue[self.index]
         else:
@@ -110,14 +129,13 @@ class BaseCommand(object):
         """
         return self.exception
         
-    def __setitem__(self, key, value):
-        """
-            set the value of the command
-        """
-        self.value.append(value)
+
     
     @property
     def lenght(self):
+        """
+            get the number of command imput value that the user have to provide
+        """
         return len(self.exception)
     
     def applyCommand(self):
@@ -125,4 +143,91 @@ class BaseCommand(object):
             this method here must be defined
         """
         pass
+        
+    def translateCmdValue(self ,value):
+        """
+            translate the imput value based on exception
+        """
+        point, entitys, distance= value
+        exitValue=None
+        try:
+            raise self.activeException()(None)
+        except ExcPoint:
+            exitValue=point
+        except ExcEntity:
+            if entitys:
+                exitValue=str(entitys[0].ID)
+        except ExcMultiEntity:
+            exitValue=self.getIdsString(entitys)
+        except ExcEntityPoint:
+            if entitys:
+                sPoint=point
+                id=str(entitys[0].ID)
+                exitValue="%s@%s"%(str(id), str(sPoint))
+        except (ExcLenght):
+            if distance:
+                exitValue=self.convertToFloat(distance)
+        except(ExcAngle):
+            p1=Point(0.0, 0.0)
+            x, y=point
+            p2=Point(x, y)
+            exitValue=Vector(p1, p2).absAng
+        except:
+            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
+        finally: return exitValue
+        
+    def getIdsString(self, selectedItems):
+        """
+            get the selected entity in terms of ids
+        """
+        text=None
+        for ent in selectedItems:
+            if not text:
+                text=''
+                text+=str(ent.ID)
+            else:
+                text+=","+str(ent.ID)
+        return text   
+                
+    def convertToBool(self, msg):   
+        """
+            return an int from user
+        """        
+        if msg=="Yes":
+            return True
+        else:
+            return False
 
+    def convertToInt(self, msg):   
+        """
+            return an int from user
+        """        
+        if msg:
+            return int(convertLengh(msg))
+        return None
+        
+    def convertToFloat(self, msg):
+        """
+            return a float number
+        """
+        if msg:
+            return convertLengh(msg)
+        return None
+        
+    def convertToAngle(self, msg):
+        """
+            convert the angle using sympy
+        """
+        if msg:
+            p=convertAngle(msg)
+            return p
+        return None
+        
+    def convertToPoint(self, msg):
+        """
+            ask at the user to imput a point 
+        """
+        if msg:
+            p=decodePoint(msg)
+            return p
+        return None

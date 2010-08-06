@@ -40,6 +40,7 @@ from Interface.cadview              import CadView
 from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
 from Interface.Entity.base          import BaseEntity
+from Interface.Command.icommand     import ICommand
 from Kernel.exception               import *  
 from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
@@ -490,8 +491,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         
     def callDocumentCommand(self, commandName):
         try:
-            pointCmd=self.__application.getCommand(commandName)
-            self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
+            self.scene.activeCommand=self.__application.getCommand(commandName)
+            #self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
+            self.scene.activeICommand=ICommand(self.scene)
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
             

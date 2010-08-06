@@ -18,88 +18,120 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-# This Module provide a Interface Command 
+# This Module provide a Interface Command managing the preview the and the snap
+# system
 #
-
 from Kernel.initsetting             import SNAP_POINT_ARRAY
-from Kernel.Command.segmentcommand  import SegmentCommand
+from Kernel.GeoEntity.point         import Point
+from Interface.Preview.factory      import *
 
 class ICommand(object):
     """
         this class provide base command operation 
     """
-    activeSnap=SNAP_POINT_ARRAY("ALL")
-    drawPreview=True
+    activeSnap=SNAP_POINT_ARRAY["ALL"] #define the active snap system
+    drawPreview=False   # enable the preview system
+    automaticApply=True # apply the command at the last insert value
     def __init__(self, scene):
-        self.__scene=scene #this is needed for the preview creation
-        self.__pointClick=[]
-        self.__entClick=[]
-        self.__distanceClick=[]
-        self.__snapClick=[]
+        self.__scene=scene                      # This is needed for the preview creation
+        self.__kernelCommand = scene.activeCommand
+        self.__previewItem=getPreviewObject(self.__kernelCommand)
+        scene.addItem( self.__previewItem)      # Add preview item on creation
+        self.__point=[]
+        self.__entity=[]
+        self.__distance=[]
+        self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
+        self.__forceDirection=self.__scene.forceDirection
+
+    def addMauseEvent(self, point, distance, entity, force=None):
+        """
+            add value to a new slot of the command 
+        """
+        try:
+            cmdIndex=self.__kernelCommand.next()
+        except StopIteration:
+            self.__kernelCommand.applyCommand()
+            return
+            
+        exception,message=cmdIndex
+        snap=self.getClickedPoint(point, entity, force)
+        self.__kernelCommand[cmdIndex]=(snap,entity,distance)
+        self.__point.append(point)
+        self.__entity.append(entity)
+        self.__distance.append(distance)
+        self.__snap.append(snap)
+        self.__forceSnap.append(force)
+        self.updatePreview()   
+        self.__index+=1
+        if self.automaticApply:
+            if(self.__index>=self.__kernelCommand.lenght-1): #Apply the command
+                self.__kernelCommand.applyCommand()    
         
+    def updateMauseEvent(self, point, distance, entity, force=None):
+        """
+            update value to the active slot of the command
+        """
+        snap=self.getClickedPoint(point, entity, force)
+        print len(self.__snap)
+        if self.index>-1:
+            self.__point[self.index]=point
+            self.__entity[self.index]=entity
+            self.__distance[self.index]=distance
+            self.__snap[self.index]=snap
+            self.__forceSnap[self.index]=force
+#            self.__point.append(point)
+#            self.__entity.append(entity)
+#            self.__distance.append(distance)
+#            self.__snap.append(snap)
+#            self.__forceSnap.append(force)
+
+        #
+        #   mange preview
+        #
+        self.updatePreview()
+        
+    def updatePreview(self):        
+        if self.drawPreview:
+            self.__previewItem.updatePreview(self.getActiveSnapClick()
+                    , self.getActiveDistanceClick(), self.__kernelCommand)
+
     def getPointClick(self, index):
         """
             return the index clicked entity
         """
-        if len(self.__pointClick)>0 and len(self.__pointClick)<index:
-            return self.__pointClick[index]
-        raise IndexError
+        return self.getDummyElement(self.__point, index)
         
     def getEntityClick(self, index):
         """
             return the index clicked entity
         """
-        if len(self.__entClick)>0 and len(self.__entClick)<index:
-            return self.__entClick[index]
-        raise IndexError
+        return self.getDummyElement(self.__entity, index)
 
     def getDistanceClick(self, index):
         """
             return the index clicked entity
         """
-        if len(self.__distanceClick)>0 and len(self.__distanceClick)<index:
-            return self.__distanceClick[index]
-        raise IndexError
+        return self.getDummyElement(self.__distanceClick, index)
         
     def getSnapClick(self, index):
         """
             return the index clicked entity
         """
-        if len(self.__snapClick)>0 and len(self.__snapClick)<index:
-            return self.__snapClick[index]
-        raise IndexError 
+        return self.getDummyElement(self.__snap, index)
         
     def getForceSnap(self, index):
         """
             return the index clicked entity
         """
-        if len(self.__forceSnap)>0 and len(self.__forceSnap)<index:
-            return self.__forceSnap[index]
+        return self.getDummyElement(self.__forceSnap, index)
+    
+    def getDummyElement(self, array, index):
+        if len(array)>0 and index<self.index:
+            return array[index]
         raise IndexError   
-        
-    def addMauseEvent(self, point, distance, entity, force):
-        """
-            add a clicked point
-        """
-        self.__index+=1
-        self.updateMauseEvent( point, distance, entity, force)
-        
-    def updateMauseEvent(self, point, distance, entity, force):
-        snap=getClickedPoint(point, entity, force)
-        if len(self.__pointClick) <=self.index:
-            self.__pointClick.append(point)
-            self.__entClick.append(distance)
-            self.__distance.append(entity)
-            self.__snapClick.append(snap)
-            self.__forceSnap.append(force)
-        else:
-            self.__pointClick[self.index]=(point)
-            self.__entClick[self.index]=(distance)
-            self.__distance[self.index]=(entity)
-            self.__snapClick[self.index]=(snap)
-            self.__forceSnap[self.index]=(force)
+
             
     @property
     def index(self):
@@ -111,12 +143,31 @@ class ICommand(object):
         """
         return self.__scene
     
+    def getDummyActive(self, func):
+        """
+            parametric function to return an element of an array
+        """
+        if self.index>0:
+            return func(self.index)
+        return None
+    def getActiveSnapClick(self):
+        """
+            get the clicked snap point
+        """
+        return self.getDummyActive(self.getSnapClick)    
+    
+    def getActiveDistanceClick(self):
+        """
+            get the clicked distance
+        """
+        return self.getDummyActive(self.getDistanceClick)  
+        
     def getDummyBefore(self, func):
         """
             parametric function to return a previews element of an array
         """
         if self.index>0:
-            return func(self.index+1)
+            return func(self.index-1)
         return None
         
     def getBeforeEntity(self):
@@ -136,15 +187,37 @@ class ICommand(object):
             get the before forced snap type
         """
         return self.getDummyBefore(self.getForceSnap)
+    
+    def correctPositionForcedDirection(self, point):
+        """
+            correct the point cords 
+        """
+        x, y=point.getCoords()
+        lastSnap=None
+        if self.index>-1:
+            lastSnap=self.getLastForceSnap()
         
+        if self.__forceDirection and  lastSnap !=None:
+            if self.__forceDirection=="H":
+                y=lastSnap.y
+            elif self.forceDirection=="V":
+                x=lastSnap.x
+            #elif self.forceDirection.find("F")>=0:
+            #    angle=convertAngle(self.forceDirection.split("F")[1])
+            #    if angle:
+            #        x=self.lastSnap.x+x
+            #        y=self.lastSnap.y+math.cos(angle)*x
+        return Point(x, y)
+
     def getClickedPoint(self,  point, entity,force=None):
         """
             Get segment snapPoints
             Remarks:
-            force:      [initsetting.SNAP_POINT_ARRAY]
+            force:      [initsetting.SNAP_POINT_ARRAY element]
             fromPoint:  [Geoent.Pointfloat]
             fromEnt:    [GeoEnt.*]
         """
+        point=self.correctPositionForcedDirection(point)
         if force==None:
             force=SNAP_POINT_ARRAY["ALL"]
         snapPoint=None
@@ -213,6 +286,7 @@ class ICommand(object):
             this fucnticion compute the orto to point snap constraint
         """
         returnVal=None
+        #TODO: getSnapOrtoPoint
         #this function have to be implemented as follow
         #   1) get the orto point from the previews entity
         #   2) update the previews snap point
@@ -222,6 +296,7 @@ class ICommand(object):
         """
             this fucnticion compute the Tangent to point snap constraint
         """
+        #TODO: getSnapTangentPoint
         returnVal=None
         #this function have to be implemented as follow
         #   1) get the Tangent point from the previews entity
@@ -233,29 +308,28 @@ class ICommand(object):
             this fucnticion compute midpoint snap constraint to the entity argument
         """
         returnVal=None
-        #this function have to be implemented as follow
-        #   1) get the mid point from entity attributes if the entity have the mid
-        #       point methods
+        if getattr(entity, 'getMiddlePoint', None):
+            returnVal=entity.getMiddlePoint()
         return returnVal
     
     def getSnapEndPoint(self, entity, point):
         """
             this fucnticion compute the  snap endpoint 
         """
-        returnVal=None
-        #this function have to be implemented as follow
-        #   1) get the end point from entity attributes if the entity 
-        #       point methods
-        return returnVal
-        #snapPoint=self.getSnapTangentPointEnd(entity)
-        #p1, p2=self.getEndpoints()
-        #snapPoints.append(p1)
-        #snapPoints.append(p2)
+        if getattr(entity, 'getEndpoints', None):
+            p1, p2=entity.getEndpoints()
+            if point.dist(p1)>point.dist(p2):
+                return p1
+            else:
+                return p2
+        else:
+            return None
         
     def getTangentOrtoSnap(self, entity):
         """
             this fucnticion compute the snap from Tangent entity  to Orto entity
         """
+        #TODO: getTangentOrtoSnap
         returnVal=None
         #this function have to be implemented as follow
         # no idea how to implements this think ..
@@ -266,6 +340,7 @@ class ICommand(object):
         """
             this fucnticion compute the  snap from point to Ortogonal entity
         """
+        #TODO: getPointOrtoSnap
         returnVal=None
         #this function have to be implemented as follow
         # 1) ask to the entity the orto point from point
@@ -275,6 +350,7 @@ class ICommand(object):
         """
             this fucnticion compute the  snap from the center of an entity
         """
+        #TODO: getSnapCenterPoint
         returnVal=None
         #this function have to be implemented as follow
         # 1) ask to the entity to get the center point
@@ -284,35 +360,9 @@ class ICommand(object):
         """
             this fucnticion compute the  snap from the quadrant 
         """
+        #TODO: getSnapQuadrantPoint
         returnVal=None
         #this function have to be implemented as follow
         #   1) get the quadrant point of an entity
         #   2) choose the nearest point 
         return returnVal
-class ISegmentCommand(ICommand):
-    """
-        this class implements all the segment command interface
-    """
-    def __init__(self,scene):
-        self.kernelCommand=SegmentCommand()
-        super(ICommand, self).__init__(scene)
-    
-    def addMauseEvent(self, point, distance, entity, snap):
-        """
-            overwrite mouse click event
-        """
-        super(ICommand, self).addMauseEvent(self, point, distance, entity, snap)
-        if(self.drawPreview):
-            self.drawPreviewItem()
-    
-    def drawPreviewItem(self):
-        """
-            draw the segment preview item
-        """
-        pass
-
-    def updateCommandValues(self):
-        pass
-    
-   
-    

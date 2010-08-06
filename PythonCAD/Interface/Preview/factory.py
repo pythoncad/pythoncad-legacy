@@ -27,7 +27,7 @@ from Kernel.Command.ellipsecommand      import EllipseCommand
 from Kernel.Command.polylinecommand     import PolylineCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 
-from Interface.Preview.segment      import Segment
+from Interface.Preview.segment      import Segment, QtSegmentItem
 from Interface.Preview.arc          import Arc
 from Interface.Preview.rectangle    import Rectangle
 from Interface.Preview.ellipse      import Ellipse
@@ -36,7 +36,8 @@ from Interface.Preview.polygon      import Polygon
 
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
-        return Segment(command)
+        #return Segment(command)
+        return QtSegmentItem(command)
     elif isinstance(command , ArcCommand):
         return Arc(command)
     elif isinstance(command , RectangleCommand):
