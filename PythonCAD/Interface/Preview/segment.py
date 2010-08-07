@@ -26,19 +26,6 @@ from Interface.Preview.base         import *
 from Kernel.GeoEntity.segment       import Segment as geoSegment
 from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
 #
-class Segment(Base):
-    def __init__(self, command):
-        super(Segment, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            Return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtSegmentItem(self._command)
-        else:
-            return None
-
 class QtSegmentItem(BaseQtPreviewItem):
     def __init__(self,command):
         super(QtSegmentItem, self).__init__(command)
@@ -55,7 +42,6 @@ class QtSegmentItem(BaseQtPreviewItem):
         """
             Overloading of the qt bounding rectangle
         """
-        
         if self.value[0]!=None and self.value[1]!=None:
             x=min(self.value[0].x(), self.value[1].x())
             y=min(self.value[0].y(), self.value[1].y())

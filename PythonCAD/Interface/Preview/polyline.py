@@ -24,19 +24,6 @@ import math
 
 from Interface.Preview.base         import *
 
-class Polyline(Base):
-    def __init__(self, command):
-        super(Polyline, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtPolylineItem(self._command)
-        else:
-            return None
-
 class QtPolylineItem(BaseQtPreviewItem):
     def __init__(self, command):
         super(QtPolylineItem, self).__init__(command)

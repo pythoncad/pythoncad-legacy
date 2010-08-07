@@ -62,9 +62,9 @@ class CadScene(QtGui.QGraphicsScene):
         self.forceDirection=None
         self.__lastPickedEntity=None
         # dinamic text editor
-        self.qtInputPopUp=DinamicEntryLine()
-        self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
-        self.addWidget(self.qtInputPopUp)
+        #self.qtInputPopUp=DinamicEntryLine()
+        #self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
+        #self.addWidget(self.qtInputPopUp)
         # setGeometry 
         #self.mouseX=0.0
         #self.mouseY=0.0
@@ -136,6 +136,9 @@ class CadScene(QtGui.QGraphicsScene):
             if len(qtItems)>0:
                 item=qtItems[0]
             if self.activeICommand:
+                if event.button()==QtCore.Qt.RightButton:
+                    self.activeICommand.applyCommand()
+                    
                 point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
                 self.activeICommand.addMauseEvent(point, distance,item )
             self.forceDirection=None # reset force direction for the imput value
@@ -156,15 +159,15 @@ class CadScene(QtGui.QGraphicsScene):
             deltaY=abs(self.__oldClickPoint.y()-event.scenePos().y())
             distance=math.sqrt(deltaX**2+deltaY**2)
         return distance
-        
-
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
-            self.qtInputPopUp.hide()
+            #self.qtInputPopUp.hide()
             self.clearSelection()
             self.updateSelected()
             self.forceDirection=None
+            self.__activeCommand=None
+            self.activeICommand=None
         elif event.key()==QtCore.Qt.Key_Return:
             self.pyCadSceneApply()
         elif event.key()==QtCore.Qt.Key_Space:
@@ -179,6 +182,15 @@ class CadScene(QtGui.QGraphicsScene):
         #    self.qtInputPopUp.show()
         super(CadScene, self).keyPressEvent(event)
     
+    def textInput(self, value):
+        """
+            someone give some test imput at the scene
+        """
+        self.forceDirection=None # reset force direction for the imput value
+        self.updateSelected()
+        self.activeICommand.addTextEvent(value)
+            
+            
     def updateSelected(self):
         """
             update all the selected items

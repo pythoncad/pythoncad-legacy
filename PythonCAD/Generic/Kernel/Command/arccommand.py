@@ -42,6 +42,7 @@ class ArcCommand(BaseCommand):
     def applyCommand(self):
         if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
+        self.applyDefault()
         arg={"ARC_0":self.value[0], 
                 "ARC_1":self.value[1], 
                 "ARC_2":self.value[2], 

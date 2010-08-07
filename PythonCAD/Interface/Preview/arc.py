@@ -24,19 +24,6 @@ import math
 
 from Interface.Preview.base         import *
 
-class Arc(Base):
-    def __init__(self, command):
-        super(Arc, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtArcItem(self._command)
-        else:
-            return None
-
 class QtArcItem(BaseQtPreviewItem):
     def __init__(self, command):
         super(QtArcItem, self).__init__(command)

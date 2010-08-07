@@ -24,19 +24,6 @@ import math
 
 from Interface.Preview.base         import *
 
-class Ellipse(Base):
-    def __init__(self, command):
-        super(Ellipse, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtEllipseItem(self._command)
-        else:
-            return None
-
 class QtEllipseItem(BaseQtPreviewItem):
     def __init__(self, command):
         super(QtEllipseItem, self).__init__(command)

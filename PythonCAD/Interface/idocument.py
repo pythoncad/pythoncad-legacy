@@ -17,11 +17,12 @@ class IDocument(QtGui.QMdiSubWindow):
         # layer list
         self.__layer_dock = LayerDock(self)
         self.__scene = CadScene(document)
-        self.__scene.pyCadScenePressEvent+=self.__cmdInf.evaluateMouseImput
-        self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
-        self.__scene.updatePreview+=self.__cmdInf.updatePreview
-        self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
-        self.__scene.keySpace+=self.__cmdInf._getCommandline().setFocus
+        #self.__scene.pyCadScenePressEvent+=self.__cmdInf.evaluateMouseImput
+        #self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
+        #self.__scene.updatePreview+=self.__cmdInf.updatePreview
+        #self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
+        self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
+        self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
         self.__view = CadView(self.__scene, self)
         self.__scene.zoomWindows+=self.__view.zoomWindows
         # the graphics view is the main/central component

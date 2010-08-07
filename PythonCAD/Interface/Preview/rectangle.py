@@ -25,19 +25,6 @@ import math
 from Interface.Preview.base         import *
 from Kernel.GeoEntity.segment       import Segment as geoSegment
 
-class Rectangle(Base):
-    def __init__(self, command):
-        super(Rectangle, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtRectangleItem(self._command)
-        else:
-            return None
-
 class QtRectangleItem(BaseQtPreviewItem):
     def __init__(self,command):
         super(QtRectangleItem, self).__init__(command)

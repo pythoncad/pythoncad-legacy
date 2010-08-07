@@ -20,8 +20,9 @@
 #
 #This module provide basic command function
 #
-from Kernel.exception   import *
-from Kernel.unitparser  import *
+from Kernel.exception           import *
+from Kernel.unitparser          import *
+from Kernel.GeoEntity.point     import Point
 
 class BaseCommand(object):
     """
@@ -37,6 +38,7 @@ class BaseCommand(object):
         self.defaultValue=[]
         self.index=-1
         self.document=document
+        self.automaticApply=True
     def __iter__(self):
         return self
     def __setitem__(self, key, value):
@@ -54,7 +56,13 @@ class BaseCommand(object):
         self.value=[]
         for val in self.defaultValue:
             self.value.append(val)
-    
+    def applyDefault(self):
+        i=0
+        for value in self.value:
+            if value==None:
+                self.value[i]=self.defaultValue[i]
+            i+=1
+            
     def reset(self):
         """
             reset the command 
@@ -82,14 +90,9 @@ class BaseCommand(object):
             Return the active exception
         """
         return self.exception[self.index]
-        
-    def activeMessage(self):
-        """
-            return the active Message
-        """
-        return self.message[self.index]
 
-    def getActiveMessage(self):
+    @property
+    def activeMessage(self):
         """
             get Active message
         """
@@ -148,7 +151,7 @@ class BaseCommand(object):
         """
             translate the imput value based on exception
         """
-        point, entitys, distance= value
+        point, entitys, distance = value
         exitValue=None
         try:
             raise self.activeException()(None)
@@ -168,10 +171,13 @@ class BaseCommand(object):
             if distance:
                 exitValue=self.convertToFloat(distance)
         except(ExcAngle):
-            p1=Point(0.0, 0.0)
-            x, y=point
-            p2=Point(x, y)
-            exitValue=Vector(p1, p2).absAng
+            if point: # case of mouse input
+                p1=Point(0.0, 0.0)
+                x, y=point
+                p2=Point(x, y)
+                exitValue=Vector(p1, p2).absAng
+            else:
+                exitValue=distance
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue

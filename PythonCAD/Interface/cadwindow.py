@@ -62,7 +62,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #pythoncad kernel
         self.__application = Application()
         self.__cmd_intf = CmdIntf(self)
-        self.__cmd_intf.FunctionHandler.commandExecuted+=self.commandExecuted
+        #self.__cmd_intf.FunctionHandler.commandExecuted+=self.commandExecuted
         # create all dock windows
         self._createDockWindows()
         # create status bar
@@ -84,19 +84,19 @@ class CadWindowMdi(QtGui.QMainWindow):
     @property
     def Application(self):
         """
-        get the kernel application object
+            get the kernel application object
         """
         return self.__application
     @property
     def LayerDock(self):
         """
-        get the layer tree dockable window
+            get the layer tree dockable window
         """
         return self.__layer_dock   
         
     def _createStatusBar(self):
         '''
-        Creates the statusbar object.
+            Creates the statusbar object.
         '''
         self.statusBar().showMessage("Ready")
         return    
@@ -106,16 +106,19 @@ class CadWindowMdi(QtGui.QMainWindow):
         
     def _createDockWindows(self):
         '''
-        Creates all dockable windows for the application
+            Creates all dockable windows for the application
         '''
         # commandline
-        command_dock = self.__cmd_intf.Commandline
+        command_dock = self.__cmd_intf.commandLine
         # if the commandline exists, add it
         if not command_dock is None:
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
         return    
     
     def closeEvent(self, event):
+        """
+            manage close event
+        """
         self.mdiArea.closeAllSubWindows()
         if self.activeMdiChild():
             event.ignore()
@@ -125,7 +128,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             
     def subWindowActivatedEvent(self):
         """
-            sub windows activation
+            Sub windows activation
         """
         if self.mdiArea.activeSubWindow():
             self.resetCommand()
@@ -212,7 +215,7 @@ class CadWindowMdi(QtGui.QMainWindow):
 
     def _registerCommands(self):
         '''
-        Register all commands that are handed by this object
+            Register all commands that are handed by this object
         '''
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
@@ -329,6 +332,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             on open recent file
         """
+        #FIXME: if in the command line we insert file_1 or file_2
+        #here we get en error action dose not have command attributes
+        # action is en edit command not an action and have an empty value
         action = self.sender()
         if action:
             spool, index=action.command.split('_')
@@ -351,68 +357,68 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
     
     def _onPoint(self):
-        self.statusBar().showMessage("CMD:Point", 2000)
+        self.statusBar().showMessage("CMD:Point")
         self.callDocumentCommand('POINT')
         return    
     def _onSegment(self):
-        self.statusBar().showMessage("CMD:Segment", 2000)
+        self.statusBar().showMessage("CMD:Segment")
         self.callDocumentCommand('SEGMENT')
         return
     def _onArc(self):
-        self.statusBar().showMessage("CMD:Arc", 2000)
+        self.statusBar().showMessage("CMD:Arc")
         self.callDocumentCommand('ARC')
         return
     def _onEllipse(self):
-        self.statusBar().showMessage("CMD:Ellipse", 2000)
+        self.statusBar().showMessage("CMD:Ellipse")
         self.callDocumentCommand('ELLIPSE')
         return
     def _onRectangle(self):
-        self.statusBar().showMessage("CMD:Rectangle", 2000)
+        self.statusBar().showMessage("CMD:Rectangle")
         self.callDocumentCommand('RECTANGLE')
         return
     def _onPolygon(self):
-        self.statusBar().showMessage("CMD:Polygon", 2000)
+        self.statusBar().showMessage("CMD:Polygon")
         self.callDocumentCommand('POLYGON')
         return
     def _onPolyline(self):
-        self.statusBar().showMessage("CMD:Polyline", 2000)
+        self.statusBar().showMessage("CMD:Polyline")
         self.callDocumentCommand('POLYLINE')
         return
     
     def _onFillet(self):
-        self.statusBar().showMessage("CMD:Fillet", 2000)
+        self.statusBar().showMessage("CMD:Fillet")
         self.callDocumentCommand('FILLET')
         return
         
     def _onChamfer(self):
-        self.statusBar().showMessage("CMD:Chamfer", 2000)
+        self.statusBar().showMessage("CMD:Chamfer")
         self.callDocumentCommand('CHAMFER')
         return
             
     def _onBisect(self):
-        self.statusBar().showMessage("CMD:Bisect", 2000)
+        self.statusBar().showMessage("CMD:Bisect")
         self.callDocumentCommand('BISECTOR')
         return
     def _onText(self):
-        self.statusBar().showMessage("CMD:Bisect", 2000)
+        self.statusBar().showMessage("CMD:Bisect")
         self.callDocumentCommand('TEXT')
         return      
     # Edit
     def _onMove(self):
-        self.statusBar().showMessage("CMD:Move", 2000)
+        self.statusBar().showMessage("CMD:Move")
         self.callDocumentCommand('MOVE')
         return
     def _onDelete(self):
-        self.statusBar().showMessage("CMD:Delete", 2000)
+        self.statusBar().showMessage("CMD:Delete")
         self.callDocumentCommand('DELETE')
-        self.statusBar().showMessage("Ready", 2000)
+        self.statusBar().showMessage("Ready")
         return
     def _onMirror(self):
-        self.statusBar().showMessage("CMD:Mirror", 2000)
+        self.statusBar().showMessage("CMD:Mirror")
         self.callDocumentCommand('MIRROR')
         return
     def _onRotate(self):
-        self.statusBar().showMessage("CMD:Rotate", 2000)
+        self.statusBar().showMessage("CMD:Rotate")
         self.callDocumentCommand('ROTATE')
         return
     # View
@@ -420,7 +426,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.view.fit()
         
     def _onZoomWindow(self):
-        self.statusBar().showMessage("CMD:ZoomWindow", 2000)
+        self.statusBar().showMessage("CMD:ZoomWindow")
         self.scene._cmdZoomWindow=True
     # Snap
     def _onSnapCommand(self):
@@ -460,7 +466,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             #self.mdiArea.activeSubWindow().scene.render(painter)
             self.mdiArea.activeSubWindow().view.render(painter)
             painter.end()
-        self.statusBar().showMessage("Ready", 2000)
+        self.statusBar().showMessage("Ready")
         return
         
     def _onUndo(self):
@@ -468,7 +474,7 @@ class CadWindowMdi(QtGui.QMainWindow):
            self.mdiArea.activeSubWindow().unDo() 
         except UndoDbExc:
             self.critical("Unable To Perform Undo")
-        self.statusBar().showMessage("Ready", 2000)
+        self.statusBar().showMessage("Ready")
         return
         
     def _onRedo(self):
@@ -476,7 +482,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.mdiArea.activeSubWindow().reDo()
         except UndoDbExc:
             self.critical("Unable To Perform Redo")
-        self.statusBar().showMessage("Ready", 2000)
+        self.statusBar().showMessage("Ready")
         
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
@@ -492,11 +498,16 @@ class CadWindowMdi(QtGui.QMainWindow):
     def callDocumentCommand(self, commandName):
         try:
             self.scene.activeCommand=self.__application.getCommand(commandName)
-            #self.__cmd_intf.evaluateInnerCommand(pointCmd, self.scene.selectedItems())
             self.scene.activeICommand=ICommand(self.scene)
+            self.scene.activeICommand.updateInput+=self.updateInput
+            self.updateInput(self.scene.activeCommand.activeMessage)
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
-            
+
+    def updateInput(self, message):
+            self.__cmd_intf.commandLine.printMsg(message)
+            self.statusBar().showMessage(message)
+
     @staticmethod
     def critical(text):
         '''

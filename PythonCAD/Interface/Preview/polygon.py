@@ -26,18 +26,6 @@ from Interface.Preview.base         import *
 from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoEntity.point         import Point
 
-class Polygon(Base):
-    def __init__(self, command):
-        super(Polygon, self).__init__(command)
-        
-    def getPreviewObject(self):
-        """
-            return the preview object
-        """
-        if len(self._command.value)>0:
-            return QtPolygonItem(self._command)
-        else:
-            return None
 
 class QtPolygonItem(BaseQtPreviewItem):
     def __init__(self, command):

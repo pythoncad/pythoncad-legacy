@@ -23,8 +23,6 @@
 # This  module Provide custom exception for the db module and kernel
 #
 
-
-
 from Kernel.GeoEntity.point     import Point
 from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
@@ -35,15 +33,15 @@ from Interface.Preview.factory  import getPreviewObject
 
 class FunctionHandler(object):
     '''
-    This object contains all known commands.
-    Commands are registered by "registerCommand" before the are available.
-    Evaluation of commands or expressions is done by "evaluate"
+        This object contains all known commands.
+        Commands are registered by "registerCommand" before the are available.
+        Evaluation of commands or expressions is done by "evaluate"
     '''
     def __init__(self, edit_ctrl, edit_output):
         '''
-        Defines an dictionary containing all known commands.
-        Member 'registerCommand' add's a command to the table.
-        Member 'evaluate' execute a command by call its call-back or evaluates an expression.
+            Defines an dictionary containing all known commands.
+            Member 'registerCommand' add's a command to the table.
+            Member 'evaluate' execute a command by call its call-back or evaluates an expression.
         '''
         # Input control
         self.__edit_ctrl = edit_ctrl
@@ -55,14 +53,9 @@ class FunctionHandler(object):
         self._command_table = {}
         # Global inner command evaluation
         self.evaluateInner=None
-        self.commandExecuted=PyCadEvent()
         #Evaluator
         self._eval=Evaluator(self.printCommand)
-        #Preview
-        self._preview=None
-        self._previewItem=None
-        self.clearPreview=PyCadEvent()
-        self.cmdEvaluator=CommandEvaluator()
+
         
     def registerCommand(self, name, callback):
         '''
@@ -78,10 +71,10 @@ class FunctionHandler(object):
 
     def evaluate(self, expression):
         '''
-        Looks up the expression from the command table.
-        If a command is found, it's callback function is called.
-        If it is not a command the expression is evaluated.
-        Return: command exit, the evaluated expression or "*error*"
+            Looks up the expression from the command table.
+            If a command is found, it's callback function is called.
+            If it is not a command the expression is evaluated.
+            Return: command exit, the evaluated expression or "*error*"
         '''
         # commands are always defined in upper case
         command = expression.upper()
@@ -92,13 +85,6 @@ class FunctionHandler(object):
             # echo on the comand line
             self.printCommand(command)
             self._value = self._command_table[command]()
-        #elif self.evaluateInner:                    # Inner Command evaluation
-        #    self.printCommand(command)
-            
-            # echo on the comand line
-            #self.performCommand(self.evaluateInner, command)
-            #if self.evaluateInner:
-            #    self.printOutput(self.evaluateInner.getActiveMessage())
         else:
             try:
                 # let python evaluate expression
@@ -112,91 +98,13 @@ class FunctionHandler(object):
         if self._value :
             self.printOutput(self._value)
         return self._value
-    
-    def evaluateInnerCommand(self, cObject,selectedItems=None):
-        """
-            evaluate an inner command from the application
-        """
-        self.cmdEvaluator.performStartCommand(cObject,selectedItems)
-        self.evaluateInner=cObject
-        self._preview=getPreviewObject(cObject)
-        self.printOutput(str(self.evaluateInner.getActiveMessage()))
-        
-    def evaluateMouseImput(self, eventItem):
-        """
-            evaluate the mouse click
-        """
-        try:
-            if self.evaluateInner:
-                point, entitys, distance=eventItem
-                exception=self.evaluateInner.exception[self.evaluateInner.index+1]
-                value=self.cmdEvaluator.performMauseClick(exception, point, entitys, distance)
-                if value:
-                    self.performCommand(self.evaluateInner, value)
-                    self.applyCommand()
-        except:
-            self.evaluateInner=None
-        if self.evaluateInner:
-            self.printOutput(self.evaluateInner.getActiveMessage())
-    
-    def applyCommand(self):
-        """
-            Apply The Command 
-        """
-        if self.evaluateInner and self.evaluateInner.index==len(self.evaluateInner.exception)-1:
-            self.evaluateInner.applyCommand()
-            self.resetCommand(False)
-            self.commandExecuted()
             
-    def performCommand(self,cObject, text):
-        """
-            Perform a Command
-            cObject is the command object
-        """
-        self.printOutput(text) 
-        from Kernel.exception import (ExcPoint, ExcLenght, ExcAngle, ExcInt,
-                                        ExcBool, ExcText, ExcEntity,
-                                        ExcMultiEntity,ExcEntityPoint,
-                                        PyCadWrongCommand,CommandException)
-        try:
-            iv=cObject.next()
-            exception,message=iv
-            cObject[iv]=self.cmdEvaluator.performCommand(exception,cObject, text)
-        except CommandException as detail :
-            self.printOutput("Imput Error :" + detail)
-        except (StopIteration):
-            self.evaluateInner.applyCommand()
-            self.resetCommand(False)
-            self.commandExecuted()
-        except PyCadWrongCommand:
-            self.printOutput("Wrong Command")
-            self.evaluateInner=None
-        self.applyCommand()
-        
     def resetCommand(self, reflect=True):
         """
             reset the command if eny are set
         """
-        self.evaluateInner=None
-        self._previewItem=None
-        self._preview=None
-        self.clearPreview()
         if reflect:
             self.printOutput("Command Ended from the user")
-    
-    def updatePreview(self, scene, position, distance):
-        if self.evaluateInner:
-            if self._previewItem==None:
-                if position:
-                    geoPoint=Point(position.x(), position.y())
-                if self._preview:
-                    qtGItem=self._preview.getPreviewObject()
-                    if qtGItem:
-                        scene.addItem(qtGItem)
-                        scene.updateLimits(qtGItem.boundingRect()) 
-                        self._previewItem=qtGItem 
-            else:
-                self._previewItem.updatePreview(position, distance,self.evaluateInner)
         
     def printCommand(self, msg):
         """
@@ -217,139 +125,139 @@ class FunctionHandler(object):
             self.__edit_output.printMsg(msg)
             
 
-class CommandEvaluator(object):
-    def performMauseClick(self ,exception, point, entitys, distance):
-        from Kernel.exception import (ExcPoint, ExcEntity, ExcEntityPoint,
-                                ExcMultiEntity, ExcLenght, ExcInt, ExcAngle)
-        value=None
-        try:
-            raise exception(None)
-        except ExcPoint:
-            value="%s,%s"%(point)
-        except ExcEntity:
-            if entitys:
-                value=str(entitys[0].ID)
-        except ExcMultiEntity:
-            value=self.getIdsString(entitys)
-        except ExcEntityPoint:
-            if entitys:
-                sPoint="%s,%s"%(point)
-                id=str(entitys[0].ID)
-                value="%s@%s"%(str(id), str(sPoint))
-        except (ExcLenght):
-            if distance:
-                value=self.convertToFloat(distance)
-        except(ExcAngle):
-            p1=Point(0.0, 0.0)
-            x, y=point
-            p2=Point(x, y)
-            value=Vector(p1, p2).absAng
-        except:
-            pass
-        finally: return value
-        
-    def performStartCommand(self, cObject,selectedItems=None):
-        """
-            Evaluate the first command in pre selection
-        """
-        from Kernel.exception import ExcEntity, ExcMultiEntity
-        if selectedItems and len(selectedItems)>0:
-            try:
-                raise cObject.exception[0](None)
-            except ExcEntity:
-                cObject.value.append(selectedItems[0].ID)
-                cObject.next()
-            except ExcMultiEntity:
-                text=self.getIdsString(selectedItems)
-                cObject.value.append(text)
-                cObject.next()
-            except:
-                return
-        else:
-            return
+#class CommandEvaluator(object):
+#    def performMauseClick(self ,exception, point, entitys, distance):
+#        from Kernel.exception import (ExcPoint, ExcEntity, ExcEntityPoint,
+#                                ExcMultiEntity, ExcLenght, ExcInt, ExcAngle)
+#        value=None
+#        try:
+#            raise exception(None)
+#        except ExcPoint:
+#            value="%s,%s"%(point)
+#        except ExcEntity:
+#            if entitys:
+#                value=str(entitys[0].ID)
+#        except ExcMultiEntity:
+#            value=self.getIdsString(entitys)
+#        except ExcEntityPoint:
+#            if entitys:
+#                sPoint="%s,%s"%(point)
+#                id=str(entitys[0].ID)
+#                value="%s@%s"%(str(id), str(sPoint))
+#        except (ExcLenght):
+#            if distance:
+#                value=self.convertToFloat(distance)
+#        except(ExcAngle):
+#            p1=Point(0.0, 0.0)
+#            x, y=point
+#            p2=Point(x, y)
+#            value=Vector(p1, p2).absAng
+#        except:
+#            pass
+#        finally: return value
+#        
+#    def performStartCommand(self, cObject,selectedItems=None):
+#        """
+#            Evaluate the first command in pre selection
+#        """
+#        from Kernel.exception import ExcEntity, ExcMultiEntity
+#        if selectedItems and len(selectedItems)>0:
+#            try:
+#                raise cObject.exception[0](None)
+#            except ExcEntity:
+#                cObject.value.append(selectedItems[0].ID)
+#                cObject.next()
+#            except ExcMultiEntity:
+#                text=self.getIdsString(selectedItems)
+#                cObject.value.append(text)
+#                cObject.next()
+#            except:
+#                return
+#        else:
+#            return
             
-    def getIdsString(self, selectedItems):
-        """
-            get the selected entity in terms of ids
-        """
-        text=None
-        for ent in selectedItems:
-            if not text:
-                text=''
-                text+=str(ent.ID)
-            else:
-                text+=","+str(ent.ID)
-        return text   
+#    def getIdsString(self, selectedItems):
+#        """
+#            get the selected entity in terms of ids
+#        """
+#        text=None
+#        for ent in selectedItems:
+#            if not text:
+#                text=''
+#                text+=str(ent.ID)
+#            else:
+#                text+=","+str(ent.ID)
+#        return text   
         
-    def performCommand(self,exception,cObject,text):
-        """
-            Perform a Command
-            cObject is the command object
-        """
-        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcMultiEntity, ExcEntityPoint,PyCadWrongCommand
-        if text:
-            try:
-                raise exception(None)
-            except ExcPoint:
-                return self.convertToPoint(text)  
-            except (ExcLenght, ExcInt):
-                return self.convertToFloat(text)
-            except (ExcAngle):
-                return self.convertToAngle(text)       
-            except (ExcBool):
-                return self.convertToBool(text)
-            except (ExcText):
-                return text
-            except (ExcEntity, ExcMultiEntity):
-                return str(text)
-            except (ExcEntityPoint):
-                return str(text)
-            except:
-                msg="Error on command imput"
-                raise CommandException, msg
-        else:
-            if cObject.getActiveDefaultValue():
-                return cObject.getActiveDefaultValue()
+#    def performCommand(self,exception,cObject,text):
+#        """
+#            Perform a Command
+#            cObject is the command object
+#        """
+#        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcMultiEntity, ExcEntityPoint,PyCadWrongCommand
+#        if text:
+#            try:
+#                raise exception(None)
+#            except ExcPoint:
+#                return self.convertToPoint(text)  
+#            except (ExcLenght, ExcInt):
+#                return self.convertToFloat(text)
+#            except (ExcAngle):
+#                return self.convertToAngle(text)       
+#            except (ExcBool):
+#                return self.convertToBool(text)
+#            except (ExcText):
+#                return text
+#            except (ExcEntity, ExcMultiEntity):
+#                return str(text)
+#            except (ExcEntityPoint):
+#                return str(text)
+#            except:
+#                msg="Error on command imput"
+#                raise CommandException, msg
+#        else:
+#            if cObject.getActiveDefaultValue():
+#                return cObject.getActiveDefaultValue()
                 
-    def convertToBool(self, msg):   
-        """
-            return an int from user
-        """        
-        if msg=="Yes":
-            return True
-        else:
-            return False
+#    def convertToBool(self, msg):   
+#        """
+#            return an int from user
+#        """        
+#        if msg=="Yes":
+#            return True
+#        else:
+#            return False
 
-    def convertToInt(self, msg):   
-        """
-            return an int from user
-        """        
-        if msg:
-            return int(convertLengh(msg))
-        return None
+#    def convertToInt(self, msg):   
+#        """
+#            return an int from user
+#        """        
+#        if msg:
+#            return int(convertLengh(msg))
+#        return None
         
-    def convertToFloat(self, msg):
-        """
-            return a float number
-        """
-        if msg:
-            return convertLengh(msg)
-        return None
-        
-    def convertToAngle(self, msg):
-        """
-            convert the angle using sympy
-        """
-        if msg:
-            p=convertAngle(msg)
-            return p
-        return None
-        
-    def convertToPoint(self, msg):
-        """
-            ask at the user to imput a point 
-        """
-        if msg:
-            p=decodePoint(msg)
-            return p
-        return None
+#    def convertToFloat(self, msg):
+#        """
+#            return a float number
+#        """
+#        if msg:
+#            return convertLengh(msg)
+#        return None
+#        
+#    def convertToAngle(self, msg):
+#        """
+#            convert the angle using sympy
+#        """
+#        if msg:
+#            p=convertAngle(msg)
+#            return p
+#        return None
+#        
+#    def convertToPoint(self, msg):
+#        """
+#            ask at the user to imput a point 
+#        """
+#        if msg:
+#            p=decodePoint(msg)
+#            return p
+#        return None

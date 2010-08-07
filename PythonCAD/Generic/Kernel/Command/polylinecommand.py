@@ -36,11 +36,12 @@ class PolylineCommand(BaseCommand):
         self.defaultValue=[None]
         self.message=["Give Me A Point"]
         self.raiseStop=False
-        
+        self.automaticApply=False #In case of polyline we need to stop the automatic apply
     def __setitem__(self, key, value):
         """
             overwrite the command to perform the stop operation
         """
+        value=self.translateCmdValue(value)
         if isinstance(value, Point):
             self.value.append(value) 
             self.exception.append(ExcPoint)
@@ -48,6 +49,7 @@ class PolylineCommand(BaseCommand):
             self.defaultValue.append(None)
         else:
            self.raiseStop=True 
+
     def applyCommand(self):
         """
             perform the write of the entity

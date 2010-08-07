@@ -5,18 +5,17 @@ sip.setapi('QString', 2)
 
 from PyQt4 import QtCore, QtGui
 from Interface.CmdIntf.functionhandler import FunctionHandler
-
+from Kernel.pycadevent import PyCadEvent
 
 class CmdLineDock(QtGui.QDockWidget):
     '''
-    A dockable window containing a edit line object.
-    The edit line is used to enter commands or expressions.
+        A dockable window containing a edit line object.
+        The edit line is used to enter commands or expressions.
     '''
-    
     def __init__(self, title, parent):
         '''
-        Creates an edit line in which commands or expressions are evaluated.
-        Evaluation of expressions is done by the FunctionHandler object.
+            Creates an edit line in which commands or expressions are evaluated.
+            Evaluation of expressions is done by the FunctionHandler object.
         '''
         super(CmdLineDock, self).__init__(title, parent)
         self.setMinimumHeight(100)
@@ -49,17 +48,18 @@ class CmdLineDock(QtGui.QDockWidget):
         self.setWidget(self.dockWidgetContents)
         self.__function_handler = FunctionHandler(self.__edit_ctrl,self.textEditOutput )
         #QtCore.QObject.connect(self.__edit_ctrl, QtCore.SIGNAL("returnPressed()"), self.textEditOutput.centerCursor)
-        
+        #
+        self.evaluatePressed=PyCadEvent()
 
     #-------- properties -----------#
-    
-    def _getFunctionHandler(self):
+    @property
+    def FunctionHandler(self):
+        """
+            Get the function handle object
+        """
         return self.__function_handler
     
-    FunctionHandler = property(_getFunctionHandler, None, None, 'Get the function handle object')
-    
-    
-    #-------- properties -----------#
+    #-------- functions -----------#
     
     def _returnPressed(self):
         '''
@@ -98,6 +98,7 @@ class CmdLineDock(QtGui.QDockWidget):
         '''
         # evaluate the expression
         result = self.__function_handler.evaluate(expression)
+        self.evaluatePressed(expression) # fire event 
         return result
     
     def setFocus(self, scene, event):
@@ -107,6 +108,12 @@ class CmdLineDock(QtGui.QDockWidget):
         self.__edit_ctrl.clear()
         self.__edit_ctrl.setFocus()
     
+    def printMsg(self, msg):
+        """
+            Print message in to the message windows
+        """
+        self.textEditOutput.printMsg(msg)
+        
 class PyCadTextView(QtGui.QTextEdit):
     """
         this class rapresent the text view that pyCad use for rendering the output

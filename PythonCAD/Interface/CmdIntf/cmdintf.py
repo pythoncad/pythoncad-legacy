@@ -35,23 +35,25 @@ class CmdIntf(object):
         return
         
     #-------- properties -----------#
-    def _getCommandline(self):
+    @property
+    def commandLine(self):
+        """
+            Get the command line dock window
+        """
         return self.__edit_ctrl
-
-    Commandline = property(_getCommandline, None, None, 'Get the command line dock window')
-    
-    
-    def _getFunctionHandler(self):
+   
+    @property
+    def FunctionHandler(self):
+        """
+            Get the function handler object
+        """
         return self.__edit_ctrl.FunctionHandler
-    
-    FunctionHandler = property(_getFunctionHandler, None, None, 'Get the function handler object')
-    
-    
-    def _getCategory(self):
-        return self.__category
-    
-    Category = property(_getCategory, None, None, 'Get the category enumerator object')
-    
+    @property 
+    def Category(self):
+        """
+            Get the category enumerator object
+        """
+        return self.__category   
         
     #-------- properties -----------#
     

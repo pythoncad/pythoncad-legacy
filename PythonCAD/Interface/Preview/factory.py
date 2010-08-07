@@ -27,26 +27,25 @@ from Kernel.Command.ellipsecommand      import EllipseCommand
 from Kernel.Command.polylinecommand     import PolylineCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 
-from Interface.Preview.segment      import Segment, QtSegmentItem
-from Interface.Preview.arc          import Arc
-from Interface.Preview.rectangle    import Rectangle
-from Interface.Preview.ellipse      import Ellipse
-from Interface.Preview.polyline     import Polyline
-from Interface.Preview.polygon      import Polygon
+from Interface.Preview.segment      import QtSegmentItem
+from Interface.Preview.arc          import QtArcItem
+from Interface.Preview.rectangle    import QtRectangleItem
+from Interface.Preview.ellipse      import QtEllipseItem
+from Interface.Preview.polyline     import QtPolylineItem
+from Interface.Preview.polygon      import QtPolygonItem
 
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
-        #return Segment(command)
         return QtSegmentItem(command)
     elif isinstance(command , ArcCommand):
-        return Arc(command)
+        return QtArcItem(command)
     elif isinstance(command , RectangleCommand):
-        return Rectangle(command)
+        return QtRectangleItem(command)
     elif isinstance(command , EllipseCommand):
-        return Ellipse(command)
+        return QtEllipseItem(command)
     elif isinstance(command , PolylineCommand):
-        return Polyline(command)
+        return QtPolylineItem(command)
     elif isinstance(command ,  PolygonCommand):
-        return Polygon(command)
+        return QtPolygonItem(command)
     else:
         return None

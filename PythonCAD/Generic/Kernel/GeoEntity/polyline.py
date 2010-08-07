@@ -45,7 +45,7 @@ class Polyline(GeometricalEntity):
             kw['POLYLINE_..n'] must be a point 
         """
         if len(kw)<2:
-            raise ValueError, "Invalid list count: %d" % _count
+            raise ValueError, "Invalid number of imput value "
         argDescription=dict([(key,Point) for key in kw])
         GeometricalEntity.__init__(self,kw, argDescription)
 

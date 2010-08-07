@@ -23,6 +23,7 @@
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
+from Kernel.pycadevent              import PyCadEvent
 from Interface.Preview.factory      import *
 
 class ICommand(object):
@@ -32,11 +33,13 @@ class ICommand(object):
     activeSnap=SNAP_POINT_ARRAY["ALL"] #define the active snap system
     drawPreview=False   # enable the preview system
     automaticApply=True # apply the command at the last insert value
+    restartCommandOption=True #restart the command for sequence command functionality
     def __init__(self, scene):
         self.__scene=scene                      # This is needed for the preview creation
         self.__kernelCommand = scene.activeCommand
         self.__previewItem=getPreviewObject(self.__kernelCommand)
-        scene.addItem( self.__previewItem)      # Add preview item on creation
+        if self.__previewItem:
+            scene.addItem(self.__previewItem)      # Add preview item on creation
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -44,7 +47,20 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         self.__forceDirection=self.__scene.forceDirection
-
+        self.updateInput=PyCadEvent()
+    
+    def restartCommand(self):
+        """
+            reuse the command 
+        """
+        self.__kernelCommand.reset()
+        self.__point=[]
+        self.__entity=[]
+        self.__distance=[]
+        self.__snap=[]
+        self.__forceSnap=[]
+        self.__index=-1
+        
     def addMauseEvent(self, point, distance, entity, force=None):
         """
             add value to a new slot of the command 
@@ -52,10 +68,13 @@ class ICommand(object):
         try:
             cmdIndex=self.__kernelCommand.next()
         except StopIteration:
-            self.__kernelCommand.applyCommand()
+            self.applyCommand()
             return
             
         exception,message=cmdIndex
+        #fire event for messsage
+        self.updateInput(self.__kernelCommand.activeMessage) 
+        #
         snap=self.getClickedPoint(point, entity, force)
         self.__kernelCommand[cmdIndex]=(snap,entity,distance)
         self.__point.append(point)
@@ -65,32 +84,71 @@ class ICommand(object):
         self.__forceSnap.append(force)
         self.updatePreview()   
         self.__index+=1
-        if self.automaticApply:
+        if self.automaticApply and self.__kernelCommand.automaticApply:
             if(self.__index>=self.__kernelCommand.lenght-1): #Apply the command
-                self.__kernelCommand.applyCommand()    
-        
+                self.applyCommand()
+                
+    def applyCommand(self):    
+        """
+            apply the command 
+        """
+        self.__kernelCommand.applyCommand()    
+        if self.restartCommandOption:
+            self.restartCommand()
+        return
+            
     def updateMauseEvent(self, point, distance, entity, force=None):
         """
             update value to the active slot of the command
         """
         snap=self.getClickedPoint(point, entity, force)
-        print len(self.__snap)
         if self.index>-1:
             self.__point[self.index]=point
             self.__entity[self.index]=entity
             self.__distance[self.index]=distance
             self.__snap[self.index]=snap
             self.__forceSnap[self.index]=force
-#            self.__point.append(point)
-#            self.__entity.append(entity)
-#            self.__distance.append(distance)
-#            self.__snap.append(snap)
-#            self.__forceSnap.append(force)
+            self.updatePreview() #   mange preview
 
-        #
-        #   mange preview
-        #
-        self.updatePreview()
+    def addTextEvent(self, value):
+        """
+            compute imput from text
+        """
+        if value=="":
+            self.applyCommand()
+            return
+        elif value=="back":
+            #TODO: perform a back operatio to the command
+            return
+        elif value=="forward":
+            #TODO: perform a forward operatio to the command
+            return
+        else:
+            tValue=self.decodeText(value)
+            self.addMauseEvent(tValue[0], tValue[1], tValue[2])
+    
+    def decodeText(self, value):
+        """
+            encode the text given from the user
+        """
+        #TODO: make encoding of the text
+        # use the sympy unit mesure to get the right value
+        # the first letter of the value give the keyword to decode the string
+        # try to use the a parsing method 
+        
+        point=None
+        distance=None
+        entitys=None
+        value=value.strip()
+        if len(value)>0:
+            if value[0]=='@': # id of the entity
+                print "id of the entity"
+            elif value[0]=='|': #point
+                x, y=value[1:].split(',')
+                point=Point(float(x), float(y))
+            elif value[0]=='?':   # distance
+                distance=float(value[1:])
+        return (point, distance, entitys)
         
     def updatePreview(self):        
         if self.drawPreview:
@@ -131,7 +189,6 @@ class ICommand(object):
         if len(array)>0 and index<self.index:
             return array[index]
         raise IndexError   
-
             
     @property
     def index(self):
@@ -192,6 +249,8 @@ class ICommand(object):
         """
             correct the point cords 
         """
+        if point ==None:
+            return None
         x, y=point.getCoords()
         lastSnap=None
         if self.index>-1:
@@ -277,6 +336,7 @@ class ICommand(object):
         if snapPoint==None:
             return point
         return snapPoint
+    
     ##
     ## here you can find all the function that compute the snap constraints
     ##
