@@ -23,6 +23,7 @@
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
+from Kernel.GeoUtil.geolib          import Vector   
 from Kernel.pycadevent              import PyCadEvent
 from Interface.Preview.factory      import *
 
@@ -33,7 +34,7 @@ class ICommand(object):
     activeSnap=SNAP_POINT_ARRAY["ALL"] #define the active snap system
     drawPreview=False   # enable the preview system
     automaticApply=True # apply the command at the last insert value
-    restartCommandOption=True #restart the command for sequence command functionality
+    restartCommandOption=True # restart the command for sequence command functionality
     def __init__(self, scene):
         self.__scene=scene                      # This is needed for the preview creation
         self.__kernelCommand = scene.activeCommand
@@ -43,6 +44,7 @@ class ICommand(object):
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
+        self.__angle=[]
         self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
@@ -57,6 +59,7 @@ class ICommand(object):
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
+        self.__angle=[]
         self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
@@ -75,11 +78,13 @@ class ICommand(object):
         #fire event for messsage
         self.updateInput(self.__kernelCommand.activeMessage) 
         #
-        snap=self.getClickedPoint(point, entity, force)
-        self.__kernelCommand[cmdIndex]=(snap,entity,distance)
+        snap=self.getClickedPoint(point,self.getEntity(entity,point), force)
+        angle=self.calculateAngle(snap)
+        self.__kernelCommand[cmdIndex]=(snap,entity,distance, angle)
         self.__point.append(point)
         self.__entity.append(entity)
-        self.__distance.append(distance)
+        self.__distance.append(distance)      
+        self.__angle.append(angle)
         self.__snap.append(snap)
         self.__forceSnap.append(force)
         self.updatePreview()   
@@ -96,19 +101,34 @@ class ICommand(object):
         if self.restartCommandOption:
             self.restartCommand()
         return
-            
+    
+    def getEntity(self, entity, position):
+        """
+            get the entity nearest at the mouse position
+        """
+        #TODO: Calculete the nearest entity at the mouseClick
+        
+        if entity == None:
+            return None
+        for ent in entity:
+            if ent!=None:
+                return ent
+        else:
+            return None
+        
     def updateMauseEvent(self, point, distance, entity, force=None):
         """
             update value to the active slot of the command
         """
-        snap=self.getClickedPoint(point, entity, force)
-        if self.index>-1:
-            self.__point[self.index]=point
-            self.__entity[self.index]=entity
-            self.__distance[self.index]=distance
-            self.__snap[self.index]=snap
-            self.__forceSnap[self.index]=force
-            self.updatePreview() #   mange preview
+        return
+#        snap=self.getClickedPoint(point, entity, force)
+#        if self.index>-1:
+#            self.__point[self.index]=point
+#            self.__entity[self.index]=entity
+#            self.__distance[self.index]=distance
+#            self.__snap[self.index]=snap
+#            self.__forceSnap[self.index]=force
+#            self.updatePreview() #   mange preview
 
     def addTextEvent(self, value):
         """
@@ -126,7 +146,21 @@ class ICommand(object):
         else:
             tValue=self.decodeText(value)
             self.addMauseEvent(tValue[0], tValue[1], tValue[2])
-    
+
+    def calculateAngle(self, snap):
+        """
+            calculate the angle betwin the point clicked
+        """
+        if snap==None:
+            return None
+            
+        for snapPoint in self.__snap:
+            if snapPoint!=None:
+                v=Vector(snapPoint,snap )
+                return v.absAng
+        else:
+            return None
+
     def decodeText(self, value):
         """
             encode the text given from the user
@@ -186,7 +220,7 @@ class ICommand(object):
         return self.getDummyElement(self.__forceSnap, index)
     
     def getDummyElement(self, array, index):
-        if len(array)>0 and index<self.index:
+        if len(array)>=0 and index<=self.index:
             return array[index]
         raise IndexError   
             
@@ -204,7 +238,7 @@ class ICommand(object):
         """
             parametric function to return an element of an array
         """
-        if self.index>0:
+        if self.index>=0:
             return func(self.index)
         return None
     def getActiveSnapClick(self):
@@ -245,21 +279,19 @@ class ICommand(object):
         """
         return self.getDummyBefore(self.getForceSnap)
     
-    def correctPositionForcedDirection(self, point):
+    def correctPositionForcedDirection(self, point, force):
         """
             correct the point cords 
         """
-        if point ==None:
+        if point ==None or force==None:
             return None
         x, y=point.getCoords()
         lastSnap=None
-        if self.index>-1:
-            lastSnap=self.getLastForceSnap()
-        
-        if self.__forceDirection and  lastSnap !=None:
-            if self.__forceDirection=="H":
+        lastSnap=self.getActiveSnapClick()
+        if force and  lastSnap !=None:
+            if force=="H":
                 y=lastSnap.y
-            elif self.forceDirection=="V":
+            elif force=="V":
                 x=lastSnap.x
             #elif self.forceDirection.find("F")>=0:
             #    angle=convertAngle(self.forceDirection.split("F")[1])
@@ -276,32 +308,32 @@ class ICommand(object):
             fromPoint:  [Geoent.Pointfloat]
             fromEnt:    [GeoEnt.*]
         """
-        point=self.correctPositionForcedDirection(point)
-        if force==None:
-            force=SNAP_POINT_ARRAY["ALL"]
-        snapPoint=None
+        snapPoint=point
+        point=self.correctPositionForcedDirection(point, force)
+        if point!=None:
+            snapPoint=point
         lastSnapType=self.getLastForceSnap()
-        if SNAP_POINT_ARRAY["MID"] == force:
+        if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
             snapPoint = self.getSnapMiddlePoint(entity)
             if lastSnapType: #Calculete in case of before constraint
                 if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
                     snapPoint=self.getSnapOrtoPoint(snapPoint)
                 elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
                     snapPoint=self.getSnapTangentPoint(snapPoint)
-        elif SNAP_POINT_ARRAY["END"] == force:
+        elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
             snapPoint =self.getSnapEndPoint(entity, point)
             if lastSnapType: #Calculete in case of before constraint
                 if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
                     snapPoint=self.getSnapOrtoPoint(snapPoint)
                 elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
                     snapPoint=self.getSnapTangentPoint(snapPoint)
-        elif SNAP_POINT_ARRAY["ORTO"] == force:
+        elif SNAP_POINT_ARRAY["ORTO"] == self.activeSnap:
             if lastSnapType:
                 if lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:    
                     snapPoint=self.getTangentOrtoSnap(entity)
                 else:
                     snapPoint=self.getPointOrtoSnap(entity)
-        elif SNAP_POINT_ARRAY["CENTER"]== force:
+        elif SNAP_POINT_ARRAY["CENTER"]== self.activeSnap:
             snapPoint =self.getSnapCenterPoint(entity)
             if lastSnapType: #Calculete in case of before constraint
                 if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
@@ -315,23 +347,28 @@ class ICommand(object):
                     snapPoint=self.getSnapOrtoPoint(snapPoint)
                 elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
                     snapPoint=self.getSnapTangentPoint(snapPoint) 
-        elif SNAP_POINT_ARRAY["ORIG"]== force:
+        elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
             snapPoint=Pointfloat(0.0, 0.0)
-        elif SNAP_POINT_ARRAY["ALL"]== force:
+        elif SNAP_POINT_ARRAY["ALL"]== self.activeSnap:
             snapPoints=[]
-            snapPoints.append(self.getSnapMiddlePoint(entity))
-            snapPoints.append(self.getSnapEndPoint(entity, point))
+            pnt=self.getSnapMiddlePoint(entity)
+            if pnt!=None:
+                snapPoints.append(pnt)
+            pnt=self.getSnapEndPoint(entity, snapPoint)
+            if pnt!=None:
+                snapPoints.append(pnt)
             outPoint=(None, None)
             for p in snapPoints:
-                if p:
-                    distance=p.dist(fromPoint)
+                if p!=None:
+                    distance=p.dist(snapPoint)
                     if outPoint[0]==None:
                         outPoint=(p, distance)
                     else:
-                        if outPoint[1]>spoolDistance:
+                        if outPoint[1]>distance:
                             outPoint=(p, distance)
             else:
-                snapPoint=outPoint[0]
+                if outPoint[0]!=None:
+                    snapPoint=outPoint[0]
                 
         if snapPoint==None:
             return point
@@ -368,20 +405,22 @@ class ICommand(object):
             this fucnticion compute midpoint snap constraint to the entity argument
         """
         returnVal=None
-        if getattr(entity, 'getMiddlePoint', None):
-            returnVal=entity.getMiddlePoint()
+        if getattr(entity, 'geoItem', None):
+            if getattr(entity.geoItem, 'getMiddlePoint', None):
+                returnVal=entity.geoItem.getMiddlePoint()
         return returnVal
     
     def getSnapEndPoint(self, entity, point):
         """
             this fucnticion compute the  snap endpoint 
         """
-        if getattr(entity, 'getEndpoints', None):
-            p1, p2=entity.getEndpoints()
-            if point.dist(p1)>point.dist(p2):
-                return p1
-            else:
-                return p2
+        if getattr(entity, 'geoItem', None):
+            if getattr(entity.geoItem, 'getEndpoints', None):
+                p1, p2=entity.geoItem.getEndpoints()
+                if point.dist(p1)<point.dist(p2):
+                    return p1
+                else:
+                    return p2
         else:
             return None
         

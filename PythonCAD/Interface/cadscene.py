@@ -127,20 +127,14 @@ class CadScene(QtGui.QGraphicsScene):
         if not self.isInPan:
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
-            #x, y=self.getPosition(event.scenePos(), qtItems)
             distance=self.getDistance(event)
             self.__oldClickPoint=event.scenePos()
-            #pyCadEvent=((x, y), qtItems, distance)
-            #self.pyCadScenePressEvent(self, pyCadEvent)
-            item=None
-            if len(qtItems)>0:
-                item=qtItems[0]
             if self.activeICommand:
                 if event.button()==QtCore.Qt.RightButton:
                     self.activeICommand.applyCommand()
-                    
                 point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                self.activeICommand.addMauseEvent(point, distance,item )
+                #fire the mouse at the icommand class
+                self.activeICommand.addMauseEvent(point, distance,qtItems, self.forceDirection )
             self.forceDirection=None # reset force direction for the imput value
             if len(qtItems)==1:
                 self.__lastPickedEntity=qtItems[0]

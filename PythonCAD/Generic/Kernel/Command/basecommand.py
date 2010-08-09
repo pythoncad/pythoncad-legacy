@@ -45,7 +45,7 @@ class BaseCommand(object):
         """
             set the value of the command
         """
-        if not isinstance(value, tuple) or len(value)!=3:
+        if not isinstance(value, tuple) or len(value)!=4:
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
         value=self.translateCmdValue(value)
         self.value.append(value)    
@@ -151,7 +151,7 @@ class BaseCommand(object):
         """
             translate the imput value based on exception
         """
-        point, entitys, distance = value
+        point, entitys, distance, angle = value
         exitValue=None
         try:
             raise self.activeException()(None)
@@ -171,13 +171,15 @@ class BaseCommand(object):
             if distance:
                 exitValue=self.convertToFloat(distance)
         except(ExcAngle):
-            if point: # case of mouse input
-                p1=Point(0.0, 0.0)
-                x, y=point
-                p2=Point(x, y)
-                exitValue=Vector(p1, p2).absAng
-            else:
+            if angle:
+                exitValue=angle
+            elif distance:
                 exitValue=distance
+            else:
+                p0=Point(0.0, 0.0)
+                x, y=point.getCoords()
+                p1=Point(x, y)
+                exitValue=Vector(p0, p1).absAng
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue

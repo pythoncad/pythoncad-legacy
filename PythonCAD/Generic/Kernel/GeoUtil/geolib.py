@@ -40,6 +40,7 @@ class Vector:
         x1,y1=p2.getCoords()
         self.X=x1-x
         self.Y=y1-y
+        
     def mag(self):
         """
             Get the versor
