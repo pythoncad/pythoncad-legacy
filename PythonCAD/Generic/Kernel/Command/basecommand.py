@@ -45,10 +45,12 @@ class BaseCommand(object):
         """
             set the value of the command
         """
-        if not isinstance(value, tuple) or len(value)!=4:
+        if not isinstance(value, tuple) or len(value)!=5:
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
+        print "add command value", value
         value=self.translateCmdValue(value)
         self.value.append(value)    
+        
     def resetToDefault(self): 
         """
             Reset the command to default value
@@ -56,12 +58,15 @@ class BaseCommand(object):
         self.value=[]
         for val in self.defaultValue:
             self.value.append(val)
+            
     def applyDefault(self):
         i=0
         for value in self.value:
-            if value==None:
+            if self.value[i]==None:
                 self.value[i]=self.defaultValue[i]
             i+=1
+        for i in range(i,self.lenght):
+            self.value.append(self.defaultValue[i])
             
     def reset(self):
         """
@@ -147,11 +152,11 @@ class BaseCommand(object):
         """
         pass
         
-    def translateCmdValue(self ,value):
+    def translateCmdValue(self , value):
         """
             translate the imput value based on exception
         """
-        point, entitys, distance, angle = value
+        point, entitys, distance, angle , text= value
         exitValue=None
         try:
             raise self.activeException()(None)
@@ -180,6 +185,10 @@ class BaseCommand(object):
                 x, y=point.getCoords()
                 p1=Point(x, y)
                 exitValue=Vector(p0, p1).absAng
+        except(ExcText):
+            exitValue=text
+            if text==None:
+                exitValue=""
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue

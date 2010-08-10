@@ -6,8 +6,8 @@ from Interface.cadview              import CadView
 
 class IDocument(QtGui.QMdiSubWindow):
     sequenceNumber = 1
-    def __init__(self, document, cmdInf):
-        super(IDocument, self).__init__()
+    def __init__(self, document, cmdInf, parent):
+        super(IDocument, self).__init__(parent)
         IDocument.sequenceNumber += 1
         self.__document=document
         self.__cmdInf=cmdInf
@@ -17,14 +17,8 @@ class IDocument(QtGui.QMdiSubWindow):
         # layer list
         self.__layer_dock = LayerDock(self)
         self.__scene = CadScene(document)
-        #self.__scene.pyCadScenePressEvent+=self.__cmdInf.evaluateMouseImput
-        #self.__scene.pyCadSceneApply+=self.__cmdInf.applyCommand
-        #self.__scene.updatePreview+=self.__cmdInf.updatePreview
-        #self.__cmdInf.FunctionHandler.clearPreview+=self.__scene.clearPreview
-        self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
         self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
         self.__view = CadView(self.__scene, self)
-        self.__scene.zoomWindows+=self.__view.zoomWindows
         # the graphics view is the main/central component
         innerWindows = QtGui.QMainWindow()
         innerWindows.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
@@ -33,6 +27,9 @@ class IDocument(QtGui.QMdiSubWindow):
         #Inizialize scene
         self.__scene.initDocumentEvents()
         self.__scene.populateScene(document)
+        self.__scene.zoomWindows+=self.__view.zoomWindows
+        self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
+        self.__scene.fireWarning+=self.popUpWarning
 
     @property
     def document(self):
@@ -90,7 +87,12 @@ class IDocument(QtGui.QMdiSubWindow):
     def wWellEWvent(self, event):
         self.__view.scaleFactor=math.pow(2.0, -event.delta() / 240.0)
         self.__view.scaleView(self.__view.scaleFactor)   
+
+    def popUpWarning(self, msg):    
+        """
+            popUp a warning mesage
+        """
+        ret = QtGui.QMessageBox.warning(self,"Warning",  msg)
+        #print "msg", msg
+        return
         
-    #dovrebbe memorizzare gli ultimi file aperti
-    #def strippedName(self, fullFileName):
-    #    return QtCore.QFileInfo(fullFileName).fileName()

@@ -225,7 +225,7 @@ class Point(GeometricalEntity):
            Get The Distance From 2 Points
         """
         if not isinstance(obj, Point):
-            if isinstance(x, tuple):
+            if isinstance(obj, tuple):
                 _x, _y = tuple_to_two_floats(obj)
             else:
                 raise TypeError,"Invalid Argument point: Point or Tuple Required"

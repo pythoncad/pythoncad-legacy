@@ -33,7 +33,6 @@ class CCircleCommand(BaseCommand):
         self.exception=[ExcPoint, ExcLenght]
         self.defaultValue=[None, 10]
         self.message=["Give Me the center Point", "Give Me the radius"]
-        self.resetToDefault()
         
     def applyCommand(self):
         if len(self.value)<2:

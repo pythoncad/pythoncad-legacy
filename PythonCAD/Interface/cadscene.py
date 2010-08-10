@@ -36,18 +36,16 @@ from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
 from Interface.cadinitsetting       import *
-from Interface.unitparser           import convertAngle
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
 
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
+from Kernel.exception               import PyCadWrongImputData
 
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
         super(CadScene, self).__init__(parent)
-        # current file
-        #self.__filename = None
         # drawing limits
         self.__limits = None
         # scene custom event
@@ -56,41 +54,33 @@ class CadScene(QtGui.QGraphicsScene):
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
         self.keySpace=PyCadEvent()
+        self.fireWarning=PyCadEvent()
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
         self.forceDirection=None
         self.__lastPickedEntity=None
-        # dinamic text editor
-        #self.qtInputPopUp=DinamicEntryLine()
-        #self.qtInputPopUp.onEnter+=self._qtInputPopUpReturnPressed
-        #self.addWidget(self.qtInputPopUp)
-        # setGeometry 
-        #self.mouseX=0.0
-        #self.mouseY=0.0
+
         self.isInPan=False
-        # Create 0,0 arrows
-        #self.addItem(ArrowItem())
-        #secondArrow=ArrowItem()
-        #secondArrow.setRotation(-90.0)
-        #self.addItem(secondArrow)
-        #
+
         self.forceSnap=None
         self._cmdZoomWindow=None
         #
         # new command implementation
         #
-        self.__activeCommand=None
+        self.__activeKernelCommand=None
         self.activeICommand=None
+        #
+        self.__grapWithd=20.0
     @property
-    def activeCommand(self):
+    def activeKernelCommand(self):
         """
             return the active command
         """
-        return self.__activeCommand
-    @activeCommand.setter
-    def activeCommand(self, value):
-        self.__activeCommand=value    
+        return self.__activeKernelCommand
+    @activeKernelCommand.setter
+    def activeKernelCommand(self, value):
+        self.__activeKernelCommand=value    
 
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
@@ -99,8 +89,9 @@ class CadScene(QtGui.QGraphicsScene):
         """
             mouse move event
         """
+        scenePos=event.scenePos()
         if self.activeICommand:
-            scenePos=event.scenePos()
+            #scenePos=event.scenePos()
             distance=None
             point=Point(scenePos.x(), scenePos.y()*-1.0)
             qtItem=[self.itemAt(scenePos)]
@@ -108,6 +99,11 @@ class CadScene(QtGui.QGraphicsScene):
                 distance=self.getDistance(event)
             self.activeICommand.updateMauseEvent(point, distance, qtItem)
 #            self.updatePreview(self,point, distance)
+        #
+#        path=QtGui.QPainterPath()
+#        path.addRect(scenePos.x()-self.__grapWithd/2, scenePos.y()+self.__grapWithd/2, self.__grapWithd, self.__grapWithd)
+#        self.setSelectionArea(path)
+        #
         super(CadScene, self).mouseMoveEvent(event)
         return 
     
@@ -127,32 +123,27 @@ class CadScene(QtGui.QGraphicsScene):
         if not self.isInPan:
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
-            distance=self.getDistance(event)
-            self.__oldClickPoint=event.scenePos()
             if self.activeICommand:
                 if event.button()==QtCore.Qt.RightButton:
-                    self.activeICommand.applyCommand()
-                point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                #fire the mouse at the icommand class
-                self.activeICommand.addMauseEvent(point, distance,qtItems, self.forceDirection )
-            self.forceDirection=None # reset force direction for the imput value
-            if len(qtItems)==1:
-                self.__lastPickedEntity=qtItems[0]
-            else:
-                self.__lastPickedEntity=None
-            #re fire the event
+                    try:
+                        self.activeICommand.applyCommand()
+                    except PyCadWrongImputData:
+                        self.fireWarning("Wrong input value")
+                    super(CadScene, self).mouseReleaseEvent(event)
+                    return
+                if event.button()==QtCore.Qt.LeftButton:
+                    point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
+                    #fire the mouse at the icommand class
+                    self.activeICommand.addMauseEvent(point,qtItems, self.forceDirection)
+                    
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
+            
         super(CadScene, self).mouseReleaseEvent(event)
-        
-    def getDistance(self, event):
-        distance=None
-        if self.__oldClickPoint:
-            deltaX=abs(self.__oldClickPoint.x()-event.scenePos().x())
-            deltaY=abs(self.__oldClickPoint.y()-event.scenePos().y())
-            distance=math.sqrt(deltaX**2+deltaY**2)
-        return distance
+        return
+
+
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
@@ -160,7 +151,7 @@ class CadScene(QtGui.QGraphicsScene):
             self.clearSelection()
             self.updateSelected()
             self.forceDirection=None
-            self.__activeCommand=None
+            self.__activeKernelCommand=None
             self.activeICommand=None
         elif event.key()==QtCore.Qt.Key_Return:
             self.pyCadSceneApply()
@@ -180,10 +171,11 @@ class CadScene(QtGui.QGraphicsScene):
         """
             someone give some test imput at the scene
         """
-        self.forceDirection=None # reset force direction for the imput value
-        self.updateSelected()
-        self.activeICommand.addTextEvent(value)
-            
+        if self.activeICommand!=None:
+            self.forceDirection=None # reset force direction for the imput value
+            self.updateSelected()
+            self.activeICommand.addTextEvent(value)
+        return
             
     def updateSelected(self):
         """

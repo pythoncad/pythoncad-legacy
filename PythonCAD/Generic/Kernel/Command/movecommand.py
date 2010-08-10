@@ -39,7 +39,6 @@ class MoveCommand(BaseCommand):
                         "Give me the from point",
                         "Give me the to point", 
                         "Give me the Mode (M or None->Move,C->Copy)"]
-        self.resetToDefault()
     def getEntsToSave(self):
         """
            get entity to save

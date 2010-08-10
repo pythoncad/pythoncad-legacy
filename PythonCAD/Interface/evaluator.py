@@ -46,8 +46,10 @@ class Evaluator(object):
             
         if value[0]=='>': # eval
             return self._eval(value[1:])
+        if value[0]=='@':
+            return self._exec(value[1:])
         else:
-            return self._exec(value)
+            return value
             
     def _eval(self, value):
         """

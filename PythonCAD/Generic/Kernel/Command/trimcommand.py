@@ -41,7 +41,7 @@ class TrimCommand(BaseCommand):
                         "Give me a point near the First entity", 
                         "Give me a point near the Second entity", 
                         "Give me The Trim Mode ((FIRST,SECOND,BOTH)"]
-        self.resetToDefault()
+
     def performTrim(self):
         """
             get the chamfer segments

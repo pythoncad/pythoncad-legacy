@@ -206,7 +206,7 @@ class CadWindowMdi(QtGui.QMainWindow):
                 child=mdiwind
                 break
         else:
-            child = IDocument(newDoc,self.__cmd_intf)
+            child = IDocument(newDoc,self.__cmd_intf, self)
             self.mdiArea.addSubWindow(child)
 
         #child.copyAvailable.connect(self.cutAct.setEnabled)
@@ -497,10 +497,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         
     def callDocumentCommand(self, commandName):
         try:
-            self.scene.activeCommand=self.__application.getCommand(commandName)
+            self.scene.activeKernelCommand=self.__application.getCommand(commandName)
             self.scene.activeICommand=ICommand(self.scene)
             self.scene.activeICommand.updateInput+=self.updateInput
-            self.updateInput(self.scene.activeCommand.activeMessage)
+            self.updateInput(self.scene.activeKernelCommand.activeMessage)
         except EntityMissing:
             self.critical("You need to have an active document to perform this command")
 
@@ -511,7 +511,7 @@ class CadWindowMdi(QtGui.QMainWindow):
     @staticmethod
     def critical(text):
         '''
-        Shows an critical message dialog
+            Shows an critical message dialog
         '''
         dlg = QtGui.QMessageBox()
         dlg.setText(text)

@@ -43,7 +43,7 @@ class FilletCommand(BaseCommand):
                         "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM)", 
                         "Give me the radius" 
                         ]
-        self.resetToDefault()
+
     def getEntsToSave(self):
         """
             get the fillet segments

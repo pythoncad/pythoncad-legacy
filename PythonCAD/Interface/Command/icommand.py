@@ -21,10 +21,16 @@
 # This Module provide a Interface Command managing the preview the and the snap
 # system
 #
+#Kernel Import
+#
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.geolib          import Vector   
-from Kernel.pycadevent              import PyCadEvent
+from Kernel.pycadevent              import *
+from Kernel.exception               import *
+#
+# Interface Import
+#
 from Interface.Preview.factory      import *
 
 class ICommand(object):
@@ -36,11 +42,11 @@ class ICommand(object):
     automaticApply=True # apply the command at the last insert value
     restartCommandOption=True # restart the command for sequence command functionality
     def __init__(self, scene):
-        self.__scene=scene                      # This is needed for the preview creation
-        self.__kernelCommand = scene.activeCommand
+        self.__scene=scene                          # This is needed for the preview creation
+        self.__kernelCommand = scene.activeKernelCommand
         self.__previewItem=getPreviewObject(self.__kernelCommand)
         if self.__previewItem:
-            scene.addItem(self.__previewItem)      # Add preview item on creation
+            scene.addItem(self.__previewItem)       # Add preview item on creation
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -64,7 +70,7 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         
-    def addMauseEvent(self, point, distance, entity, force=None):
+    def addMauseEvent(self, point, entity, force=None, text=None):
         """
             add value to a new slot of the command 
         """
@@ -73,14 +79,20 @@ class ICommand(object):
         except StopIteration:
             self.applyCommand()
             return
-            
+        
         exception,message=cmdIndex
         #fire event for messsage
         self.updateInput(self.__kernelCommand.activeMessage) 
         #
+        # Compute snap distance and position force
+        #
         snap=self.getClickedPoint(point,self.getEntity(entity,point), force)
         angle=self.calculateAngle(snap)
-        self.__kernelCommand[cmdIndex]=(snap,entity,distance, angle)
+        distance=self.getDistance(snap)
+        #
+        # Assing value to the object arrays
+        #
+        self.__kernelCommand[cmdIndex]=(snap,entity,distance, angle, text)
         self.__point.append(point)
         self.__entity.append(entity)
         self.__distance.append(distance)      
@@ -97,9 +109,16 @@ class ICommand(object):
         """
             apply the command 
         """
-        self.__kernelCommand.applyCommand()    
-        if self.restartCommandOption:
-            self.restartCommand()
+        try:
+            self.__kernelCommand.applyCommand()    
+            if self.restartCommandOption:
+                self.restartCommand()
+                self.updateInput(self.__kernelCommand.activeMessage) 
+            else:
+                self=None
+        except:
+            print "Errore "
+            return
         return
     
     def getEntity(self, entity, position):
@@ -135,6 +154,7 @@ class ICommand(object):
             compute imput from text
         """
         if value=="":
+            self.__kernelCommand.applyDefault()
             self.applyCommand()
             return
         elif value=="back":
@@ -145,8 +165,19 @@ class ICommand(object):
             return
         else:
             tValue=self.decodeText(value)
-            self.addMauseEvent(tValue[0], tValue[1], tValue[2])
-
+            self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3])
+    
+    def getDistance(self, point):
+        """
+            Get The distance from 2 points
+        """
+        prPoint=self.getActiveSnapClick()
+        if prPoint!=None and point!=None:
+            d=prPoint.dist(point)
+            return d
+        else:
+            return None
+        
     def calculateAngle(self, snap):
         """
             calculate the angle betwin the point clicked
@@ -173,16 +204,28 @@ class ICommand(object):
         point=None
         distance=None
         entitys=None
-        value=value.strip()
-        if len(value)>0:
-            if value[0]=='@': # id of the entity
-                print "id of the entity"
-            elif value[0]=='|': #point
-                x, y=value[1:].split(',')
-                point=Point(float(x), float(y))
-            elif value[0]=='?':   # distance
-                distance=float(value[1:])
-        return (point, distance, entitys)
+        text=None
+        try:
+            kCmd=self.__kernelCommand
+            raise kCmd.exception[kCmd.index+1](None)
+        except ExcPoint:
+            x, y=value.split(',')
+            point=Point(float(x), float(y))
+        except (ExcEntity,ExcMultiEntity):
+            entitys=self.getIdsString(value)
+        except ExcEntityPoint:
+            #TODO: must be rewritten 
+            print "Must be rewritten"
+            return
+        except (ExcLenght, ExcAngle, ExcInt, ExcBool):
+            distance=value
+        except(ExcText):
+            text=value
+        except:
+            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
+        return (point, distance, entitys, text)
+        
+        
         
     def updatePreview(self):        
         if self.drawPreview:

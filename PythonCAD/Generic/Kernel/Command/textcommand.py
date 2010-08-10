@@ -36,7 +36,7 @@ class TextCommand(BaseCommand):
                         "Give Me The Text string",
                         "Give Me The angle", 
                         "Give me the position of the text referred to the point"]
-        self.resetToDefault()
+
     def applyCommand(self):
         if len(self.value)!=4:
             raise PyCadWrongImputData("Wrong number of imput parameter")

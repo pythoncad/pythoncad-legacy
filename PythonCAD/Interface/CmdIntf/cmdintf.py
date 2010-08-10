@@ -152,13 +152,7 @@ class CmdIntf(object):
             reset the active command 
         """
         self.__edit_ctrl.FunctionHandler.resetCommand()
-        
-    def updatePreview(self, scene, position, distance):
-        """
-            pass the imput to the hendler
-        """
-        self.__edit_ctrl.FunctionHandler.updatePreview(scene, position, distance)
-        
+                
     @QtCore.pyqtSlot(str)
     def _actionHandler(self, expression):
         '''
