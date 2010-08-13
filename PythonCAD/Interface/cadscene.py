@@ -139,6 +139,7 @@ class CadScene(QtGui.QGraphicsScene):
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
+            self.clearSelection() #clear the selection after the window zoom
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
@@ -238,7 +239,7 @@ class CadScene(QtGui.QGraphicsScene):
     
     def eventUndoRedo(self, document, entity):
         """
-        Manage the undo redo event
+            Manage the undo redo event
         """
         self.clear()
         self.populateScene(document)
@@ -246,21 +247,21 @@ class CadScene(QtGui.QGraphicsScene):
 
     def eventShow(self, document, entity):        
         """
-        Manage the show entity event
+            Manage the show entity event
         """
         self.addGraficalObject(entity)
     
     
     def eventUpdate(self, document, entity):    
         """
-        Manage the Update entity event  
+            Manage the Update entity event  
         """
         self.updateItemsFromID([entity])
     
 
     def eventDelete(self, document, entity):    
         """
-        Manage the Delete entity event
+            Manage the Delete entity event
         """
         #import time 
         #startTime=time.clock()

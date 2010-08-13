@@ -47,7 +47,7 @@ class BaseCommand(object):
         """
         if not isinstance(value, tuple) or len(value)!=5:
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
-        print "add command value", value
+        print "BaseCommand add command value", value
         value=self.translateCmdValue(value)
         self.value.append(value)    
         
@@ -169,15 +169,14 @@ class BaseCommand(object):
             exitValue=self.getIdsString(entitys)
         except ExcEntityPoint:
             if entitys:
-                sPoint=point
-                id=str(entitys[0].ID)
-                exitValue="%s@%s"%(str(id), str(sPoint))
+                exitValue=(str(entitys[0].ID), point)
         except (ExcLenght):
             if distance:
                 exitValue=self.convertToFloat(distance)
         except(ExcAngle):
             if angle:
-                exitValue=angle
+                m(angle)
+                exitValue=convertAngle(angle)
             elif distance:
                 exitValue=distance
             else:

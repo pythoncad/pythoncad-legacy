@@ -332,8 +332,5 @@ def getIdPoint(value):
         imput must be 10@0,0
         return id,Point
     """
-    from Kernel.GeoEntity.point         import Point
-    id, ps=value.split('@')
-    x, y=ps.split(',')    
-    p=Point(float(x), float(y))
+    id, p=value.split('@')
     return id, p

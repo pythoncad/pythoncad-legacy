@@ -21,6 +21,10 @@
 # This Module provide a Interface Command managing the preview the and the snap
 # system
 #
+#Qt Import
+#
+from PyQt4 import QtCore, QtGui
+#
 #Kernel Import
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY
@@ -70,7 +74,7 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         
-    def addMauseEvent(self, point, entity, force=None, text=None):
+    def addMauseEvent(self, point, entity,distance=None,angle=None , force=None, text=None):
         """
             add value to a new slot of the command 
         """
@@ -86,9 +90,11 @@ class ICommand(object):
         #
         # Compute snap distance and position force
         #
-        snap=self.getClickedPoint(point,self.getEntity(entity,point), force)
-        angle=self.calculateAngle(snap)
-        distance=self.getDistance(snap)
+        snap=self.getClickedPoint(point,self.getEntity(point), force)
+        if angle==None:
+            angle=self.calculateAngle(snap)
+        if distance==None:
+            distance=self.getDistance(snap)
         #
         # Assing value to the object arrays
         #
@@ -117,23 +123,27 @@ class ICommand(object):
             else:
                 self=None
         except:
-            print "Errore "
+            print "ICommand applyCommand Errore "
+            self.restartCommand()
             return
         return
     
-    def getEntity(self, entity, position):
+    def getEntity(self, position):
         """
             get the entity nearest at the mouse position
         """
-        #TODO: Calculete the nearest entity at the mouseClick
-        
-        if entity == None:
+        if position ==None:
             return None
-        for ent in entity:
-            if ent!=None:
-                return ent
-        else:
-            return None
+        p=QtCore.QPointF(position.x, position.y*-1.0)
+        ents=self.__scene.items(p)
+        if len(ents)>0:
+            #TODO: here it will be nice to have a sort of control for chosing one entity
+            #in case of overlapping entity selection
+            print "more than one entity under the mouse"
+        for e in ents:
+            print "e :", e
+            return e
+        return None
         
     def updateMauseEvent(self, point, distance, entity, force=None):
         """
@@ -165,7 +175,7 @@ class ICommand(object):
             return
         else:
             tValue=self.decodeText(value)
-            self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3])
+            self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4])
     
     def getDistance(self, point):
         """
@@ -205,6 +215,7 @@ class ICommand(object):
         distance=None
         entitys=None
         text=None
+        angle=None
         try:
             kCmd=self.__kernelCommand
             raise kCmd.exception[kCmd.index+1](None)
@@ -217,13 +228,15 @@ class ICommand(object):
             #TODO: must be rewritten 
             print "Must be rewritten"
             return
-        except (ExcLenght, ExcAngle, ExcInt, ExcBool):
+        except (ExcLenght, ExcInt, ExcBool):
             distance=value
+        except(ExcAngle):
+            angle=value
         except(ExcText):
             text=value
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
-        return (point, distance, entitys, text)
+        return (point,entitys, distance,angle, text)
         
         
         

@@ -27,6 +27,7 @@ from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR
 from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
+    shapeSize=10
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
@@ -138,7 +139,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         painterStrock=QtGui.QPainterPathStroker()
         path=QtGui.QPainterPath()
         self.drawShape(path)
-        painterStrock.setWidth(self.lineWith)
+        painterStrock.setWidth(self.lineWith*self.shapeSize)
         path1=painterStrock.createStroke(path)
         return path1
         
