@@ -23,6 +23,7 @@
 
 from Kernel.GeoComposedEntity.objoint import *
 from Kernel.GeoUtil.geolib import Vector
+import math
 
 class Bisector(ObjectJoint):
     """
@@ -43,14 +44,36 @@ class Bisector(ObjectJoint):
         if not kw["OBJECTJOINT_5"]:
             self["OBJECTJOINT_5"]=self.getDefaultLeng()
         self._UpdateBisector()
-    
+        
+    def getAngledVector(self, segment,  point):
+        """
+            calculate the vector use
+        """
+        pi=self.intersection[0]
+        p1, p2=segment.getEndpoints()
+        vs1=Vector(pi, p1)
+        vs2=Vector(pi, p2)
+        
+        if abs(vs1.absAng-vs2.absAng)<0.00001:
+            if pi.dist(p1)>pi.dist(p2):
+                return Vector(pi, p1)
+            else:
+                return Vector(pi, p2)
+        else:
+            jp=segment.getProjection(point)
+            vj=Vector(pi, jp)
+            if abs(vj.absAng-vs1.absAng)<0.00001:
+                return Vector(pi, p1)
+            else:
+                return Vector(pi, p2)        
+        
     def _UpdateBisector(self):
         """
             Update the segment base on the imput value
         """
-        v1=self.obj1.vector
-        v2=self.obj2.vector
-        ang=v1.ang(v2)/2.0     
+        v1=self.getAngledVector(self.obj1, self.pointClick1)
+        v2=self.getAngledVector(self.obj2, self.pointClick2)
+        ang=v1.ang(v2)/2.0
         if v1.absAng==0 or v2.absAng==0:
             if v2.point.y<0:
                 bisecVector=v2.mag()
