@@ -53,7 +53,6 @@ class Bisector(ObjectJoint):
         p1, p2=segment.getEndpoints()
         vs1=Vector(pi, p1)
         vs2=Vector(pi, p2)
-        
         if abs(vs1.absAng-vs2.absAng)<0.00001:
             if pi.dist(p1)>pi.dist(p2):
                 return Vector(pi, p1)
@@ -85,11 +84,17 @@ class Bisector(ObjectJoint):
                 else:
                     bisecVector=v1.mag()
         else:
+            v1v2Ang=abs(v1.absAng-v2.absAng)
             if v1.absAng>v2.absAng:
-                bisecVector=v2.mag()
+                if v1v2Ang>math.pi:
+                    bisecVector=v1.mag()
+                else:
+                    bisecVector=v2.mag()
             else:
-                bisecVector=v1.mag()
-            
+                if v1v2Ang>math.pi:
+                    bisecVector=v2.mag()
+                else:
+                    bisecVector=v1.mag()
         bisecVector.mult(self.lengh)
         bisecVector.rotate(ang)
         newPoint=self.intersection[0]+bisecVector.point
