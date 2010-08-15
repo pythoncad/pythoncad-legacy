@@ -49,6 +49,7 @@ class BaseCommand(object):
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
         print "BaseCommand add command value", value
         value=self.translateCmdValue(value)
+        print "Value Chosen", value
         self.value.append(value)    
         
     def resetToDefault(self): 
@@ -175,7 +176,6 @@ class BaseCommand(object):
                 exitValue=self.convertToFloat(distance)
         except(ExcAngle):
             if angle:
-                m(angle)
                 exitValue=convertAngle(angle)
             elif distance:
                 exitValue=distance
