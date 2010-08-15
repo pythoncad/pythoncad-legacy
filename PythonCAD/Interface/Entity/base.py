@@ -28,6 +28,7 @@ from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
     shapeSize=10
+    showShape=False
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
@@ -150,7 +151,8 @@ class BaseEntity(QtGui.QGraphicsItem):
         #painter.setPen(QtGui.QPen(self.color, self.lineWith))
         painter.setPen(QtGui.QPen(self.color))
         #draw geometry
-        #painter.drawPath(self.shape())
+        if self.showShape:
+            painter.drawPath(self.shape())
         self.drawGeometry(painter,option,widget)
         return 
         

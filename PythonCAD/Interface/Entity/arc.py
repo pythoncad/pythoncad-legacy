@@ -32,7 +32,9 @@ class Arc(BaseEntity):
         # get the geometry
         geoEnt=self.geoItem
         self.xc, self.yc=geoEnt.center.getCoords()
+        self.center=(self.xc, self.yc)
         startAngle=geoEnt.startAngle
+        self.sa=startAngle
         spanAngle=geoEnt.endAngle
         self.yc=(-1.0*self.yc)- geoEnt.radius
         self.xc=self.xc-geoEnt.radius
@@ -56,7 +58,15 @@ class Arc(BaseEntity):
         """
             overloading of the shape method 
         """
-        painterPath.arcTo(self.boundingRect(),self.startAngle,self.spanAngle) 
+        #TODO: Fix the starting point of the path
+        r=self.h/2.0
+        x=r*math.cos(self.sa)
+        y=r*math.sin(self.sa)
+        xc, yc=self.center
+        x=xc+x
+        y=(yc+y)*-1.0
+        painterPath.moveTo(x, y)
+        painterPath.arcTo(self.boundingRect(),self.startAngle/16.0,self.spanAngle/16.0) 
     
     def drawGeometry(self, painter, option, widget):
         """
