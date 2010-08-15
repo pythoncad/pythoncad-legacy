@@ -41,16 +41,16 @@ class ICommand(object):
     """
         this class provide base command operation 
     """
-    activeSnap=SNAP_POINT_ARRAY["ALL"] #define the active snap system
-    drawPreview=False   # enable the preview system
-    automaticApply=True # apply the command at the last insert value
-    restartCommandOption=True # restart the command for sequence command functionality
+    activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
+    drawPreview=False                   # Enable the preview system
+    automaticApply=True                 # Apply the command at the last insert value
+    restartCommandOption=True           # Restart the command for sequence command functionality
+    
     def __init__(self, scene):
-        self.__scene=scene                          # This is needed for the preview creation
-        self.__kernelCommand = scene.activeKernelCommand
-        self.__previewItem=getPreviewObject(self.__kernelCommand)
+        self.__scene=scene              # This is needed for the preview creation
+        self.__previewItem=getPreviewObject(self.kernelCommand)
         if self.__previewItem:
-            scene.addItem(self.__previewItem)       # Add preview item on creation
+            scene.addItem(self.__previewItem)   # Add preview item on creation
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -58,14 +58,34 @@ class ICommand(object):
         self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
-        self.__forceDirection=self.__scene.forceDirection
         self.updateInput=PyCadEvent()
-    
+    @property
+    def forceDirection(self):
+        """
+            get scene force direction
+        """
+        return self.__scene.forceDirection
+    @property
+    def kernelCommand(self):
+        """
+            get scene the kernel command
+        """
+        return self.scene.activeKernelCommand
+    @property
+    def scene(self):
+        """
+            get scene
+        """
+        return self.__scene
+    @property
+    def index(self):
+        return self.__index
+  
     def restartCommand(self):
         """
             reuse the command 
         """
-        self.__kernelCommand.reset()
+        self.kernelCommand.reset()
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -79,18 +99,20 @@ class ICommand(object):
             add value to a new slot of the command 
         """
         try:
-            cmdIndex=self.__kernelCommand.next()
+            cmdIndex=self.kernelCommand.next()
         except StopIteration:
             self.applyCommand()
             return
         
         exception,message=cmdIndex
         #fire event for messsage
-        self.updateInput(self.__kernelCommand.activeMessage) 
+        self.updateInput(self.kernelCommand.activeMessage) 
         #
         # Compute snap distance and position force
         #
         snap=self.getClickedPoint(point,self.getEntity(point), force)
+        if snap!=None:
+            print "Snap Point", snap.info
         if angle==None:
             angle=self.calculateAngle(snap)
         if distance==None:
@@ -98,7 +120,7 @@ class ICommand(object):
         #
         # Assing value to the object arrays
         #
-        self.__kernelCommand[cmdIndex]=(snap,entity,distance, angle, text)
+        self.kernelCommand[cmdIndex]=(snap,entity,distance, angle, text)
         self.__point.append(point)
         self.__entity.append(entity)
         self.__distance.append(distance)      
@@ -107,8 +129,8 @@ class ICommand(object):
         self.__forceSnap.append(force)
         self.updatePreview()   
         self.__index+=1
-        if self.automaticApply and self.__kernelCommand.automaticApply:
-            if(self.__index>=self.__kernelCommand.lenght-1): #Apply the command
+        if self.automaticApply and self.kernelCommand.automaticApply:
+            if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
                 
     def applyCommand(self):    
@@ -116,10 +138,10 @@ class ICommand(object):
             apply the command 
         """
         try:
-            self.__kernelCommand.applyCommand()    
+            self.kernelCommand.applyCommand()    
             if self.restartCommandOption:
                 self.restartCommand()
-                self.updateInput(self.__kernelCommand.activeMessage) 
+                self.updateInput(self.kernelCommand.activeMessage) 
             else:
                 self=None
         except:
@@ -164,7 +186,7 @@ class ICommand(object):
             compute imput from text
         """
         if value=="":
-            self.__kernelCommand.applyDefault()
+            self.kernelCommand.applyDefault()
             self.applyCommand()
             return
         elif value=="back":
@@ -205,19 +227,14 @@ class ICommand(object):
     def decodeText(self, value):
         """
             encode the text given from the user
-        """
-        #TODO: make encoding of the text
-        # use the sympy unit mesure to get the right value
-        # the first letter of the value give the keyword to decode the string
-        # try to use the a parsing method 
-        
+        """       
         point=None
         distance=None
         entitys=None
         text=None
         angle=None
         try:
-            kCmd=self.__kernelCommand
+            kCmd=self.kernelCommand
             raise kCmd.exception[kCmd.index+1](None)
         except ExcPoint:
             x, y=value.split(',')
@@ -225,8 +242,11 @@ class ICommand(object):
         except (ExcEntity,ExcMultiEntity):
             entitys=self.getIdsString(value)
         except ExcEntityPoint:
-            #TODO: must be rewritten 
-            print "Must be rewritten"
+            #(4@10,20)
+            id, p=value.split('@')
+            x, y=p.split(',')
+            point=Point(float(x), float(y))
+            entitys=self.getIdsString(id)
             return
         except (ExcLenght, ExcInt, ExcBool):
             distance=value
@@ -238,12 +258,19 @@ class ICommand(object):
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         return (point,entitys, distance,angle, text)
         
-        
+    def getIdsString(self, value):
+        """
+            return the entity from a string value (id)
+        """
+        return self.scene.getEntFromId(value)
         
     def updatePreview(self):        
+        """
+            make update of the preview
+        """
         if self.drawPreview:
             self.__previewItem.updatePreview(self.getActiveSnapClick()
-                    , self.getActiveDistanceClick(), self.__kernelCommand)
+                    , self.getActiveDistanceClick(), self.kernelCommand)
 
     def getPointClick(self, index):
         """
@@ -276,19 +303,13 @@ class ICommand(object):
         return self.getDummyElement(self.__forceSnap, index)
     
     def getDummyElement(self, array, index):
+        """
+            generic function to get an item from a generic array
+        """
         if len(array)>=0 and index<=self.index:
             return array[index]
         raise IndexError   
             
-    @property
-    def index(self):
-        return self.__index
-    @property
-    def scene(self):
-        """
-            get the actual scene object
-        """
-        return self.__scene
     
     def getDummyActive(self, func):
         """

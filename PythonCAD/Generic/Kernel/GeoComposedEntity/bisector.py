@@ -154,3 +154,5 @@ class Bisector(ObjectJoint):
             return the element to be written in the db and used for renderin
         """
         return self.bisector
+    
+        

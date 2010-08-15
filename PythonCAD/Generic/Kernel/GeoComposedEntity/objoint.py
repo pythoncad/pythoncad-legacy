@@ -58,7 +58,7 @@ class ObjectJoint(GeometricalEntityComposed):
         GeometricalEntityComposed.__init__(self, kw, argDescription)
         self._externalIntersectio=False
         spoolIntersection=[Point(x, y) for x, y in find_intersections(self.obj1, self.obj2)]
-        if not spoolIntersection: #if not intesection is found extend it on cLine
+        if len(spoolIntersection)<=0: #if not intesection is found extend it on cLine
             spoolIntersection=findSegmentExtendedIntersectionPoint(self.obj1, self.obj2)
             self._externalIntersectio=True
         self._intersectionPoints=spoolIntersection

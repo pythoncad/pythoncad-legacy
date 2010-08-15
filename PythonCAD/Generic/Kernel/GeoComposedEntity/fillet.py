@@ -66,7 +66,7 @@ class Fillet(ObjectJoint):
             "OBJECTJOINT_3":self.pointClick2, 
             "OBJECTJOINT_5":bisectorLengh}
         bisect=Bisector(arg)
-        p1, p2=bisect.bisector.getEndpoints()
+        p1, p2=bisect.bisector.getEndpoints() #bisector is a segment so the getEndPoints is made on segment object
         if self.intersection[0].dist(p1)>self.intersection[0].dist(p2):
             self.__center=p1
         else:
@@ -76,6 +76,9 @@ class Fillet(ObjectJoint):
         """
             Recompute the Fillet segment
         """
+        #
+        # Calculate the center of the filet
+        #
         self._calculateCenter()
         obj1, pc1=self._updateSegment(self.obj1, self.pointClick1 )
         obj2, pc2=self._updateSegment(self.obj2, self.pointClick2 )
