@@ -174,6 +174,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #View
         self.__cmd_intf.setVisible('fit', hasMdiChild)
         self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
+        self.__cmd_intf.setVisible('zoomitem', hasMdiChild)
         #snap
         self.__cmd_intf.setVisible('autosnap', hasMdiChild)
         self.__cmd_intf.setVisible('endsnap', hasMdiChild)
@@ -267,7 +268,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
         # View
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'zoom&Window', self._onZoomWindow)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'Zoom&Window', self._onZoomWindow)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomitem', 'Zoom&Item',self._onCenterItem)
         # Snap
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'autosnap', 'Automatic Snap', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'endsnap', 'End', self._onSnapCommand)
@@ -428,6 +430,9 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onZoomWindow(self):
         self.statusBar().showMessage("CMD:ZoomWindow")
         self.scene._cmdZoomWindow=True
+    
+    def _onCenterItem(self):
+        self.view.centerOnSelection()
     # Snap
     def _onSnapCommand(self):
         """

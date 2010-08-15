@@ -47,7 +47,7 @@ class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
         super(CadScene, self).__init__(parent)
         # drawing limits
-        self.__limits = None
+        self.setSceneRect(-10000, -10000, 20000, 20000)
         # scene custom event
         self.pyCadScenePressEvent=PyCadEvent()
         self.pyCadSceneApply=PyCadEvent()
@@ -72,6 +72,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.activeICommand=None
         #
         self.__grapWithd=20.0
+        
     @property
     def activeKernelCommand(self):
         """
@@ -80,8 +81,9 @@ class CadScene(QtGui.QGraphicsScene):
         return self.__activeKernelCommand
     @activeKernelCommand.setter
     def activeKernelCommand(self, value):
-        self.__activeKernelCommand=value    
-
+        self.__activeKernelCommand=value
+        
+       
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
@@ -143,8 +145,6 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
-
-
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
@@ -186,22 +186,17 @@ class CadScene(QtGui.QGraphicsScene):
             item.updateSelected()
 
     def clearPreview(self):
+        """
+            remove the preview items from the scene
+        """
         entitys=[item for item in self.items() if isinstance(item, BaseQtPreviewItem)]
         for ent in entitys:
             self.removeItem(ent)
         self.__oldClickPoint=None
-        
-    @property    
-    def Limits(self):
-        """
-            Gets the drawing limits
-        """
-        return self.__limits
-        
-
+   
     def initDocumentEvents(self):
         """
-        Initialize the document events.
+            Initialize the document events.
         """
         if not self.__document is None:
             self.__document.showEntEvent        += self.eventShow
@@ -211,16 +206,16 @@ class CadScene(QtGui.QGraphicsScene):
             self.__document.undoRedoEvent       += self.eventUndoRedo
 
     def populateScene(self, document):
-        '''
-        Traverse all entities in the document and add these to the scene.
-        '''
+        """
+            Traverse all entities in the document and add these to the scene.
+        """
         entities = self.__document.getEntityFromType(SCENE_SUPPORTED_TYPE)
         for entity in entities:
             self.addGraficalObject(entity)
  
     def addGraficalObject(self, entity):                
         """
-        Add the single object
+            Add the single object
         """
         newQtEnt=None
         entityType=entity.getEntityType()
@@ -234,8 +229,6 @@ class CadScene(QtGui.QGraphicsScene):
         """
         if qtItem:
             self.addItem(qtItem)
-            # adjust drawing limits
-            self.updateLimits(qtItem.boundingRect())  
     
     def eventUndoRedo(self, document, entity):
         """
@@ -287,29 +280,18 @@ class CadScene(QtGui.QGraphicsScene):
         for ent in entitys:
             self.removeItem(dicItems[ent.getId()])
 
-    def updateLimits(self, rect):
-        # init size
-        if self.__limits == None:
-            self.__limits = rect
-            return
-        # left side
-        if rect.left() < self.__limits.left():
-            self.__limits.setLeft(rect.left())
-        # right side
-        if rect.right() > self.__limits.right():
-            self.__limits.setRight(rect.right())
-        # bottom side
-        if rect.bottom() < self.__limits.bottom():
-            self.__limits.setBottom(rect.bottom())
-        # top side
-        if rect.top() > self.__limits.top():
-            self.__limits.setTop(rect.top())
-        return
-            
-    
+    def getEntFromId(self, id):
+        """
+            get the grafical entity from an id
+        """
+        dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity) and item.ID==id])
+        if len(dicItems)>0:
+            return dicItems[0][1]
+        return None
+        
     def updateItemsFromID(self,entitys):
         """
-        Update the scene from the Entity []
+            Update the scene from the Entity []
         """
         dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:

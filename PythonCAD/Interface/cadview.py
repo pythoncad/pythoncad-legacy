@@ -11,10 +11,10 @@ class CadView(QtGui.QGraphicsView):
         self.scaleFactor=1
         self.controlPress=False
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        self.setResizeAnchor(QtGui.QGraphicsView.NoAnchor) 
+        self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse) 
 
     def sizeHint(self):
-        return QtCore.QSize(800,600)
+        return QtCore.QSize(3000,3000)
     
     def wheelEvent(self, event):
         self.scaleFactor=math.pow(2.0,-event.delta() / 240.0)
@@ -46,6 +46,16 @@ class CadView(QtGui.QGraphicsView):
                 qRect=qRect.unite(bound)
         if qRect:
             self.zoomWindows(qRect) 
+            
+    def centerOnSelection(self):        
+        """
+            center the view on selected item
+        """
+        #TODO: if the item is in the border the centerOn will not work propely
+        #more info at :http://www.riverbankcomputing.co.uk/static/Docs/PyQt4/html/qgraphicsview.html#ViewportAnchor-enum
+        for item in self.scene.selectedItems():
+            self.centerOn(item)
+            return 
             
     def zoomWindows(self, qRect):
         """
