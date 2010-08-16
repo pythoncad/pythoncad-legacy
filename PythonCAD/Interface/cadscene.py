@@ -50,7 +50,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.setSceneRect(-10000, -10000, 20000, 20000)
         # scene custom event
         self.pyCadScenePressEvent=PyCadEvent()
-        self.pyCadSceneApply=PyCadEvent()
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
         self.keySpace=PyCadEvent()
@@ -145,17 +144,23 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
-    
+
+    def cancelCommand(self):
+        """
+            cancel the active command
+        """
+        self.clearSelection()
+        self.updateSelected()
+        self.forceDirection=None
+        self.__activeKernelCommand=None
+        self.activeICommand=None
+
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
-            #self.qtInputPopUp.hide()
-            self.clearSelection()
-            self.updateSelected()
-            self.forceDirection=None
-            self.__activeKernelCommand=None
-            self.activeICommand=None
+            self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
-            self.pyCadSceneApply()
+            if self.activeICommand!=None:
+                self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
         elif event.key()==QtCore.Qt.Key_H:

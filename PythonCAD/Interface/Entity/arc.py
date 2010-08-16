@@ -58,7 +58,6 @@ class Arc(BaseEntity):
         """
             overloading of the shape method 
         """
-        #TODO: Fix the starting point of the path
         r=self.h/2.0
         x=r*math.cos(self.sa)
         y=r*math.sin(self.sa)

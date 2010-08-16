@@ -140,6 +140,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             Resect the active command
         """
         self.__cmd_intf.resetCommand()
+        self.scene.cancelCommand()
         self.statusBar().showMessage("Ready")
         
     def updateMenus(self):
@@ -507,6 +508,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.activeICommand.updateInput+=self.updateInput
             self.updateInput(self.scene.activeKernelCommand.activeMessage)
         except EntityMissing:
+            self.scene.cancelCommand()
             self.critical("You need to have an active document to perform this command")
 
     def updateInput(self, message):

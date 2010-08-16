@@ -56,7 +56,18 @@ class CmdIntf(object):
         return self.__category   
         
     #-------- properties -----------#
-    
+    @QtCore.pyqtSlot(str)
+    def _actionHandler(self, expression):
+        '''
+        Callback function for all QAction objects.
+        1) Look up command in the dictionary.
+        2) Execute command by calling the FunctionHandler.Evaluate member.
+        '''
+        # evaluate command
+        if len(expression) > 0:
+            # command is found, evaluate it
+            self.__edit_ctrl.FunctionHandler.evaluate(expression)
+        return
     
     def _getIcon(self, cmd):
         '''
@@ -140,32 +151,13 @@ class CmdIntf(object):
             get imput from viewport
         '''
         self.__edit_ctrl.FunctionHandler.evaluateMouseImput(event)
-    
-    def applyCommand(self):    
-        """
-            apply the command if possible
-        """
-        self.__edit_ctrl.FunctionHandler.applyCommand()
         
     def resetCommand(self):
         """
             reset the active command 
         """
         self.__edit_ctrl.FunctionHandler.resetCommand()
-                
-    @QtCore.pyqtSlot(str)
-    def _actionHandler(self, expression):
-        '''
-        Callback function for all QAction objects.
-        1) Look up command in the dictionary.
-        2) Execute command by calling the FunctionHandler.Evaluate member.
-        '''
-        # evaluate command
-        if len(expression) > 0:
-            # command is found, evaluate it
-            self.__edit_ctrl.FunctionHandler.evaluate(expression)
-        return
-    
+
     def hideAction(self, name):
         """
             hide the name action
