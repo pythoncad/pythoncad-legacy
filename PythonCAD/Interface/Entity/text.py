@@ -37,13 +37,22 @@ class Text(BaseEntity):
         """
             overloading of the qt bounding rectangle
         """
-        return QtCore.QRectF(self.location.x(),self.location.y()  ,10.0,10.0)
+        fm = QtGui.QFontMetricsF(self.font)
+        textBBox=fm.boundingRect(self.text)
+        
+        location=QtCore.QPointF(self.location.x(), self.location.y()-textBBox.size().height())
+        
+        return QtCore.QRectF(location, textBBox.size() )
 
+
+        
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
         """
         painterPath.addText(self.location, self.font, self.text)
+        return
+        
         
     def drawGeometry(self, painter, option, widget):
         #Create Segment

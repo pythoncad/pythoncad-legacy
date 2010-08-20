@@ -45,7 +45,10 @@ class Polyline(BaseEntity):
         min_y=min(Y)
         w=abs(max_y-min_y)
         h=abs(max_x-min_x)
-        self.bbox=QtCore.QRectF(min_x,min_y ,h ,w )
+        self.bbox=QtCore.QRectF(min_x-self.shapeSize/2.0,
+                                min_y-self.shapeSize/2.0 ,
+                                h+self.shapeSize, 
+                                w+self.shapeSize )
         return
         
     def getQtPointF(self):

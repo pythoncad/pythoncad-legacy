@@ -1,4 +1,4 @@
-#
+
 # Copyright (c) 2009,2010 Matteo Boscolo
 #
 # This file is part of PythonCAD.
@@ -31,9 +31,8 @@ class Segment(BaseEntity):
         self.x1, self.y1=p2.getCoords()
         self.y=self.y*-1.0
         self.y1=self.y1*-1.0
-        #self.snapItem=[QtCore.QPointF(self.x,self.y), QtCore.QPointF(self.x1,self.y1 )]
         return
-        
+
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
@@ -42,7 +41,8 @@ class Segment(BaseEntity):
         y=min(self.y, self.y1)
         deltax=abs(self.x-self.x1)
         deltay=abs(self.y-self.y1)
-        ret=QtCore.QRectF(x,y ,deltax,deltay)
+        
+        ret=QtCore.QRectF(x-self.shapeSize/2.0,y-self.shapeSize/2.0 ,deltax+self.shapeSize*1.5,deltay+self.shapeSize*1.5)
         return ret
 
     def drawShape(self, painterPath):    

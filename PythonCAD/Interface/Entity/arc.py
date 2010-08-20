@@ -47,12 +47,20 @@ class Arc(BaseEntity):
         self.startAngle=startAngle
         self.spanAngle=spanAngle
         return
-        
+    
+    def arcRect(self):    
+        return QtCore.QRectF(self.xc,
+                             self.yc,
+                             self.h,
+                             self.h)
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
         """
-        return QtCore.QRectF(self.xc,self.yc ,self.h ,self.h)
+        return QtCore.QRectF(self.xc-self.shapeSize/2.0,
+                             self.yc-self.shapeSize/2.0,
+                             self.h+self.shapeSize,
+                             self.h+self.shapeSize)
     
     def drawShape(self, painterPath):    
         """
@@ -65,7 +73,7 @@ class Arc(BaseEntity):
         x=xc+x
         y=(yc+y)*-1.0
         painterPath.moveTo(x, y)
-        painterPath.arcTo(self.boundingRect(),self.startAngle/16.0,self.spanAngle/16.0) 
+        painterPath.arcTo(self.arcRect(),self.startAngle/16.0,self.spanAngle/16.0) 
     
     def drawGeometry(self, painter, option, widget):
         """

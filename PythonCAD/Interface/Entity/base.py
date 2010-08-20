@@ -23,12 +23,14 @@
 import math
 from PyQt4  import QtCore, QtGui
 
-from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR
+from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR
+
 from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
     shapeSize=10
-    showShape=True
+    showShape=False #This Flag is used for debughing porpouse
+    showBBox=False  #This Flag is used for debughing porpouse
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)    #Fire over events
@@ -148,11 +150,19 @@ class BaseEntity(QtGui.QGraphicsItem):
         """
             overloading of the paint method
         """
-        #painter.setPen(QtGui.QPen(self.color, self.lineWith))
-        painter.setPen(QtGui.QPen(self.color))
         #draw geometry
         if self.showShape:
+            r, g, b= PYTHONCAD_COLOR["cyan"]
+            painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
             painter.drawPath(self.shape())
+        
+        if self.showBBox:
+            r, g, b= PYTHONCAD_COLOR["darkblue"]
+            painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
+            painter.setPen(QtGui.QPen(self.color))
+            painter.drawRect(self.boundingRect())
+            
+        painter.setPen(QtGui.QPen(self.color))
         self.drawGeometry(painter,option,widget)
         return 
         
