@@ -98,21 +98,10 @@ class ICommand(object):
         """
             add value to a new slot of the command 
         """
-        try:
-            cmdIndex=self.kernelCommand.next()
-        except StopIteration:
-            self.applyCommand()
-            return
-        
-        exception,message=cmdIndex
-        #fire event for messsage
-        self.updateInput(self.kernelCommand.activeMessage) 
         #
         # Compute snap distance and position force
         #
         snap=self.getClickedPoint(point,self.getEntity(point), force)
-        if snap!=None:
-            print "Snap Point", snap.info
         if angle==None:
             angle=self.calculateAngle(snap)
         if distance==None:
@@ -120,7 +109,13 @@ class ICommand(object):
         #
         # Assing value to the object arrays
         #
-        self.kernelCommand[cmdIndex]=(snap,entity,distance, angle, text)
+        try:
+            self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
+        except PyCadWrongImputData, msg:
+            print "ICommand.addMauseEvent exept"
+            self.updateInput(msg)
+            self.updateInput(self.kernelCommand.activeMessage) 
+            return
         self.__point.append(point)
         self.__entity.append(entity)
         self.__distance.append(distance)      
@@ -129,6 +124,12 @@ class ICommand(object):
         self.__forceSnap.append(force)
         self.updatePreview()   
         self.__index+=1
+        try:
+            self.kernelCommand.next()
+        except StopIteration:
+            self.applyCommand()
+            return
+        self.updateInput(self.kernelCommand.activeMessage) 
         if self.automaticApply and self.kernelCommand.automaticApply:
             if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
@@ -196,8 +197,14 @@ class ICommand(object):
             #TODO: perform a forward operatio to the command
             return
         else:
-            tValue=self.decodeText(value)
-            self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4])
+            try:
+                tValue=self.decodeText(value)
+                self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4])
+            except PyCadWrongImputData, msg:
+                print "Problem on ICommand.addTextEvent"
+                self.updateInput(msg)
+                self.updateInput(self.kernelCommand.activeMessage) 
+                return  
     
     def getDistance(self, point):
         """
@@ -234,26 +241,26 @@ class ICommand(object):
         text=None
         angle=None
         try:
-            kCmd=self.kernelCommand
-            raise kCmd.exception[kCmd.index+1](None)
-        except ExcPoint:
-            x, y=value.split(',')
-            point=Point(float(x), float(y))
-        except (ExcEntity,ExcMultiEntity):
-            entitys=self.getIdsString(value)
-        except ExcEntityPoint:
-            #(4@10,20)
-            id, p=value.split('@')
-            x, y=p.split(',')
-            point=Point(float(x), float(y))
-            entitys=self.getIdsString(id)
-            return
-        except (ExcLenght, ExcInt, ExcBool):
-            distance=value
-        except(ExcAngle):
-            angle=value
-        except(ExcText):
-            text=value
+            try:
+                raise self.kernelCommand.activeException()(None)
+            except ExcPoint:
+                x, y=value.split(',')
+                point=Point(float(x), float(y))
+            except (ExcEntity,ExcMultiEntity):
+                entitys=self.getIdsString(value)
+            except ExcEntityPoint:
+                #(4@10,20)
+                id, p=value.split('@')
+                x, y=p.split(',')
+                point=Point(float(x), float(y))
+                entitys=self.getIdsString(id)
+                return
+            except (ExcLenght, ExcInt, ExcBool):
+                distance=value
+            except(ExcAngle):
+                angle=value
+            except(ExcText):
+                text=value
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         return (point,entitys, distance,angle, text)

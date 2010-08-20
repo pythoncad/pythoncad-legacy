@@ -36,7 +36,7 @@ class BaseCommand(object):
         self.value=[]
         self.message=[]
         self.defaultValue=[]
-        self.index=-1
+        self.index=0
         self.document=document
         self.automaticApply=True
     def __iter__(self):
@@ -47,9 +47,11 @@ class BaseCommand(object):
         """
         if not isinstance(value, tuple) or len(value)!=5:
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
-        print "BaseCommand add command value", value
+        print "BaseCommand add command value", [str(x) for x in value]
         value=self.translateCmdValue(value)
-        print "Value Chosen", value
+        if value==None:
+            print "BaseCommand.__setitem__ exept"
+            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         self.value.append(value)    
         
     def resetToDefault(self): 
@@ -73,7 +75,7 @@ class BaseCommand(object):
         """
             reset the command 
         """
-        self.index=-1
+        self.index=0
         self.value=[]
     @property
     def valueIndex(self):    
@@ -102,9 +104,8 @@ class BaseCommand(object):
         """
             get Active message
         """
-        _index=self.index+1
-        if len(self.message)>_index:
-            return self.message[_index]
+        if len(self.message)>self.index:
+            return self.message[self.index]
         else:
             return "Press enter to ececute the command"
 
@@ -123,12 +124,12 @@ class BaseCommand(object):
         else:
             return None   
 
-    def previus(selfself):
+    def previus(self):
         """
             came back with the iteration
         """
         self.index-=1
-        if self.index<=0:
+        if self.index<0:
             self.index=0
         return (self.exception[self.index],self.message[self.index])       
     

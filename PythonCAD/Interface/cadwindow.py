@@ -512,8 +512,8 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.critical("You need to have an active document to perform this command")
 
     def updateInput(self, message):
-            self.__cmd_intf.commandLine.printMsg(message)
-            self.statusBar().showMessage(message)
+            self.__cmd_intf.commandLine.printMsg(str(message))
+            self.statusBar().showMessage(str(message))
 
     @staticmethod
     def critical(text):

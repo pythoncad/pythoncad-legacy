@@ -35,6 +35,12 @@ class DeleteCommand(BaseCommand):
         self.exception=[ExcMultiEntity]
         self.message=["Give Me the Entity ID use , for more enitt ES: 4,10,5"]
         
+    def applyDefault(self):    
+        """
+            aver written to  avoid apply default in this command
+        """
+        return
+        
     def applyCommand(self):
         """
             apply the champfer command

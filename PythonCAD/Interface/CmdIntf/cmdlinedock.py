@@ -135,7 +135,7 @@ class PyCadTextView(QtGui.QTextEdit):
         """
             print a message withouth formatting in the last row
         """
-        self.append(msg)
+        self.append(str(msg))
         self.scrollToBottom()
 
     def scrollToBottom(self):    

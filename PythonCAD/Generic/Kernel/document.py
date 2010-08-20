@@ -165,6 +165,7 @@ class Document(BaseDb):
         self.__logger.debug('stopMassiveCreation')
         self.__bulkCommit=False
         self.__bulkUndoIndex=-1
+        self.performCommit()
 
     def getEntity(self,entId):
         """
