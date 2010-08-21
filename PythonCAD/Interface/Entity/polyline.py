@@ -29,26 +29,7 @@ class Polyline(BaseEntity):
     """
     def __init__(self, entity):
         super(Polyline, self).__init__(entity)
-        # get the geometry
-        geometry = self.entity.getConstructionElements()
-        geoPoints=[geometry[k] for k in geometry]
-        coordPoints=[point.getCoords() for point in geoPoints]
-        
-        #self.qtPoints=[QtCore.QPointF(x, y*-1.0 ) for x, y in coordPoints]
         self.qtPoints=self.getQtPointF()
-        
-        X=[x for x,y in coordPoints]
-        max_x=max(X)
-        min_x=min(X)
-        Y=[y*-1.0 for x,y in coordPoints]
-        max_y=max(Y)
-        min_y=min(Y)
-        w=abs(max_y-min_y)
-        h=abs(max_x-min_x)
-        self.bbox=QtCore.QRectF(min_x-self.shapeSize/2.0,
-                                min_y-self.shapeSize/2.0 ,
-                                h+self.shapeSize, 
-                                w+self.shapeSize )
         return
         
     def getQtPointF(self):
@@ -59,13 +40,6 @@ class Polyline(BaseEntity):
             qtPointf=QtCore.QPointF(x, y*-1.0 )
             qtPoints.append(qtPointf)
         return qtPoints
-        
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        return self.bbox
-    
 
     def drawShape(self, painterPath):    
         """

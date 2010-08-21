@@ -34,16 +34,7 @@ class Ellipse(BaseEntity):
         self.h=major
         self.w=minor
         return
-        
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        return QtCore.QRectF(self.xc-(self.h/2.0)-self.shapeSize/2.0,
-                             self.yc- (self.w/2.0)-self.shapeSize/2.0 ,
-                             self.h+self.shapeSize ,
-                             self.w+self.shapeSize )
-    
+
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 

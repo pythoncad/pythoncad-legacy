@@ -173,3 +173,9 @@ class BaseEntity(QtGui.QGraphicsItem):
         x=abs(qtPointF_1.x()-qtPointF_2.x())
         y=abs(qtPointF_1.y()- qtPointF_2.y())
         return math.sqrt(x**2+y**2)
+        
+    def boundingRect(self):
+        """
+            overloading of the qt bounding rectangle
+        """
+        return self.shape().boundingRect()

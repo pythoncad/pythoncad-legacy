@@ -32,13 +32,7 @@ class Point(BaseEntity):
         self.xc,self.yc= self.geoItem.getCoords()
         self.yc=(-1.0*self.yc)
         return
-       
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        return QtCore.QRectF(self.xc-2,self.yc-2 ,4 ,4)
-    
+
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 

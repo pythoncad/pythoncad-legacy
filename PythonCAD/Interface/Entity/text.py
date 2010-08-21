@@ -33,19 +33,6 @@ class Text(BaseEntity):
         self.font=QtGui.QFont() #This have to be derived from the geoent as son is implemented
         return
         
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        fm = QtGui.QFontMetricsF(self.font)
-        textBBox=fm.boundingRect(self.text)
-        
-        location=QtCore.QPointF(self.location.x(), self.location.y()-textBBox.size().height())
-        
-        return QtCore.QRectF(location, textBBox.size() )
-
-
-        
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 

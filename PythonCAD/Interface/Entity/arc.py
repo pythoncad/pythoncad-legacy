@@ -31,6 +31,9 @@ class Arc(BaseEntity):
         super(Arc, self).__init__(entity)
         # get the geometry
         geoEnt=self.geoItem
+        #p1, p2=geoEnt.getEndpoints()
+        #TODO: MAKE THE RIGHT BOUNDING BOX FOR THE ARC
+        
         self.xc, self.yc=geoEnt.center.getCoords()
         self.center=(self.xc, self.yc)
         startAngle=geoEnt.startAngle
@@ -53,14 +56,7 @@ class Arc(BaseEntity):
                              self.yc,
                              self.h,
                              self.h)
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        return QtCore.QRectF(self.xc-self.shapeSize/2.0,
-                             self.yc-self.shapeSize/2.0,
-                             self.h+self.shapeSize,
-                             self.h+self.shapeSize)
+
     
     def drawShape(self, painterPath):    
         """

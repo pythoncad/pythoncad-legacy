@@ -33,18 +33,6 @@ class Segment(BaseEntity):
         self.y1=self.y1*-1.0
         return
 
-    def boundingRect(self):
-        """
-            overloading of the qt bounding rectangle
-        """
-        x=min(self.x, self.x1)
-        y=min(self.y, self.y1)
-        deltax=abs(self.x-self.x1)
-        deltay=abs(self.y-self.y1)
-        
-        ret=QtCore.QRectF(x-self.shapeSize/2.0,y-self.shapeSize/2.0 ,deltax+self.shapeSize*1.5,deltay+self.shapeSize*1.5)
-        return ret
-
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
