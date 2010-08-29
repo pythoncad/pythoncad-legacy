@@ -25,6 +25,7 @@
 
 from Kernel.GeoComposedEntity.objoint import *
 from Kernel.GeoComposedEntity.bisector import Bisector
+from Kernel.exception           import *
 _dtr = 180.0/pi
 
 class Fillet(ObjectJoint):

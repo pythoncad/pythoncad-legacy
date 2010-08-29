@@ -168,8 +168,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('arc', hasMdiChild)
         self.__cmd_intf.setVisible('ellipse', hasMdiChild)
         self.__cmd_intf.setVisible('polygon', hasMdiChild)
-        self.__cmd_intf.setVisible('fillet', hasMdiChild)
-        self.__cmd_intf.setVisible('chamfer', hasMdiChild)
+        self.__cmd_intf.setVisible('fillet', False)
+        self.__cmd_intf.setVisible('chamfer', False)
         self.__cmd_intf.setVisible('bisect', hasMdiChild)
         self.__cmd_intf.setVisible('text', hasMdiChild)
         #View
@@ -181,10 +181,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('endsnap', hasMdiChild)
         self.__cmd_intf.setVisible('middlesnap', hasMdiChild)
         self.__cmd_intf.setVisible('centersnap', hasMdiChild)
-        self.__cmd_intf.setVisible('ortosnap', hasMdiChild)
-        self.__cmd_intf.setVisible('tangentsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('ortosnap', False)
+        self.__cmd_intf.setVisible('tangentsnap', False)
         self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
-        self.__cmd_intf.setVisible('originsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('originsnap', False)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -360,6 +360,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
     
     def _onPoint(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Point")
         self.callDocumentCommand('POINT')
         return    
@@ -368,22 +369,27 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callDocumentCommand('SEGMENT')
         return
     def _onArc(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Arc")
         self.callDocumentCommand('ARC')
         return
     def _onEllipse(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Ellipse")
         self.callDocumentCommand('ELLIPSE')
         return
     def _onRectangle(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rectangle")
         self.callDocumentCommand('RECTANGLE')
         return
     def _onPolygon(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polygon")
         self.callDocumentCommand('POLYGON')
         return
     def _onPolyline(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polyline")
         self.callDocumentCommand('POLYLINE')
         return
@@ -394,33 +400,40 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onChamfer(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Chamfer")
         self.callDocumentCommand('CHAMFER')
         return
             
     def _onBisect(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
         self.callDocumentCommand('BISECTOR')
         return
     def _onText(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
         self.callDocumentCommand('TEXT')
         return      
     # Edit
     def _onMove(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")
         self.callDocumentCommand('MOVE')
         return
     def _onDelete(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Delete")
         self.callDocumentCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
     def _onMirror(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Mirror")
         self.callDocumentCommand('MIRROR')
         return
     def _onRotate(self):
+        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rotate")
         self.callDocumentCommand('ROTATE')
         return
@@ -439,30 +452,31 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             On snep Command action
         """
+        self.scene.clearSelection()
         action = self.sender()
         if action:
             if action.command=="autosnap":
-                self.scene.forceSnap= SNAP_POINT_ARRAY["ALL"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
             elif action.command=="endsnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["END"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["END"])
             elif action.command=="middlesnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["MID"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["MID"])
             elif action.command=="centersnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["CENTER"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["CENTER"])
             elif action.command=="ortosnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["ORTO"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORTO"])
             elif action.command=="tangentsnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["TANGENT"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["TANGENT"])
             elif action.command=="quadrantsnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["QUADRANT"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["QUADRANT"]) 
             elif action.command=="originsnap":
-                self.scene.forceSnap=SNAP_POINT_ARRAY["ORIG"] 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORIG"])
             else:
-                self.scene.forceSnap=SNAP_POINT_ARRAY["ALL"] 
-                
-        
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
+            
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
+        self.scene.clearSelection()
         printer=QtGui.QPrinter()
         printDialog=QtGui.QPrintDialog(printer)
         if (printDialog.exec_() == QtGui.QDialog.Accepted): 
@@ -476,6 +490,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onUndo(self):
+        self.scene.clearSelection()
         try:
            self.mdiArea.activeSubWindow().unDo() 
         except UndoDbExc:
@@ -484,6 +499,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onRedo(self):
+        self.scene.clearSelection()
         try:
             self.mdiArea.activeSubWindow().reDo()
         except UndoDbExc:

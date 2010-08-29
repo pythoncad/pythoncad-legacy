@@ -26,7 +26,7 @@ import cPickle as pickle
 from Kernel.entity              import *
 from Kernel.Db.basedb           import BaseDb
 from Kernel.initsetting         import *
-from Kernel.exception           import EmptyDbSelect
+from Kernel.exception           import *
 
 class EntityDb(BaseDb):
     """

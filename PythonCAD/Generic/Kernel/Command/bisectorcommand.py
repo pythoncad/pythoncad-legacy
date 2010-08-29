@@ -38,8 +38,8 @@ class BisectorCommand(BaseCommand):
                         ExcLenght,  
                         ]
         self.defaultValue=[None, None, 100]
-        self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
-                        "Give me the second Entity ID,end a point Es(4@10,20)", 
+        self.message=[  "Select the First entity or give me a the keyword Text As: (4@10,20)", 
+                        "Select the Second entity or give me a the keyword Text As: (4@10,20)", 
                         "Give me the bisector lengh"]
         
     def getEntsToSave(self):

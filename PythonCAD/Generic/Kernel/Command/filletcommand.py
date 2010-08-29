@@ -38,10 +38,10 @@ class FilletCommand(BaseCommand):
                         ExcText, 
                         ExcLenght]
         self.defaultValue=[None, None,"BOTH",10]
-        self.message=[  "Give me the first  Entity ID,end a point Es(4@10,20)", 
-                        "Give me the second Entity ID,end a point Es(4@10,20)", 
+        self.message=[  "Select the First entity or give me a the keyword Text As: (4@10,20)", 
+                        "Select the Second entity or give me a the keyword Text As: (4@10,20)", 
                         "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM)", 
-                        "Give me the radius" 
+                        "Give me the radius " 
                         ]
 
     def getEntsToSave(self):

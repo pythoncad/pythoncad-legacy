@@ -67,7 +67,10 @@ class ObjectJoint(GeometricalEntityComposed):
         """
             angle betwin the two entity
         """
-        return float(self.obj1.getSympy().angle_between(self.obj2.getSympy()))
+        v1=self.getAngledVector(self.obj1, self.pointClick1)
+        v2=self.getAngledVector(self.obj2, self.pointClick2)
+        ang=v1.ang(v2)
+        return ang
         
     @property
     def trimMode(self):
@@ -121,14 +124,7 @@ class ObjectJoint(GeometricalEntityComposed):
     @pointClick2.setter
     def pointClick2(self, value):
         self["OBJECTJOINT_3"]=value
-
-    def getConstructionElements(self):
-        """
-            Return the two Entity Object joined by the ObjectJoint.
-            This method returns a tuple holding the two Entity Object joined
-            by the ObjectJoint.
-        """
-        return self
+        
     @property    
     def intersection(self):
         """
@@ -138,6 +134,15 @@ class ObjectJoint(GeometricalEntityComposed):
             [] no intersection
         """
         return self._intersectionPoints
+        
+    def getConstructionElements(self):
+        """
+            Return the two Entity Object joined by the ObjectJoint.
+            This method returns a tuple holding the two Entity Object joined
+            by the ObjectJoint.
+        """
+        return self
+
     
     def getReletedComponent(self):
         """
@@ -145,5 +150,24 @@ class ObjectJoint(GeometricalEntityComposed):
         """
         return self.getConstructionElements()
 
-
+    def getAngledVector(self, segment,  point):
+        """
+            calculate the vector use
+        """
+        pi=self.intersection[0]
+        p1, p2=segment.getEndpoints()
+        vs1=Vector(pi, p1)
+        vs2=Vector(pi, p2)
+        if abs(vs1.absAng-vs2.absAng)<0.00001:
+            if pi.dist(p1)>pi.dist(p2):
+                return Vector(pi, p1)
+            else:
+                return Vector(pi, p2)
+        else:
+            jp=segment.getProjection(point)
+            vj=Vector(pi, jp)
+            if abs(vj.absAng-vs1.absAng)<0.00001:
+                return Vector(pi, p1)
+            else:
+                return Vector(pi, p2)  
 

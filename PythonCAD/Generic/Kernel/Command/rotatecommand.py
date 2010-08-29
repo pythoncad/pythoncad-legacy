@@ -37,10 +37,10 @@ class RotateCommand(BaseCommand):
                         ExcAngle, 
                         ExcText]
         self.defaultValue=[None, None, math.pi/2, "C"]
-        self.message=[  "Give me Entity ID use , for more enitt ES: 4,10,5", 
+        self.message=[  "Select the entity to mirror or give me a the keyword Text As: (10,20,30,...)", 
                         "Give me the reference rotation point", 
                         "Give me the rotation angle", 
-                        "Give me the Mode (M or None->Move,C->Copy)"]
+                        "Give me the Mode (M or None ->Move,C ->Copy)"]
               
     def performRotation(self):
         """

@@ -476,4 +476,18 @@ class Arc(GeometricalEntity):
         vEnd=Vector( endPoint, endMirror)
         newStart=endMirror+vEnd.point
         self.startAngle=Vector(self.center, newStart).absAng
-
+    
+    def getQuadrant(self):
+        """
+            Return the circle intersection with the line x,y passing through the
+            center
+        """
+        print "call getQuadrant"
+        x, y=self.center.getCoords()
+        p1=Point(x, y+self.radius)
+        p2=Point(x-self.radius, y)
+        p3=Point(x, y-self.radius)
+        p4=Point(x+self.radius, y)
+        return [p1, p2, p3, p4]
+        
+            

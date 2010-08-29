@@ -81,8 +81,11 @@ class CadScene(QtGui.QGraphicsScene):
     @activeKernelCommand.setter
     def activeKernelCommand(self, value):
         self.__activeKernelCommand=value
-        
-       
+    
+    def setActiveSnap(self, value):
+        if self.activeICommand!=None:
+            self.activeICommand.activeSnap=value
+
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
@@ -135,7 +138,9 @@ class CadScene(QtGui.QGraphicsScene):
                 if event.button()==QtCore.Qt.LeftButton:
                     point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
                     #fire the mouse at the icommand class
-                    self.activeICommand.addMauseEvent(point,qtItems, self.forceDirection)
+                    self.activeICommand.addMauseEvent(point=point,
+                                                    entity=qtItems,
+                                                    force=self.forceDirection)
                     
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
@@ -144,7 +149,7 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
-
+    
     def cancelCommand(self):
         """
             cancel the active command

@@ -94,13 +94,14 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         
-    def addMauseEvent(self, point, entity,distance=None,angle=None , force=None, text=None):
+    def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None):
         """
             add value to a new slot of the command 
         """
         #
         # Compute snap distance and position force
         #
+        print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
         snap=self.getClickedPoint(point,self.getEntity(point), force)
         if angle==None:
             angle=self.calculateAngle(snap)
@@ -115,6 +116,7 @@ class ICommand(object):
             print "ICommand.addMauseEvent exept"
             self.updateInput(msg)
             self.updateInput(self.kernelCommand.activeMessage) 
+            self.scene.clearSelection()
             return
         self.__point.append(point)
         self.__entity.append(entity)
@@ -133,7 +135,7 @@ class ICommand(object):
         if self.automaticApply and self.kernelCommand.automaticApply:
             if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
-                
+        
     def applyCommand(self):    
         """
             apply the command 
@@ -145,10 +147,11 @@ class ICommand(object):
                 self.updateInput(self.kernelCommand.activeMessage) 
             else:
                 self=None
-        except:
-            print "ICommand applyCommand Errore "
+        except Exception as e:
+            print type(e)     # the exception instance
+            print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
-            return
+        self.scene.clearSelection()
         return
     
     def getEntity(self, position):
@@ -424,8 +427,8 @@ class ICommand(object):
                     snapPoint=self.getSnapOrtoPoint(snapPoint)
                 elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
                     snapPoint=self.getSnapTangentPoint(snapPoint) 
-        elif SNAP_POINT_ARRAY["QUADRANT"]== force:
-            snapPoint =self.getSnapQuadrantPoint(entity, point)
+        elif SNAP_POINT_ARRAY["QUADRANT"]== self.activeSnap:
+            snapPoint =self.getSnapQuadrantPoint(entity, snapPoint)
             if lastSnapType: #Calculete in case of before constraint
                 if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
                     snapPoint=self.getSnapOrtoPoint(snapPoint)
@@ -453,7 +456,11 @@ class ICommand(object):
             else:
                 if outPoint[0]!=None:
                     snapPoint=outPoint[0]
-                
+        #
+        # Reset to snap all
+        #
+        self.activeSnap=SNAP_POINT_ARRAY["ALL"]
+        #
         if snapPoint==None:
             return point
         return snapPoint
@@ -498,6 +505,10 @@ class ICommand(object):
         """
             this fucnticion compute the  snap endpoint 
         """
+        if point == None or entity == None:
+            print "log: getSnapEndPoint :point or entity is none "
+            return None
+            
         if getattr(entity, 'geoItem', None):
             if getattr(entity.geoItem, 'getEndpoints', None):
                 p1, p2=entity.geoItem.getEndpoints()
@@ -533,19 +544,33 @@ class ICommand(object):
         """
             this fucnticion compute the  snap from the center of an entity
         """
-        #TODO: getSnapCenterPoint
+        print "getSnapCenterPoint", entity
         returnVal=None
-        #this function have to be implemented as follow
-        # 1) ask to the entity to get the center point
+        if getattr(entity, 'geoItem', None):
+            print "isgeoitem"
+            geoEntity=entity.geoItem
+            if getattr(geoEntity, 'getCenter', None):
+                print "have cente attr"
+                returnVal=geoEntity.center
         return returnVal
      
     def getSnapQuadrantPoint(self, entity, point):
         """
             this fucnticion compute the  snap from the quadrant 
         """
-        #TODO: getSnapQuadrantPoint
         returnVal=None
-        #this function have to be implemented as follow
-        #   1) get the quadrant point of an entity
-        #   2) choose the nearest point 
+        if getattr(entity, 'geoItem', None):
+            geoEntity=entity.geoItem
+            if getattr(geoEntity, 'getQuadrant', None):
+                dist=None
+                for p in geoEntity.getQuadrant():
+                    if dist==None:
+                        returnVal=p
+                        dist=point.dist(p)
+                        continue
+                    else:
+                        newDist=point.dist(p)
+                        if dist>newDist:
+                            dist=newDist
+                            returnVal=p
         return returnVal

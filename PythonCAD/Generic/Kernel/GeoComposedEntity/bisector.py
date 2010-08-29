@@ -44,28 +44,7 @@ class Bisector(ObjectJoint):
         if not kw["OBJECTJOINT_5"]:
             self["OBJECTJOINT_5"]=self.getDefaultLeng()
         self._UpdateBisector()
-        
-    def getAngledVector(self, segment,  point):
-        """
-            calculate the vector use
-        """
-        pi=self.intersection[0]
-        p1, p2=segment.getEndpoints()
-        vs1=Vector(pi, p1)
-        vs2=Vector(pi, p2)
-        if abs(vs1.absAng-vs2.absAng)<0.00001:
-            if pi.dist(p1)>pi.dist(p2):
-                return Vector(pi, p1)
-            else:
-                return Vector(pi, p2)
-        else:
-            jp=segment.getProjection(point)
-            vj=Vector(pi, jp)
-            if abs(vj.absAng-vs1.absAng)<0.00001:
-                return Vector(pi, p1)
-            else:
-                return Vector(pi, p2)        
-        
+
     def _UpdateBisector(self):
         """
             Update the segment base on the imput value

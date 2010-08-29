@@ -35,10 +35,10 @@ class MoveCommand(BaseCommand):
                         ExcPoint, 
                         ExcText]
         self.defaultValue=[None, None,None,"C"]
-        self.message=[  "Give Me the Entity ID use , for more enitt ES: 4,10,5", 
+        self.message=[  "Select the entity to mirror or give me a the keyword Text As: (10,20,30,...)", 
                         "Give me the from point",
                         "Give me the to point", 
-                        "Give me the Mode (M or None->Move,C->Copy)"]
+                        "Give me the Mode (M or None ->Move,C ->Copy)"]
     def getEntsToSave(self):
         """
            get entity to save
