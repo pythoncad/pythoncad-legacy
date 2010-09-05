@@ -28,7 +28,7 @@ import shutil
 if __name__=="__main__":
     sys.path.append(os.path.join(os.getcwd(), 'Kernel'))
 #
-from Kernel.pycadevent              import PyCadEvent
+from Kernel.pycadevent          import PyCadEvent
 from Kernel.exception           import *
 from Kernel.document            import *
 from Kernel.Command             import *
@@ -124,7 +124,7 @@ class Application(object):
             raise EntityMissing("Miss Active document in the application")
         if self.__applicationCommand.has_key(commandType):
             cmd=self.__applicationCommand[commandType]
-            cmdIstance=cmd(self.__ActiveDocument) # fixme : c'e' un errore qui ... controllare
+            cmdIstance=cmd(self.__ActiveDocument) 
             return cmdIstance
         else:
             raise PyCadWrongCommand("") 

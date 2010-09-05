@@ -85,7 +85,8 @@ class ICommand(object):
         """
             reuse the command 
         """
-        self.kernelCommand.reset()
+        if self.kernelCommand!=None:
+            self.kernelCommand.reset()
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -112,9 +113,9 @@ class ICommand(object):
         #
         try:
             self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
-        except PyCadWrongImputData, msg:
-            print "ICommand.addMauseEvent exept"
-            self.updateInput(msg)
+        except:
+            print "Exceprion  ICommand.addMauseEvent "
+            self.updateInput("msg")
             self.updateInput(self.kernelCommand.activeMessage) 
             self.scene.clearSelection()
             return

@@ -15,7 +15,7 @@ AppUpdatesURL=http://sourceforge.net/projects/pythoncad/
 DefaultDirName={pf}\PythonCad
 DefaultGroupName=PythonCad
 OutputBaseFilename=setup
-SetupIconFile=C:\Users\mboscolo\Downloads\trunk\pythoncad_qt\dist\pythoncad_qt\icons\pythoncad.ico
+SetupIconFile=C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\pythoncad.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -31,14 +31,15 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\mboscolo\Downloads\trunk\pythoncad_qt\dist\pythoncad_qt\pythoncad_qt.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\mboscolo\Downloads\trunk\pythoncad_qt\dist\pythoncad_qt\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\mboscolo\Desktop\R38\trunk\pythoncad_qt\dist\pythoncad_qt\pythoncad_qt.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\mboscolo\Desktop\R38\trunk\pythoncad_qt\dist\pythoncad_qt\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\PythonCad"; Filename: "{app}\pythoncad_qt.exe"
-Name: "{commondesktop}\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: quicklaunchicon
+Name: "{group}\PythonCad"; Filename: "{app}\pythoncad_qt.exe";WorkingDir: "{app}"
+Name: "{commondesktop}\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: desktopicon ;WorkingDir: "{app}"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: quicklaunchicon  ;WorkingDir: "{app}"
 
 [Run]
 Filename: "{app}\pythoncad_qt.exe"; Description: "{cm:LaunchProgram,PythonCad}"; Flags: nowait postinstall skipifsilent

@@ -29,7 +29,7 @@ import os
 import sys
 
 from PyQt4 import QtCore, QtGui
-
+   
 import cadwindow_rc
 
 from Generic.application            import Application
@@ -41,6 +41,7 @@ from Interface.idocument            import IDocument
 from Interface.CmdIntf.cmdintf      import CmdIntf
 from Interface.Entity.base          import BaseEntity
 from Interface.Command.icommand     import ICommand
+from Interface.cadinitsetting       import *
 from Kernel.exception               import *  
 from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
@@ -185,6 +186,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('tangentsnap', False)
         self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
         self.__cmd_intf.setVisible('originsnap', False)
+        #Tools
+        
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -280,6 +283,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentsnap', 'Tangent', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'quadrantsnap', 'Quadrant', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'originsnap', 'Origin', self._onSnapCommand)
+        #Tools
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Tools, 'info2p', 'Info Two Points', self._onInfo2p)
         # window
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
@@ -362,80 +367,80 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onPoint(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Point")
-        self.callDocumentCommand('POINT')
+        self.callCommand('POINT')
         return    
     def _onSegment(self):
         self.statusBar().showMessage("CMD:Segment")
-        self.callDocumentCommand('SEGMENT')
+        self.callCommand('SEGMENT')
         return
     def _onArc(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Arc")
-        self.callDocumentCommand('ARC')
+        self.callCommand('ARC')
         return
     def _onEllipse(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Ellipse")
-        self.callDocumentCommand('ELLIPSE')
+        self.callCommand('ELLIPSE')
         return
     def _onRectangle(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rectangle")
-        self.callDocumentCommand('RECTANGLE')
+        self.callCommand('RECTANGLE')
         return
     def _onPolygon(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polygon")
-        self.callDocumentCommand('POLYGON')
+        self.callCommand('POLYGON')
         return
     def _onPolyline(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polyline")
-        self.callDocumentCommand('POLYLINE')
+        self.callCommand('POLYLINE')
         return
     
     def _onFillet(self):
         self.statusBar().showMessage("CMD:Fillet")
-        self.callDocumentCommand('FILLET')
+        self.callCommand('FILLET')
         return
         
     def _onChamfer(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Chamfer")
-        self.callDocumentCommand('CHAMFER')
+        self.callCommand('CHAMFER')
         return
             
     def _onBisect(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
-        self.callDocumentCommand('BISECTOR')
+        self.callCommand('BISECTOR')
         return
     def _onText(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
-        self.callDocumentCommand('TEXT')
+        self.callCommand('TEXT')
         return      
     # Edit
     def _onMove(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")
-        self.callDocumentCommand('MOVE')
+        self.callCommand('MOVE')
         return
     def _onDelete(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Delete")
-        self.callDocumentCommand('DELETE')
+        self.callCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
     def _onMirror(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Mirror")
-        self.callDocumentCommand('MIRROR')
+        self.callCommand('MIRROR')
         return
     def _onRotate(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rotate")
-        self.callDocumentCommand('ROTATE')
+        self.callCommand('ROTATE')
         return
     # View
     def _onFit(self):
@@ -473,7 +478,16 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORIG"])
             else:
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
-            
+    #Tools
+    def _onInfo2p(self):
+        """
+            on info two point command
+        """
+        self.scene.clearSelection()
+        self.statusBar().showMessage("CMD:Info2Points")
+        self.callCommand('DISTANCE2POINT', 'document')
+        return
+
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
         self.scene.clearSelection()
@@ -512,21 +526,39 @@ class CadWindowMdi(QtGui.QMainWindow):
                    The PythonCAD project aims to produce a scriptable, open-source,
                    easy to use CAD package for any Python/PyQt supported Platforms
                    <p>
-                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.2)<b><P>
+                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.3)<b><P>
                    <p>
                    <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>""")
         return
-        
-    def callDocumentCommand(self, commandName):
+                
+    def callCommand(self, commandName, commandFrom=None):
+        """
+            call a document command (kernel)
+        """
         try:
-            self.scene.activeKernelCommand=self.__application.getCommand(commandName)
+            if commandFrom==None or commandFrom=='kernel':
+                self.scene.activeKernelCommand=self.__application.getCommand(commandName)
+            elif commandFrom=='document':
+                self.scene.activeKernelCommand=self.getCommand(commandName)
+            else:
+                return
             self.scene.activeICommand=ICommand(self.scene)
             self.scene.activeICommand.updateInput+=self.updateInput
             self.updateInput(self.scene.activeKernelCommand.activeMessage)
         except EntityMissing:
             self.scene.cancelCommand()
             self.critical("You need to have an active document to perform this command")
-
+    
+    def getCommand(self, name):
+        """
+            get an interface command
+        """
+        if INTERFACE_COMMAND.has_key(name):
+            return INTERFACE_COMMAND[name](self.mdiArea.activeSubWindow().document, 
+                                           self.mdiArea.activeSubWindow())
+        else:
+            self.critical("Wrong command")
+        
     def updateInput(self, message):
             self.__cmd_intf.commandLine.printMsg(str(message))
             self.statusBar().showMessage(str(message))

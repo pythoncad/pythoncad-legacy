@@ -77,7 +77,7 @@ class Arc(BaseEntity):
         """
         #Create Arc/Circle
         painter.drawArc(self.xc,self.yc ,self.h ,self.h ,self.startAngle,  self.spanAngle)
-        #painter.drawRect(self.boundingRect()) #Used for debugging porpouse
+        #painter.drawRect(self.xc,self.yc ,self.h ,self.h) #Used for debugging porpouse
 
     
     

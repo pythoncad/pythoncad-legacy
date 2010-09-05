@@ -161,6 +161,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.activeICommand=None
 
     def keyPressEvent(self, event):
+        self.forceDirection=''
         if event.key()==QtCore.Qt.Key_Escape:
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:

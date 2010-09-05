@@ -92,6 +92,11 @@ class IDocument(QtGui.QMdiSubWindow):
             popUp a warning mesage
         """
         ret = QtGui.QMessageBox.warning(self,"Warning",  msg)
-        #print "msg", msg
         return
-        
+    
+    def popUpInfo(self, msg):    
+        """
+            popUp a Info mesage
+        """
+        ret = QtGui.QMessageBox.information(self,"Information",  msg)
+        return   

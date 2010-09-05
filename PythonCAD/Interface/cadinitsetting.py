@@ -28,6 +28,8 @@ from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
 from Interface.Entity.polyline  import Polyline
 
+from Interface.Command.distance2point import Distance2Point
+
 SCENE_SUPPORTED_TYPE=["SEGMENT",
                       "POINT", 
                         "ARC",
@@ -44,3 +46,5 @@ SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE,
                         Ellipse, 
                         Polyline
                        )))
+
+INTERFACE_COMMAND={'DISTANCE2POINT':Distance2Point}
