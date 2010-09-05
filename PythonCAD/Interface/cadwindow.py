@@ -185,7 +185,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('ortosnap', False)
         self.__cmd_intf.setVisible('tangentsnap', False)
         self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
-        self.__cmd_intf.setVisible('originsnap', False)
+        self.__cmd_intf.setVisible('originsnap', hasMdiChild)
         #Tools
         
         #window

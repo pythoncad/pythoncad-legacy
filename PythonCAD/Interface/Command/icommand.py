@@ -436,7 +436,7 @@ class ICommand(object):
                 elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
                     snapPoint=self.getSnapTangentPoint(snapPoint) 
         elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
-            snapPoint=Pointfloat(0.0, 0.0)
+            snapPoint=Point(0.0, 0.0)
         elif SNAP_POINT_ARRAY["ALL"]== self.activeSnap:
             snapPoints=[]
             pnt=self.getSnapMiddlePoint(entity)
