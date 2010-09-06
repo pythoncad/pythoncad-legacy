@@ -186,6 +186,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('tangentsnap', False)
         self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
         self.__cmd_intf.setVisible('originsnap', hasMdiChild)
+        self.__cmd_intf.setVisible('intersection', hasMdiChild)
         #Tools
         
         #window
@@ -282,7 +283,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'ortosnap', 'Ortogonal', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentsnap', 'Tangent', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'quadrantsnap', 'Quadrant', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'intersection', 'Intersection', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'originsnap', 'Origin', self._onSnapCommand)
+        
         #Tools
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Tools, 'info2p', 'Info Two Points', self._onInfo2p)
         # window
@@ -476,6 +479,8 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["QUADRANT"]) 
             elif action.command=="originsnap":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORIG"])
+            elif action.command=="intersection":
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["INTERSECTION"])
             else:
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
     #Tools

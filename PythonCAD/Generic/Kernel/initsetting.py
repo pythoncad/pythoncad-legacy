@@ -328,7 +328,8 @@ SNAP_POINT_ARRAY={'ALL':0,
                     'TANGENT':4, 
                     'CENTER':5,
                     'QUADRANT':6,
-                    'ORIG':7  
+                    'ORIG':7, 
+                    'INTERSECTION':8  
                     }
 
 ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["ALL"]

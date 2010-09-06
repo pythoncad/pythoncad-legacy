@@ -30,8 +30,10 @@ from PyQt4 import QtCore, QtGui
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.geolib          import Vector   
+from Kernel.GeoUtil.intersection    import *
 from Kernel.pycadevent              import *
 from Kernel.exception               import *
+
 #
 # Interface Import
 #
@@ -168,7 +170,6 @@ class ICommand(object):
             #in case of overlapping entity selection
             print "more than one entity under the mouse"
         for e in ents:
-            print "e :", e
             return e
         return None
         
@@ -437,6 +438,8 @@ class ICommand(object):
                     snapPoint=self.getSnapTangentPoint(snapPoint) 
         elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
             snapPoint=Point(0.0, 0.0)
+        elif SNAP_POINT_ARRAY["INTERSECTION"]== self.activeSnap:
+            snapPoint=self.getIntersection(entity,snapPoint )
         elif SNAP_POINT_ARRAY["ALL"]== self.activeSnap:
             snapPoints=[]
             pnt=self.getSnapMiddlePoint(entity)
@@ -554,7 +557,31 @@ class ICommand(object):
                 print "have cente attr"
                 returnVal=geoEntity.center
         return returnVal
-     
+        
+    def getIntersection(self, entity, point): 
+        """
+            this fucnticion compute the  snap intersection point
+        """
+        print "intersection"
+        returnVal=None
+        distance=None
+        if entity!=None:
+            geoEntityFrom=entity.geoItem
+            entityList=self.__scene.collidingItems(entity)
+            for ent in entityList:
+                intPoint=find_intersections(ent.geoItem,geoEntityFrom)
+                for tp in intPoint:
+                    iPoint=Point(tp[0], tp[1])
+                    if distance==None:
+                        distance=iPoint.dist(point)
+                        returnVal=iPoint
+                    else:
+                        spoolDist=iPoint.dist(point)
+                        if distance>spoolDist:
+                            returnVal=iPoint.dist(point)
+                            returnVal=iPoint
+        return returnVal    
+
     def getSnapQuadrantPoint(self, entity, point):
         """
             this fucnticion compute the  snap from the quadrant 
