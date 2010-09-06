@@ -50,8 +50,8 @@ class ChamferCommand(BaseCommand):
         """
             get the chamfer segments
         """
-        id0, p0=getIdPoint(self.value[0])
-        id1, p1=getIdPoint(self.value[1])
+        id0, p0=self.value[0]
+        id1, p1=self.value[1]
        
         objEnt=[]
         ent1=self.document.getEntity(id0)

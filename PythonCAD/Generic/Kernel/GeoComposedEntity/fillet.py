@@ -100,43 +100,19 @@ class Fillet(ObjectJoint):
         """
             update the Fillet arc angle
         """
-        #compute span angle
         v1=Vector(self.center, pc1)
         v2=Vector(self.center, pc2)
         ang1=v1.absAng
         ang2=v2.absAng
         self.endAngle=v1.ang(v2)
         angC=Vector(self.center, self.intersection[0]).absAng
-        print "Angle 1", ang1
-        print "Angle 2", ang2
-        print "Angle c", angC
-        print "andAngle ",self.endAngle
-        print "first if", abs(((ang1+self.endAngle/2.0)-angC))  
-        print "second if", abs(((ang2+self.endAngle/2.0)-angC))
         if make_c_angle_rad(abs(((ang1+self.endAngle/2.0)-angC)))<0.0001:
             self.startAngle=ang1
-            print "take ang1"
         elif make_c_angle_rad(abs(((ang2+self.endAngle/2.0)-angC)))<0.0001:
             self.startAngle=ang2
-            print "take ang2"
         else:
-            print "Error _UpdateAngle unable to upgrade the angle"
             raise StructuralError, "_UpdateAngle Unable to upgrade the angle"
-#        if ang1==0:
-#            if v2.y>0:
-#                self.startAngle=ang1
-#            else:
-#                self.startAngle=ang2
-#        elif ang2==0:
-#            if v1.y>0:
-#                self.startAngle=ang2 
-#            else:
-#                self.startAngle=ang1
-#        else:
-#            if angC<ang1:
-#                self.startAngle=ang2
-#            else:
-#                self.startAngle=ang1
+
         
     def _updateSegment(self,objSegment,objPoint):
         """
