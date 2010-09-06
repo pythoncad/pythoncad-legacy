@@ -72,7 +72,18 @@ class Vector:
               Return The Point 
         """
         return Point(self.X,self.Y)
-        
+    @property
+    def x(self):
+        """
+            return the x value of the vector
+        """
+        return self.X
+    @property
+    def y(self):
+        """
+            return the y value of the vector
+        """
+        return self.Y
     def dot(self,vector):
         """
             Compute The Dot Product

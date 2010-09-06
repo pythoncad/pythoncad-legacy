@@ -29,13 +29,9 @@ class Arc(BaseEntity):
     """
     def __init__(self, entity):
         super(Arc, self).__init__(entity)
-        # get the geometry
-        geoEnt=self.geoItem
-        #p1, p2=geoEnt.getEndpoints()
-        #TODO: MAKE THE RIGHT BOUNDING BOX FOR THE ARC
-        
+        geoEnt=self.geoItem  # get the geometry from kernel
+        self.startPoint, p2=geoEnt.getEndpoints()     
         self.xc, self.yc=geoEnt.center.getCoords()
-        self.center=(self.xc, self.yc)
         startAngle=geoEnt.startAngle
         self.sa=startAngle
         spanAngle=geoEnt.endAngle
@@ -60,25 +56,20 @@ class Arc(BaseEntity):
     
     def drawShape(self, painterPath):    
         """
-            overloading of the shape method 
+            extending of the shape method 
         """
-        r=self.h/2.0
-        x=r*math.cos(self.sa)
-        y=r*math.sin(self.sa)
-        xc, yc=self.center
-        x=xc+x
-        y=(yc+y)*-1.0
-        painterPath.moveTo(x, y)
+        x, y=self.startPoint.getCoords()
+        painterPath.moveTo(x, y*-1.0)
         painterPath.arcTo(self.arcRect(),self.startAngle/16.0,self.spanAngle/16.0) 
+        return
     
     def drawGeometry(self, painter, option, widget):
         """
-            overloading of the paint method
+            extending of the paint method
         """
         #Create Arc/Circle
-        painter.drawArc(self.xc,self.yc ,self.h ,self.h ,self.startAngle,  self.spanAngle)
-        #painter.drawRect(self.xc,self.yc ,self.h ,self.h) #Used for debugging porpouse
-
+        
+        painter.drawArc(self.arcRect(),self.startAngle,  self.spanAngle)
     
     
     

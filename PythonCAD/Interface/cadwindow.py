@@ -169,7 +169,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('arc', hasMdiChild)
         self.__cmd_intf.setVisible('ellipse', hasMdiChild)
         self.__cmd_intf.setVisible('polygon', hasMdiChild)
-        self.__cmd_intf.setVisible('fillet', False)
+        self.__cmd_intf.setVisible('fillet', hasMdiChild)
         self.__cmd_intf.setVisible('chamfer', False)
         self.__cmd_intf.setVisible('bisect', hasMdiChild)
         self.__cmd_intf.setVisible('text', hasMdiChild)

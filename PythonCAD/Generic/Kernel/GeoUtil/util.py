@@ -106,7 +106,16 @@ def make_c_angle(angle):
     elif _a > 360.0:
         _a = fmod(_a, 360.0)
     return _a
-
+    
+def make_c_angle_rad(angle):
+    """
+        return the angle from 0 to 2*pi
+    """
+    while angle>pi*2:
+        angle=angle-pi*2
+    return angle
+        
+    
 def make_coords(x, y):
     """Check and convert x/y values to float values.
 
