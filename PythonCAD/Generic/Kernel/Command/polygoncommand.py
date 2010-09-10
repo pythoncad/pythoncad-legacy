@@ -49,7 +49,7 @@ class PolygonCommand(BaseCommand):
         self.message=["Give Me the first Point",
                         "Give Me The Second Point", 
                         "Give Me The Number of Segment", 
-                        "Give Me External or Internal (E/I)"]
+                        "Give Me External or Internal (TRUE/FALSE)"]
         self.__xpts = array.array("d")
         self.__ypts = array.array("d")
         self.__increment=0.0 #default value

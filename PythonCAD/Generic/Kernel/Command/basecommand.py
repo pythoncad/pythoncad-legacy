@@ -160,6 +160,7 @@ class BaseCommand(object):
         """
         point, entitys, distance, angle , text= value
         exitValue=None
+        print "Try to except ", self.activeException()
         try:
             raise self.activeException()(None)
         except ExcPoint:
@@ -185,10 +186,17 @@ class BaseCommand(object):
                 x, y=point.getCoords()
                 p1=Point(x, y)
                 exitValue=Vector(p0, p1).absAng
+        except(ExcInt):
+            exitValue=self.convertToInt(distance)
         except(ExcText):
             exitValue=text
             if text==None:
                 exitValue=""
+        except(ExcBool):
+            if text=="TRUE":
+                exitValue=True    
+            else:
+                exitValue=False
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue
