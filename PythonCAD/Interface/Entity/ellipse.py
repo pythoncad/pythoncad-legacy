@@ -27,24 +27,22 @@ class Ellipse(BaseEntity):
     def __init__(self, entity):
         super(Ellipse, self).__init__(entity)
         geoEnt=self.geoItem
-        major=geoEnt.major
-        minor=geoEnt.minor
         self.xc,self.yc=geoEnt.center.getCoords()
         self.yc=self.yc*-1.0
-        self.h=major
-        self.w=minor
+        self.h=geoEnt.verticalRadius
+        self.w=geoEnt.horizontalRadius
         return
 
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
         """
-        painterPath.addEllipse(self.xc-(self.h/2.0),self.yc-(self.w/2.0),self.h ,self.w)     
+        painterPath.addEllipse(self.xc-(self.w/2.0),self.yc-(self.h/2.0),self.w,self.h )     
     
     def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
         #   Create Ellipse
-        painter.drawEllipse(self.xc-(self.h/2.0),self.yc-(self.w/2.0),self.h ,self.w)
+        painter.drawEllipse(self.xc-(self.w/2.0),self.yc-(self.h/2.0),self.w,self.h)
 

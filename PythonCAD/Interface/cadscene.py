@@ -304,13 +304,18 @@ class CadScene(QtGui.QGraphicsScene):
         """
             Update the scene from the Entity []
         """
-        dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
+        dicItems=self.getAllBaseEntity()
         for ent in entitys:
             if ent.getId() in dicItems:
                 self.removeItem(dicItems[ent.getId()])
                 self.addGraficalObject(ent)
-
-        
+    
+    def getAllBaseEntity(self):
+        """
+            get all the base entity from the scene
+        """
+        return dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
+    
     def updateItemsFromID_2(self,entities):
         """
             update the scene from the Entity []

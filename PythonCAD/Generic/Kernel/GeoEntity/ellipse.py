@@ -41,30 +41,30 @@ class Ellipse(GeometricalEntity):
         A base class for Ellipses
         An ellipse has the following attributes:
         center: A _point object
-        major_axis:
-        minor_axis:
+        horizontalRadius_axis:
+        verticalRadius_axis:
     """
     def __init__(self,kw):
         """
             Initialize a Arc/Circle.
             kw['ELLIPSE_0'] center must be a point 
-            kw['ELLIPSE_1'] major ax
-            kw['ELLIPSE_2'] minor ax
+            kw['ELLIPSE_1'] hradius ax
+            kw['ELLIPSE_2'] vradius ax
         """
         argDescription={
                         "ELLIPSE_0":Point,
                         "ELLIPSE_1":(float, int), 
                         "ELLIPSE_2":(float, int)
                         }
-        _major=kw['ELLIPSE_1']
-        _minor=kw['ELLIPSE_2']
-        if _minor > _major:
-            kw['ELLIPSE_2']=get_float(_major)
-            kw['ELLIPSE_1']=get_float(_minor)
+        _horizontalRadius=kw['ELLIPSE_1']
+        _verticalRadius=kw['ELLIPSE_2']
+        #if _verticalRadius > _horizontalRadius:
+        #    kw['ELLIPSE_2']=get_float(_horizontalRadius)
+        #    kw['ELLIPSE_1']=get_float(_verticalRadius)
         GeometricalEntity.__init__(self,kw, argDescription)
     @property
     def info(self):
-        return "Ellipse: Center: %s, Major: %s, Minor:%s "%(str(self.center), str(self.major), str(self.minor))        
+        return "Ellipse: Center: %s, horizontalRadius: %s, verticalRadius:%s "%(str(self.center), str(self.horizontalRadius), str(self.verticalRadius))        
     def __eq__(self, obj):
         """
             Compare one ellipse to another for equality.
@@ -74,8 +74,8 @@ class Ellipse(GeometricalEntity):
         if obj is self:
             return True
         return (self.center == obj.getCenter() and
-                abs(self.major - obj.getMajorAxis()) < 1e-10 and
-                abs(self.minor - obj.getMinorAxis()) < 1e-10 
+                abs(self.horizontalRadius - obj.gethorizontalRadiusAxis()) < 1e-10 and
+                abs(self.verticalRadius - obj.getverticalRadiusAxis()) < 1e-10 
                 )
 
     def __ne__(self, obj):
@@ -100,53 +100,53 @@ class Ellipse(GeometricalEntity):
 
     center = property(getCenter, setCenter, None, "Ellipse center")
 
-    def getMajorAxis(self):
+    def gethorizontalRadiusAxis(self):
         """
-            Return the major axis value of the Ellipse.
+            Return the horizontalRadius axis value of the Ellipse.
             This method returns a float.
         """
         return self['ELLIPSE_1']
 
-    def setMajorAxis(self, val):
+    def sethorizontalRadiusAxis(self, val):
         """
-            Set the major axis of the Ellipse.
+            Set the horizontalRadius axis of the Ellipse.
             Argument 'val' must be a float value greater than 0.
         """
         _val = get_float(val)
         if _val < 0.0:
-            raise ValueError, "Invalid major axis value: %g" % _val
-        if _val < self.minor:
-            self.self['ELLIPSE_1']=self.minor
-            self.minor=_val
+            raise ValueError, "Invalid horizontalRadius axis value: %g" % _val
+        if _val < self.verticalRadius:
+            self.self['ELLIPSE_1']=self.verticalRadius
+            self.verticalRadius=_val
         else:
             self['ELLIPSE_1']=_val
             
-    major= property(getMajorAxis, setMajorAxis, None,
-                          "Ellipse major axis")
+    horizontalRadius= property(gethorizontalRadiusAxis, sethorizontalRadiusAxis, None,
+                          "Ellipse horizontalRadius axis")
 
-    def getMinorAxis(self):
+    def getverticalRadiusAxis(self):
         """
-            Return the minor axis value of the Ellipse.
+            Return the verticalRadius axis value of the Ellipse.
             This method returns a float.
         """
         return self['ELLIPSE_2']
 
-    def setMinorAxis(self, val):
+    def setverticalRadiusAxis(self, val):
         """
-            Set the minor axis of the Ellipse.
+            Set the verticalRadius axis of the Ellipse.
             Argument 'val' must be a float value greater than 0.
         """
         _val = get_float(val)
         if _val < 0.0:
-            raise ValueError, "Invalid minor axis value: %g" % _val
-        if _val > self.major:
-            self['ELLIPSE_2']=self.major
-            self.major=_val
+            raise ValueError, "Invalid verticalRadius axis value: %g" % _val
+        if _val > self.horizontalRadius:
+            self['ELLIPSE_2']=self.horizontalRadius
+            self.horizontalRadius=_val
         else:
             self['ELLIPSE_2']=_val
             
-    minor = property(getMinorAxis, setMinorAxis, None,
-                          "Ellipse minor axis")
+    verticalRadius = property(getverticalRadiusAxis, setverticalRadiusAxis, None,
+                          "Ellipse verticalRadius axis")
 
 
     def eccentricity(self):
@@ -154,12 +154,12 @@ class Ellipse(GeometricalEntity):
             Return the eccecntricity of the Ellipse.
             This method returns a float value.
         """
-        _major = self.major
-        _minor = self.minor
-        if abs(_major - _minor) < 1e-10: # circular
+        _horizontalRadius = self.horizontalRadius
+        _verticalRadius = self.verticalRadius
+        if abs(_horizontalRadius - _verticalRadius) < 1e-10: # circular
             _e = 0.0
         else:
-            _e = math.sqrt(1.0 - ((_minor * _minor)/(_major * _major)))
+            _e = math.sqrt(1.0 - ((_verticalRadius * _verticalRadius)/(_horizontalRadius * _horizontalRadius)))
         return _e
 
     def area(self):
@@ -167,7 +167,7 @@ class Ellipse(GeometricalEntity):
             Return the area of the Ellipse.
             This method returns a float value.
         """
-        return math.pi * self.major * self.minor
+        return math.pi * self.horizontalRadius * self.verticalRadius
 
     def circumference(self):
         """
@@ -177,8 +177,8 @@ class Ellipse(GeometricalEntity):
             http://astronomy.swin.edu.au/~pbourke/geometry/ellipsecirc/
             Ramanujan, Second Approximation
         """
-        _a = self.major
-        _b = self.minor
+        _a = self.horizontalRadius
+        _b = self.verticalRadius
         _h = math.pow((_a - _b), 2)/math.pow((_a + _b), 2)
         _3h = 3.0 * _h
         return math.pi * (_a + _b) * (1.0 + _3h/(10.0 + math.sqrt(4.0 - _3h)))
@@ -205,19 +205,19 @@ class Ellipse(GeometricalEntity):
             get the sympy object in this case a ellipse
         """
         _cp=self.center.getSympy()
-        return geoSympy.Ellipse(geoSympy.Point(0,0),mainSympy.Rational(self.major),mainSympy.Rational(self.minor))
+        return geoSympy.Ellipse(_cp,mainSympy.Rational(str(self.horizontalRadius*.5)),mainSympy.Rational(str(self.verticalRadius*.5)))
         
     def setFromSympy(self, sympyEllipse):    
         """
             update the points cord from a sympyobject only avaiable for circle
         """
         self.center.setFromSympy(sympyEllipse[0])
-        self.major=float(sympyEllipse[1])
-        self.minor=float(sympyEllipse[2])
+        self.horizontalRadius=float(sympyEllipse[1])
+        self.verticalRadius=float(sympyEllipse[2])
         
     def __str__(self):
-        msg="Ellipse: Center %s , Major Axi=%s, Mino Axi=%s"%(
-            str(self.center), str(self.major), str(self.minor))
+        msg="Ellipse: Center %s , horizontalRadius Axi=%s, Mino Axi=%s"%(
+            str(self.center), str(self.horizontalRadius), str(self.verticalRadius))
         return msg
         
     def mirror(self, mirrorRef):

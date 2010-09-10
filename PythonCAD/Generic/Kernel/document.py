@@ -56,7 +56,7 @@ from Kernel.GeoEntity.arc          import Arc
 from Kernel.GeoEntity.ellipse      import Ellipse
 from Kernel.GeoEntity.polyline     import Polyline
 from Kernel.GeoEntity.style        import Style
-
+from Kernel.GeoEntity.entityutil   import *
 
 #   Define the log 
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
@@ -215,7 +215,14 @@ class Document(BaseDb):
             check if the drawing have some data in it
         """
         return self.__EntityDb.haveDrwEntitys([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-
+    
+    def saveSympyEnt(self, sympyEnt):
+        """
+            save the sympy entity
+        """
+        ent=getEntityEntity(sympyEnt)
+        self.saveEntity(ent)
+    
     def saveEntity(self,entity):
         """
             save the entity into the database

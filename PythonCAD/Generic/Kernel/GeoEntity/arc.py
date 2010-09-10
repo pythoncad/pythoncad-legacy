@@ -67,7 +67,8 @@ class Arc(GeometricalEntity):
         GeometricalEntity.__init__(self,kw, argDescription)
         __isCircle=False
         if self.startAngle ==None or self.endAngle==None:
-            self.startAngle=self.endAngle=0
+            self.startAngle=0
+            self.endAngle=pi_2
             __isCircle=True
         if not get_float(self.radius) > 0.0:
             raise ValueError, "Invalid radius" 
@@ -426,7 +427,7 @@ class Arc(GeometricalEntity):
             get the sympy object in this case a circle
         """
         _cp=self.center.getSympy()
-        return geoSympy.Circle(_cp, mainSympy.Rational(self.radius))
+        return geoSympy.Circle(_cp, mainSympy.Rational(str(self.radius)))
         
     def setFromSympy(self, sympyCircle):    
         """
@@ -489,5 +490,3 @@ class Arc(GeometricalEntity):
         p3=Point(x, y-self.radius)
         p4=Point(x+self.radius, y)
         return [p1, p2, p3, p4]
-        
-            

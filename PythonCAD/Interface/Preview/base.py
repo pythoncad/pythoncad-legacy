@@ -58,17 +58,17 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             update the data at the preview item
         """
-        #Assing default values
+        # Assing default values
         for i in range(0, len(kernelCommand.exception)):
             if len(self.value)>i:
                 self.value[i]=self.convertToQTObject(kernelCommand.defaultValue[i])
             else:
                 self.value.append(self.convertToQTObject(kernelCommand.defaultValue[i]))
-        #Assing Command Values
+        # Assing Command Values
         for i in range(0, len(kernelCommand.exception)):        
             if(i<len(kernelCommand.value)):
                 self.value[i]=self.convertToQTObject(kernelCommand.value[i])
-        #Assing mouse keyboard values
+        # Assing mouse keyboard values
         index=kernelCommand.valueIndex
         try:
             raise kernelCommand.exception[index](None)

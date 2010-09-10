@@ -20,9 +20,14 @@ sys.path.append(os.path.join(genericPath, 'Interface'))
 
 from Interface.cadwindow        import CadWindowMdi
 
-if __name__ == '__main__':
-    import sys
+
+def getPythonCAD():
     app = QtGui.QApplication(sys.argv)
     w=CadWindowMdi()
     w.show()
+    return w, app
+
+if __name__ == '__main__':
+    import sys
+    w,app=getPythonCAD()
     sys.exit(app.exec_())

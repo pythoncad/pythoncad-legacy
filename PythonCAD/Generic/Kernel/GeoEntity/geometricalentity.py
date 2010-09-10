@@ -124,7 +124,7 @@ class GeometricalEntity(dict):
             update the points cord from a sympyobject
         """
         pass   
-    
+
 class GeometricalEntityComposed(dict):
     """
         this class provide the basic object for composed entity 

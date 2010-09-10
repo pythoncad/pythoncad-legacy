@@ -33,7 +33,7 @@ class BaseEntity(QtGui.QGraphicsItem):
     showBBox=False  #This Flag is used for debughing porpouse
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
-        self.setAcceptsHoverEvents(True)    #Fire over events
+        self.setAcceptsHoverEvents(True)                        #Fire over events
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
         #Get the geometry
         self.__entity=entity
@@ -61,7 +61,6 @@ class BaseEntity(QtGui.QGraphicsItem):
         if ePoint==None:
             return qtPointEvent
         return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
-            
         
     @property
     def entity(self):

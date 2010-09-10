@@ -50,12 +50,13 @@ class ICommand(object):
     
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
-        self.__previewItem=getPreviewObject(self.kernelCommand)
+        self.__previewItem=None
+        #self.__previewItem=getPreviewObject(self.kernelCommand)
         if self.__previewItem:
             scene.addItem(self.__previewItem)   # Add preview item on creation
         self.__point=[]
         self.__entity=[]
-        self.__distance=[]
+        self.__distance=[]  
         self.__angle=[]
         self.__snap=[]
         self.__forceSnap=[]
@@ -578,7 +579,7 @@ class ICommand(object):
                     else:
                         spoolDist=iPoint.dist(point)
                         if distance>spoolDist:
-                            returnVal=iPoint.dist(point)
+                            distance=spoolDist
                             returnVal=iPoint
         return returnVal    
 

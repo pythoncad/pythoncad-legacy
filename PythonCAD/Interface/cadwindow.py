@@ -55,7 +55,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
     
         self.readSettings() #make some studis on this 
-        self.setWindowTitle("PythonCad")
+        self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
         if qIcon:
             self.setWindowIcon(qIcon)
@@ -218,7 +218,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         #child.copyAvailable.connect(self.cutAct.setEnabled)
         #child.copyAvailable.connect(self.copyAct.setEnabled)
         return child
-
+    #def setAppDocActiveOnUi(self, doc):
+    #    self.mdiArea.
+        
     def _registerCommands(self):
         '''
             Register all commands that are handed by this object
@@ -629,3 +631,38 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.resetCommand()
             
         super(CadWindowMdi, self).keyPressEvent(event)
+#
+# Sympy integration
+#
+    def plotFromSympy(self, objects):
+        """
+            plot the sympy Object into PythonCAD
+        """
+        if self.mdiArea.currentSubWindow()==None:
+            self._onNewDrawing()
+        for obj in objects:
+            self.plotSympyEntity(obj)
+    
+    def plotSympyEntity(self, sympyEntity):
+        """
+            plot the sympy entity
+        """
+        self.mdiArea.currentSubWindow().document.saveSympyEnt(sympyEntity)
+    
+    def createSympyDocument(self):
+        """
+            create a new document to be used by sympy plugin
+        """
+        self._onNewDrawing()
+        
+    def getSympyObject(self):
+        """
+            get an array of sympy object
+        """
+        #if self.Application.getActiveDocument()==None:
+        if self.mdiArea.currentSubWindow()==None:
+            raise StructuralError("unable to get the active document")
+        
+        ents=self.mdiArea.currentSubWindow().scene.getAllBaseEntity()
+        return [ents[ent].geoItem.getSympy() for ent in ents if ent!=None]
+                
