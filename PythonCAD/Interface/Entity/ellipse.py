@@ -31,18 +31,22 @@ class Ellipse(BaseEntity):
         self.yc=self.yc*-1.0
         self.h=geoEnt.verticalRadius
         self.w=geoEnt.horizontalRadius
+        self.setPos(QtCore.QPointF(self.xc, self.yc))
+        self.rotate(0.0)
         return
 
     def drawShape(self, painterPath):    
         """
-            overloading of the shape method 
+            called from the shape method 
         """
-        painterPath.addEllipse(self.xc-(self.w/2.0),self.yc-(self.h/2.0),self.w,self.h )     
+        w2=self.w/2.0
+        h2=self.h/2.0
+        painterPath.addEllipse(-w2,-h2,self.w,self.h )     
     
     def drawGeometry(self, painter, option, widget):
         """
-            overloading of the paint method
+            called from the paint method
         """
         #   Create Ellipse
-        painter.drawEllipse(self.xc-(self.w/2.0),self.yc-(self.h/2.0),self.w,self.h)
+        painter.drawEllipse(self.boundingRect())
 

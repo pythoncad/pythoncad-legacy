@@ -595,5 +595,5 @@ cgcol = {
 '#bebebe':254, 254:'#bebebe',
 '#ffffff':255, 255:'#ffffff',
 }
-
-TEXT_POSITION=['n','ne', 'e', 'se', 's', 'sw', 'w','nw']
+#descripe the text position refered to the point clicked
+TEXT_POSITION=['n','ne', 'e', 'se', 's', 'sw', 'w','nw', 'c']

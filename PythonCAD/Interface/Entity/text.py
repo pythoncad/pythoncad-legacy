@@ -22,27 +22,33 @@
 #
 
 from Interface.Entity.base import *
-
+from math import degrees
 class Text(BaseEntity):
     def __init__(self, entity):
         super(Text, self).__init__(entity)
         geoEnt=self.geoItem
-        self.text=geoEnt.text#QtCore.QString(geoEnt.text)
+        self.text=geoEnt.text #QtCore.QString(geoEnt.text)
         x, y=geoEnt.location.getCoords()
-        self.location=QtCore.QPointF(float(x), -1.0*y) 
+        self.angle=degrees(geoEnt.angle)
+        self.location=QtCore.QPointF(float(x), -1.0*y)
+        self.pointPosition=geoEnt.pointPosition
         self.font=QtGui.QFont() #This have to be derived from the geoent as son is implemented
+        self.setPos(self.location)
+        self.rotate(self.angle)
         return
-        
+            
     def drawShape(self, painterPath):    
         """
             overloading of the shape method 
         """
-        painterPath.addText(self.location, self.font, self.text)
+        painterPath.addText(QtCore.QPointF(0.0, 0.0), self.font, self.text)        
         return
         
         
     def drawGeometry(self, painter, option, widget):
-        #Create Segment
-        painter.drawText(self.location, self.text)
+        #Create Text
+        painter.drawText(self.boundingRect(),QtCore.Qt.AlignCenter,  self.text)
+        
+        
         
         
