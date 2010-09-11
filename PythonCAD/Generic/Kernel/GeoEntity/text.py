@@ -48,7 +48,7 @@ class Text(GeometricalEntity):
                         "TEXT_0":Point,
                         "TEXT_1":(float, str, unicode), 
                         "TEXT_2":(float, int), 
-                        "TEXT_3":(float, str)
+                        "TEXT_3":(str, unicode)
                         }
         
         if kw['TEXT_2']==None:
