@@ -119,7 +119,7 @@ class Text(GeometricalEntity):
         """
             Set the angle at which the text block should be drawn.
         """
-        self['TEXT_2']= get_float(_angle)
+        self['TEXT_2']= get_float(angle)
     @property
     def pointPosition(self):
         """
@@ -169,3 +169,7 @@ class Text(GeometricalEntity):
 
         pl=self.getLocation()
         pl.mirror(mirrorRef)
+    def rotate(self, rotationPoint, angle):
+        GeometricalEntity.rotate(self, rotationPoint, angle)
+        self.angle=self.angle-angle
+        
