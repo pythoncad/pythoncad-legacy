@@ -157,6 +157,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #Edit
         self.__cmd_intf.setVisible('undo', hasMdiChild)
         self.__cmd_intf.setVisible('redo', hasMdiChild)
+        self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('move', hasMdiChild)
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
@@ -253,6 +254,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
@@ -426,6 +428,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('TEXT')
         return      
     # Edit
+    def _onCopy(self):
+        self.scene.clearSelection()
+        self.statusBar().showMessage("CMD:Copy")
+        self.callCommand('COPY')
+        return
     def _onMove(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")

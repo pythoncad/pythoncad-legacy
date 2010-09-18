@@ -24,7 +24,7 @@ from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
 from Kernel.GeoEntity.arc import Arc
 
-class MoveCommand(BaseCommand):
+class CopyCommand(BaseCommand):
     """
         this class rappresent the Move command
     """
@@ -34,9 +34,10 @@ class MoveCommand(BaseCommand):
                         ExcPoint, 
                         ExcPoint]
         self.defaultValue=[None, None,None]
-        self.message=[  "Select the entity to move [or give me a the keyword Text As: (10,20,30,...)]", 
+        self.message=[  "Select the entity to copy [or give me a the keyword Text As: (10,20,30,...)]", 
                         "Give me the base point",
                         "Give me the destination point"]
+    
     def getEntsToSave(self):
         """
            get entity to save
@@ -46,8 +47,7 @@ class MoveCommand(BaseCommand):
             dbEnt=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.move(self.value[1], self.value[2])
-            dbEnt.setConstructionElements(geoEnt.getConstructionElements())
-            updEnts.append(dbEnt)
+            updEnts.append(geoEnt)
         return updEnts
         
     def applyCommand(self):

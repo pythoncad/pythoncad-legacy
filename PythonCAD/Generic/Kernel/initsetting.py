@@ -38,6 +38,7 @@ from Kernel.Command.filletcommand       import FilletCommand
 from Kernel.Command.bisectorcommand     import BisectorCommand
 from Kernel.Command.rectanglecommand    import RectangleCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
+from Kernel.Command.copycommand         import CopyCommand
 from Kernel.Command.movecommand         import MoveCommand
 from Kernel.Command.mirrorcommand       import MirrorCommand
 from Kernel.Command.rotatecommand       import RotateCommand
@@ -111,6 +112,7 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'BISECTOR':BisectorCommand, 
                         'RECTANGLE':RectangleCommand, 
                         'POLYGON':PolygonCommand, 
+                        'COPY':CopyCommand, 
                         'MOVE':MoveCommand, 
                         'MIRROR':MirrorCommand, 
                         'ROTATE':RotateCommand, 
