@@ -71,7 +71,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self._registerCommands()
         self.updateMenus()
- #       self.statusBarCoords=
         return
         
     @property
@@ -100,9 +99,8 @@ class CadWindowMdi(QtGui.QMainWindow):
             Creates the statusbar object.
         '''
         self.statusBar().showMessage("Ready")
-        #set coordinates label on statusbar
+        #set coordinates label on statusbar (updated by idocumet)
         self.coordLabel=QtGui.QLabel("0.0,0.0")
-#        self.coordLabel.setAlignment (Qt.AlignRight)
         self.statusBar().addPermanentWidget(self.coordLabel)
         return    
         

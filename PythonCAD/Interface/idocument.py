@@ -104,5 +104,6 @@ class IDocument(QtGui.QMdiSubWindow):
         return   
     
     def setStatusbarCoords(self, x, y):
-        self.__cadwindow.coordLabel.setText(str("%.2f" % x)+","+str("%.2f" % y))
+        #set statusbar coordinates when mouse move on the scene 
+        self.__cadwindow.coordLabel.setText(str("%.2f" % x)+","+str("%.2f" % y)) # "%.2f" %  sets the precision decimals to 2
         

@@ -23,7 +23,6 @@
 #
 
 import math
-#from decimal import *
 
 from PyQt4 import QtCore, QtGui
 
@@ -97,11 +96,11 @@ class CadScene(QtGui.QGraphicsScene):
         """
         scenePos=event.scenePos()
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
-        point=Point(scenePos.x(), scenePos.y()*-1.0)
         self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
         if self.activeICommand:
             #scenePos=event.scenePos()
             distance=None
+            point=Point(scenePos.x(), scenePos.y()*-1.0)
             qtItem=[self.itemAt(scenePos)]
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
