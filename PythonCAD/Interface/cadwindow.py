@@ -53,7 +53,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
-    
         self.readSettings() #make some studis on this 
         self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
@@ -162,7 +161,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('redo', hasMdiChild)
         self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('move', hasMdiChild)
-        self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
         self.__cmd_intf.setVisible('rotate', hasMdiChild)
@@ -260,7 +258,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotate', '&Rotare', self._onRotate)
