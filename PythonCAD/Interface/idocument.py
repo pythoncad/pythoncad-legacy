@@ -11,6 +11,7 @@ class IDocument(QtGui.QMdiSubWindow):
         IDocument.sequenceNumber += 1
         self.__document=document
         self.__cmdInf=cmdInf
+        self.__cadwindow=parent
         self.setWindowTitle(document.dbPath + '[*]')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.isUntitled = True
@@ -30,7 +31,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.zoomWindows+=self.__view.zoomWindows
         self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
         self.__scene.fireWarning+=self.popUpWarning
-        
+        self.__scene.fireCoords+=self.setStatusbarCoords
     @property
     def document(self):
         return self.__document
@@ -101,3 +102,8 @@ class IDocument(QtGui.QMdiSubWindow):
         """
         ret = QtGui.QMessageBox.information(self,"Information",  msg)
         return   
+    
+    def setStatusbarCoords(self, x, y):
+        #set statusbar coordinates when mouse move on the scene 
+        self.__cadwindow.coordLabel.setText(str("%.2f" % x)+","+str("%.2f" % y)) # "%.2f" %  sets the precision decimals to 2
+        

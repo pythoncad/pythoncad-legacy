@@ -71,7 +71,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self._registerCommands()
         self.updateMenus()
-        self.statusBar().showMessage("Ready")
         return
       
     @property
@@ -100,6 +99,9 @@ class CadWindowMdi(QtGui.QMainWindow):
             Creates the statusbar object.
         '''
         self.statusBar().showMessage("Ready")
+        #set coordinates label on statusbar (updated by idocumet)
+        self.coordLabel=QtGui.QLabel("0.0,0.0")
+        self.statusBar().addPermanentWidget(self.coordLabel)
         return    
         
     def commandExecuted(self):
@@ -158,6 +160,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #Edit
         self.__cmd_intf.setVisible('undo', hasMdiChild)
         self.__cmd_intf.setVisible('redo', hasMdiChild)
+        self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('move', hasMdiChild)
         self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('delete', hasMdiChild)
@@ -255,6 +258,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
@@ -429,6 +433,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('TEXT')
         return      
     # Edit
+    def _onCopy(self):
+        self.scene.clearSelection()
+        self.statusBar().showMessage("CMD:Copy")
+        self.callCommand('COPY')
+        return
     def _onMove(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")
