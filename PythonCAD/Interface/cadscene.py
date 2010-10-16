@@ -59,9 +59,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.needPreview=False
         self.forceDirection=None
         self.__lastPickedEntity=None
-
         self.isInPan=False
-
         self.forceSnap=None
         self._cmdZoomWindow=None
         #

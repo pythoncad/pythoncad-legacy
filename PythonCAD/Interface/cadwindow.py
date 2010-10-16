@@ -73,7 +73,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.updateMenus()
         self.statusBar().showMessage("Ready")
         return
-        
+      
     @property
     def scene(self):
         if self.mdiArea.activeSubWindow():
@@ -141,7 +141,8 @@ class CadWindowMdi(QtGui.QMainWindow):
             Resect the active command
         """
         self.__cmd_intf.resetCommand()
-        self.scene.cancelCommand()
+        if self.scene!=None:
+            self.scene.cancelCommand()
         self.statusBar().showMessage("Ready")
         
     def updateMenus(self):
@@ -158,6 +159,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('undo', hasMdiChild)
         self.__cmd_intf.setVisible('redo', hasMdiChild)
         self.__cmd_intf.setVisible('move', hasMdiChild)
+        self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
         self.__cmd_intf.setVisible('rotate', hasMdiChild)
@@ -198,7 +200,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #                self.activeMdiChild().textCursor().hasSelection())
         #self.cutAct.setEnabled(hasSelection)
         #self.copyAct.setEnabled(hasSelection)
-        
+      
     def createMdiChild(self, file=None):
         """
             Create new IDocument 
@@ -254,6 +256,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotate', '&Rotare', self._onRotate)
@@ -430,6 +433,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")
         self.callCommand('MOVE')
+        return
+    def _onCopy(self):
+        self.scene.clearSelection()
+        self.statusBar().showMessage("CMD:Copy")
+        self.callCommand('COPY')
         return
     def _onDelete(self):
         self.scene.clearSelection()

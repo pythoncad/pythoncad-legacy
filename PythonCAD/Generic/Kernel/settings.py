@@ -67,8 +67,7 @@ class Settings(object):
         """
         if self.__property and self.__property.has_key(name):
             return self.__property[name]
-        
-            return None
+        return None
     
     def setVariable(self, name, value):
         """

@@ -22,7 +22,7 @@
 #
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.arc import Arc
+from Kernel.GeoEntity.arc           import Arc
 
 class MoveCommand(BaseCommand):
     """

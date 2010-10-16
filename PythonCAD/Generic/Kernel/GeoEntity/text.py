@@ -161,15 +161,19 @@ class Text(GeometricalEntity):
         """
             perform the mirror of the line
         """
-        #TODO Look at the qt text implementation to understand better the text 
-        #mirror 
+        # TODO Look at the qt text implementation to understand better the text 
+        # mirror 
         pass
-        if not isinstance(mirrorRef, (CLine, Segment)):
+        if not isinstance(mirrorRef, ( Segment)):
             raise TypeError, "mirrorObject must be Cline Segment or a tuple of points"
 
         pl=self.getLocation()
         pl.mirror(mirrorRef)
+    
     def rotate(self, rotationPoint, angle):
+        """
+            overloading of the rotate base method 
+        """
         GeometricalEntity.rotate(self, rotationPoint, angle)
         self.angle=self.angle-angle
         

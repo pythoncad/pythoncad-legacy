@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -12,7 +13,7 @@
    version="1.0"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="pythoncad-logo-inkscape.svg"
    width="463.60858"
    height="680.24469"
@@ -25,13 +26,13 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <sodipodi:namedview
-     inkscape:window-height="999"
-     inkscape:window-width="1680"
+     inkscape:window-height="750"
+     inkscape:window-width="1366"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      guidetolerance="10.0"
@@ -42,8 +43,8 @@
      pagecolor="#ffffff"
      id="base"
      inkscape:zoom="0.81781712"
-     inkscape:cx="144.37307"
-     inkscape:cy="309.92292"
+     inkscape:cx="-46.378623"
+     inkscape:cy="358.83361"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:current-layer="svg2"
@@ -53,7 +54,8 @@
      showgrid="false"
      inkscape:snap-global="false"
      showguides="true"
-     inkscape:guide-bbox="true" />
+     inkscape:guide-bbox="true"
+     inkscape:window-maximized="0" />
   <defs
      id="defs4">
     <inkscape:path-effect
@@ -631,7 +633,7 @@
      id="path50" />
   <path
      d="M 189.52241,168.09372 L 180.61357,168.09372 L 180.61357,133.70599 C 180.61357,130.20678 179.79481,127.19493 178.16706,124.68018 C 176.28587,121.83403 173.67364,120.41095 170.32065,120.41095 C 166.23661,120.41095 161.12913,122.56506 154.99823,126.87328 L 154.99823,168.09372 L 146.08938,168.09372 L 146.08938,85.896506 L 154.99823,83.089346 L 154.99823,120.52792 C 160.69053,116.38541 166.90916,114.30928 173.66389,114.30928 C 178.38149,114.30928 182.20235,115.89805 185.12647,119.06586 C 188.06035,122.23366 189.52241,126.18123 189.52241,130.89882 L 189.52241,168.09372 L 189.52241,168.09372 z"
-     style="fill:#646464;fill-opacity:1"
+     style="fill:#646464;fill-opacity:1;"
      id="path52" />
   <path
      d="M 236.87377,140.3535 C 236.87377,134.75867 235.81135,130.13855 233.69622,126.48339 C 231.18148,122.02897 227.2729,119.67992 221.98997,119.43624 C 212.22339,120.00158 207.34985,126.99999 207.34985,140.41198 C 207.34985,146.5624 208.36354,151.69911 210.41042,155.82213 C 213.02265,161.07581 216.94098,163.66854 222.16542,163.58082 C 231.97099,163.50282 236.87377,155.76365 236.87377,140.3535 L 236.87377,140.3535 z M 246.63062,140.412 C 246.63062,148.37538 244.59348,155.0034 240.52894,160.29607 C 236.05503,166.2223 229.87537,169.19516 221.98997,169.19516 C 214.17281,169.19516 208.08088,166.2223 203.68494,160.29607 C 199.69838,155.0034 197.70997,148.37538 197.70997,140.412 C 197.70997,132.92624 199.86408,126.62962 204.17229,121.50265 C 208.72419,116.06377 214.7089,113.33459 222.10693,113.33459 C 229.50498,113.33459 235.52867,116.06377 240.1683,121.50265 C 244.4765,126.62962 246.63062,132.92624 246.63062,140.412 L 246.63062,140.412 z"
@@ -764,21 +766,100 @@
   <path
      style="fill:url(#linearGradient3747);fill-opacity:1.0"
      d="M 209.96054,512.69601 C 202.50559,512.696 196.55429,518.83417 196.55429,526.32101 L 196.55429,553.16476 C 196.55429,560.6516 202.50559,566.78976 209.96054,566.78976 L 230.77304,566.78976 L 230.77304,512.69601 L 209.96054,512.69601 z"
-     id="path3733" />
+     id="path3733"
+     inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\PythonCAD_logo.png"
+     inkscape:export-xdpi="199.45764"
+     inkscape:export-ydpi="199.45764" />
   <path
      style="fill:url(#linearGradient3749);fill-opacity:1"
      d="M 217.74179,484.47726 L 217.71054,509.28976 L 232.71054,509.28976 C 233.67481,509.28976 234.71054,510.41924 234.71054,511.38351 L 234.71054,566.78976 L 259.71054,566.78976 L 259.71054,497.94601 C 259.71054,490.45917 253.75925,484.321 246.30429,484.32101 C 236.75191,484.03329 227.24842,484.42107 217.74179,484.47726 z"
-     id="path3735" />
+     id="path3735"
+     inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\PythonCAD_logo.png"
+     inkscape:export-xdpi="199.45764"
+     inkscape:export-ydpi="199.45764" />
   <path
      style="fill:url(#linearGradient3751);fill-opacity:1.0"
      d="M 182.46054,484.38351 C 175.0902,484.38351 169.05428,491.80467 169.05429,499.07101 L 169.05429,524.60226 C 169.05429,532.0891 175.00558,538.22726 182.46054,538.22726 L 193.26278,538.22726 L 193.26278,524.9602 C 193.26278,516.86162 200.89959,509.28976 209.20399,509.28976 L 214.64804,509.28976 L 214.64804,484.38351 L 182.46054,484.38351 z"
-     id="path3737" />
+     id="path3737"
+     inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\PythonCAD_logo.png"
+     inkscape:export-xdpi="199.45764"
+     inkscape:export-ydpi="199.45764" />
   <path
      style="fill:#ffffff;fill-opacity:1"
      d="M 201.58554,492.26858 C 198.816,492.26858 196.55429,494.56723 196.55429,497.39358 C 196.5543,500.20992 198.816,502.48733 201.58554,502.48733 C 204.36502,502.48733 206.61679,500.20992 206.61679,497.39358 C 206.6168,494.56723 204.36502,492.26858 201.58554,492.26858 z"
-     id="path3739" />
+     id="path3739"
+     inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\PythonCAD_logo.png"
+     inkscape:export-xdpi="199.45764"
+     inkscape:export-ydpi="199.45764" />
   <path
      style="fill:url(#linearGradient3753);fill-opacity:1"
      d="M 278.5878,512.69601 C 286.04275,512.696 291.99405,518.83417 291.99405,526.32101 L 291.99405,553.16476 C 291.99405,560.6516 286.04275,566.78976 278.5878,566.78976 L 263.23491,566.78976 L 263.23491,512.69601 L 278.5878,512.69601 z"
-     id="path3741" />
+     id="path3741"
+     inkscape:export-filename="C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\PythonCAD_logo.png"
+     inkscape:export-xdpi="199.45764"
+     inkscape:export-ydpi="199.45764" />
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="26.900881"
+     y="644.78442"
+     id="text3101"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3103"
+       x="26.900881"
+       y="644.78442" /></text>
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3105"
+     style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+       id="flowRegion3107"><rect
+         id="rect3109"
+         width="136.94994"
+         height="101.48969"
+         x="161.40527"
+         y="478.4881" /></flowRegion><flowPara
+       id="flowPara3111"></flowPara></flowRoot>  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3113"
+     style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+       id="flowRegion3115"><rect
+         id="rect3117"
+         width="152.84592"
+         height="117.38566"
+         x="135.72717"
+         y="457.70105" /></flowRegion><flowPara
+       id="flowPara3119"></flowPara></flowRoot>  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3121"
+     style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+       id="flowRegion3123"><rect
+         id="rect3125"
+         width="130.83609"
+         height="92.930313"
+         x="163.85081"
+         y="477.26532" /></flowRegion><flowPara
+       id="flowPara3127"></flowPara></flowRoot>  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="9.7821379"
+     y="745.05133"
+     id="text3129"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3131"
+       x="9.7821379"
+       y="745.05133" /></text>
+  <text
+     xml:space="preserve"
+     style="font-size:102.77192688000000000px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+     x="-594.00702"
+     y="142.02324"
+     id="text3133"
+     sodipodi:linespacing="125%"
+     transform="scale(0.879349,1.1372049)"><tspan
+       sodipodi:role="line"
+       id="tspan3135"
+       x="-594.00702"
+       y="142.02324">PythonCAD</tspan></text>
 </svg>

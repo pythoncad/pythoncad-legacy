@@ -30,6 +30,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.zoomWindows+=self.__view.zoomWindows
         self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
         self.__scene.fireWarning+=self.popUpWarning
+        
     @property
     def document(self):
         return self.__document

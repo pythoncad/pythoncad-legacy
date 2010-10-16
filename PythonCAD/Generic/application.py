@@ -154,9 +154,9 @@ class Application(object):
         self.beforeOpenDocumentEvent(self, fileName)
         if not self.__Docuemnts.has_key(fileName):
             self.__Docuemnts[fileName]=Document(fileName)
+            self.addRecentFiles(fileName)
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
         self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
-        self.addRecentFiles(fileName)
         return self.__Docuemnts[fileName]
     
     def saveAs(self, newFileName):
@@ -167,7 +167,6 @@ class Application(object):
             oldFileName=self.__ActiveDocument.getName()
             self.closeDocument(oldFileName)
             shutil.copy2(oldFileName,newFileName)
-            self.addRecentFiles(newFileName)
             return self.openDocument(newFileName)
         raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
     

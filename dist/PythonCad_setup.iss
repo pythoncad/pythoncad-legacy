@@ -6,18 +6,19 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8154F675-986F-4E74-AF85-E6432F344F1D}
-AppName=PythonCad
-AppVerName=PythonCad Alfa R38 
+AppName=PythonCAD
+AppVerName=PythonCAD Alfa R38-04
 AppPublisher=Matteo Boscolo OpenSource
 AppPublisherURL=http://sourceforge.net/projects/pythoncad/
 AppSupportURL=http://sourceforge.net/projects/pythoncad/
 AppUpdatesURL=http://sourceforge.net/projects/pythoncad/
-DefaultDirName={pf}\PythonCad
-DefaultGroupName=PythonCad
+DefaultDirName={pf}\PythonCAD
+DefaultGroupName=PythonCAD
 OutputBaseFilename=setup
 SetupIconFile=C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\pythoncad.ico
 Compression=lzma
 SolidCompression=yes
+
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -37,10 +38,10 @@ Source: "C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\*"; DestDir: "{
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\PythonCad"; Filename: "{app}\pythoncad_qt.exe";WorkingDir: "{app}"
-Name: "{commondesktop}\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: desktopicon ;WorkingDir: "{app}"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: quicklaunchicon  ;WorkingDir: "{app}"
+Name: "{group}\PythonCAD"; Filename: "{app}\pythoncad_qt.exe";WorkingDir: "{app}";AppUserModelID: "PythonCAD.PythonCAD"
+Name: "{commondesktop}\PythonCAD"; Filename: "{app}\pythoncad_qt.exe"; Tasks: desktopicon ;WorkingDir: "{app}";AppUserModelID: "PythonCAD.PythonCAD"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PythonCad"; Filename: "{app}\pythoncad_qt.exe"; Tasks: quicklaunchicon  ;WorkingDir: "{app}";AppUserModelID: "PythonCAD.PythonCAD"
 
 [Run]
-Filename: "{app}\pythoncad_qt.exe"; Description: "{cm:LaunchProgram,PythonCad}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\pythoncad_qt.exe"; Description: "{cm:LaunchProgram,PythonCAD}"; Flags: nowait postinstall skipifsilent
 

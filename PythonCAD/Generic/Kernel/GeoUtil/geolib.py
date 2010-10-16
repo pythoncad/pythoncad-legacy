@@ -128,10 +128,8 @@ class Vector:
         """
             return the angle from the cartesian reference
         """
-        _x=self.point.x
         _y=self.point.y
-
-        ang=math.atan2(float(self.point.y),float(self.point.x))
+        ang=math.atan2(float(_y),float(self.point.x))
         if _y<0:
             ang=ang+2*math.pi
         return ang
