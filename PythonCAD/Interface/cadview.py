@@ -12,7 +12,8 @@ class CadView(QtGui.QGraphicsView):
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse) 
         
-        #handle mouse midbutton pan
+        #handle mouse midbutton pan and zoom
+        scene.fireZoomFit+=self.fit
         scene.firePan+=self.Pan
         self.firstPanPoint=QtCore.QPointF()
     
@@ -39,7 +40,6 @@ class CadView(QtGui.QGraphicsView):
         #get the mouse position in scene coordinates
         pOnView=event.pos()
         pOnScene=self.mapToScene(pOnView)
-        
         #old command
         self.scaleFactor=math.pow(2.0,event.delta() / 240.0)
         self.scaleView(self.scaleFactor)

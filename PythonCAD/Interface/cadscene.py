@@ -57,6 +57,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.fireWarning=PyCadEvent()
         self.fireCoords=PyCadEvent()
         self.firePan=PyCadEvent()
+        self.fireZoomFit=PyCadEvent()
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
@@ -93,16 +94,13 @@ class CadScene(QtGui.QGraphicsScene):
         self.forceDirection="F"+self.qtInputPopUp.text
         
     def mouseMoveEvent(self, event):
-        """
-            mouse move event
-        """
         scenePos=event.scenePos()
         
         if self.isInPan:
             self.firePan(None, event.scenePos())
-            
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
         self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
+        
         if self.activeICommand:
             #scenePos=event.scenePos()
             distance=None
@@ -171,6 +169,12 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
+    
+    def mouseDoubleClickEvent(self, event):
+        if event.button()==QtCore.Qt.MidButton:
+            self.fireZoomFit()
+        else:
+            pass
     
     def cancelCommand(self):
         """
