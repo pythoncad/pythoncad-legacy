@@ -70,6 +70,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.setUnifiedTitleAndToolBarOnMac(True)
         self._registerCommands()
         self.updateMenus()
+        self.lastDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
         return
       
     @property
@@ -330,18 +331,28 @@ class CadWindowMdi(QtGui.QMainWindow):
         
     def _onOpenDrawing(self):
         # ask the user to select an existing drawing
-        drawing = QtGui.QFileDialog.getOpenFileName(self, "Open Drawing", "/home", "Drawings (*.pdr)");
+        drawing = QtGui.QFileDialog.getOpenFileName(parent=self,directory=self.lastDirectory,  caption ="Open Drawing", filter ="Drawings (*.pdr *.dxf)");
         # open a document and load the drawing
         if len(drawing)>0:
-            child = self.createMdiChild(drawing)
+            self.lastDirectory=os.path.split(drawing)[0]
+            (name, extension)=os.path.splitext(drawing)
+            if extension.upper()=='.DXF':
+                child = self.createMdiChild()
+                child.importExternalFormat(drawing)
+            elif extension.upper()=='.PDR':
+                child = self.createMdiChild(drawing)
+            else:
+                self.critical("Wrong command selected")
+                return
             child.show() 
             self.updateRecentFileList()           
         return
     
     def _onImportDrawing(self):
-        drawing = QtGui.QFileDialog.getOpenFileName(self, "Import Drawing", "/home", "Dxf (*.dxf)");
+        drawing = QtGui.QFileDialog.getOpenFileName(parent=self, caption="Import Drawing", directory=self.lastDirectory, filter="Dxf (*.dxf)");
         # open a document and load the drawing
         if len(drawing)>0:
+            self.lastDirectory=os.path.split(drawing)[0]
             self.mdiArea.activeSubWindow().importExternalFormat(drawing)
         return
         

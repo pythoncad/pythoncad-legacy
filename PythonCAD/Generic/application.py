@@ -149,7 +149,7 @@ class Application(object):
         
     def openDocument(self, fileName):
         """
-            open a new document 
+            open a saved document 
         """
         self.beforeOpenDocumentEvent(self, fileName)
         if not self.__Docuemnts.has_key(fileName):
