@@ -35,7 +35,7 @@ from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
-from Interface.Entity.actionhandler import PositionHandler
+from Interface.Entity.actionHandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
@@ -56,6 +56,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.keySpace=PyCadEvent()
         self.fireWarning=PyCadEvent()
         self.fireCoords=PyCadEvent()
+        self.firePan=PyCadEvent()
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
@@ -96,6 +97,10 @@ class CadScene(QtGui.QGraphicsScene):
             mouse move event
         """
         scenePos=event.scenePos()
+        
+        if self.isInPan:
+            self.firePan(None, event.scenePos())
+            
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
         self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
         if self.activeICommand:
@@ -116,6 +121,9 @@ class CadScene(QtGui.QGraphicsScene):
         return 
     
     def mousePressEvent(self, event):
+        if event.button()==QtCore.Qt.MidButton:
+            self.isInPan=True
+            self.firePan(True, event.scenePos())
         if not self.isInPan:
             qtItem=self.itemAt(event.scenePos())
             p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
@@ -128,6 +136,9 @@ class CadScene(QtGui.QGraphicsScene):
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
+        if event.button()==QtCore.Qt.MidButton:
+            self.isInPan=False
+            self.firePan(False, None)
         if not self.isInPan:
             self.updateSelected()
             qtItems=[item for item in self.selectedItems() if isinstance(item, BaseEntity)]
