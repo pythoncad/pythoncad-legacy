@@ -13,9 +13,28 @@ class CadView(QtGui.QGraphicsView):
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse) 
     
     def wheelEvent(self, event):
-        self.scaleFactor=math.pow(2.0,-event.delta() / 240.0)
+        #get the center of the view in scene coordinates
+        c=QtCore.QPoint((self.width()/2.0)-10, (self.height()/2.0)-10)
+        cOnScene=self.mapToScene(c)
+        #get the mouse position in scene coordinates
+        pOnView=event.pos()
+        pOnScene=self.mapToScene(pOnView)
+        
+        #old command
+        self.scaleFactor=math.pow(2.0,event.delta() / 240.0)
         self.scaleView(self.scaleFactor)
         self.updateShape()
+        
+        #get the modified position due to occurred zoom
+        newPOnScene=self.mapToScene(pOnView)
+        #get the vector to move the modified position in the old position
+        vector=pOnScene-newPOnScene
+        #set a new center to maintain mouse position referred to the scene
+        newC=cOnScene+vector
+        self.centerOn(newC)
+        #self.scaleFactor=math.pow(2.0,-event.delta() / 240.0)
+        #self.scaleView(self.scaleFactor)
+        #self.updateShape()
 
         
     def keyPressEvent(self, event):

@@ -35,6 +35,7 @@ from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
+from Interface.Entity.actionhandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
@@ -63,6 +64,8 @@ class CadScene(QtGui.QGraphicsScene):
         self.isInPan=False
         self.forceSnap=None
         self._cmdZoomWindow=None
+        self.showHandler=False
+        self.posHandler=None
         #
         # new command implementation
         #
@@ -137,8 +140,15 @@ class CadScene(QtGui.QGraphicsScene):
                     super(CadScene, self).mouseReleaseEvent(event)
                     return
                 if event.button()==QtCore.Qt.LeftButton:
-                    point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                    #fire the mouse at the icommand class
+                    point=None
+                    if self.showHandler:
+                        if self.posHandler==None:
+                            self.posHandler=PositionHandler(event.scenePos())
+                            self.addItem(self.posHandler)
+                            point=self.posHandler.scenePos
+                    if Point==None:
+                        point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
+                    # fire the mouse at the icommand class
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
@@ -160,6 +170,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.forceDirection=None
         self.__activeKernelCommand=None
         self.activeICommand=None
+        self.showHandler=False
 
     def keyPressEvent(self, event):
         self.forceDirection=''
@@ -174,10 +185,8 @@ class CadScene(QtGui.QGraphicsScene):
             self.forceDirection='H'
         elif event.key()==QtCore.Qt.Key_V:
             self.forceDirection='V'
-        #elif event.key()==QtCore.Qt.Key_F:
-        #    self.qtInputPopUp.setText('')
-        #    self.qtInputPopUp.setPos(self.mouseX, self.mouseY)
-        #    self.qtInputPopUp.show()
+        elif event.key()==QtCore.Qt.Key_Q:
+            self.showHandler=True
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):

@@ -22,7 +22,7 @@
 import math
 from PyQt4 import QtCore, QtGui
 
-class CustomVector(Vector):
+class CustomVector(object):
     """
         Provide a full 2d CustomVector operation and definition
     """
@@ -90,7 +90,9 @@ class PositionHandler(QtGui.QGraphicsItem):
         if position!=None:
             self.setPos(position)
         self.position=position
-        
+     
+    def updateSelected(self):
+        pass
     def boundingRect(self):
         return self.shape().boundingRect()
     
@@ -115,7 +117,6 @@ class PositionHandler(QtGui.QGraphicsItem):
         #painter.setBrush(QtCore.Qt.cyan);
         #painter.setPen(QtCore.Qt.darkCyan);
         #painter.drawPath(self.definePath())
-        print "dist", self.distance
         pass
     @property
     def distance(self):  
@@ -166,7 +167,8 @@ class ActionHandler(QtGui.QGraphicsItem):
         self.position=position
         self.setAcceptsHoverEvents(True)
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
-            
+    def updateSelected(self):
+        pass        
     def boundingRect(self):
         return QtCore.QRectF()
         
@@ -185,7 +187,8 @@ class ArcAngle(QtGui.QGraphicsItem):
         if position!=None:
             self.setPos(position)
         self.position=position
-        
+    def updateSelected(self):
+        pass    
     def definePath(self):
         rectangle=QtCore.QRectF(-47.5,40, 105, -110)
         arrowPath=QtGui.QPainterPath()
@@ -265,7 +268,8 @@ class CirclePosition(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
         if position!=None:
             self.setPos(position)
-        
+    def updateSelected(self):
+        pass    
     def definePath(self):
         ellipse=QtCore.QRectF(-10.0, -10.0, 10.0, 10.0)
         arrowPath=QtGui.QPainterPath()
@@ -327,7 +331,8 @@ class ArrowItem(QtGui.QGraphicsItem):
             self.rotate(-rotation)
             self._angle=rotation
         self.delta=0
-
+    def updateSelected(self):
+        pass
     def definePath(self):
         poligonArrow=QtGui.QPolygonF()
         poligonArrow.append(QtCore.QPointF(0.0, 5.0))

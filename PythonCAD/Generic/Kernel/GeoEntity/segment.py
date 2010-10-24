@@ -49,7 +49,8 @@ class Segment(GeometricalEntity):
                         }
         GeometricalEntity.__init__(self,kw, argDescription)
         if self.p1.dist(self.p2)<0.000001:
-            raise StructuralError("Wrong point imput distance between point mast be >0.000001") 
+            print "distance =0", self
+            #raise StructuralError("Wrong point imput distance between point mast be >0.000001") 
                 
     
     def __str__(self):
