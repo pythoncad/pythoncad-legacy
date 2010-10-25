@@ -11,6 +11,26 @@ class CadView(QtGui.QGraphicsView):
         self.controlPress=False
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse) 
+        
+        #handle mouse midbutton pan
+        scene.firePan+=self.Pan
+        self.firstPanPoint=QtCore.QPointF()
+    
+    def Pan(self, panActive, eventPoint):
+        if panActive==True:
+            self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
+            self.firstPanPoint=eventPoint
+        elif panActive==False:
+            self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+        else:
+            if self.controlPress==False:
+                c=QtCore.QPoint((self.width()/2-10), (self.height()/2-10))
+                cOnScene=self.mapToScene(c)
+                vector=self.firstPanPoint-eventPoint
+                newC=cOnScene+vector
+                self.centerOn(newC)
+            
+
     
     def wheelEvent(self, event):
         #get the center of the view in scene coordinates
