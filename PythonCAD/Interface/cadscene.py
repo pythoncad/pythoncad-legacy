@@ -155,7 +155,7 @@ class CadScene(QtGui.QGraphicsScene):
                             self.posHandler=PositionHandler(event.scenePos())
                             self.addItem(self.posHandler)
                             point=self.posHandler.scenePos
-                    if Point==None:
+                    if point==None:
                         point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
                     # fire the mouse at the icommand class
                     self.activeICommand.addMauseEvent(point=point,
