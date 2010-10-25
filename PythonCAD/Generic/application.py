@@ -39,13 +39,11 @@ class Application(object):
         this class provide the real pythoncad api interface ..
     """
     def __init__(self, **args):
-        #++
-        #TODO: Improve the local directory for different os ..
-        #this file will be in the local setting os user folder
-        #W$     :   user\PythonCad\db
-        #mac    :   ask to Gertwin
-        #linux  :   /home/user/pythoncad/db
-        baseDbName=os.path.join(os.getcwd(), 'Pythoncad_baseDb.pdr')
+        userDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
+        pyUserDir=os.path.join(userDirectory, "PythonCAD")
+        if not os.path.exists(pyUserDir):
+            os.makedirs(pyUserDir)
+        baseDbName=os.path.join(pyUserDir, 'PythonCAD_Local.pdr')    
         #--
         self.kernel=Document(baseDbName)
         self.__applicationCommand=APPLICATION_COMMAND
