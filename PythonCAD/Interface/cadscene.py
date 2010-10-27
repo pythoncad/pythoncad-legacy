@@ -35,7 +35,7 @@ from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
-from Interface.Entity.actionhandler import PositionHandler
+from Interface.Entity.actionHandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
@@ -56,6 +56,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.keySpace=PyCadEvent()
         self.fireWarning=PyCadEvent()
         self.fireCoords=PyCadEvent()
+        #fire Pan and Zoom events to the view
         self.firePan=PyCadEvent()
         self.fireZoomFit=PyCadEvent()
         self.__document=document
