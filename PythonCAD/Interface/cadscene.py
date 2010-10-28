@@ -76,6 +76,11 @@ class CadScene(QtGui.QGraphicsScene):
         self.activeICommand=None
         #
         self.__grapWithd=20.0
+        #
+        # Input implemetation by carlo
+        #
+        self.textTyped=[]
+        
         
     @property
     def activeKernelCommand(self):
@@ -100,7 +105,10 @@ class CadScene(QtGui.QGraphicsScene):
         if self.isInPan:
             self.firePan(None, event.scenePos())
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
-        self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
+        if len(self.textTyped)==0:
+            self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
+        else:
+            pass
         
         if self.activeICommand:
             #scenePos=event.scenePos()
@@ -203,6 +211,34 @@ class CadScene(QtGui.QGraphicsScene):
             self.forceDirection='V'
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
+        elif event.key()==QtCore.Qt.Key_Delete:
+            print "delete pressed"
+        # ################Numbers Input by Carlo######################
+        elif event.key()==QtCore.Qt.Key_1:
+            self.textTyped.append("1")
+        elif event.key()==QtCore.Qt.Key_2:
+            self.textTyped.append("2")
+        elif event.key()==QtCore.Qt.Key_3:
+            self.textTyped.append("3")
+        elif event.key()==QtCore.Qt.Key_4:
+            self.textTyped.append("4")
+        elif event.key()==QtCore.Qt.Key_5:
+            self.textTyped.append("5")
+        elif event.key()==QtCore.Qt.Key_6:
+            self.textTyped.append("6")
+        elif event.key()==QtCore.Qt.Key_7:
+            self.textTyped.append("7")
+        elif event.key()==QtCore.Qt.Key_8:
+            self.textTyped.append("8")
+        elif event.key()==QtCore.Qt.Key_9:
+            self.textTyped.append("9")
+        elif event.key()==QtCore.Qt.Key_0:
+            self.textTyped.append("0")
+        elif event.key()==QtCore.Qt.Key_Backspace:
+            print "erased"
+            a=''.join(self.textTyped)
+            print a
+            self.textTyped=[]
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):
