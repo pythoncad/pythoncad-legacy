@@ -53,7 +53,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
-        self.readSettings() #make some studis on this 
+        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
         self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
         if qIcon:
@@ -98,11 +98,13 @@ class CadWindowMdi(QtGui.QMainWindow):
         '''
             Creates the statusbar object.
         '''
+
         self.statusBar().showMessage("Ready")
+
         #set coordinates label on statusbar (updated by idocumet)
         self.coordLabel=QtGui.QLabel("0.0,0.0")
         self.statusBar().addPermanentWidget(self.coordLabel)
-        return    
+
         
     def commandExecuted(self):
         self.resetCommand()
@@ -605,17 +607,26 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
 
     def readSettings(self):
-        #settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
-        #pos = settings.value('pos', QtCore.QPoint(200, 200))
-        #size = settings.value('size', QtCore.QSize(400, 400))
-        #self.move(pos)
-        #self.resize(size)
-        pass
+        settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
+        settings.beginGroup("CadWindow")
+        self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
+        self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+        settings.endGroup()
+
 
     def writeSettings(self):
-        settings = QtCore.QSettings('Trolltech', 'MDI Example')
+        settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
+        
+        settings.beginGroup("CadWindow")
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
+        settings.endGroup()
+        
+        settings.beginGroup("Toolbars")
+        settings.setValue('pos', self.pos())
+        settings.setValue('size', self.size())
+        settings.endGroup()
+        
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

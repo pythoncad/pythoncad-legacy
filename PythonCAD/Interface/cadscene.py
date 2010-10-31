@@ -50,10 +50,12 @@ class CadScene(QtGui.QGraphicsScene):
         # drawing limits
         self.setSceneRect(-10000, -10000, 20000, 20000)
         # scene custom event
-        self.pyCadScenePressEvent=PyCadEvent()
+#        self.pyCadScenePressEvent=PyCadEvent()   <<<<this seems unuseful
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
         self.keySpace=PyCadEvent()
+        self.fireKeyShortcut=PyCadEvent()
+        self.fireKeyEvent=PyCadEvent()
         self.fireWarning=PyCadEvent()
         self.fireCoords=PyCadEvent()
         #fire Pan and Zoom events to the view
@@ -79,7 +81,7 @@ class CadScene(QtGui.QGraphicsScene):
         #
         # Input implemetation by carlo
         #
-        self.fromPoint=None
+        self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint()
         self.textTyped=[]
         
         
@@ -111,12 +113,13 @@ class CadScene(QtGui.QGraphicsScene):
         if self.fromPoint==None:
             self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
         else:
+            #set relative coordinates in the statusbar if frompoin is not none
             if len(self.textTyped)==0:
                 x=scenePos.x()-self.fromPoint.getx()
                 y=scenePos.y()*-1.0-self.fromPoint.gety()
                 self.fireCoords(x, y)
             else:
-                print 'polar'
+                pass
         
         if self.activeICommand:
             #scenePos=event.scenePos()
@@ -175,7 +178,7 @@ class CadScene(QtGui.QGraphicsScene):
                             point=self.posHandler.scenePos
                     if point==None:
                         point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                    # fire the mouse at the icommand class
+                    # fire the mouse to the icommand class
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
@@ -213,7 +216,10 @@ class CadScene(QtGui.QGraphicsScene):
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
             if self.activeICommand!=None:
-                self.activeICommand.applyCommand()
+                self.fireKeyEvent(event)
+                #self.activeICommand.applyCommand()
+            else:
+                pass
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
         elif event.key()==QtCore.Qt.Key_H:
@@ -223,33 +229,17 @@ class CadScene(QtGui.QGraphicsScene):
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
         elif event.key()==QtCore.Qt.Key_Delete:
-            print "delete pressed"
-        # ################Numbers Input experiment by Carlo######################
-        elif event.key()==QtCore.Qt.Key_1:
-            self.textTyped.append("1")
-        elif event.key()==QtCore.Qt.Key_2:
-            self.textTyped.append("2")
-        elif event.key()==QtCore.Qt.Key_3:
-            self.textTyped.append("3")
-        elif event.key()==QtCore.Qt.Key_4:
-            self.textTyped.append("4")
-        elif event.key()==QtCore.Qt.Key_5:
-            self.textTyped.append("5")
-        elif event.key()==QtCore.Qt.Key_6:
-            self.textTyped.append("6")
-        elif event.key()==QtCore.Qt.Key_7:
-            self.textTyped.append("7")
-        elif event.key()==QtCore.Qt.Key_8:
-            self.textTyped.append("8")
-        elif event.key()==QtCore.Qt.Key_9:
-            self.textTyped.append("9")
-        elif event.key()==QtCore.Qt.Key_0:
-            self.textTyped.append("0")
-        elif event.key()==QtCore.Qt.Key_Backspace:
-            print "erased"
-            a=''.join(self.textTyped)
-            print a
-            self.textTyped=[]
+            self.fireKeyShortcut('DELETE')
+        elif event.key()==QtCore.Qt.Key_C:
+            self.fireKeyShortcut('COPY')
+        elif event.key()==QtCore.Qt.Key_G:
+            self.fireKeyShortcut('MOVE')
+        elif event.key()==QtCore.Qt.Key_R:
+            self.fireKeyShortcut('ROTATE')
+        elif event.key()==QtCore.Qt.Key_M:
+            self.fireKeyShortcut('MIRROR')
+        else:
+            self.fireKeyEvent(event)
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):

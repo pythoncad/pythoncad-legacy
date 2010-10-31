@@ -46,7 +46,7 @@ class ICommand(object):
     activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
     drawPreview=False                   # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
-    restartCommandOption=True           # Restart the command for sequence command functionality
+    restartCommandOption=True         # Restart the command for sequence command functionality
     
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
@@ -252,28 +252,7 @@ class ICommand(object):
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
                 x, y=value.split(',')
-                if self.__scene.fromPoint==None:
-                    point=Point(float(x), float(y))
-                else:
-                    if value.index(','):
-                        print "c e una stringa cn virgola"
-                        x, y=value.split(',')
-                        point=Point(float(x), float(y))
-                        print 'a'
-                    elif value.index('@'):
-                        print'*'
-                        x, y=value.split('*')
-                        x=float(x)-self.__scene.fromPoint.getx()
-                        y=float(y)-self.__scene.fromPoint.gety()
-                        point=Point(x, y)
-                    elif value.index('<'):
-                        d, a=value.split('<')
-                        a=math.cos(float(a)/180*math.pi)
-                        d=float(d)
-                        x=d*a
-                        y=d/a                       
-                        point=Point(fx, floaty)
-                    
+                point=Point(float(x), float(y))
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:
