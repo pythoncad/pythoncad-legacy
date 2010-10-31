@@ -442,33 +442,23 @@ class CadWindowMdi(QtGui.QMainWindow):
         return      
     # Edit
     def _onCopy(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Copy")
         self.callCommand('COPY')
         return
     def _onMove(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Move")
         self.callCommand('MOVE')
         return
-    def _onCopy(self):
-        self.scene.clearSelection()
-        self.statusBar().showMessage("CMD:Copy")
-        self.callCommand('COPY')
-        return
     def _onDelete(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Delete")
         self.callCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
     def _onMirror(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Mirror")
         self.callCommand('MIRROR')
         return
     def _onRotate(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rotate")
         self.callCommand('ROTATE')
         return
@@ -580,6 +570,14 @@ class CadWindowMdi(QtGui.QMainWindow):
         except EntityMissing:
             self.scene.cancelCommand()
             self.critical("You need to have an active document to perform this command")
+        #checks if scene has selected items and lauches them direclty to the Icommand if it's first prompt it's "give me entities"
+        if len(self.scene.selectedItems())>0:
+            print 'selezioneesiste'
+            if  self.scene.activeKernelCommand.activeException()==ExcMultiEntity:
+                qtItems=[item for item in self.scene.selectedItems() if isinstance(item, BaseEntity)]
+                self.scene.activeICommand.addMauseEvent(point=None,
+                                                    entity=qtItems,
+                                                    force=None)
     
     def getCommand(self, name):
         """

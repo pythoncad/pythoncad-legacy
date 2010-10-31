@@ -21,6 +21,7 @@
 #
 import math
 from PyQt4 import QtCore, QtGui
+from Kernel.pycadevent              import PyCadEvent
 
 class CustomVector(object):
     """
@@ -118,6 +119,7 @@ class PositionHandler(QtGui.QGraphicsItem):
         #painter.setPen(QtCore.Qt.darkCyan);
         #painter.drawPath(self.definePath())
         pass
+        
     @property
     def distance(self):  
         """
@@ -153,20 +155,33 @@ class ActionHandler(QtGui.QGraphicsItem):
         # Center point 
         p0=QtCore.QPointF(5,5)
         self.circle=CirclePosition(self, p0)
+        self.circle+=self.positionChanged
         # Angle hendler
         self.arcAngle=ArcAngle(self, p0)
         p1=QtCore.QPointF(10,0)
         # Horizontal Arrow
         self.hArrow=ArrowItem(self,p1)
         p2=QtCore.QPointF(0,-10)
+        self.hArrow+=self.positionChanged
         # Vertical Arrow
         self.vArrow=ArrowItem(self,p2, 90, QtGui.QPen(QtGui.QColor(79, 106, 25)))
+        self.vArrow+=self.positionChanged
         # QGraphicsItem settings
         if position!=None:
             self.setPos(position)
         self.position=position
         self.setAcceptsHoverEvents(True)
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
+    def positionChanged(self, item):
+        """
+            notifies that some changed are made in position 
+        """
+        pass
+    def rotationChanged(self, item):
+        """
+            notifies that some changed are made in position 
+        """
+        pass
     def updateSelected(self):
         pass        
     def boundingRect(self):
@@ -187,6 +202,7 @@ class ArcAngle(QtGui.QGraphicsItem):
         if position!=None:
             self.setPos(position)
         self.position=position
+        self.customAction=PyCadEvent()
     def updateSelected(self):
         pass    
     def definePath(self):
@@ -237,6 +253,7 @@ class ArcAngle(QtGui.QGraphicsItem):
             set the rotation angle
         """
         self.parentItem().setRotation(angle%360)
+        self.customAction(self)
         
     def contextMenuEvent(self, event) :
         self.qle=QtGui.QLineEdit()
@@ -268,6 +285,7 @@ class CirclePosition(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
         if position!=None:
             self.setPos(position)
+        self.customAction=PyCadEvent()
     def updateSelected(self):
         pass    
     def definePath(self):
@@ -314,7 +332,8 @@ class CirclePosition(QtGui.QGraphicsItem):
         else:
             self.setPos(QtCore.QPointF(x, y))
             super(mouseMoveEvent, self).mouseMoveEvent(event)
-            
+        self.customAction(self) 
+        
 class ArrowItem(QtGui.QGraphicsItem):
     def __init__(self,parent=None, position=None, rotation=None , arrowColor=None):
         super(ArrowItem, self).__init__(parent)
@@ -331,6 +350,7 @@ class ArrowItem(QtGui.QGraphicsItem):
             self.rotate(-rotation)
             self._angle=rotation
         self.delta=0
+        self.customAction=PyCadEvent()
     def updateSelected(self):
         pass
     def definePath(self):
@@ -388,6 +408,7 @@ class ArrowItem(QtGui.QGraphicsItem):
         x=distance*math.cos(ang)+self.parentItem().pos().x()
         y=distance*math.sin(ang)+self.parentItem().pos().y()
         self.parentItem().setPos(QtCore.QPointF(x, y))
+        self.customAction(self)
         
     def contextMenuEvent(self, event) :
         self.qle=QtGui.QLineEdit()

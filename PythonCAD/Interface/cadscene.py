@@ -35,7 +35,7 @@ from Interface.Entity.arc           import Arc
 from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
-from Interface.Entity.actionHandler import PositionHandler
+from Interface.Entity.actionhandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
@@ -118,6 +118,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
             self.activeICommand.updateMauseEvent(point, distance, qtItem)
+
 #            self.updatePreview(self,point, distance)
         #
 #        path=QtGui.QPainterPath()
@@ -213,7 +214,7 @@ class CadScene(QtGui.QGraphicsScene):
             self.showHandler=True
         elif event.key()==QtCore.Qt.Key_Delete:
             print "delete pressed"
-        # ################Numbers Input by Carlo######################
+        # ################Numbers Input experiment by Carlo######################
         elif event.key()==QtCore.Qt.Key_1:
             self.textTyped.append("1")
         elif event.key()==QtCore.Qt.Key_2:
