@@ -209,7 +209,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.fromPoint=None
 
     def keyPressEvent(self, event):
-        self.forceDirection=''
         if event.key()==QtCore.Qt.Key_Escape:
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
@@ -218,10 +217,15 @@ class CadScene(QtGui.QGraphicsScene):
                 #self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
-        elif event.key()==QtCore.Qt.Key_H:
-            self.forceDirection='H'
-        elif event.key()==QtCore.Qt.Key_V:
-            self.forceDirection='V'
+        elif event.key()==QtCore.Qt.Key_F8:
+            if self.forceDirection is None:
+                self.forceDirection=True
+            else:
+                self.forceDirection=None
+            print self.forceDirection
+#            self.forceDirection='H'
+#        elif event.key()==QtCore.Qt.Key_V:
+#            self.forceDirection='V'
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
         elif event.key()==QtCore.Qt.Key_Delete:

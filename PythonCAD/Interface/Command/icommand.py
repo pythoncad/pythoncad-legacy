@@ -380,9 +380,9 @@ class ICommand(object):
         lastSnap=None
         lastSnap=self.getActiveSnapClick()
         if force and  lastSnap !=None:
-            if force=="H":
+            if abs(x-lastSnap.x)>abs(y-lastSnap.y):
                 y=lastSnap.y
-            elif force=="V":
+            else:
                 x=lastSnap.x
             #elif self.forceDirection.find("F")>=0:
             #    angle=convertAngle(self.forceDirection.split("F")[1])
