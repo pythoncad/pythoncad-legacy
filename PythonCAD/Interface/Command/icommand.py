@@ -156,6 +156,7 @@ class ICommand(object):
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
         self.scene.clearSelection()
+        self.scene.fromPoint=None
         return
     
     def getEntity(self, position):
@@ -251,7 +252,28 @@ class ICommand(object):
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
                 x, y=value.split(',')
-                point=Point(float(x), float(y))
+                if self.__scene.fromPoint==None:
+                    point=Point(float(x), float(y))
+                else:
+                    if value.index(','):
+                        print "c e una stringa cn virgola"
+                        x, y=value.split(',')
+                        point=Point(float(x), float(y))
+                        print 'a'
+                    elif value.index('@'):
+                        print'*'
+                        x, y=value.split('*')
+                        x=float(x)-self.__scene.fromPoint.getx()
+                        y=float(y)-self.__scene.fromPoint.gety()
+                        point=Point(x, y)
+                    elif value.index('<'):
+                        d, a=value.split('<')
+                        a=math.cos(float(a)/180*math.pi)
+                        d=float(d)
+                        x=d*a
+                        y=d/a                       
+                        point=Point(fx, floaty)
+                    
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:
@@ -467,8 +489,11 @@ class ICommand(object):
         self.activeSnap=SNAP_POINT_ARRAY["ALL"]
         #
         if snapPoint==None:
+            self.__scene.fromPoint=point
             return point
+        self.__scene.fromPoint=snapPoint
         return snapPoint
+
     
     ##
     ## here you can find all the function that compute the snap constraints

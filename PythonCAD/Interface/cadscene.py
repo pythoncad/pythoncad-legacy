@@ -79,6 +79,7 @@ class CadScene(QtGui.QGraphicsScene):
         #
         # Input implemetation by carlo
         #
+        self.fromPoint=None
         self.textTyped=[]
         
         
@@ -102,13 +103,20 @@ class CadScene(QtGui.QGraphicsScene):
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
         
+        #Fire pan if scene.isInPan True
         if self.isInPan:
             self.firePan(None, event.scenePos())
+            
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
-        if len(self.textTyped)==0:
+        if self.fromPoint==None:
             self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
         else:
-            pass
+            if len(self.textTyped)==0:
+                x=scenePos.x()-self.fromPoint.getx()
+                y=scenePos.y()*-1.0-self.fromPoint.gety()
+                self.fireCoords(x, y)
+            else:
+                print 'polar'
         
         if self.activeICommand:
             #scenePos=event.scenePos()
@@ -171,6 +179,8 @@ class CadScene(QtGui.QGraphicsScene):
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
+                print 'FromPoint'
+                print self.fromPoint
                     
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
