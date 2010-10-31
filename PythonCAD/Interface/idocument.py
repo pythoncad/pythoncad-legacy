@@ -111,10 +111,9 @@ class IDocument(QtGui.QMdiSubWindow):
         
     def keyEvent(self, event): #fire the key event in the scene to the commandline
         # How to check if commandline has some text?
-        if event.key()==QtCore.Qt.Key_Return:
-            print self.__cmdInf.commandLine
-            if self.__scene.activeICommand!=None:
-                self.__scene.activeICommand.applyCommand()
+#        if event.key()==QtCore.Qt.Key_Return:
+#            if self.__scene.activeICommand!=None:
+#                self.__scene.activeICommand.applyCommand()
         self.__cmdInf.commandLine._keyPress(event)
         pass
         

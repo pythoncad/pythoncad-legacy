@@ -82,7 +82,6 @@ class CadScene(QtGui.QGraphicsScene):
         # Input implemetation by carlo
         #
         self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint()
-        self.textTyped=[]
         
         
     @property
@@ -114,12 +113,10 @@ class CadScene(QtGui.QGraphicsScene):
             self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
         else:
             #set relative coordinates in the statusbar if frompoin is not none
-            if len(self.textTyped)==0:
-                x=scenePos.x()-self.fromPoint.getx()
-                y=scenePos.y()*-1.0-self.fromPoint.gety()
-                self.fireCoords(x, y)
-            else:
-                pass
+            x=scenePos.x()-self.fromPoint.getx()
+            y=scenePos.y()*-1.0-self.fromPoint.gety()
+            self.fireCoords(x, y)
+
         
         if self.activeICommand:
             #scenePos=event.scenePos()
@@ -209,17 +206,16 @@ class CadScene(QtGui.QGraphicsScene):
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
+        self.fromPoint=None
 
     def keyPressEvent(self, event):
         self.forceDirection=''
         if event.key()==QtCore.Qt.Key_Escape:
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
-            if self.activeICommand!=None:
-                self.fireKeyEvent(event)
+#            if self.activeICommand!=None:
+            self.fireKeyEvent(event)
                 #self.activeICommand.applyCommand()
-            else:
-                pass
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
         elif event.key()==QtCore.Qt.Key_H:
@@ -230,14 +226,14 @@ class CadScene(QtGui.QGraphicsScene):
             self.showHandler=True
         elif event.key()==QtCore.Qt.Key_Delete:
             self.fireKeyShortcut('DELETE')
-        elif event.key()==QtCore.Qt.Key_C:
-            self.fireKeyShortcut('COPY')
-        elif event.key()==QtCore.Qt.Key_G:
-            self.fireKeyShortcut('MOVE')
-        elif event.key()==QtCore.Qt.Key_R:
-            self.fireKeyShortcut('ROTATE')
-        elif event.key()==QtCore.Qt.Key_M:
-            self.fireKeyShortcut('MIRROR')
+#        elif event.key()==QtCore.Qt.Key_C:
+#            self.fireKeyShortcut('COPY')
+#        elif event.key()==QtCore.Qt.Key_G:
+#            self.fireKeyShortcut('MOVE')
+#        elif event.key()==QtCore.Qt.Key_R:
+#            self.fireKeyShortcut('ROTATE')
+#        elif event.key()==QtCore.Qt.Key_M:
+#            self.fireKeyShortcut('MIRROR')
         else:
             self.fireKeyEvent(event)
         super(CadScene, self).keyPressEvent(event)
