@@ -110,12 +110,12 @@ class CadScene(QtGui.QGraphicsScene):
             
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
         if self.fromPoint==None:
-            self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
+            self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
         else:
             #set relative coordinates in the statusbar if frompoin is not none
             x=scenePos.x()-self.fromPoint.getx()
             y=scenePos.y()*-1.0-self.fromPoint.gety()
-            self.fireCoords(x, y)
+            self.fireCoords(x, y, "rel")
 
         
         if self.activeICommand:
@@ -179,8 +179,6 @@ class CadScene(QtGui.QGraphicsScene):
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
-                print 'FromPoint'
-                print self.fromPoint
                     
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
@@ -202,7 +200,7 @@ class CadScene(QtGui.QGraphicsScene):
         """
         self.clearSelection()
         self.updateSelected()
-        self.forceDirection=None
+        #self.forceDirection=None
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
@@ -217,12 +215,12 @@ class CadScene(QtGui.QGraphicsScene):
                 #self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
-        elif event.key()==QtCore.Qt.Key_F8:
-            if self.forceDirection is None:
-                self.forceDirection=True
-            else:
-                self.forceDirection=None
-            print self.forceDirection
+#        elif event.key()==QtCore.Qt.Key_F8:
+#            if self.forceDirection is None:
+#                self.forceDirection=True
+#            else:
+#                self.forceDirection=None
+#            print self.forceDirection
 #            self.forceDirection='H'
 #        elif event.key()==QtCore.Qt.Key_V:
 #            self.forceDirection='V'
@@ -247,7 +245,7 @@ class CadScene(QtGui.QGraphicsScene):
             someone give some test imput at the scene
         """
         if self.activeICommand!=None:
-            self.forceDirection=None # reset force direction for the imput value
+            #self.forceDirection=None # reset force direction for the imput value
             self.updateSelected()
             self.activeICommand.addTextEvent(value)
         return

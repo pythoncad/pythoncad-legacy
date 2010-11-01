@@ -105,10 +105,13 @@ class IDocument(QtGui.QMdiSubWindow):
         ret = QtGui.QMessageBox.information(self,"Information",  msg)
         return   
     
-    def setStatusbarCoords(self, x, y):
+    def setStatusbarCoords(self, x, y, status):
         #set statusbar coordinates when mouse move on the scene 
-        self.__cadwindow.coordLabel.setText(str("%.2f" % x)+","+str("%.2f" % y)) # "%.2f" %  sets the precision decimals to 2
-        
+        if status=="abs":
+            self.__cadwindow.coordLabel.setText("X="+str("%.3f" % x)+"\n"+"Y="+str("%.3f" % y)) # "%.3f" %  sets the precision decimals to 3
+        elif status=="rel":
+            self.__cadwindow.coordLabel.setText("dx="+str("%.3f" % x)+"\n"+"dy="+str("%.3f" % y)) # "%.3f" %  sets the precision decimals to 3
+            
     def keyEvent(self, event): #fire the key event in the scene to the commandline
         # How to check if commandline has some text?
 #        if event.key()==QtCore.Qt.Key_Return:

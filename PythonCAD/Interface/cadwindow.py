@@ -93,7 +93,11 @@ class CadWindowMdi(QtGui.QMainWindow):
             get the layer tree dockable window
         """
         return self.__layer_dock   
-        
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------StatusBAR
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     def _createStatusBar(self):
         '''
             Creates the statusbar object.
@@ -101,11 +105,39 @@ class CadWindowMdi(QtGui.QMainWindow):
 
         self.statusBar().showMessage("Ready")
 
-        #set coordinates label on statusbar (updated by idocumet)
-        self.coordLabel=QtGui.QLabel("0.0,0.0")
-        self.statusBar().addPermanentWidget(self.coordLabel)
-
+        #------------------------------------------------------------------------------------Create state buttons
+        #Force Direction
+        self.forceDirectionStatus=QtGui.QPushButton()
+        self.forceDirectionStatus.setCheckable(True)
+        self.forceDirectionStatus.setFlat(True)
+        self.forceDirectionStatus.setFixedSize(30, 30)
+        iconpath=os.path.join(os.getcwd(), 'icons', 'forceDir.png')
+        self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
+        self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
+        self.statusBar().addPermanentWidget(self.forceDirectionStatus)
+        #Grid
+        #....etc
         
+        #------------------------------------------------------------------------------------Set coordinates label on statusbar (updated by idocumet)
+        self.coordLabel=QtGui.QLabel("x=0.000\ny=0.000")
+                        #       self.coordLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.coordLabel.setFrameStyle( QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
+        self.coordLabel.setMinimumWidth(80)
+        self.coordLabel.setMinimumHeight(30)
+        self.coordLabel.setFont(QtGui.QFont("Sans", 7))
+        self.statusBar().addPermanentWidget(self.coordLabel)
+       
+    def setForceDirection(self):
+        if self.forceDirectionStatus.isChecked():
+            print "abilita"
+            self.scene.forceDirection=True
+        else:
+            self.scene.forceDirection=False
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------END StatusBAR
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     def commandExecuted(self):
         self.resetCommand()
         
@@ -204,7 +236,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         #                self.activeMdiChild().textCursor().hasSelection())
         #self.cutAct.setEnabled(hasSelection)
         #self.copyAct.setEnabled(hasSelection)
-      
+        
+        #StatusBAR Satus Tools
+        self.forceDirectionStatus.setVisible(hasMdiChild)
+        
     def createMdiChild(self, file=None):
         """
             Create new IDocument 
