@@ -81,7 +81,7 @@ class CadScene(QtGui.QGraphicsScene):
         #
         # Input implemetation by carlo
         #
-        self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint()
+        self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
         
         
     @property
@@ -101,6 +101,10 @@ class CadScene(QtGui.QGraphicsScene):
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------MOUSE EVENTS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
+
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
         
@@ -205,6 +209,10 @@ class CadScene(QtGui.QGraphicsScene):
         self.activeICommand=None
         self.showHandler=False
         self.fromPoint=None
+        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------------KEY EVENTS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
 
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:

@@ -135,7 +135,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.forceDirection=False
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------END StatusBAR
+#--------------------------------------------------------------------------------------------------------------------------------------------------------END StatusBAR
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     def commandExecuted(self):
@@ -180,7 +180,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         if self.scene!=None:
             self.scene.cancelCommand()
         self.statusBar().showMessage("Ready")
-        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------SET if ICON AND MENU are VISIBLE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def updateMenus(self):
         """
             update menu status
@@ -357,6 +359,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
         return QtCore.QFileInfo(fullFileName).fileName()    
         
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in FILE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     def _onNewDrawing(self):
         '''
             Create a new drawing 
@@ -415,12 +421,31 @@ class CadWindowMdi(QtGui.QMainWindow):
         if len(drawing)>0:
             self.__application.saveAs(drawing)
             
+    def _onPrint(self):
+#       printer.setPaperSize(QPrinter.A4);
+        self.scene.clearSelection()
+        printer=QtGui.QPrinter()
+        printDialog=QtGui.QPrintDialog(printer)
+        if (printDialog.exec_() == QtGui.QDialog.Accepted): 
+            painter=QtGui.QPainter()
+            painter.begin(printer)
+            painter.setRenderHint(QtGui.QPainter.Antialiasing);
+            #self.mdiArea.activeSubWindow().scene.render(painter)
+            self.mdiArea.activeSubWindow().view.render(painter)
+            painter.end()
+        self.statusBar().showMessage("Ready")
+        return
+            
     def _onCloseDrawing(self):
         path=self.mdiArea.activeSubWindow().fileName
         self.__application.closeDocument(path)
         self.mdiArea.closeActiveSubWindow()
         return
-    
+        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in DRAW
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     def _onPoint(self):
         self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Point")
@@ -477,29 +502,54 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Bisect")
         self.callCommand('TEXT')
         return      
-    # Edit
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in EDIT
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    def _onUndo(self):
+        self.scene.clearSelection()
+        try:
+           self.mdiArea.activeSubWindow().unDo() 
+        except UndoDbExc:
+            self.critical("Unable To Perform Undo")
+        self.statusBar().showMessage("Ready")
+        return
+        
+    def _onRedo(self):
+        self.scene.clearSelection()
+        try:
+            self.mdiArea.activeSubWindow().reDo()
+        except UndoDbExc:
+            self.critical("Unable To Perform Redo")
+        self.statusBar().showMessage("Ready")
+        
     def _onCopy(self):
         self.statusBar().showMessage("CMD:Copy")
         self.callCommand('COPY')
         return
+        
     def _onMove(self):
         self.statusBar().showMessage("CMD:Move")
         self.callCommand('MOVE')
         return
+        
     def _onDelete(self):
         self.statusBar().showMessage("CMD:Delete")
         self.callCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
+        
     def _onMirror(self):
         self.statusBar().showMessage("CMD:Mirror")
         self.callCommand('MIRROR')
         return
+        
     def _onRotate(self):
         self.statusBar().showMessage("CMD:Rotate")
         self.callCommand('ROTATE')
         return
-    # View
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in VIEW
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def _onFit(self):
         self.view.fit()
         
@@ -509,7 +559,9 @@ class CadWindowMdi(QtGui.QMainWindow):
     
     def _onCenterItem(self):
         self.view.centerOnSelection()
-    # Snap
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in SNAP
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def _onSnapCommand(self):
         """
             On snep Command action
@@ -537,7 +589,9 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["INTERSECTION"])
             else:
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
-    #Tools
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in TOOLS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def _onInfo2p(self):
         """
             on info two point command
@@ -547,37 +601,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('DISTANCE2POINT', 'document')
         return
 
-    def _onPrint(self):
-#       printer.setPaperSize(QPrinter.A4);
-        self.scene.clearSelection()
-        printer=QtGui.QPrinter()
-        printDialog=QtGui.QPrintDialog(printer)
-        if (printDialog.exec_() == QtGui.QDialog.Accepted): 
-            painter=QtGui.QPainter()
-            painter.begin(printer)
-            painter.setRenderHint(QtGui.QPainter.Antialiasing);
-            #self.mdiArea.activeSubWindow().scene.render(painter)
-            self.mdiArea.activeSubWindow().view.render(painter)
-            painter.end()
-        self.statusBar().showMessage("Ready")
-        return
-        
-    def _onUndo(self):
-        self.scene.clearSelection()
-        try:
-           self.mdiArea.activeSubWindow().unDo() 
-        except UndoDbExc:
-            self.critical("Unable To Perform Undo")
-        self.statusBar().showMessage("Ready")
-        return
-        
-    def _onRedo(self):
-        self.scene.clearSelection()
-        try:
-            self.mdiArea.activeSubWindow().reDo()
-        except UndoDbExc:
-            self.critical("Unable To Perform Redo")
-        self.statusBar().showMessage("Ready")
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in ABOUT
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
@@ -590,6 +616,10 @@ class CadWindowMdi(QtGui.QMainWindow):
                    <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>""")
         return
                 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------CALL COMMAND
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     def callCommand(self, commandName, commandFrom=None):
         """
             call a document command (kernel)
@@ -640,7 +670,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         dlg.setIcon(QtGui.QMessageBox.Critical)
         dlg.exec_()
         return
-
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------SETTINGS STORAGE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def readSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
         settings.beginGroup("CadWindow")
@@ -662,6 +694,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         settings.setValue('size', self.size())
         settings.endGroup()
         
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------END SETTINGS STORAGE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
@@ -700,9 +735,9 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.resetCommand()
             
         super(CadWindowMdi, self).keyPressEvent(event)
-#
-# Sympy integration
-#
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------SYMPY INTEGRATION
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
     def plotFromSympy(self, objects):
         """
             plot the sympy Object into PythonCAD
