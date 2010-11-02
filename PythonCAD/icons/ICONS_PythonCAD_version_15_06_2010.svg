@@ -14,10 +14,21 @@
    height="1052.3622047"
    id="svg23624"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="ICONS_PythonCAD_version_15_06_2010.svg">
   <defs
      id="defs23626">
+    <linearGradient
+       id="linearGradient3212">
+      <stop
+         id="stop3214"
+         offset="0"
+         style="stop-color:#0b71fc;stop-opacity:1;" />
+      <stop
+         id="stop3216"
+         offset="1"
+         style="stop-color:#00c1ff;stop-opacity:0.25882354;" />
+    </linearGradient>
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 526.18109 : 1"
@@ -316,15 +327,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0397301"
-     inkscape:cx="499.05961"
-     inkscape:cy="674.53348"
+     inkscape:cx="363.14883"
+     inkscape:cy="-293.07347"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1139"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="1280"
+     inkscape:window-height="951"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -333,7 +344,9 @@
      inkscape:snap-center="true"
      inkscape:snap-grids="false"
      inkscape:object-paths="true"
-     inkscape:snap-intersection-paths="true">
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="true">
     <sodipodi:guide
        orientation="1,0"
        position="400,1000"
@@ -783,6 +796,16 @@
        height="100"
        x="550"
        y="1130.3495" />
+    <rect
+       y="1441.02"
+       x="400"
+       height="100"
+       width="100"
+       id="rect3208"
+       style="fill:none;fill-opacity:0.25882354000000002;stroke:none"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
     <rect
        style="fill:url(#linearGradient3954);fill-opacity:1;stroke:none"
        id="rect3919"
@@ -1533,5 +1556,55 @@
        id="path4146"
        style="fill:none;stroke:#000000;stroke-width:3.48961782;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        sodipodi:type="arc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 450,1491.02 39.27502,0"
+       id="path4005"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0"
+       d="m 400,1491.02 100,0"
+       id="path3997"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0"
+       d="m 450,1441.02 0,100"
+       id="path3995"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
+    <path
+       transform="matrix(0.28656434,0,0,0.28656434,402.28817,1447.5163)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4001"
+       style="fill:#ffffff;stroke:#000000;stroke-width:3.48961781999999987;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;stroke:#000000;stroke-width:3.48961781999999987;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3999"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.28656434,0,0,0.28656434,363.01315,1447.5163)"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/forceDir.png"
+       inkscape:export-xdpi="27"
+       inkscape:export-ydpi="27" />
   </g>
 </svg>

@@ -50,10 +50,12 @@ class CadScene(QtGui.QGraphicsScene):
         # drawing limits
         self.setSceneRect(-10000, -10000, 20000, 20000)
         # scene custom event
-        self.pyCadScenePressEvent=PyCadEvent()
+#        self.pyCadScenePressEvent=PyCadEvent()   <<<<this seems unuseful
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
         self.keySpace=PyCadEvent()
+        self.fireKeyShortcut=PyCadEvent()
+        self.fireKeyEvent=PyCadEvent()
         self.fireWarning=PyCadEvent()
         self.fireCoords=PyCadEvent()
         #fire Pan and Zoom events to the view
@@ -76,6 +78,11 @@ class CadScene(QtGui.QGraphicsScene):
         self.activeICommand=None
         #
         self.__grapWithd=20.0
+        #
+        # Input implemetation by carlo
+        #
+        self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
+        
         
     @property
     def activeKernelCommand(self):
@@ -94,13 +101,26 @@ class CadScene(QtGui.QGraphicsScene):
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
         
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------MOUSE EVENTS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
+
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
         
+        #Fire pan if scene.isInPan True
         if self.isInPan:
             self.firePan(None, event.scenePos())
+            
         #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
-        self.fireCoords(scenePos.x(), (scenePos.y()*-1.0))
+        if self.fromPoint==None:
+            self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
+        else:
+            #set relative coordinates in the statusbar if frompoin is not none
+            x=scenePos.x()-self.fromPoint.getx()
+            y=scenePos.y()*-1.0-self.fromPoint.gety()
+            self.fireCoords(x, y, "rel")
+
         
         if self.activeICommand:
             #scenePos=event.scenePos()
@@ -110,6 +130,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
             self.activeICommand.updateMauseEvent(point, distance, qtItem)
+
 #            self.updatePreview(self,point, distance)
         #
 #        path=QtGui.QPainterPath()
@@ -158,7 +179,7 @@ class CadScene(QtGui.QGraphicsScene):
                             point=self.posHandler.scenePos
                     if point==None:
                         point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                    # fire the mouse at the icommand class
+                    # fire the mouse to the icommand class
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
@@ -183,26 +204,48 @@ class CadScene(QtGui.QGraphicsScene):
         """
         self.clearSelection()
         self.updateSelected()
-        self.forceDirection=None
+        #self.forceDirection=None
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
+        self.fromPoint=None
+        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------------KEY EVENTS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
 
     def keyPressEvent(self, event):
-        self.forceDirection=''
         if event.key()==QtCore.Qt.Key_Escape:
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
-            if self.activeICommand!=None:
-                self.activeICommand.applyCommand()
+#            if self.activeICommand!=None:
+            self.fireKeyEvent(event)
+                #self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
             self.keySpace(self, event)
-        elif event.key()==QtCore.Qt.Key_H:
-            self.forceDirection='H'
-        elif event.key()==QtCore.Qt.Key_V:
-            self.forceDirection='V'
+#        elif event.key()==QtCore.Qt.Key_F8:
+#            if self.forceDirection is None:
+#                self.forceDirection=True
+#            else:
+#                self.forceDirection=None
+#            print self.forceDirection
+#            self.forceDirection='H'
+#        elif event.key()==QtCore.Qt.Key_V:
+#            self.forceDirection='V'
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
+        elif event.key()==QtCore.Qt.Key_Delete:
+            self.fireKeyShortcut('DELETE')
+#        elif event.key()==QtCore.Qt.Key_C:
+#            self.fireKeyShortcut('COPY')
+#        elif event.key()==QtCore.Qt.Key_G:
+#            self.fireKeyShortcut('MOVE')
+#        elif event.key()==QtCore.Qt.Key_R:
+#            self.fireKeyShortcut('ROTATE')
+#        elif event.key()==QtCore.Qt.Key_M:
+#            self.fireKeyShortcut('MIRROR')
+        else:
+            self.fireKeyEvent(event)
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):
@@ -210,7 +253,7 @@ class CadScene(QtGui.QGraphicsScene):
             someone give some test imput at the scene
         """
         if self.activeICommand!=None:
-            self.forceDirection=None # reset force direction for the imput value
+            #self.forceDirection=None # reset force direction for the imput value
             self.updateSelected()
             self.activeICommand.addTextEvent(value)
         return

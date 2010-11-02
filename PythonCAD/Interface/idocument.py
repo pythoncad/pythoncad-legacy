@@ -30,6 +30,8 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.populateScene(document)
         self.__scene.zoomWindows+=self.__view.zoomWindows
         self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
+        self.__scene.fireKeyShortcut+=self.keyShortcut
+        self.__scene.fireKeyEvent+=self.keyEvent
         self.__scene.fireWarning+=self.popUpWarning
         self.__scene.fireCoords+=self.setStatusbarCoords
     @property
@@ -103,7 +105,29 @@ class IDocument(QtGui.QMdiSubWindow):
         ret = QtGui.QMessageBox.information(self,"Information",  msg)
         return   
     
-    def setStatusbarCoords(self, x, y):
+    def setStatusbarCoords(self, x, y, status):
         #set statusbar coordinates when mouse move on the scene 
-        self.__cadwindow.coordLabel.setText(str("%.2f" % x)+","+str("%.2f" % y)) # "%.2f" %  sets the precision decimals to 2
+        if status=="abs":
+            self.__cadwindow.coordLabel.setText("X="+str("%.3f" % x)+"\n"+"Y="+str("%.3f" % y)) # "%.3f" %  sets the precision decimals to 3
+        elif status=="rel":
+            self.__cadwindow.coordLabel.setText("dx="+str("%.3f" % x)+"\n"+"dy="+str("%.3f" % y)) # "%.3f" %  sets the precision decimals to 3
+            
+    def keyEvent(self, event): #fire the key event in the scene to the commandline
+        # How to check if commandline has some text?
+#        if event.key()==QtCore.Qt.Key_Return:
+#            if self.__scene.activeICommand!=None:
+#                self.__scene.activeICommand.applyCommand()
+        self.__cmdInf.commandLine._keyPress(event)
+        pass
         
+    def keyShortcut(self, command):
+        if command=='DELETE':
+            self.__cadwindow._onDelete()
+        elif command=='COPY':
+            self.__cadwindow._onCopy()
+        elif command=='MOVE':
+            self.__cadwindow._onMove()
+        elif command=='ROTATE':
+            self.__cadwindow._onRotate()
+        elif command=='MIRROR':
+            self.__cadwindow._onMirror()

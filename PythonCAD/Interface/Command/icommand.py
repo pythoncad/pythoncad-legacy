@@ -46,7 +46,7 @@ class ICommand(object):
     activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
     drawPreview=False                   # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
-    restartCommandOption=True           # Restart the command for sequence command functionality
+    restartCommandOption=True         # Restart the command for sequence command functionality
     
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
@@ -156,6 +156,7 @@ class ICommand(object):
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
         self.scene.clearSelection()
+        self.scene.fromPoint=None
         return
     
     def getEntity(self, position):
@@ -379,9 +380,9 @@ class ICommand(object):
         lastSnap=None
         lastSnap=self.getActiveSnapClick()
         if force and  lastSnap !=None:
-            if force=="H":
+            if abs(x-lastSnap.x)>abs(y-lastSnap.y):
                 y=lastSnap.y
-            elif force=="V":
+            else:
                 x=lastSnap.x
             #elif self.forceDirection.find("F")>=0:
             #    angle=convertAngle(self.forceDirection.split("F")[1])
@@ -467,8 +468,11 @@ class ICommand(object):
         self.activeSnap=SNAP_POINT_ARRAY["ALL"]
         #
         if snapPoint==None:
+            self.__scene.fromPoint=point
             return point
+        self.__scene.fromPoint=snapPoint
         return snapPoint
+
     
     ##
     ## here you can find all the function that compute the snap constraints
