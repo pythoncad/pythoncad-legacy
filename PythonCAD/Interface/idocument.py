@@ -29,7 +29,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.__scene.initDocumentEvents()
         self.__scene.populateScene(document)
         self.__scene.zoomWindows+=self.__view.zoomWindows
-        self.__scene.keySpace+=self.__cmdInf.commandLine.setFocus
+        self.__scene.fireCommandlineFocus+=self.__cmdInf.commandLine.setFocus
         self.__scene.fireKeyShortcut+=self.keyShortcut
         self.__scene.fireKeyEvent+=self.keyEvent
         self.__scene.fireWarning+=self.popUpWarning
@@ -104,7 +104,11 @@ class IDocument(QtGui.QMdiSubWindow):
         """
         ret = QtGui.QMessageBox.information(self,"Information",  msg)
         return   
-    
+        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------MANAGE SCENE EVENTS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
     def setStatusbarCoords(self, x, y, status):
         #set statusbar coordinates when mouse move on the scene 
         if status=="abs":
@@ -113,10 +117,6 @@ class IDocument(QtGui.QMdiSubWindow):
             self.__cadwindow.coordLabel.setText("dx="+str("%.3f" % x)+"\n"+"dy="+str("%.3f" % y)) # "%.3f" %  sets the precision decimals to 3
             
     def keyEvent(self, event): #fire the key event in the scene to the commandline
-        # How to check if commandline has some text?
-#        if event.key()==QtCore.Qt.Key_Return:
-#            if self.__scene.activeICommand!=None:
-#                self.__scene.activeICommand.applyCommand()
         self.__cmdInf.commandLine._keyPress(event)
         pass
         

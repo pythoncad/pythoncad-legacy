@@ -43,8 +43,8 @@
      pagecolor="#ffffff"
      id="base"
      inkscape:zoom="2.3131362"
-     inkscape:cx="775.66071"
-     inkscape:cy="214.15814"
+     inkscape:cx="716.25652"
+     inkscape:cy="382.86779"
      inkscape:window-x="0"
      inkscape:window-y="155"
      inkscape:current-layer="svg2"
@@ -745,11 +745,11 @@
      width="192.2477"
      height="144.1134"
      x="651.72949"
-     y="246.96277"
-     ry="12.27872"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/g3947.png"
-     inkscape:export-xdpi="186.97252"
-     inkscape:export-ydpi="186.97252" />
+     y="212.72528"
+     ry="0"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-ydpi="187.01299" />
   <g
      id="g3372"
      transform="translate(128.68899,-220.79915)" />
@@ -1090,6 +1090,21 @@
        x="870.16357"
        y="403.24982">ALPHA 04</tspan></text>
   <text
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     transform="scale(0.94360283,1.0597679)"
+     sodipodi:linespacing="125%"
+     id="text3197"
+     y="333.09824"
+     x="703.97479"
+     style="font-size:4.55784321px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;font-family:Sans"
+     xml:space="preserve"><tspan
+       y="333.09824"
+       x="703.97479"
+       id="tspan3199"
+       sodipodi:role="line">PythonCAD is written, surprisingly enough, in Python using the PyQt interface</tspan></text>
+  <text
      xml:space="preserve"
      style="font-size:4.74153757px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
      x="1028.8987"
@@ -1104,6 +1119,25 @@
        id="tspan3249"
        x="1028.8987"
        y="383.63245">PythonCAD is written, surprisingly enough, in Python using the PyQt interface</tspan></text>
+  <text
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     xml:space="preserve"
+     style="font-size:7.51278639px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;font-family:Sans"
+     x="723.36292"
+     y="299.34146"
+     id="text3167"
+     sodipodi:linespacing="125%"
+     transform="scale(0.91836886,1.0888871)"><tspan
+       id="tspan3173"
+       sodipodi:role="line"
+       x="723.36292"
+       y="299.34146">PythonCAD project aims to produce a scriptable,</tspan><tspan
+       id="tspan3177"
+       sodipodi:role="line"
+       x="723.36292"
+       y="308.73245">open-source, intuitive CAD package</tspan></text>
   <text
      transform="scale(0.86946021,1.1501389)"
      sodipodi:linespacing="125%"
@@ -1149,9 +1183,10 @@
        sodipodi:role="line">R38</tspan></text>
   <g
      id="g3947"
-     transform="translate(1.7401027,-25.178822)"
-     inkscape:export-xdpi="186.97252"
-     inkscape:export-ydpi="186.97252">
+     transform="translate(3.7401027,-82.167353)"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png">
     <path
        transform="matrix(0.9588872,0,0,0.809524,677.97174,289.67888)"
        d="m 110.46717,132.28575 c 0,4.75334 -21.914896,8.60668 -48.948287,8.60668 -27.033391,0 -48.948284,-3.85334 -48.948284,-8.60668 0,-4.75334 21.914893,-8.60668 48.948284,-8.60668 27.033391,0 48.948287,3.85334 48.948287,8.60668 z"
@@ -1224,4 +1259,13 @@
          id="tspan3931"
          sodipodi:role="line">R38</tspan></text>
   </g>
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="638.59021"
+     y="395.64563"
+     id="text3183"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3185"></tspan></text>
 </svg>
