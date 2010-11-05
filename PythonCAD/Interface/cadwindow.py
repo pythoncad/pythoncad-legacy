@@ -110,30 +110,40 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.forceDirectionStatus=QtGui.QPushButton()
         self.forceDirectionStatus.setCheckable(True)
         self.forceDirectionStatus.setFlat(True)
-        self.forceDirectionStatus.setFixedSize(30, 30)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'forceDir.png')
+        self.forceDirectionStatus.setFixedSize(20, 20)
+        iconpath=os.path.join(os.getcwd(), 'icons', 'SForceDir.png')
         self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
         #Grid
-        #....etc
+        self.GridStatus=QtGui.QPushButton()
+        self.GridStatus.setCheckable(True)
+        self.GridStatus.setFlat(True)
+        self.GridStatus.setFixedSize(20, 20)
+        iconpath=os.path.join(os.getcwd(), 'icons', 'SGrid.png')
+        self.GridStatus.setIcon(QtGui.QIcon(iconpath))
+        self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
+        self.statusBar().addPermanentWidget(self.GridStatus)
         
         #------------------------------------------------------------------------------------Set coordinates label on statusbar (updated by idocumet)
         self.coordLabel=QtGui.QLabel("x=0.000\ny=0.000")
-                        #       self.coordLabel.setAlignment(QtCore.Qt.AlignRight)
-        self.coordLabel.setFrameStyle( QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
+        self.coordLabel.setAlignment(QtCore.Qt.AlignVCenter)
+        self.coordLabel.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
         self.coordLabel.setMinimumWidth(80)
-        self.coordLabel.setMinimumHeight(30)
-        self.coordLabel.setFont(QtGui.QFont("Sans", 7))
+        self.coordLabel.setMaximumHeight(20)
+        self.coordLabel.setFont(QtGui.QFont("Sans", 6))
         self.statusBar().addPermanentWidget(self.coordLabel)
        
     def setForceDirection(self):
         if self.forceDirectionStatus.isChecked():
             print "abilita"
             self.scene.forceDirection=True
+            self.forceDirectionStatus.setFocus(False)
         else:
             self.scene.forceDirection=False
 
+    def setGrid(self):
+        pass
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------END StatusBAR
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -240,7 +250,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         #self.copyAct.setEnabled(hasSelection)
         
         #StatusBAR Satus Tools
-        self.forceDirectionStatus.setVisible(hasMdiChild)
+        self.forceDirectionStatus.setEnabled(hasMdiChild)
+        self.GridStatus.setEnabled(hasMdiChild)
         
     def createMdiChild(self, file=None):
         """

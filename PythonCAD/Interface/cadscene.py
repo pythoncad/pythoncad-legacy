@@ -53,7 +53,7 @@ class CadScene(QtGui.QGraphicsScene):
 #        self.pyCadScenePressEvent=PyCadEvent()   <<<<this seems unuseful
         self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
-        self.keySpace=PyCadEvent()
+        self.fireCommandlineFocus=PyCadEvent()
         self.fireKeyShortcut=PyCadEvent()
         self.fireKeyEvent=PyCadEvent()
         self.fireWarning=PyCadEvent()
@@ -218,25 +218,24 @@ class CadScene(QtGui.QGraphicsScene):
         if event.key()==QtCore.Qt.Key_Escape:
             self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Return:
-#            if self.activeICommand!=None:
-            self.fireKeyEvent(event)
-                #self.activeICommand.applyCommand()
+            if self.activeICommand!=None:
+                self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
-            self.keySpace(self, event)
-#        elif event.key()==QtCore.Qt.Key_F8:
+            self.fireCommandlineFocus(self, event)
+#        elif event.key()==QtCore.Qt.Key_F8:  <<<<this must maybe be implemented in cadwindow
 #            if self.forceDirection is None:
 #                self.forceDirection=True
 #            else:
 #                self.forceDirection=None
 #            print self.forceDirection
-#            self.forceDirection='H'
-#        elif event.key()==QtCore.Qt.Key_V:
+#            self.forceDirection='H'        <<<<<<<H and V are substituted by ortho mode, for future implementations it could be nice if shift pressed locks the direction of the mouse pointer
+#        elif event.key()==QtCore.Qt.Key_V:  <<<Ortho mode should be rewritten allowing to enter step angles and snap direction
 #            self.forceDirection='V'
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
         elif event.key()==QtCore.Qt.Key_Delete:
             self.fireKeyShortcut('DELETE')
-#        elif event.key()==QtCore.Qt.Key_C:
+#        elif event.key()==QtCore.Qt.Key_C:        <<<<<<<<<<shortcuts must be customizable and preferences should be saved in a settings file
 #            self.fireKeyShortcut('COPY')
 #        elif event.key()==QtCore.Qt.Key_G:
 #            self.fireKeyShortcut('MOVE')
@@ -245,7 +244,9 @@ class CadScene(QtGui.QGraphicsScene):
 #        elif event.key()==QtCore.Qt.Key_M:
 #            self.fireKeyShortcut('MIRROR')
         else:
-            self.fireKeyEvent(event)
+            if self.activeICommand!=None:
+                self.fireCommandlineFocus(self, event)
+                self.fireKeyEvent(event)
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):

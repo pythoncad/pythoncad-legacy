@@ -32,7 +32,7 @@
   </metadata>
   <sodipodi:namedview
      inkscape:window-height="750"
-     inkscape:window-width="1366"
+     inkscape:window-width="1278"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      guidetolerance="10.0"
@@ -42,11 +42,11 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="0.81781712"
-     inkscape:cx="-46.378623"
-     inkscape:cy="358.83361"
+     inkscape:zoom="2.3131362"
+     inkscape:cx="716.25652"
+     inkscape:cy="382.86779"
      inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-y="155"
      inkscape:current-layer="svg2"
      width="210mm"
      height="40mm"
@@ -605,7 +605,151 @@
        y1="20.603781"
        x2="135.66525"
        y2="114.39767" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2795"
+       id="radialGradient3121"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.382716e-8,-0.296405,1.43676,4.683673e-7,-128.544,150.5202)"
+       cx="61.518883"
+       cy="132.28575"
+       fx="61.518883"
+       fy="132.28575"
+       r="29.036913" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3303"
+       id="linearGradient3125"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="-14.107"
+       y1="47.514599"
+       x2="94.909378"
+       y2="141.30852" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4671"
+       id="linearGradient3129"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="-14.107"
+       y1="47.514599"
+       x2="94.909378"
+       y2="141.30852" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4689"
+       id="linearGradient3133"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="26.648937"
+       y1="20.603781"
+       x2="135.66525"
+       y2="114.39767" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4689"
+       id="linearGradient3139"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="26.648937"
+       y1="20.603781"
+       x2="135.66525"
+       y2="114.39767" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2795"
+       id="radialGradient3961"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.382716e-8,-0.296405,1.43676,4.683673e-7,-128.544,150.5202)"
+       cx="61.518883"
+       cy="132.28575"
+       fx="61.518883"
+       fy="132.28575"
+       r="29.036913" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3303"
+       id="linearGradient3963"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="-14.107"
+       y1="47.514599"
+       x2="94.909378"
+       y2="141.30852" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4671"
+       id="linearGradient3965"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="-14.107"
+       y1="47.514599"
+       x2="94.909378"
+       y2="141.30852" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4689"
+       id="linearGradient3967"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="26.648937"
+       y1="20.603781"
+       x2="135.66525"
+       y2="114.39767" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4689"
+       id="linearGradient3969"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,739.13422,290.63962)"
+       x1="26.648937"
+       y1="20.603781"
+       x2="135.66525"
+       y2="114.39767" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3303"
+       id="linearGradient3188"
+       x1="769.73419"
+       y1="413.83908"
+       x2="769.73419"
+       y2="558.35443"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-18.157167,0)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3303"
+       id="linearGradient3237"
+       x1="727.15131"
+       y1="558.76459"
+       x2="727.15131"
+       y2="413.38123"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.3635199,0,0,0.3635199,411.05047,364.00083)" />
   </defs>
+  <rect
+     inkscape:export-ydpi="187.35246"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     ry="0"
+     y="413.83578"
+     x="652.59412"
+     height="144.1134"
+     width="192.2477"
+     id="rect3143"
+     style="fill:url(#linearGradient3188);fill-opacity:1;stroke:none" />
+  <rect
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.28947285;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+     id="rect3945"
+     width="192.2477"
+     height="144.1134"
+     x="651.72949"
+     y="212.72528"
+     ry="0"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-ydpi="187.01299" />
   <g
      id="g3372"
      transform="translate(128.68899,-220.79915)" />
@@ -819,7 +963,7 @@
          height="101.48969"
          x="161.40527"
          y="478.4881" /></flowRegion><flowPara
-       id="flowPara3111"></flowPara></flowRoot>  <flowRoot
+       id="flowPara3111" /></flowRoot>  <flowRoot
      xml:space="preserve"
      id="flowRoot3113"
      style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
@@ -829,7 +973,7 @@
          height="117.38566"
          x="135.72717"
          y="457.70105" /></flowRegion><flowPara
-       id="flowPara3119"></flowPara></flowRoot>  <flowRoot
+       id="flowPara3119" /></flowRoot>  <flowRoot
      xml:space="preserve"
      id="flowRoot3121"
      style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
@@ -839,7 +983,7 @@
          height="92.930313"
          x="163.85081"
          y="477.26532" /></flowRegion><flowPara
-       id="flowPara3127"></flowPara></flowRoot>  <text
+       id="flowPara3127" /></flowRoot>  <text
      xml:space="preserve"
      style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
      x="9.7821379"
@@ -862,4 +1006,266 @@
        id="tspan3135"
        x="-594.00702"
        y="142.02324">PythonCAD</tspan></text>
+  <path
+     inkscape:connector-curvature="0"
+     id="path3150"
+     d="m 671.55263,534.10191 c -2.71003,0 -4.87344,2.23134 -4.87344,4.95296 l 0,9.75824 c 0,2.72161 2.16341,4.95295 4.87344,4.95295 l 7.56575,0 0,-19.66415 -7.56575,0 z"
+     style="fill:#ffffff;fill-opacity:1"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3152"
+     d="m 674.38126,523.84383 -0.0113,9.01984 5.4528,0 c 0.35053,0 0.72704,0.41059 0.72704,0.76112 l 0,20.14127 9.088,0 0,-25.02607 c 0,-2.72161 -2.16341,-4.95296 -4.87344,-4.95296 -3.47248,-0.10459 -6.92719,0.0364 -10.38304,0.0568 z"
+     style="fill:#ffffff;fill-opacity:1"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246" />
+  <a
+     id="a3210"
+     transform="matrix(0.3635199,0,0,0.3635199,470.61205,364.00083)"
+     style="fill:#ffffff"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246">
+    <path
+       style="fill:#ffffff;fill-opacity:1"
+       d="m 525.26362,439.61534 c -7.37034,0 -13.40626,7.42116 -13.40625,14.6875 l 0,25.53125 c 0,7.48684 5.95129,13.625 13.40625,13.625 l 10.80224,0 0,-13.26706 c 0,-8.09858 7.63681,-15.67044 15.94121,-15.67044 l 5.44405,0 0,-24.90625 -32.1875,0 z"
+       id="path3154"
+       inkscape:connector-curvature="0" />
+  </a>
+  <path
+     inkscape:connector-curvature="0"
+     id="path3156"
+     d="m 668.50815,526.67613 c -1.00679,0 -1.82896,0.83561 -1.82896,1.86304 0,1.0238 0.82217,1.85168 1.82896,1.85168 1.01039,0 1.82896,-0.82788 1.82896,-1.85168 0,-1.02743 -0.81857,-1.86304 -1.82896,-1.86304 z"
+     style="fill:url(#linearGradient3237);fill-opacity:1"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3158"
+     d="m 696.5,534.10191 c 2.71002,0 4.87346,2.23134 4.87346,4.95296 l 0,9.75824 c 0,2.72161 -2.16344,4.95295 -4.87346,4.95295 l -5.58108,0 0,-19.66415 5.58108,0 z"
+     style="fill:#ffffff;fill-opacity:1"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3160"
+     d="m 702.82923,494.69155 -16.27248,-19.09547 0.35852,-0.70469 c 0.43975,-0.86434 1.91558,-2.70353 2.66864,-3.32567 l 0.55607,-0.4594 14.53934,17.06081 14.53934,17.06081 -0.0585,4.27954 -0.0585,4.27955 -16.27247,-19.09548 z"
+     style="fill:none;stroke:none"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246" />
+  <text
+     xml:space="preserve"
+     style="font-size:22.89136887px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+     x="817.75317"
+     y="403.0264"
+     id="text3239"
+     sodipodi:linespacing="125%"
+     transform="scale(0.86946021,1.1501389)"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246"><tspan
+       sodipodi:role="line"
+       id="tspan3241"
+       x="817.75317"
+       y="403.0264">R38</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:7.1126852px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+     x="870.16357"
+     y="403.24982"
+     id="text3243"
+     sodipodi:linespacing="125%"
+     transform="scale(0.86946021,1.1501389)"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246"><tspan
+       sodipodi:role="line"
+       id="tspan3245"
+       x="870.16357"
+       y="403.24982">ALPHA 04</tspan></text>
+  <text
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     transform="scale(0.94360283,1.0597679)"
+     sodipodi:linespacing="125%"
+     id="text3197"
+     y="333.09824"
+     x="703.97479"
+     style="font-size:4.55784321px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;font-family:Sans"
+     xml:space="preserve"><tspan
+       y="333.09824"
+       x="703.97479"
+       id="tspan3199"
+       sodipodi:role="line">PythonCAD is written, surprisingly enough, in Python using the PyQt interface</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:4.74153757px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+     x="1028.8987"
+     y="383.63245"
+     id="text3247"
+     sodipodi:linespacing="125%"
+     transform="scale(0.69316185,1.4426645)"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246"><tspan
+       sodipodi:role="line"
+       id="tspan3249"
+       x="1028.8987"
+       y="383.63245">PythonCAD is written, surprisingly enough, in Python using the PyQt interface</tspan></text>
+  <text
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     xml:space="preserve"
+     style="font-size:7.51278639px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;font-family:Sans"
+     x="723.36292"
+     y="299.34146"
+     id="text3167"
+     sodipodi:linespacing="125%"
+     transform="scale(0.91836886,1.0888871)"><tspan
+       id="tspan3173"
+       sodipodi:role="line"
+       x="723.36292"
+       y="299.34146">PythonCAD project aims to produce a scriptable,</tspan><tspan
+       id="tspan3177"
+       sodipodi:role="line"
+       x="723.36292"
+       y="308.73245">open-source, intuitive CAD package</tspan></text>
+  <text
+     transform="scale(0.86946021,1.1501389)"
+     sodipodi:linespacing="125%"
+     id="text3164"
+     y="419.69455"
+     x="819.94427"
+     style="font-size:7.1126852px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+     xml:space="preserve"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/screenShot.png"
+     inkscape:export-xdpi="187.35246"
+     inkscape:export-ydpi="187.35246"><tspan
+       y="419.69455"
+       x="819.94427"
+       id="tspan3166"
+       sodipodi:role="line">PythonCAD project aims to produce a</tspan><tspan
+       y="428.58542"
+       x="819.94427"
+       sodipodi:role="line"
+       id="tspan3255">scriptable</tspan><tspan
+       y="437.47626"
+       x="819.94427"
+       sodipodi:role="line"
+       id="tspan3259">open-source </tspan><tspan
+       y="446.36713"
+       x="819.94427"
+       sodipodi:role="line"
+       id="tspan3257">intuitive </tspan><tspan
+       y="455.25797"
+       x="819.94427"
+       sodipodi:role="line"
+       id="tspan3261">CAD package</tspan></text>
+  <text
+     transform="scale(0.879349,1.1372049)"
+     sodipodi:linespacing="125%"
+     id="text3168"
+     y="459.78867"
+     x="1141.6377"
+     style="font-size:25.78048325px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+     xml:space="preserve"><tspan
+       y="459.78867"
+       x="1141.6377"
+       id="tspan3170"
+       sodipodi:role="line">R38</tspan></text>
+  <g
+     id="g3947"
+     transform="translate(3.7401027,-82.167353)"
+     inkscape:export-xdpi="187.01299"
+     inkscape:export-ydpi="187.01299"
+     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png">
+    <path
+       transform="matrix(0.9588872,0,0,0.809524,677.97174,289.67888)"
+       d="m 110.46717,132.28575 c 0,4.75334 -21.914896,8.60668 -48.948287,8.60668 -27.033391,0 -48.948284,-3.85334 -48.948284,-8.60668 0,-4.75334 21.914893,-8.60668 48.948284,-8.60668 27.033391,0 48.948287,3.85334 48.948287,8.60668 z"
+       sodipodi:ry="8.6066771"
+       sodipodi:rx="48.948284"
+       sodipodi:cy="132.28575"
+       sodipodi:cx="61.518883"
+       id="path3119"
+       style="opacity:0.44382025;fill:url(#radialGradient3961);fill-opacity:1;fill-rule:nonzero;stroke:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3123"
+       d="m 702.76556,330.98909 c -7.45495,-10e-6 -13.40625,6.13816 -13.40625,13.625 l 0,26.84375 c 0,7.48684 5.9513,13.625 13.40625,13.625 l 20.8125,0 0,-54.09375 -20.8125,0 z"
+       style="fill:url(#linearGradient3963);fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3127"
+       d="m 710.54681,302.77034 -0.0312,24.8125 15,0 c 0.96427,0 2,1.12948 2,2.09375 l 0,55.40625 25,0 0,-68.84375 c 0,-7.48684 -5.95129,-13.62501 -13.40625,-13.625 -9.55238,-0.28772 -19.05587,0.10006 -28.5625,0.15625 z"
+       style="fill:url(#linearGradient3965);fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3131"
+       d="m 675.26556,302.67659 c -7.37034,0 -13.40626,7.42116 -13.40625,14.6875 l 0,25.53125 c 0,7.48684 5.95129,13.625 13.40625,13.625 l 10.80224,0 0,-13.26706 c 0,-8.09858 7.63681,-15.67044 15.94121,-15.67044 l 5.44405,0 0,-24.90625 -32.1875,0 z"
+       style="fill:url(#linearGradient3967);fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3135"
+       d="m 694.39056,310.56166 c -2.76954,0 -5.03125,2.29865 -5.03125,5.125 10e-6,2.81634 2.26171,5.09375 5.03125,5.09375 2.77948,0 5.03125,-2.27741 5.03125,-5.09375 10e-6,-2.82635 -2.25177,-5.125 -5.03125,-5.125 z"
+       style="fill:#ffffff;fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3137"
+       d="m 771.39282,330.98909 c 7.45495,-10e-6 13.40625,6.13816 13.40625,13.625 l 0,26.84375 c 0,7.48684 -5.9513,13.625 -13.40625,13.625 l -15.35289,0 0,-54.09375 15.35289,0 z"
+       style="fill:url(#linearGradient3969);fill-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3147"
+       d="m 707.14152,357.7528 -16.27248,-19.09547 0.35852,-0.70469 c 0.43975,-0.86434 1.91558,-2.70353 2.66864,-3.32567 l 0.55607,-0.4594 14.53934,17.06081 14.53934,17.06081 -0.0585,4.27954 -0.0585,4.27955 -16.27247,-19.09548 z"
+       style="fill:none;stroke:none" />
+    <rect
+       y="302.11237"
+       x="660.94855"
+       height="73.135155"
+       width="124.19797"
+       id="rect3155"
+       style="opacity:0.70307162;fill:#ffffff;stroke:none" />
+    <text
+       transform="matrix(0,-0.85490766,1.169717,0,0,0)"
+       sodipodi:linespacing="125%"
+       id="text3933"
+       y="707.43237"
+       x="-422.38568"
+       style="font-size:15.54498482px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="707.43237"
+         x="-422.38568"
+         id="tspan3935"
+         sodipodi:role="line">alpha 04</tspan></text>
+    <text
+       transform="scale(0.879349,1.1372049)"
+       sodipodi:linespacing="125%"
+       id="text3929"
+       y="338.99158"
+       x="892.86102"
+       style="font-size:25.78048325px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="338.99158"
+         x="892.86102"
+         id="tspan3931"
+         sodipodi:role="line">R38</tspan></text>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="638.59021"
+     y="395.64563"
+     id="text3183"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3185"></tspan></text>
 </svg>
