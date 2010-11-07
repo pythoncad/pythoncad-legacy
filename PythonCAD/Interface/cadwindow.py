@@ -45,6 +45,7 @@ from Interface.cadinitsetting       import *
 from Kernel.exception               import *  
 from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
+
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
         super(CadWindowMdi, self).__init__()
@@ -105,7 +106,8 @@ class CadWindowMdi(QtGui.QMainWindow):
 
         self.statusBar().showMessage("Ready")
 
-        #------------------------------------------------------------------------------------Create state buttons
+        #------------------------------------------------------------------------------------Create status buttons
+        
         #Force Direction
         self.forceDirectionStatus=QtGui.QPushButton()
         self.forceDirectionStatus.setCheckable(True)
@@ -113,6 +115,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.forceDirectionStatus.setFixedSize(20, 20)
         iconpath=os.path.join(os.getcwd(), 'icons', 'SForceDir.png')
         self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
+        self.forceDirectionStatus.setToolTip('Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
         #Grid
@@ -122,6 +125,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.GridStatus.setFixedSize(20, 20)
         iconpath=os.path.join(os.getcwd(), 'icons', 'SGrid.png')
         self.GridStatus.setIcon(QtGui.QIcon(iconpath))
+        self.GridStatus.setToolTip('Grid Mode [not available yet]')
         self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
         self.statusBar().addPermanentWidget(self.GridStatus)
         
@@ -191,7 +195,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.cancelCommand()
         self.statusBar().showMessage("Ready")
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------SET if ICON AND MENU are VISIBLE
+#-----------------------------------------------------------------------------------------------------------------------SET if ICON AND MENU are ENABLED
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def updateMenus(self):
         """
@@ -458,7 +462,6 @@ class CadWindowMdi(QtGui.QMainWindow):
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     def _onPoint(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Point")
         self.callCommand('POINT')
         return    
@@ -467,27 +470,22 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('SEGMENT')
         return
     def _onArc(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Arc")
         self.callCommand('ARC')
         return
     def _onEllipse(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Ellipse")
         self.callCommand('ELLIPSE')
         return
     def _onRectangle(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rectangle")
         self.callCommand('RECTANGLE')
         return
     def _onPolygon(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polygon")
         self.callCommand('POLYGON')
         return
     def _onPolyline(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polyline")
         self.callCommand('POLYLINE')
         return
@@ -498,19 +496,16 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onChamfer(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Chamfer")
         self.callCommand('CHAMFER')
         return
             
     def _onBisect(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
         self.callCommand('BISECTOR')
         return
     def _onText(self):
-        self.scene.clearSelection()
-        self.statusBar().showMessage("CMD:Bisect")
+        self.statusBar().showMessage("CMD:Text")
         self.callCommand('TEXT')
         return      
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -656,6 +651,8 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.scene.activeICommand.addMauseEvent(point=None,
                                                     entity=qtItems,
                                                     force=None)
+            else:
+                self.scene.clearSelection()
     
     def getCommand(self, name):
         """

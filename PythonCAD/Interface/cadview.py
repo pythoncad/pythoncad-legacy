@@ -43,7 +43,7 @@ class CadView(QtGui.QGraphicsView):
         #old command
         self.scaleFactor=math.pow(2.0,event.delta() / 240.0)
         self.scaleView(self.scaleFactor)
-        self.updateShape()
+#        self.updateShape()  <<<prova
         
         #get the modified position due to occurred zoom
         newPOnScene=self.mapToScene(pOnView)
@@ -54,7 +54,7 @@ class CadView(QtGui.QGraphicsView):
         self.centerOn(newC)
         #self.scaleFactor=math.pow(2.0,-event.delta() / 240.0)
         #self.scaleView(self.scaleFactor)
-        #self.updateShape()
+        self.updateShape()   # <<<prova
 
         
     def keyPressEvent(self, event):
