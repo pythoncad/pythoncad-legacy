@@ -50,7 +50,9 @@ class CmdLineDock(QtGui.QDockWidget):
         #QtCore.QObject.connect(self.__edit_ctrl, QtCore.SIGNAL("returnPressed()"), self.textEditOutput.centerCursor)
         #
         self.evaluatePressed=PyCadEvent()
-
+        
+        self.setObjectName("CmdLineDock") #this is needed for remember toolbar position in cadwindow.writesettings(savestate)
+        
     #-------- properties -----------#
     @property
     def FunctionHandler(self):

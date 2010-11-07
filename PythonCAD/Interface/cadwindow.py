@@ -54,7 +54,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
-        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
+#        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
         self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
         if qIcon:
@@ -72,6 +72,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         self._registerCommands()
         self.updateMenus()
         self.lastDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
+        
+        self.readSettings() #now works for position and size and ismaximized, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
+
         return
       
     @property
@@ -678,16 +681,23 @@ class CadWindowMdi(QtGui.QMainWindow):
         dlg.setIcon(QtGui.QMessageBox.Critical)
         dlg.exec_()
         return
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------------------------------------------------------------SETTINGS STORAGE
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#---------------------------------------------------------------SETTINGS STORAGE
+#-------------------------------------------------------------------------------
     def readSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
         settings.beginGroup("CadWindow")
-        self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-        self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+        max=settings.value("maximized", False)
+        if max==True: #if cadwindow was maximized set it maximized again
+            self.showMaximized()
+        else: #else set it to the previous position and size
+            self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
+            self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
         settings.endGroup()
-
+        
+        settings.beginGroup("CadWindowState")
+        self.restoreState(settings.value('State').toByteArray())
+        settings.endGroup()
 
     def writeSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
@@ -695,13 +705,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         settings.beginGroup("CadWindow")
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
+        settings.setValue('maximized', self.isMaximized())
         settings.endGroup()
         
-        settings.beginGroup("Toolbars")
-        settings.setValue('pos', self.pos())
-        settings.setValue('size', self.size())
+        settings.beginGroup("CadWindowState")
+        settings.setValue("state", self.saveState())  # it works but still give this error : QMainWindow::saveState(): 'objectName' not set for QToolBar 0x327acd0 'Windows'
         settings.endGroup()
-        
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------END SETTINGS STORAGE
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
