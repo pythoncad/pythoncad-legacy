@@ -313,12 +313,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotate', '&Rotare', self._onRotate)
+        #Modify
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'copy', '&Copy', self._onCopy)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'move', '&Move', self._onMove)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'delete', '&Delete', self._onDelete)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'mirror', '&Mirror', self._onMirror)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'rotate', '&Rotare', self._onRotate)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
@@ -681,9 +681,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         dlg.setIcon(QtGui.QMessageBox.Critical)
         dlg.exec_()
         return
-#-------------------------------------------------------------------------------
-#---------------------------------------------------------------SETTINGS STORAGE
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------
+#--------------------------------------------------------------------SETTINGS STORAGE
+#------------------------------------------------------------------------------------
     def readSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
         settings.beginGroup("CadWindow")
@@ -709,11 +709,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         settings.endGroup()
         
         settings.beginGroup("CadWindowState")
-        settings.setValue("state", self.saveState())  # it works but still give this error : QMainWindow::saveState(): 'objectName' not set for QToolBar 0x327acd0 'Windows'
+        settings.setValue("state", self.saveState()) 
         settings.endGroup()
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------------END SETTINGS STORAGE
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
+#------------------------------------------------------------------------------------
+#----------------------------------------------------------------END SETTINGS STORAGE
+#------------------------------------------------------------------------------------       
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
