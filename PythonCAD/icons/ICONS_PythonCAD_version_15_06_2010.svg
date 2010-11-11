@@ -326,9 +326,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.8816016"
-     inkscape:cx="590.88823"
-     inkscape:cy="-440.43944"
+     inkscape:zoom="1.3873551"
+     inkscape:cx="783.19143"
+     inkscape:cy="-420.32665"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -460,7 +460,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1693,6 +1693,16 @@
        inkscape:export-xdpi="18"
        inkscape:export-ydpi="18" />
     <rect
+       inkscape:export-ydpi="17.821783"
+       inkscape:export-xdpi="17.821783"
+       inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/SGrid.png"
+       style="fill:none;stroke:#000000"
+       id="rect3240"
+       width="100"
+       height="99.999962"
+       x="818.47284"
+       y="1441.02" />
+    <rect
        y="1441.02"
        x="691.75726"
        height="99.999962"
@@ -1799,5 +1809,28 @@
        id="path4272"
        d="m 691.75723,1452.1311 100,0"
        style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <g
+       id="g3260"
+       transform="matrix(1.0231861,0.91084512,-0.91084512,1.0231861,1336.1005,-806.60651)">
+      <path
+         sodipodi:nodetypes="ccssscccssc"
+         inkscape:connector-curvature="0"
+         id="path3253"
+         d="m 858.87675,1496.7083 -7.69431,6.8527 c 0,0 -12.98414,-10.0988 -17.19196,-14.0661 -4.20782,-3.9674 -9.85833,-20.5583 2.88536,-33.302 12.7437,-12.7436 32.2199,-8.2954 36.7884,-0.3606 4.56849,7.9347 10.33922,19.4762 10.33922,19.4762 l -7.81453,6.6123 c 0,0 -6.37184,-14.1864 -9.25721,-18.0335 -2.88536,-3.8472 -12.74369,-8.7763 -21.88068,-0.1203 -8.77731,8.3153 -6.36318,16.1754 -1.32245,20.438 6.07848,5.1403 15.14816,12.5033 15.14816,12.5033 z"
+         style="fill:#ff0000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         style="opacity:0.88395906;fill:#ffffff;stroke:#000000;stroke-width:1"
+         d="m 852.94324,1504.7419 7.57622,-6.7179 14.74118,12.8168 -7.36166,6.5521 z"
+         id="path3258"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         transform="matrix(0.9154456,-0.40244175,0.40244175,0.9154456,0,0)"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect3255"
+         d="m 205.99852,1711.1903 9.78246,-2.8987 1.52399,19.221 -9.37602,3.0354 z"
+         style="opacity:0.88395906;fill:#ffffff;stroke:#000000" />
+    </g>
   </g>
 </svg>

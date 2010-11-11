@@ -22,8 +22,20 @@ from Interface.cadwindow        import CadWindowMdi
 #
 def getPythonCAD():
     app = QtGui.QApplication(sys.argv)
+    
+    #splashscreen
+    splashPath=os.path.join(os.getcwd(), 'icons', 'splashScreen1.png')
+    splash_pix = QtGui.QPixmap(splashPath)
+    splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    splash.setMask(splash_pix.mask())
+    splash.show()
+    
     w=CadWindowMdi()
     w.show()
+    
+    #end splashscreen
+    splash.finish(w)
+
     return w, app
 #
 if __name__ == '__main__':

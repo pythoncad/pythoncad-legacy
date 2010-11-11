@@ -110,6 +110,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("Ready")
 
         #------------------------------------------------------------------------------------Create status buttons
+
+        
         
         #Force Direction
         self.forceDirectionStatus=QtGui.QPushButton()
@@ -121,6 +123,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.forceDirectionStatus.setToolTip('Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
+        
         #Grid
         self.GridStatus=QtGui.QPushButton()
         self.GridStatus.setCheckable(True)

@@ -179,6 +179,7 @@ class Segment(GeometricalEntity):
         else:
             retY=_y2+_deltay
         return Point(retX,retY)
+        #return Point((_x1+_x2)/2.0,(_y1+_y2)/2.0) <<<<why not like this? it seems to work too
 
     def getProjection(self,point):
         """

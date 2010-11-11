@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -43,8 +43,8 @@
      pagecolor="#ffffff"
      id="base"
      inkscape:zoom="2.8284271"
-     inkscape:cx="749.10956"
-     inkscape:cy="395.52537"
+     inkscape:cx="744.93518"
+     inkscape:cy="396.38033"
      inkscape:window-x="0"
      inkscape:window-y="155"
      inkscape:current-layer="svg2"
@@ -752,19 +752,19 @@
        gradientTransform="matrix(0.3635199,0,0,0.3635199,411.05047,364.00083)" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient3174"
+       xlink:href="#linearGradient3303"
        id="linearGradient3180"
-       x1="752.22546"
-       y1="401.60922"
-       x2="868.22546"
-       y2="70.392166"
+       x1="756.82172"
+       y1="227.66095"
+       x2="702.05542"
+       y2="371.26608"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4689"
        id="linearGradient3189"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.562541,0,0,0.567972,742.44201,208.90458)"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,741.85621,208.90458)"
        x1="26.648937"
        y1="20.603781"
        x2="135.66525"
@@ -784,7 +784,7 @@
        xlink:href="#linearGradient4671"
        id="linearGradient3196"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.562541,0,0,0.567972,742.44201,208.90458)"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,741.85621,208.90458)"
        x1="-14.107"
        y1="47.514599"
        x2="94.909378"
@@ -794,7 +794,7 @@
        xlink:href="#linearGradient3303"
        id="linearGradient3199"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.562541,0,0,0.567972,742.44201,208.90458)"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,741.85621,208.90458)"
        x1="-14.107"
        y1="47.514599"
        x2="94.909378"
@@ -813,7 +813,7 @@
        xlink:href="#linearGradient4689"
        id="linearGradient3999"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.562541,0,0,0.567972,742.44201,208.90458)"
+       gradientTransform="matrix(-0.562541,0,0,0.567972,741.85621,208.90458)"
        x1="26.648937"
        y1="20.603781"
        x2="135.66525"
@@ -1281,13 +1281,13 @@
      sodipodi:rx="48.948284"
      sodipodi:ry="8.6066771"
      d="m 110.46717,132.28575 a 48.948284,8.6066771 0 1 1 -97.896571,0 48.948284,8.6066771 0 1 1 97.896571,0 z"
-     transform="matrix(0.9588872,0,0,0.809524,681.71184,207.51153)"
+     transform="matrix(0.9588872,0,0,0.809524,680.41894,207.51153)"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <path
      style="fill:url(#linearGradient3199);fill-opacity:1"
-     d="m 706.07335,249.25405 c -7.45495,-1e-5 -13.40625,6.13816 -13.40625,13.625 l 0,26.84375 c 0,7.48684 5.9513,13.625 13.40625,13.625 l 20.8125,0 0,-54.09375 -20.8125,0 z"
+     d="m 705.48755,249.25405 c -7.45495,-1e-5 -13.40625,6.13816 -13.40625,13.625 l 0,26.84375 c 0,7.48684 5.9513,13.625 13.40625,13.625 l 20.8125,0 0,-54.09375 -20.8125,0 z"
      id="path3123"
      inkscape:connector-curvature="0"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
@@ -1295,7 +1295,7 @@
      inkscape:export-ydpi="187" />
   <path
      style="fill:url(#linearGradient3196);fill-opacity:1"
-     d="m 713.8546,221.0353 -0.0312,24.8125 15,0 c 0.96427,0 2,1.12948 2,2.09375 l 0,55.40625 25,0 0,-68.84375 c 0,-7.48684 -5.95129,-13.62501 -13.40625,-13.625 -9.55238,-0.28772 -19.05587,0.10006 -28.5625,0.15625 z"
+     d="m 713.2688,221.0353 -0.0312,24.8125 15,0 c 0.96427,0 2,1.12948 2,2.09375 l 0,55.40625 25,0 0,-68.84375 c 0,-7.48684 -5.95129,-13.62501 -13.40625,-13.625 -9.55238,-0.28772 -19.05587,0.10006 -28.5625,0.15625 z"
      id="path3127"
      inkscape:connector-curvature="0"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
@@ -1303,14 +1303,15 @@
      inkscape:export-ydpi="187" />
   <path
      style="fill:url(#linearGradient3999);fill-opacity:1"
-     d="M 678.5625 220.9375 C 671.19216 220.9375 665.15624 228.35866 665.15625 235.625 L 665.15625 261.15625 C 665.15625 268.64309 671.10754 274.78125 678.5625 274.78125 L 689.375 274.78125 L 689.375 261.53125 C 689.375 253.43267 697.0081 245.84375 705.3125 245.84375 L 710.75 245.84375 L 710.75 220.9375 L 678.5625 220.9375 z M 697.6875 228.8125 C 700.46698 228.8125 702.71876 231.11115 702.71875 233.9375 C 702.71875 236.75384 700.46698 239.03125 697.6875 239.03125 C 694.91796 239.03125 692.65626 236.75384 692.65625 233.9375 C 692.65625 231.11115 694.91796 228.8125 697.6875 228.8125 z "
+     d="m 677.9767,220.9375 c -7.37034,0 -13.40626,7.42116 -13.40625,14.6875 l 0,25.53125 c 0,7.48684 5.95129,13.625 13.40625,13.625 l 10.8125,0 0,-13.25 c 0,-8.09858 7.6331,-15.6875 15.9375,-15.6875 l 5.4375,0 0,-24.90625 -32.1875,0 z m 19.125,7.875 c 2.77948,0 5.03126,2.29865 5.03125,5.125 0,2.81634 -2.25177,5.09375 -5.03125,5.09375 -2.76954,0 -5.03124,-2.27741 -5.03125,-5.09375 0,-2.82635 2.26171,-5.125 5.03125,-5.125 z"
      id="path3131"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
-     inkscape:export-ydpi="187" />
+     inkscape:export-ydpi="187"
+     inkscape:connector-curvature="0" />
   <path
      style="fill:url(#linearGradient3189);fill-opacity:1"
-     d="m 774.70061,249.25405 c 7.45495,-1e-5 13.40625,6.13816 13.40625,13.625 l 0,26.84375 c 0,7.48684 -5.9513,13.625 -13.40625,13.625 l -15.35289,0 0,-54.09375 15.35289,0 z"
+     d="m 774.11481,249.25405 c 7.45495,-1e-5 13.40625,6.13816 13.40625,13.625 l 0,26.84375 c 0,7.48684 -5.9513,13.625 -13.40625,13.625 l -15.35289,0 0,-54.09375 15.35289,0 z"
      id="path3137"
      inkscape:connector-curvature="0"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
@@ -1318,7 +1319,7 @@
      inkscape:export-ydpi="187" />
   <path
      style="fill:none;stroke:none"
-     d="m 710.44931,276.01776 -16.27248,-19.09547 0.35852,-0.70469 c 0.43975,-0.86434 1.91558,-2.70353 2.66864,-3.32567 l 0.55607,-0.4594 14.53934,17.06081 14.53934,17.06081 -0.0585,4.27954 -0.0585,4.27955 -16.27247,-19.09548 z"
+     d="m 709.86351,276.01776 -16.27248,-19.09547 0.35852,-0.70469 c 0.43975,-0.86434 1.91558,-2.70353 2.66864,-3.32567 l 0.55607,-0.4594 14.53934,17.06081 14.53934,17.06081 -0.0585,4.27954 -0.0585,4.27955 -16.27247,-19.09548 z"
      id="path3147"
      inkscape:connector-curvature="0"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
@@ -1326,7 +1327,7 @@
      inkscape:export-ydpi="187" />
   <text
      xml:space="preserve"
-     style="font-size:15.54498482px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+     style="font-size:15.54498481999999981px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#e6e6e6;fill-opacity:1;stroke:none;font-family:Sans"
      x="-326.27313"
      y="710.62982"
      id="text3933"
@@ -1341,7 +1342,7 @@
        y="710.62982">alpha 04</tspan></text>
   <text
      xml:space="preserve"
-     style="font-size:25.78048325px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#646464;fill-opacity:1;stroke:none;font-family:Sans"
+     style="font-size:25.78048324999999963px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#e6e6e6;fill-opacity:1;stroke:none;font-family:Sans;"
      x="897.11426"
      y="266.54773"
      id="text3929"
@@ -1365,35 +1366,36 @@
        id="tspan3185" /></text>
   <g
      id="g4024"
-     style="opacity:0.74061433"
+     style="opacity:0.88395906"
      inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
-     inkscape:export-ydpi="187">
+     inkscape:export-ydpi="187"
+     transform="translate(-0.58578642,0)">
     <g
        id="g4030"
-       style="opacity:0.79522183999999985">
+       style="opacity:0.79522184">
       <path
          inkscape:connector-curvature="0"
          id="path4004"
          d="m 706.07155,249.25405 c -7.45495,-1e-5 -13.40625,6.13816 -13.40625,13.625 l 0,24.93468 34.21875,10e-6 0,-38.55969 z"
-         style="opacity:1;fill:#ffffff;fill-opacity:1"
+         style="fill:#ffffff;fill-opacity:1"
          sodipodi:nodetypes="sscccs" />
       <path
          inkscape:connector-curvature="0"
          id="path4008"
          d="m 713.8528,221.0353 -0.0312,24.8125 15,0 c 0.96427,0 2,1.12948 2,2.09375 l 0,39.73651 25,0 0,-53.17401 c 0,-7.48684 -5.95129,-13.62501 -13.40625,-13.625 -9.55238,-0.28772 -19.05587,0.10006 -28.5625,0.15625 z"
-         style="opacity:1;fill:#ffffff;fill-opacity:1"
+         style="fill:#ffffff;fill-opacity:1"
          sodipodi:nodetypes="ccssccsccc" />
       <path
          id="path4012"
          d="m 678.5607,220.9375 c -7.37034,0 -13.40626,7.42116 -13.40625,14.6875 l 0,25.53125 c 0,7.48684 5.95129,13.625 13.40625,13.625 l 10.8125,0 0,-13.25 c 0,-8.09858 7.6331,-15.6875 15.9375,-15.6875 l 5.4375,0 0,-24.90625 -32.1875,0 z m 19.125,7.875 c 2.77948,0 5.03126,2.29865 5.03125,5.125 0,2.81634 -2.25177,5.09375 -5.03125,5.09375 -2.76954,0 -5.03124,-2.27741 -5.03125,-5.09375 0,-2.82635 2.26171,-5.125 5.03125,-5.125 z"
-         style="opacity:1;fill:#ffffff;fill-opacity:1"
+         style="fill:#ffffff;fill-opacity:1"
          inkscape:connector-curvature="0" />
       <path
          inkscape:connector-curvature="0"
          id="path4016"
          d="m 774.69881,249.25405 c 7.45495,-1e-5 13.40625,6.13816 13.40625,13.625 l 0,24.79188 -28.75914,-0.0497 0,-38.36722 z"
-         style="opacity:1;fill:#ffffff;fill-opacity:1"
+         style="fill:#ffffff;fill-opacity:1"
          sodipodi:nodetypes="sscccs" />
     </g>
   </g>
