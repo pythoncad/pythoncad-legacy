@@ -44,6 +44,18 @@ from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
 from Kernel.exception               import PyCadWrongImputData
 
+
+KEY_MAP={
+         QtCore.Qt.Key_Escape:"self.cancelCommand()", 
+         QtCore.Qt.Key_Delete:"self.fireKeyShortcut('DELETE')", 
+         QtCore.Qt.Key_G:"self.fireKeyShortcut('MOVE')", 
+         QtCore.Qt.Key_C:"self.fireKeyShortcut('COPY')", 
+         QtCore.Qt.Key_D:"self.fireKeyShortcut('DELETE')", 
+         QtCore.Qt.Key_R:"self.fireKeyShortcut('ROTATE')", 
+         QtCore.Qt.Key_M:"self.fireKeyShortcut('MIRROR')"
+         }
+
+
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
         super(CadScene, self).__init__(parent)
@@ -215,9 +227,7 @@ class CadScene(QtGui.QGraphicsScene):
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
 
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Escape:
-            self.cancelCommand()
-        elif event.key()==QtCore.Qt.Key_Return:
+        if event.key()==QtCore.Qt.Key_Return:
             if self.activeICommand!=None:
                 self.activeICommand.applyCommand()
         elif event.key()==QtCore.Qt.Key_Space:
@@ -233,20 +243,12 @@ class CadScene(QtGui.QGraphicsScene):
 #            self.forceDirection='V'
         elif event.key()==QtCore.Qt.Key_Q:
             self.showHandler=True
-        elif event.key()==QtCore.Qt.Key_Delete:
-            self.fireKeyShortcut('DELETE')
-#        elif event.key()==QtCore.Qt.Key_C:        <<<<<<<<<<shortcuts must be customizable and preferences should be saved in a settings file
-#            self.fireKeyShortcut('COPY')
-#        elif event.key()==QtCore.Qt.Key_G:
-#            self.fireKeyShortcut('MOVE')
-#        elif event.key()==QtCore.Qt.Key_R:
-#            self.fireKeyShortcut('ROTATE')
-#        elif event.key()==QtCore.Qt.Key_M:
-#            self.fireKeyShortcut('MIRROR')
         else:
             if self.activeICommand!=None:
                 self.fireCommandlineFocus(self, event)
                 self.fireKeyEvent(event)
+            elif event.key() in KEY_MAP:
+                    exec(KEY_MAP[event.key()])
         super(CadScene, self).keyPressEvent(event)
     
     def textInput(self, value):
