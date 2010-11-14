@@ -36,8 +36,8 @@ class ArcCommand(BaseCommand):
         self.defaultValue=[None, 10, 0, math.pi*2]
         self.message=["Give Me the center Point", 
                         "Give Me the radius", 
-                        "Give Me the first Angle (Could Be None)", 
-                        "Give Me the second Angle (Could Be None)"]
+                        "Give Me the start Angle (Could Be None)", 
+                        "Give Me the span Angle (Could Be None)"]
         
     def applyCommand(self):
         if len(self.value)<2:
