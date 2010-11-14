@@ -319,9 +319,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         #Modify
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'move', '&Move', self._onMove)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'delete', '&Delete', self._onDelete)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'rotate', '&Rotate', self._onRotate)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'mirror', '&Mirror', self._onMirror)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'rotate', '&Rotare', self._onRotate)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'delete', '&Delete', self._onDelete)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
