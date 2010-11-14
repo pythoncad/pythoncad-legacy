@@ -157,7 +157,7 @@ class Vector:
     
     def rotate(self, angle):
         """
-            rotete the vector of a given angle
+            rotate the vector of a given angle
         """
         _a=self.absAng+angle
         _norm=self.norm

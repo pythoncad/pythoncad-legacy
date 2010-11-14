@@ -42,18 +42,7 @@ from Interface.Preview.base         import BaseQtPreviewItem
 
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
-from Kernel.exception               import PyCadWrongImputData
-
-
-KEY_MAP={
-         QtCore.Qt.Key_Escape:"self.cancelCommand()", 
-         QtCore.Qt.Key_Delete:"self.fireKeyShortcut('DELETE')", 
-         QtCore.Qt.Key_G:"self.fireKeyShortcut('MOVE')", 
-         QtCore.Qt.Key_C:"self.fireKeyShortcut('COPY')", 
-         QtCore.Qt.Key_D:"self.fireKeyShortcut('DELETE')", 
-         QtCore.Qt.Key_R:"self.fireKeyShortcut('ROTATE')", 
-         QtCore.Qt.Key_M:"self.fireKeyShortcut('MIRROR')"
-         }
+from Kernel.exception               import *
 
 
 class CadScene(QtGui.QGraphicsScene):
@@ -94,7 +83,7 @@ class CadScene(QtGui.QGraphicsScene):
         # Input implemetation by carlo
         #
         self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
-        
+        self.selectionAddMode=None
         
     @property
     def activeKernelCommand(self):
@@ -119,21 +108,23 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
-        
-        #Fire pan if scene.isInPan True
+        #
+        #This event manages middle mouse button PAN
+        #
         if self.isInPan:
             self.firePan(None, event.scenePos())
-            
-        #Converts scene coordinates to pycad kernel coordinates and fire the event that handle the status bar coordinates display
+        #
+        #This event manages the status bar coordinates display (relative or absolute depending on self.fromPoint)
+        #
         if self.fromPoint==None:
             self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
         else:
-            #set relative coordinates in the statusbar if frompoin is not none
             x=scenePos.x()-self.fromPoint.getx()
             y=scenePos.y()*-1.0-self.fromPoint.gety()
             self.fireCoords(x, y, "rel")
-
-        
+        #
+        #This seems needed to preview commands
+        #
         if self.activeICommand:
             #scenePos=event.scenePos()
             distance=None
@@ -199,7 +190,7 @@ class CadScene(QtGui.QGraphicsScene):
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
-            self.clearSelection() #clear the selection after the window zoom
+            self.clearSelection() #clear the selection after the window zoom, why?
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
@@ -230,8 +221,13 @@ class CadScene(QtGui.QGraphicsScene):
         if event.key()==QtCore.Qt.Key_Return:
             if self.activeICommand!=None:
                 self.activeICommand.applyCommand()
+        elif event.key()==QtCore.Qt.Key_Escape:
+            self.cancelCommand()
         elif event.key()==QtCore.Qt.Key_Space:
             self.fireCommandlineFocus(self, event)
+        elif event.key()==QtCore.Qt.Key_Shift:
+            self.selectionAddMode=True
+            print self.selectionAddMode
 #        elif event.key()==QtCore.Qt.Key_F8:  <<<<this must maybe be implemented in cadwindow
 #            if self.forceDirection is None:
 #                self.forceDirection=True
@@ -241,16 +237,28 @@ class CadScene(QtGui.QGraphicsScene):
 #            self.forceDirection='H'        <<<<<<<H and V are substituted by ortho mode, for future implementations it could be nice if shift pressed locks the direction of the mouse pointer
 #        elif event.key()==QtCore.Qt.Key_V:  <<<Ortho mode should be rewritten allowing to enter step angles and snap direction
 #            self.forceDirection='V'
-        elif event.key()==QtCore.Qt.Key_Q:
+        elif event.key()==QtCore.Qt.Key_Q: #Maybe we could use TAB
             self.showHandler=True
         else:
             if self.activeICommand!=None:
                 self.fireCommandlineFocus(self, event)
                 self.fireKeyEvent(event)
             elif event.key() in KEY_MAP:
-                    exec(KEY_MAP[event.key()])
+                    #exec(KEY_MAP[event.key()])
+                    self.fireKeyShortcut(KEY_MAP[event.key()])
         super(CadScene, self).keyPressEvent(event)
     
+    def keyReleaseEvent(self, event):
+        if event.key()==QtCore.Qt.Key_Shift:
+#            if self.activeICommand!=None:
+#                if self.activeKernelCommand.activeException()==ExcMultiEntity:
+#                    self.selectionAddMode=True
+#                    print self.selectionAddMode
+            self.selectionAddMode=None
+            print self.selectionAddMode
+        else:
+            pass
+            
     def textInput(self, value):
         """
             someone give some test imput at the scene

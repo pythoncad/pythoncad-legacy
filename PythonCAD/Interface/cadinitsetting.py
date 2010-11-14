@@ -28,6 +28,8 @@ from Interface.Entity.text      import Text
 from Interface.Entity.ellipse   import Ellipse
 from Interface.Entity.polyline  import Polyline
 
+from PyQt4 import QtCore
+
 from Interface.Command.distance2point import Distance2Point
 
 SCENE_SUPPORTED_TYPE=["SEGMENT",
@@ -48,3 +50,14 @@ SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE,
                        )))
 
 INTERFACE_COMMAND={'DISTANCE2POINT':Distance2Point}
+
+KEY_MAP={
+         QtCore.Qt.Key_Delete:'DELETE', 
+         QtCore.Qt.Key_L:'SEGMENT', 
+         QtCore.Qt.Key_P:'POLYLINE', 
+         QtCore.Qt.Key_G:'MOVE', 
+         QtCore.Qt.Key_C:'COPY', 
+         QtCore.Qt.Key_D:'DELETE', 
+         QtCore.Qt.Key_R:'ROTATE', 
+         QtCore.Qt.Key_M:'MIRROR'
+         }

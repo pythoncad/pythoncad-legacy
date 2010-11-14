@@ -18,7 +18,7 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the polyline command
+#This module provide a class for the rotate command
 #
 import math
 
@@ -39,7 +39,7 @@ class RotateCommand(BaseCommand):
         self.defaultValue=[None, None, math.pi/2, "C"]
         self.message=[  "Select the entity to rotate or give me a the keyword Text As: (10,20,30,...)", 
                         "Give me the reference rotation point", 
-                        "Give me the rotation angle", 
+                        "Give me the rotation angle[rad]", 
                         "Give me the Mode (M or None ->Move,C ->Copy)"]
               
     def performRotation(self):
