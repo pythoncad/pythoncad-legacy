@@ -28,6 +28,7 @@ from PyQt4 import QtCore, QtGui
 #Kernel Import
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY
+from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.geolib          import Vector   
 from Kernel.GeoUtil.intersection    import *
@@ -46,7 +47,7 @@ class ICommand(object):
     activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
     drawPreview=False                   # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
-    restartCommandOption=True         # Restart the command for sequence command functionality
+    #restartCommandOption=False         # moved to Interface.cadinitsetting  > RESTART_COMMAND_OPTION
     
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
@@ -146,17 +147,20 @@ class ICommand(object):
         """
         try:
             self.kernelCommand.applyCommand()    
-            if self.restartCommandOption:
+            if RESTART_COMMAND_OPTION:
                 self.restartCommand()
                 self.updateInput(self.kernelCommand.activeMessage) 
+                self.scene.clearSelection()
+                self.scene.fromPoint=None
             else:
+                self.scene.cancelCommand()
+                self.updateInput("Ready") 
                 self=None
         except Exception as e:
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
-        self.scene.clearSelection()
-        self.scene.fromPoint=None
+        
         return
     
     def getEntity(self, position):

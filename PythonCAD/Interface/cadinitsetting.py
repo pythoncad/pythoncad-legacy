@@ -51,6 +51,8 @@ SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE,
 
 INTERFACE_COMMAND={'DISTANCE2POINT':Distance2Point}
 
+RESTART_COMMAND_OPTION=False
+
 KEY_MAP={
          QtCore.Qt.Key_Delete:'DELETE', 
          QtCore.Qt.Key_L:'SEGMENT', 
