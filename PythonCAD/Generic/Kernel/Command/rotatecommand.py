@@ -18,7 +18,7 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the polyline command
+#This module provide a class for the rotate command
 #
 import math
 
@@ -39,23 +39,23 @@ class RotateCommand(BaseCommand):
         self.defaultValue=[None, None, math.pi/2, "C"]
         self.message=[  "Select the entity to rotate or give me a the keyword Text As: (10,20,30,...)", 
                         "Give me the reference rotation point", 
-                        "Give me the rotation angle", 
+                        "Give me the rotation angle[rad]", 
                         "Give me the Mode (M or None ->Move,C ->Copy)"]
               
     def performRotation(self):
         """
             perform the mirror of all the entity selected
         """
-        move=True
+        copy=True
         if self.value[3]:
             if self.value[3]=='C':
-                move=False
+                copy=False
         updEnts=[]
         for id in str(self.value[0]).split(','):
             dbEnt=self.document.getEntity(id)
             geoEnt=self.document.convertToGeometricalEntity(dbEnt)
             geoEnt.rotate(self.value[1], self.value[2])
-            if move:
+            if not copy:
                 dbEnt.setConstructionElements(geoEnt.getConstructionElements())
                 updEnts.append(dbEnt)
             else:

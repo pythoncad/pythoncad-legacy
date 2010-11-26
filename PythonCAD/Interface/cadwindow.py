@@ -45,6 +45,7 @@ from Interface.cadinitsetting       import *
 from Kernel.exception               import *  
 from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
+
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
         super(CadWindowMdi, self).__init__()
@@ -53,7 +54,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
-        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
+#        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
         self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
         if qIcon:
@@ -71,6 +72,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         self._registerCommands()
         self.updateMenus()
         self.lastDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
+        
+        self.readSettings() #now works for position and size and ismaximized, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
+
         return
       
     @property
@@ -105,7 +109,10 @@ class CadWindowMdi(QtGui.QMainWindow):
 
         self.statusBar().showMessage("Ready")
 
-        #------------------------------------------------------------------------------------Create state buttons
+        #------------------------------------------------------------------------------------Create status buttons
+
+        
+        
         #Force Direction
         self.forceDirectionStatus=QtGui.QPushButton()
         self.forceDirectionStatus.setCheckable(True)
@@ -113,8 +120,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.forceDirectionStatus.setFixedSize(20, 20)
         iconpath=os.path.join(os.getcwd(), 'icons', 'SForceDir.png')
         self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
+        self.forceDirectionStatus.setToolTip('Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
+        
         #Grid
         self.GridStatus=QtGui.QPushButton()
         self.GridStatus.setCheckable(True)
@@ -122,6 +131,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.GridStatus.setFixedSize(20, 20)
         iconpath=os.path.join(os.getcwd(), 'icons', 'SGrid.png')
         self.GridStatus.setIcon(QtGui.QIcon(iconpath))
+        self.GridStatus.setToolTip('Grid Mode [not available yet]')
         self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
         self.statusBar().addPermanentWidget(self.GridStatus)
         
@@ -191,7 +201,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.cancelCommand()
         self.statusBar().showMessage("Ready")
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------SET if ICON AND MENU are VISIBLE
+#-----------------------------------------------------------------------------------------------------------------------SET if ICON AND MENU are ENABLED
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def updateMenus(self):
         """
@@ -307,12 +317,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'copy', '&Copy', self._onCopy)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'move', '&Move', self._onMove)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'delete', '&Delete', self._onDelete)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'mirror', '&Mirror', self._onMirror)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'rotate', '&Rotare', self._onRotate)
+        #Modify
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'copy', '&Copy', self._onCopy)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'move', '&Move', self._onMove)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'rotate', '&Rotate', self._onRotate)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'mirror', '&Mirror', self._onMirror)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'delete', '&Delete', self._onDelete)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
@@ -460,7 +470,6 @@ class CadWindowMdi(QtGui.QMainWindow):
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     def _onPoint(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Point")
         self.callCommand('POINT')
         return    
@@ -469,27 +478,22 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('SEGMENT')
         return
     def _onArc(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Arc")
         self.callCommand('ARC')
         return
     def _onEllipse(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Ellipse")
         self.callCommand('ELLIPSE')
         return
     def _onRectangle(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Rectangle")
         self.callCommand('RECTANGLE')
         return
     def _onPolygon(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polygon")
         self.callCommand('POLYGON')
         return
     def _onPolyline(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Polyline")
         self.callCommand('POLYLINE')
         return
@@ -500,19 +504,16 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onChamfer(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Chamfer")
         self.callCommand('CHAMFER')
         return
             
     def _onBisect(self):
-        self.scene.clearSelection()
         self.statusBar().showMessage("CMD:Bisect")
         self.callCommand('BISECTOR')
         return
     def _onText(self):
-        self.scene.clearSelection()
-        self.statusBar().showMessage("CMD:Bisect")
+        self.statusBar().showMessage("CMD:Text")
         self.callCommand('TEXT')
         return      
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -658,6 +659,8 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.scene.activeICommand.addMauseEvent(point=None,
                                                     entity=qtItems,
                                                     force=None)
+            else:
+                self.scene.clearSelection()
     
     def getCommand(self, name):
         """
@@ -683,16 +686,23 @@ class CadWindowMdi(QtGui.QMainWindow):
         dlg.setIcon(QtGui.QMessageBox.Critical)
         dlg.exec_()
         return
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------------------------------------------------------------SETTINGS STORAGE
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------
+#--------------------------------------------------------------------SETTINGS STORAGE
+#------------------------------------------------------------------------------------
     def readSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
         settings.beginGroup("CadWindow")
-        self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-        self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+        max=settings.value("maximized", False)
+        if max==True: #if cadwindow was maximized set it maximized again
+            self.showMaximized()
+        else: #else set it to the previous position and size
+            self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
+            self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
         settings.endGroup()
-
+        
+        settings.beginGroup("CadWindowState")
+        self.restoreState(settings.value('State').toByteArray())
+        settings.endGroup()
 
     def writeSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
@@ -700,16 +710,15 @@ class CadWindowMdi(QtGui.QMainWindow):
         settings.beginGroup("CadWindow")
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
+        settings.setValue('maximized', self.isMaximized())
         settings.endGroup()
         
-        settings.beginGroup("Toolbars")
-        settings.setValue('pos', self.pos())
-        settings.setValue('size', self.size())
+        settings.beginGroup("CadWindowState")
+        settings.setValue("state", self.saveState()) 
         settings.endGroup()
-        
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------------END SETTINGS STORAGE
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------       
+#------------------------------------------------------------------------------------
+#----------------------------------------------------------------END SETTINGS STORAGE
+#------------------------------------------------------------------------------------       
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

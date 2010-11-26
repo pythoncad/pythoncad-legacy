@@ -121,13 +121,5 @@ class IDocument(QtGui.QMdiSubWindow):
         pass
         
     def keyShortcut(self, command):
-        if command=='DELETE':
-            self.__cadwindow._onDelete()
-        elif command=='COPY':
-            self.__cadwindow._onCopy()
-        elif command=='MOVE':
-            self.__cadwindow._onMove()
-        elif command=='ROTATE':
-            self.__cadwindow._onRotate()
-        elif command=='MIRROR':
-            self.__cadwindow._onMirror()
+        self.__cadwindow.statusBar().showMessage(str(command))
+        self.__cadwindow.callCommand(command)

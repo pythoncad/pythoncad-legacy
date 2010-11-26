@@ -46,6 +46,7 @@ class CmdCategory(object):
             self.__menus[number] = menu
             # create tool-bar
             toolbar = main_window.addToolBar(category)
+            toolbar.setObjectName(category)  #this is needed for remember toolbar position in cadwindow.writesettings(savestate)
             self.__toolbars[number] = toolbar
             # set attribute for category
             setattr(self, category, number)
@@ -61,7 +62,10 @@ class CmdCategory(object):
             return self.__menus[number]
         return None
 
-
+    @property
+    def getToolbarList(self):
+        return self.__toolbars
+        
     def getToolbar(self, number):
         '''
         Gets an tool-bar from the list.
