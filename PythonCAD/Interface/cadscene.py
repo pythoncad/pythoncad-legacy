@@ -170,20 +170,26 @@ class CadScene(QtGui.QGraphicsScene):
                         self.fireWarning("Wrong input value")
                     super(CadScene, self).mouseReleaseEvent(event)
                     return
+                    
                 if event.button()==QtCore.Qt.LeftButton:
                     point=None
                     if self.showHandler:
                         if self.posHandler==None:
                             self.posHandler=PositionHandler(event.scenePos())
                             self.addItem(self.posHandler)
-                            point=self.posHandler.scenePos
+                            return
+                        else:
+                            self.posHandler.show()
+                            return
                     if point==None:
                         point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)
-                    # fire the mouse to the icommand class
+                    # fire the mouse to the ICommand class
                     self.activeICommand.addMauseEvent(point=point,
                                                     entity=qtItems,
                                                     force=self.forceDirection)
-                    
+            else:
+                self.hideHandler()
+                
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
@@ -191,7 +197,24 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
-    
+        
+    def hanhlerDoubleClick(self):  
+        """
+            event add from the handler 
+        """
+        point=Point(self.posHandler.scenePos.x(), self.posHandler.scenePos.y()*-1.0)
+        self.activeICommand.addMauseEvent(point=point, 
+                                            distance=posHandler.distance,
+                                            angle=posHandler.angle)
+        self.hideHandler()
+        
+    def hideHandler(self):
+        """
+            this function is used to hide the handler 
+        """
+        if self.posHandler!=None:
+            self.posHandler.hide()
+            
     def mouseDoubleClickEvent(self, event):
         if event.button()==QtCore.Qt.MidButton:
             self.fireZoomFit()

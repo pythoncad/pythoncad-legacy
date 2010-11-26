@@ -116,7 +116,7 @@ class CmdLineDock(QtGui.QDockWidget):
         
 class PyCadTextView(QtGui.QTextEdit):
     """
-        this class rapresent the text view that pyCad use for rendering the output
+        this class represent the text view that pyCad use for rendering the output
     """
     def __init__(self, parent):
         super(PyCadTextView, self).__init__(parent)

@@ -20,7 +20,9 @@
 # This module provide class to manage geometrical CustomVector operation
 #
 import math
+
 from PyQt4 import QtCore, QtGui
+
 from Kernel.pycadevent              import PyCadEvent
 
 class CustomVector(object):
@@ -76,7 +78,7 @@ class CustomVector(object):
         
 class PositionHandler(QtGui.QGraphicsItem):
     """
-        this class provide a custom object for esely moving entity into
+        this class provide a custom object for easily moving entity into
         PythonCAD
     """
     def __init__(self, position=None ):
@@ -88,16 +90,38 @@ class PositionHandler(QtGui.QGraphicsItem):
         self.circle.setAcceptDrops(False)
         self.circle.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
         self.ActionHandler=ActionHandler(self, QtCore.QPointF(0,0))
+        self.ActionHandler.fireApply+=self._fireApply
+        self.customAction=PyCadEvent()
+        self.confirmEvent=PyCadEvent()
+        self.fireApply=PyCadEvent()
         if position!=None:
             self.setPos(position)
         self.position=position
-     
+        
+    def _fireApply(self):
+        print "Apply"
+        self.fireApply()
+        
+    def handlerUpdated(self, angle, position):
+        """
+            re fire the event to the upper class
+        """
+        self.customAction(item, angle, position, self.distance)
+       
+        
     def updateSelected(self):
         pass
+        
     def boundingRect(self):
+        """
+            method overloaded
+        """
         return self.shape().boundingRect()
     
     def definePath(self):
+        """
+        method overloaded
+        """
         p1=QtCore.QPointF(self.circle.pos().x()-5.0,self.circle.pos().y()-5.0)
         p2=QtCore.QPointF(self.ActionHandler.pos().x(),self.ActionHandler.pos().y())
         rect=QtCore.QRectF(p1,p2)
@@ -152,38 +176,45 @@ class PositionHandler(QtGui.QGraphicsItem):
 class ActionHandler(QtGui.QGraphicsItem):
     def __init__(self,parent=None, position=None ):
         super(ActionHandler, self).__init__(parent)
+        # supported event 
+        self.customAction=PyCadEvent()
+        self.fireApply=PyCadEvent()
         # Center point 
         p0=QtCore.QPointF(5,5)
         self.circle=CirclePosition(self, p0)
-        self.circle+=self.positionChanged
+        self.circle.customAction+=self.positionChanged
+        self.circle.fireApply+=self._fireApply
         # Angle hendler
         self.arcAngle=ArcAngle(self, p0)
+        self.arcAngle.customAction+=self.positionChanged
+        self.arcAngle.fireApply+=self._fireApply
         p1=QtCore.QPointF(10,0)
         # Horizontal Arrow
         self.hArrow=ArrowItem(self,p1)
         p2=QtCore.QPointF(0,-10)
-        self.hArrow+=self.positionChanged
+        self.hArrow.customAction+=self.positionChanged
+        self.arcAngle.fireApply+=self._fireApply
         # Vertical Arrow
         self.vArrow=ArrowItem(self,p2, 90, QtGui.QPen(QtGui.QColor(79, 106, 25)))
-        self.vArrow+=self.positionChanged
+        self.vArrow.customAction+=self.positionChanged
+        self.arcAngle.fireApply+=self._fireApply
         # QGraphicsItem settings
         if position!=None:
             self.setPos(position)
         self.position=position
         self.setAcceptsHoverEvents(True)
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
-    def positionChanged(self, item):
+        
+    def _fireApply(self):   
+        print "ActionHandler apply" 
+        self.fireApply()
+        
+    def positionChanged(self):
         """
             notifies that some changed are made in position 
         """
-        pass
-    def rotationChanged(self, item):
-        """
-            notifies that some changed are made in position 
-        """
-        pass
-    def updateSelected(self):
-        pass        
+        self.customAction(self.rotation(), self.scenePos())       
+        
     def boundingRect(self):
         return QtCore.QRectF()
         
@@ -192,7 +223,8 @@ class ActionHandler(QtGui.QGraphicsItem):
             overloading of the paint method
         """
         self.parentItem().paint(painter,option,widget)
-
+    
+        
 class ArcAngle(QtGui.QGraphicsItem):
     def __init__(self,parent=None , position=None ):
         super(ArcAngle, self).__init__(parent)
@@ -203,6 +235,7 @@ class ArcAngle(QtGui.QGraphicsItem):
             self.setPos(position)
         self.position=position
         self.customAction=PyCadEvent()
+        self.fireApply=PyCadEvent()
     def updateSelected(self):
         pass    
     def definePath(self):
@@ -253,15 +286,10 @@ class ArcAngle(QtGui.QGraphicsItem):
             set the rotation angle
         """
         self.parentItem().setRotation(angle%360)
-        self.customAction(self)
+        self.customAction()
         
     def contextMenuEvent(self, event) :
-        self.qle=QtGui.QLineEdit()
-        self.qle.keyPressEvent=self._keyPress
-        self.menu =QtGui.QMenu();
-        wac=QtGui.QWidgetAction(self.menu)
-        wac.setDefaultWidget(self.qle)
-        action=self.menu.addAction(wac);
+        self.menu=ContextMenu(self._keyPress, self._apply)
         self.menu.exec_(event.screenPos())
         del(self.menu)
         
@@ -270,11 +298,34 @@ class ArcAngle(QtGui.QGraphicsItem):
             keyPressEvent
         """
         if keyEvent.key()==16777220: # Return Pressed
-            text=self.qle.text()
+            text=self.menu.qle.text()
             r=self.parentItem().rotation()
             self.setRotation(float(text)+r)
             return
-        QtGui.QLineEdit.keyPressEvent(self.qle, keyEvent)       
+        QtGui.QLineEdit.keyPressEvent(self.menu.qle, keyEvent)   
+        
+    def _apply(self, event):
+        self.fireApply()
+            
+        
+class ContextMenu(QtGui.QMenu):
+    def __init__(self, keyPressFunction=None, confermationFunction=None):
+        super(ContextMenu, self).__init__()
+        #set action QLineEdit
+        if keyPressFunction!= None:
+            self.qle=QtGui.QLineEdit()
+            self.qle.keyPressEvent=keyPressFunction
+            wac=QtGui.QWidgetAction(self)
+            wac.setDefaultWidget(self.qle)
+            dummyAction=self.addAction(wac)
+        #set apply action 
+        if confermationFunction!=None:
+            self.label=QtGui.QLabel()
+            self.label.setText("Apply")
+            self.label.mouseReleaseEvent=confermationFunction
+            wac1=QtGui.QWidgetAction(self)
+            wac1.setDefaultWidget(self.label)
+            dummyAction=self.addAction(wac1);
         
 class CirclePosition(QtGui.QGraphicsItem):
     def __init__(self,parent=None , position=None ):
@@ -286,6 +337,7 @@ class CirclePosition(QtGui.QGraphicsItem):
         if position!=None:
             self.setPos(position)
         self.customAction=PyCadEvent()
+        self.fireApply=PyCadEvent()
     def updateSelected(self):
         pass    
     def definePath(self):
@@ -332,7 +384,27 @@ class CirclePosition(QtGui.QGraphicsItem):
         else:
             self.setPos(QtCore.QPointF(x, y))
             super(mouseMoveEvent, self).mouseMoveEvent(event)
-        self.customAction(self) 
+        self.customAction() 
+    
+    def contextMenuEvent(self, event):
+        self.menu=ContextMenu(self._keyPress, self._apply)
+        self.menu.exec_(event.screenPos())
+        del(self.menu)
+        
+    def _keyPress(self, keyEvent):
+        """
+            keyPressEvent
+        """
+        if keyEvent.key()==16777220: # Return Pressed
+            text=self.menu.qle.text()
+            x, y=text.split(',')
+            p=QtCore.QPointF(float(x), float(y))
+            self.parentItem().setPos(p)
+            return
+        QtGui.QLineEdit.keyPressEvent(self.menu.qle, keyEvent)   
+        
+    def _apply(self, event):
+        self.fireApply()
         
 class ArrowItem(QtGui.QGraphicsItem):
     def __init__(self,parent=None, position=None, rotation=None , arrowColor=None):
@@ -351,6 +423,8 @@ class ArrowItem(QtGui.QGraphicsItem):
             self._angle=rotation
         self.delta=0
         self.customAction=PyCadEvent()
+        self.fireApply=PyCadEvent()
+        
     def updateSelected(self):
         pass
     def definePath(self):
@@ -408,15 +482,10 @@ class ArrowItem(QtGui.QGraphicsItem):
         x=distance*math.cos(ang)+self.parentItem().pos().x()
         y=distance*math.sin(ang)+self.parentItem().pos().y()
         self.parentItem().setPos(QtCore.QPointF(x, y))
-        self.customAction(self)
+        self.customAction()
         
-    def contextMenuEvent(self, event) :
-        self.qle=QtGui.QLineEdit()
-        self.qle.keyPressEvent=self._keyPress
-        self.menu =QtGui.QMenu();
-        wac=QtGui.QWidgetAction(self.menu)
-        wac.setDefaultWidget(self.qle)
-        action=self.menu.addAction(wac);
+    def contextMenuEvent(self, event):
+        self.menu=ContextMenu(self._keyPress, self._apply)
         self.menu.exec_(event.screenPos())
         del(self.menu)
         
@@ -425,8 +494,12 @@ class ArrowItem(QtGui.QGraphicsItem):
             keyPressEvent
         """
         if keyEvent.key()==16777220: # Return Pressed
-            text=self.qle.text()
+            text=self.menu.qle.text()
             self.setDistance(float(text))
             return
-        QtGui.QLineEdit.keyPressEvent(self.qle, keyEvent)   
-           
+        QtGui.QLineEdit.keyPressEvent(self.menu.qle, keyEvent)   
+        
+    def _apply(self, event):
+        print "ArrowItem apply"
+        self.fireApply()
+

@@ -208,6 +208,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('redo', hasMdiChild)
         self.__cmd_intf.setVisible('copy', hasMdiChild)
         self.__cmd_intf.setVisible('move', hasMdiChild)
+        
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
         self.__cmd_intf.setVisible('rotate', hasMdiChild)
@@ -352,6 +353,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'previous', 'Pre&vious', self.mdiArea.activatePreviousSubWindow)
         # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
+        
         return
         
     def updateRecentFileList(self):

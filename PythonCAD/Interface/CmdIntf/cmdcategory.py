@@ -61,7 +61,7 @@ class CmdCategory(object):
             return self.__menus[number]
         return None
 
-    
+
     def getToolbar(self, number):
         '''
         Gets an tool-bar from the list.
