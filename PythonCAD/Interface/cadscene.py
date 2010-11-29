@@ -115,23 +115,24 @@ class CadScene(QtGui.QGraphicsScene):
         #
         #This event manages the status bar coordinates display (relative or absolute depending on self.fromPoint)
         #
-        if self.fromPoint==None:
-            self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
         else:
-            x=scenePos.x()-self.fromPoint.getx()
-            y=scenePos.y()*-1.0-self.fromPoint.gety()
-            self.fireCoords(x, y, "rel")
+            if self.fromPoint==None:
+                self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
+            else:
+                x=scenePos.x()-self.fromPoint.getx()
+                y=scenePos.y()*-1.0-self.fromPoint.gety()
+                self.fireCoords(x, y, "rel")
         #
         #This seems needed to preview commands
         #
-        if self.activeICommand:
-            #scenePos=event.scenePos()
-            distance=None
-            point=Point(scenePos.x(), scenePos.y()*-1.0)
-            qtItem=[self.itemAt(scenePos)]
-            if self.__oldClickPoint:
-                distance=self.getDistance(event)
-            self.activeICommand.updateMauseEvent(point, distance, qtItem)
+            if self.activeICommand:
+                #scenePos=event.scenePos()
+                distance=None
+                point=Point(scenePos.x(), scenePos.y()*-1.0)
+                qtItem=[self.itemAt(scenePos)]
+                if self.__oldClickPoint:
+                    distance=self.getDistance(event)
+                self.activeICommand.updateMauseEvent(point, distance, qtItem)
 
 #            self.updatePreview(self,point, distance)
         #

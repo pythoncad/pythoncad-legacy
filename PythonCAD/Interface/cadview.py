@@ -18,10 +18,12 @@ class CadView(QtGui.QGraphicsView):
         self.firstPanPoint=QtCore.QPointF()
     
     def Pan(self, panActive, eventPoint):
+        
         if panActive==True:
-            self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
+            self.setDragMode(QtGui.QGraphicsView.NoDrag)
             self.firstPanPoint=eventPoint
         elif panActive==False:
+            self.firstPanPoint=None
             self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         else:
             if self.controlPress==False:
@@ -30,7 +32,6 @@ class CadView(QtGui.QGraphicsView):
                 vector=self.firstPanPoint-eventPoint
                 newC=cOnScene+vector
                 self.centerOn(newC)
-            
 
     
     def wheelEvent(self, event):
