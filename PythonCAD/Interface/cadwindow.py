@@ -115,37 +115,19 @@ class CadWindowMdi(QtGui.QMainWindow):
         
         
         #Force Direction
-        self.forceDirectionStatus=QtGui.QToolButton()
-        self.forceDirectionStatus.setCheckable(True)
-#        self.forceDirectionStatus.setFlat(True)
-        self.forceDirectionStatus.setFixedSize(20, 20)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'SForceDir.png')
-        self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
-        self.forceDirectionStatus.setToolTip('Orthogonal Mode [right click will in the future set increment constrain angle]')
+        self.forceDirectionStatus=statusButton('SForceDir.png', 'Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
         
         #Snap
-        self.SnapStatus=QtGui.QToolButton()
-        self.SnapStatus.setCheckable(True)
-#        self.forceDirectionStatus.setFlat(True)
-        self.SnapStatus.setFixedSize(20, 20)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'SSnap.png')
-        self.SnapStatus.setIcon(QtGui.QIcon(iconpath))
-        self.SnapStatus.setToolTip('Snap [long click display snap list, it should be \n a checkist in the future, and activated by rightclick]')
+        self.SnapStatus=statusButton('SSnap.png', 'Snap [long click display snap list, it should be \n a checkist in the future, and activated by rightclick]')
         self.connect(self.SnapStatus, QtCore.SIGNAL('clicked()'), self.setSnapStatus)
         self.SnapStatus.setMenu(self.__cmd_intf.Category.getMenu(5))
         self.statusBar().addPermanentWidget(self.SnapStatus)
 
         
         #Grid
-        self.GridStatus=QtGui.QToolButton()
-        self.GridStatus.setCheckable(True)
-#        self.GridStatus.setFlat(True)
-        self.GridStatus.setFixedSize(20, 20)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'SGrid.png')
-        self.GridStatus.setIcon(QtGui.QIcon(iconpath))
-        self.GridStatus.setToolTip('Grid Mode [not available yet]')
+        self.GridStatus=statusButton('SGrid.png', 'Grid Mode [not available yet]') 
         self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
         self.statusBar().addPermanentWidget(self.GridStatus)
         
@@ -280,6 +262,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #StatusBAR Satus Tools
         self.forceDirectionStatus.setEnabled(hasMdiChild)
         self.GridStatus.setEnabled(hasMdiChild)
+        self.SnapStatus.setEnabled(hasMdiChild)
         
     def createMdiChild(self, file=None):
         """
@@ -819,3 +802,20 @@ class CadWindowMdi(QtGui.QMainWindow):
         return [ents[ent].geoItem.getSympy() for ent in ents if ent!=None]
                 
 
+class statusButton(QtGui.QToolButton):
+    def __init__(self, icon,  tooltip):
+        super(statusButton, self).__init__()
+        self.setCheckable(True)
+        self.setFixedSize(20, 20)
+        self.getIcon(icon)
+        self.setToolTip(tooltip)
+        
+    def getIcon(self, fileName):
+        iconpath=os.path.join(os.getcwd(), 'icons', fileName)
+        self.setIcon(QtGui.QIcon(iconpath))
+    
+#    def mousePressEvent(self, event):
+#        if event.button()==QtCore.Qt.LeftButton:
+#            pass
+#        elif event.button()==QtCore.Qt.RightButton:
+#            pass
