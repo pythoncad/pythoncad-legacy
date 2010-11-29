@@ -120,7 +120,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
         
         #Snap
-        self.SnapStatus=statusButton('SSnap.png', 'Snap [long click display snap list, it should be \n a checkist in the future, and activated by rightclick]')
+        self.SnapStatus=statusButton('SSnap.png', 'Snap [right click displays snap list]\n for future implementation it should be a checkist')
         self.connect(self.SnapStatus, QtCore.SIGNAL('clicked()'), self.setSnapStatus)
         self.SnapStatus.setMenu(self.__cmd_intf.Category.getMenu(5))
         self.statusBar().addPermanentWidget(self.SnapStatus)
@@ -814,8 +814,8 @@ class statusButton(QtGui.QToolButton):
         iconpath=os.path.join(os.getcwd(), 'icons', fileName)
         self.setIcon(QtGui.QIcon(iconpath))
     
-#    def mousePressEvent(self, event):
-#        if event.button()==QtCore.Qt.LeftButton:
-#            pass
-#        elif event.button()==QtCore.Qt.RightButton:
-#            pass
+    def mousePressEvent(self, event):
+        if event.button()==QtCore.Qt.LeftButton:
+            self.click()
+        elif event.button()==QtCore.Qt.RightButton:
+            self.showMenu()
