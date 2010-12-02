@@ -271,36 +271,27 @@ class ICommand(object):
                 elif value.find('<')>0:
                     pass
                     #implement here polar coordinates
-                else: # brand new feature for Alpha 04, need restile too
+                else: # set coordinate based on distance input and angle from mouse position on the scene
                     d=float(value)
 
                     pX=self.scene.mouseOnSceneX
                     pY=self.scene.mouseOnSceneY
-
-                    #if frompoint is not none
+                    
+                    if self.scene.forceDirection is not None:
+                        pc=Point(pX, pY)
+                        pc=self.correctPositionForcedDirection(pc, self.scene.forceDirection)
+                        pX, pY=pc.getCoords()
+                        
+                    #if frompoint is not none else exception
                     dx=pX-self.scene.fromPoint.getx()
                     dy=pY-self.scene.fromPoint.gety()
-    
-                    if self.scene.forceDirection is not None:
-                        if dx>dy:
-                            x=self.scene.fromPoint.getx()+d
-                            y=self.scene.fromPoint.gety()
-                            
-                            point=Point(x, y)
-                            
-                        elif dx<dy:
-                            x=self.scene.fromPoint.getx()
-                            y=self.scene.fromPoint.gety()+d
-                            
-                            point=Point(x, y)
-                            
-                    else:
-                        a=math.atan2(dy, dx)
+
+                    a=math.atan2(dy, dx)
                         
-                        x=self.scene.fromPoint.getx()+d*math.cos(a)
-                        y=self.scene.fromPoint.gety()+d*math.sin(a)
+                    x=self.scene.fromPoint.getx()+d*math.cos(a)
+                    y=self.scene.fromPoint.gety()+d*math.sin(a)
                             
-                        point=Point(x, y)
+                    point=Point(x, y)
                         
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
