@@ -21,9 +21,15 @@
 # This Module provide a Interface Command managing the preview the and the snap
 # system
 #
+# How it works:
+# 
+#
+#
 #Qt Import
 #
 from PyQt4 import QtCore, QtGui
+
+import math, string
 #
 #Kernel Import
 #
@@ -255,8 +261,47 @@ class ICommand(object):
             try:
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
-                x, y=value.split(',')
-                point=Point(float(x), float(y))
+                if value.find(',')>0:
+                    x, y=value.split(',')
+                    point=Point(float(x), float(y))
+#                elif value.find('*')>0:     waiting for improovement
+#                    x, y=value.split('*')
+#                    point=Point(float(x), float(y))
+#                    # implement here relative coordinates
+                elif value.find('<')>0:
+                    pass
+                    #implement here polar coordinates
+                else: # brand new feature for Alpha 04, need restile too
+                    d=float(value)
+
+                    pX=self.scene.mouseOnSceneX
+                    pY=self.scene.mouseOnSceneY
+
+                    #if frompoint is not none
+                    dx=pX-self.scene.fromPoint.getx()
+                    dy=pY-self.scene.fromPoint.gety()
+    
+                    if self.scene.forceDirection is not None:
+                        if dx>dy:
+                            x=self.scene.fromPoint.getx()+d
+                            y=self.scene.fromPoint.gety()
+                            
+                            point=Point(x, y)
+                            
+                        elif dx<dy:
+                            x=self.scene.fromPoint.getx()
+                            y=self.scene.fromPoint.gety()+d
+                            
+                            point=Point(x, y)
+                            
+                    else:
+                        a=math.atan2(dy, dx)
+                        
+                        x=self.scene.fromPoint.getx()+d*math.cos(a)
+                        y=self.scene.fromPoint.gety()+d*math.sin(a)
+                            
+                        point=Point(x, y)
+                        
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:

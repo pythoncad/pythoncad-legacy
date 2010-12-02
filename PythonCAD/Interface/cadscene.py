@@ -82,8 +82,14 @@ class CadScene(QtGui.QGraphicsScene):
         #
         # Input implemetation by carlo
         #
+        self.cooDeltaX=0
+        self.cooDeltaY=0
         self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
-        self.selectionAddMode=None
+        self.selectionAddMode=False
+        
+        # scene aspect
+        r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
+        self.setBackgroundBrush(QtGui.QBrush(QtGui.QColor(r, g, b), QtCore.Qt.SolidPattern))
         
     @property
     def activeKernelCommand(self):
@@ -107,6 +113,8 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
+        self.mouseOnSceneX=scenePos.x()
+        self.mouseOnSceneY=scenePos.y()*-1.0
         #
         #This event manages middle mouse button PAN
         #
@@ -118,10 +126,15 @@ class CadScene(QtGui.QGraphicsScene):
         else:
             if self.fromPoint==None:
                 self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
+                self.cooDeltaX=scenePos.x()
+                self.cooDeltaY=scenePos.y()*-1.0
             else:
                 x=scenePos.x()-self.fromPoint.getx()
                 y=scenePos.y()*-1.0-self.fromPoint.gety()
                 self.fireCoords(x, y, "rel")
+                
+                self.cooDeltaX=x
+                self.cooDeltaY=y
         #
         #This seems needed to preview commands
         #
@@ -190,7 +203,7 @@ class CadScene(QtGui.QGraphicsScene):
         if self._cmdZoomWindow:
             self.zoomWindows(self.selectionArea().boundingRect())
             self._cmdZoomWindow=None
-            self.clearSelection() #clear the selection after the window zoom, why?
+            self.clearSelection() #clear the selection after the window zoom, why? because zoom windows select entities_>that's bad
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
@@ -251,9 +264,7 @@ class CadScene(QtGui.QGraphicsScene):
         if event.key()==QtCore.Qt.Key_Shift:
 #            if self.activeICommand!=None:
 #                if self.activeKernelCommand.activeException()==ExcMultiEntity:
-#                    self.selectionAddMode=True
-#                    print self.selectionAddMode
-            self.selectionAddMode=None
+            self.selectionAddMode=False
             print self.selectionAddMode
         else:
             pass

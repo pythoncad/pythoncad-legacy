@@ -53,6 +53,8 @@ INTERFACE_COMMAND={'DISTANCE2POINT':Distance2Point}
 
 RESTART_COMMAND_OPTION=False
 
+BACKGROUND_COLOR=(255, 255, 255)
+
 KEY_MAP={
          QtCore.Qt.Key_Delete:'DELETE', 
          QtCore.Qt.Key_L:'SEGMENT', 
