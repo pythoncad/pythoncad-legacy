@@ -43,7 +43,9 @@ from Interface.Entity.base          import BaseEntity
 from Interface.Command.icommand     import ICommand
 from Interface.cadinitsetting       import *
 from Kernel.exception               import *  
-from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
+from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
+
+from Interface.caddialogs import *
 
 
 class CadWindowMdi(QtGui.QMainWindow):
@@ -73,8 +75,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.updateMenus()
         self.lastDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
         
-        self.readSettings() #now works for position and size and ismaximized, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
-
+        self.readSettings() #now works for position and size and ismaximized, and finally toolbar position
         return
       
     @property
@@ -114,24 +115,19 @@ class CadWindowMdi(QtGui.QMainWindow):
         
         
         #Force Direction
-        self.forceDirectionStatus=QtGui.QPushButton()
-        self.forceDirectionStatus.setCheckable(True)
-        self.forceDirectionStatus.setFlat(True)
-        self.forceDirectionStatus.setFixedSize(20, 20)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'SForceDir.png')
-        self.forceDirectionStatus.setIcon(QtGui.QIcon(iconpath))
-        self.forceDirectionStatus.setToolTip('Orthogonal Mode [right click will in the future set increment constrain angle]')
+        self.forceDirectionStatus=statusButton('SForceDir.png', 'Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
         
+        #Snap
+        self.SnapStatus=statusButton('SSnap.png', 'Snap [right click displays snap list]\n for future implementation it should be a checkist')
+        self.connect(self.SnapStatus, QtCore.SIGNAL('clicked()'), self.setSnapStatus)
+        self.SnapStatus.setMenu(self.__cmd_intf.Category.getMenu(5))
+        self.statusBar().addPermanentWidget(self.SnapStatus)
+
+        
         #Grid
-        self.GridStatus=QtGui.QPushButton()
-        self.GridStatus.setCheckable(True)
-        self.GridStatus.setFlat(True)
-        self.GridStatus.setFixedSize(20, 20)
-        iconpath=os.path.join(os.getcwd(), 'icons', 'SGrid.png')
-        self.GridStatus.setIcon(QtGui.QIcon(iconpath))
-        self.GridStatus.setToolTip('Grid Mode [not available yet]')
+        self.GridStatus=statusButton('SGrid.png', 'Grid Mode [not available yet]') 
         self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
         self.statusBar().addPermanentWidget(self.GridStatus)
         
@@ -152,6 +148,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         else:
             self.scene.forceDirection=False
 
+    def setSnapStatus(self):
+        print "status"
+        pass
+        
     def setGrid(self):
         pass
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,6 +263,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         #StatusBAR Satus Tools
         self.forceDirectionStatus.setEnabled(hasMdiChild)
         self.GridStatus.setEnabled(hasMdiChild)
+        self.SnapStatus.setEnabled(hasMdiChild)
         
     def createMdiChild(self, file=None):
         """
@@ -317,6 +318,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
+        # separator
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'preferences', '&User Preferences', self.preferences)
         #Modify
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'copy', '&Copy', self._onCopy)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'move', '&Move', self._onMove)
@@ -535,7 +539,13 @@ class CadWindowMdi(QtGui.QMainWindow):
         except UndoDbExc:
             self.critical("Unable To Perform Redo")
         self.statusBar().showMessage("Ready")
-        
+    
+    def preferences(self):
+        p=ConfigDialog()
+        #p.exec_()
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------------ON COMMANDS in EDIT
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def _onCopy(self):
         self.statusBar().showMessage("CMD:Copy")
         self.callCommand('COPY')
@@ -580,6 +590,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             On snep Command action
         """
+        #__________SNAP NONE?
         self.scene.clearSelection()
         action = self.sender()
         if action:
@@ -792,3 +803,21 @@ class CadWindowMdi(QtGui.QMainWindow):
         ents=self.mdiArea.currentSubWindow().scene.getAllBaseEntity()
         return [ents[ent].geoItem.getSympy() for ent in ents if ent!=None]
                 
+
+class statusButton(QtGui.QToolButton):
+    def __init__(self, icon,  tooltip):
+        super(statusButton, self).__init__()
+        self.setCheckable(True)
+        self.setFixedSize(20, 20)
+        self.getIcon(icon)
+        self.setToolTip(tooltip)
+        
+    def getIcon(self, fileName):
+        iconpath=os.path.join(os.getcwd(), 'icons', fileName)
+        self.setIcon(QtGui.QIcon(iconpath))
+    
+    def mousePressEvent(self, event):
+        if event.button()==QtCore.Qt.LeftButton:
+            self.click()
+        elif event.button()==QtCore.Qt.RightButton:
+            self.showMenu()
