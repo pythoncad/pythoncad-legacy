@@ -261,17 +261,19 @@ class ICommand(object):
             try:
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
-                if value.find(',')>0:
+                if value.find(',')>-1:   #ABSOLUTE CARTESIAN INPUT
                     x, y=value.split(',')
                     point=Point(float(x), float(y))
-#                elif value.find('*')>0:     waiting for improovement
-#                    x, y=value.split('*')
-#                    point=Point(float(x), float(y))
-#                    # implement here relative coordinates
-                elif value.find('<')>0:
+                elif value.find('*')>-1:    # RELATIVE CARTESIAN INPUT
+                    x, y=value.split('*')
+                    x=self.scene.fromPoint.getx()+float(x)
+                    y=self.scene.fromPoint.gety()+float(y)
+                    point=Point(x, y)
+                    # implement here relative coordinates
+                elif value.find('<')>-1:
                     pass
                     #implement here polar coordinates
-                else: # set coordinate based on distance input and angle from mouse position on the scene
+                else: # DISTANCE+ANGLE FROM SCENE set coordinate based on distance input and angle from mouse position on the scene
                     d=float(value)
 
                     pX=self.scene.mouseOnSceneX
