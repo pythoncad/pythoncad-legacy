@@ -21,9 +21,15 @@
 # This Module provide a Interface Command managing the preview the and the snap
 # system
 #
+# How it works:
+# 
+#
+#
 #Qt Import
 #
 from PyQt4 import QtCore, QtGui
+
+import math, string
 #
 #Kernel Import
 #
@@ -255,8 +261,38 @@ class ICommand(object):
             try:
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
-                x, y=value.split(',')
-                point=Point(float(x), float(y))
+                if value.find(',')>0:
+                    x, y=value.split(',')
+                    point=Point(float(x), float(y))
+#                elif value.find('*')>0:     waiting for improovement
+#                    x, y=value.split('*')
+#                    point=Point(float(x), float(y))
+#                    # implement here relative coordinates
+                elif value.find('<')>0:
+                    pass
+                    #implement here polar coordinates
+                else: # set coordinate based on distance input and angle from mouse position on the scene
+                    d=float(value)
+
+                    pX=self.scene.mouseOnSceneX
+                    pY=self.scene.mouseOnSceneY
+                    
+                    if self.scene.forceDirection is not None:
+                        pc=Point(pX, pY)
+                        pc=self.correctPositionForcedDirection(pc, self.scene.forceDirection)
+                        pX, pY=pc.getCoords()
+                        
+                    #if frompoint is not none else exception
+                    dx=pX-self.scene.fromPoint.getx()
+                    dy=pY-self.scene.fromPoint.gety()
+
+                    a=math.atan2(dy, dx)
+                        
+                    x=self.scene.fromPoint.getx()+d*math.cos(a)
+                    y=self.scene.fromPoint.gety()+d*math.sin(a)
+                            
+                    point=Point(x, y)
+                        
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:
