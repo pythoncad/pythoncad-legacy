@@ -697,8 +697,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         if max==True: #if cadwindow was maximized set it maximized again
             self.showMaximized()
         else: #else set it to the previous position and size
-            self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-            self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+            self.resize(settings.value("size").toSize()) #QtCore.QSize(800, 600)).toSize()) #Still need default value
+            self.move(settings.value("pos").toPoint()) #QtCore.QPoint(400, 300)).toPoint()) #Still need default value
+            pass
         settings.endGroup()
         
         settings.beginGroup("CadWindowState")
