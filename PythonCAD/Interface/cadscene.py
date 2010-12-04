@@ -82,9 +82,9 @@ class CadScene(QtGui.QGraphicsScene):
         #
         # Input implemetation by carlo
         #
-        self.cooDeltaX=0
-        self.cooDeltaY=0
         self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
+        self.mouseOnSceneX=0.0
+        self.mouseOnSceneY=0.0
         self.selectionAddMode=False
         
         # scene aspect
@@ -126,15 +126,10 @@ class CadScene(QtGui.QGraphicsScene):
         else:
             if self.fromPoint==None:
                 self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
-                self.cooDeltaX=scenePos.x()
-                self.cooDeltaY=scenePos.y()*-1.0
             else:
                 x=scenePos.x()-self.fromPoint.getx()
                 y=scenePos.y()*-1.0-self.fromPoint.gety()
                 self.fireCoords(x, y, "rel")
-                
-                self.cooDeltaX=x
-                self.cooDeltaY=y
         #
         #This seems needed to preview commands
         #
