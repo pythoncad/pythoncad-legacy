@@ -247,7 +247,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('originsnap', hasMdiChild)
         self.__cmd_intf.setVisible('intersection', hasMdiChild)
         #Tools
-        
+        self.__cmd_intf.setVisible('info2p', hasMdiChild)
         #window
         self.__cmd_intf.setVisible('tile', hasMdiChild)
         self.__cmd_intf.setVisible('cascade', hasMdiChild)
@@ -630,9 +630,12 @@ class CadWindowMdi(QtGui.QMainWindow):
                    The PythonCAD project aims to produce a scriptable, open-source,
                    easy to use CAD package for any Python/PyQt supported Platforms
                    <p>
-                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.3)<b><P>
+                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.4)<b><P>
                    <p>
-                   <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>""")
+                   <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>
+                   <p>
+                   <a href="http://pythoncad.sourceforge.net/dokuwiki/doku.php">PythonCAD Wiki Page</a>
+                   """)
         return
                 
 # ########################################## CALL COMMAND
@@ -699,8 +702,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         if max==True: #if cadwindow was maximized set it maximized again
             self.showMaximized()
         else: #else set it to the previous position and size
-            self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-            self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+            self.resize(settings.value("size", QtCore.QSize(800, 600)))
+            self.move(settings.value("pos", QtCore.QPoint(400, 300)))
         settings.endGroup()
         
         settings.beginGroup("CadWindowState")
