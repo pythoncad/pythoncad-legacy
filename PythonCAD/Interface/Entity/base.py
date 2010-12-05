@@ -88,8 +88,11 @@ class BaseEntity(QtGui.QGraphicsItem):
         
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemSelectedChange:
-            selected, spool=value.toUInt()
-            self.setColor(selected==True)
+            #selected, spool=value.toUInt()
+            print "value", value, value==1
+            #selected, spool=value
+            #self.setColor(selected==True)
+            self.setColor(value==1)
             self.update(self.boundingRect())
         return QtGui.QGraphicsItem.itemChange(self, change, value)
         
