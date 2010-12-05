@@ -45,7 +45,7 @@ class Point(BaseEntity):
         """
         #Create Arc/Circle
         p=QtCore.QPoint(self.xc, self.yc)
-        painter.drawRect(self.boundingRect())
+        painter.drawRect(self.boundingRect())# self.xc-2,self.yc-2 ,4 ,4) with coordinates seems better
         painter.drawPoint(p)
 
     
