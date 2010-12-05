@@ -700,12 +700,18 @@ class CadWindowMdi(QtGui.QMainWindow):
         if max==True: #if cadwindow was maximized set it maximized again
             self.showMaximized()
         else: #else set it to the previous position and size
-            self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-            self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())
+            try:
+                self.resize(settings.value("size").toSize()) # self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
+                self.move(settings.value("pos").toPoint())   # self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())+
+            except:    
+                print "Warning: unable to set the previews values"
         settings.endGroup()
         
         settings.beginGroup("CadWindowState")
-        self.restoreState(settings.value('State').toByteArray())
+        try:
+            self.restoreState(settings.value('State').toByteArray())
+        except:
+            print "Warning: Unable to set state"
         settings.endGroup()
 
     def writeSettings(self):
