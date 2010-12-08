@@ -39,6 +39,7 @@ from Interface.Entity.actionhandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
+from Interface.snap import *
 
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
@@ -87,6 +88,11 @@ class CadScene(QtGui.QGraphicsScene):
         self.mouseOnSceneY=0.0
         self.selectionAddMode=False
         
+        # Init loading of snap marks
+        self.snappingPoint=SnapPoint()
+        self.endMark=SnapEndMark(0.0, 0.0)
+        self.addItem(self.endMark)
+        
         # scene aspect
         r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
         self.setBackgroundBrush(QtGui.QBrush(QtGui.QColor(r, g, b), QtCore.Qt.SolidPattern))
@@ -104,6 +110,7 @@ class CadScene(QtGui.QGraphicsScene):
     def setActiveSnap(self, value):
         if self.activeICommand!=None:
             self.activeICommand.activeSnap=value
+            self.snappingPoint.activeSnap=value
 
     def _qtInputPopUpReturnPressed(self):
         self.forceDirection="F"+self.qtInputPopUp.text
@@ -115,6 +122,7 @@ class CadScene(QtGui.QGraphicsScene):
         scenePos=event.scenePos()
         self.mouseOnSceneX=scenePos.x()
         self.mouseOnSceneY=scenePos.y()*-1.0
+        self.mouseOnScene=Point(self.mouseOnSceneX,self.mouseOnSceneY)
         #
         #This event manages middle mouse button PAN
         #
@@ -125,22 +133,33 @@ class CadScene(QtGui.QGraphicsScene):
         #
         else:
             if self.fromPoint==None:
-                self.fireCoords(scenePos.x(), (scenePos.y()*-1.0), "abs")
+                self.fireCoords(self.mouseOnSceneX, self.mouseOnSceneY, "abs")
             else:
-                x=scenePos.x()-self.fromPoint.getx()
-                y=scenePos.y()*-1.0-self.fromPoint.gety()
+                x=self.mouseOnSceneX-self.fromPoint.getx()
+                y=self.mouseOnSceneY-self.fromPoint.gety()
                 self.fireCoords(x, y, "rel")
+
         #
         #This seems needed to preview commands
         #
-            if self.activeICommand:
-                #scenePos=event.scenePos()
-                distance=None
-                point=Point(scenePos.x(), scenePos.y()*-1.0)
-                qtItem=[self.itemAt(scenePos)]
-                if self.__oldClickPoint:
-                    distance=self.getDistance(event)
-                self.activeICommand.updateMauseEvent(point, distance, qtItem)
+        if self.activeICommand:
+            
+            #SNAP PREVIEW
+            if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
+                item=self.activeICommand.getEntity(self.mouseOnScene)
+                if item:
+                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item, None)
+                    if ps!=self.mouseOnScene:
+                        self.endMark.move(ps.getx(), ps.gety()*-1)
+                else:
+                    self.hideSnapMarks()
+            #scenePos=event.scenePos()
+            distance=None
+            point=Point(scenePos.x(), scenePos.y()*-1.0)
+            qtItem=[self.itemAt(scenePos)] 
+            if self.__oldClickPoint:
+                distance=self.getDistance(event)
+            self.activeICommand.updateMauseEvent(point, distance, qtItem)
 
 #            self.updatePreview(self,point, distance)
         #
@@ -225,6 +244,12 @@ class CadScene(QtGui.QGraphicsScene):
         """
         if self.posHandler!=None:
             self.posHandler.hide()
+    
+    def hideSnapMarks(self):
+        """
+            this function is used to hide the handler 
+        """
+        self.endMark.hide()
             
     def mouseDoubleClickEvent(self, event):
         if event.button()==QtCore.Qt.MidButton:
@@ -242,6 +267,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
+        self.hideSnapMarks()
         self.fromPoint=None
         
 # ################################################# KEY EVENTS
