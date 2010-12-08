@@ -23,63 +23,90 @@
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
 from Kernel.GeoEntity               import *
+from Kernel.GeoEntity.segment       import Segment
 from Kernel.GeoUtil.intersection    import *
 from Kernel.GeoUtil.util            import *
 
 class TrimCommand(BaseCommand):
     """
-        this class rappresent the Trim command
+        this class represent the Trim command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
-        self.exception=[ExcText,
-                        ExcText,  
+        self.exception=[ExcEntityPoint,
+                        ExcEntityPoint,  
                         ExcText]
         self.defaultValue=[None, None,"BOTH"]
-        self.message=[  "Geve me the First entity", 
+        self.message=[  "Give me the First entity", 
                         "Give me the Second entity",
-                        "Give me a point near the First entity", 
-                        "Give me a point near the Second entity", 
                         "Give me The Trim Mode ((FIRST,SECOND,BOTH)"]
 
     def performTrim(self):
         """
             get the chamfer segments
         """
+        id0, p0=self.value[0]
+        id1, p1=self.value[1]
+        
         updEnts=[]
-        dbEnt1=self.document.getEntity(self.value[0])
-        geoEnt1=self.document.convertToGeometricalEntity(dbEnt1)
-        dbEnt2=self.document.getEntity(self.value[1])
-        geoEnt2=self.document.convertToGeometricalEntity(dbEnt2)
-        intPoint=findSegmentExtendedIntersectionPoint(geoEnt1, geoEnt2)
+        geoEnt1=self.document.getEntity(id0)
+        seg1=geoEnt1.toGeometricalEntity()
+        geoEnt2=self.document.getEntity(id1)
+        seg2=geoEnt2.toGeometricalEntity()
+        intPoint=findSegmentExtendedIntersectionPoint(seg1, seg2)
         if len(intPoint)<=0:
             raise PythopnCadWarning("No intersection Found") 
         
-        if dbEnt1.eType=="SEGMENT":     
-            geoEntTrim1=updateSegment(geoEnt1, self.value[2], intPoint[0])
+        def getNearestPoint(pointArray, referencePoint):              
+            distance=None
+            exitPoint=None
+            for p in pointArray:
+                if distance==None:
+                    distance=p.dist(referencePoint)
+                    exitPoint=p
+                    continue
+                else:
+                    newDistance=p.dist(exitPoint)
+                    if newDistance<distance:
+                        distance=newDistance
+                        exitPoint=p
+            return exitPoint 
             
-        if dbEnt2.eType=="SEGMENT":     
-            geoEntTrim2=updateSegment(geoEnt2, self.value[3], intPoint[0])
-        
-        if self.value[4]=='FIRST':
-            dbEnt1.setConstructionElements(geoEntTrim1.getConstructionElements())
-            updEnts.append(dbEnt1)
-        elif self.value[4]=='SECOND':
-            dbEnt2.setConstructionElements(geoEntTrim2.getConstructionElements())
-            updEnts.append(dbEnt2)            
-        else:
-            dbEnt1.setConstructionElements(geoEntTrim1.getConstructionElements())
-            updEnts.append(dbEnt1)
-            dbEnt2.setConstructionElements(geoEntTrim2.getConstructionElements())
-            updEnts.append(dbEnt2) 
+        def getSegmentCelements(obj, pickPoint, intersectionPoint):
+            if isinstance(obj, Segment):
+                geoEntTrim=None
+                geoEntTrim=updateSegment(obj, pickPoint, intersectionPoint)
+                _cElements, entityType=self.document._getCelements(geoEntTrim)
+                return _cElements
+            else:
+                return None
+            
+        if self.value[2]=='FIRST' or self.value[2]=='BOTH':
+            nearestIntersectionPoint=getNearestPoint(intPoint, p0)
+            if nearestIntersectionPoint!=None:
+                _cElements=getSegmentCelements(seg1, p0,nearestIntersectionPoint)
+                if _cElements!= None:
+                    geoEnt1.setConstructionElements(_cElements)
+                    updEnts.append(geoEnt1)
+            
+        if self.value[2]=='SECOND' or self.value[2]=='BOTH':
+            nearestIntersectionPoint=getNearestPoint(intPoint, p1)
+            if nearestIntersectionPoint!=None:
+                _cElements=getSegmentCelements(seg2, p1,nearestIntersectionPoint)
+                if _cElements!= None:
+                    geoEnt2.setConstructionElements(_cElements)
+                    updEnts.append(geoEnt2)
         return updEnts
         
     def applyCommand(self):
         """
             apply the trim command
         """
-        if len(self.value)!=5:
+        if len(self.value)<2:
             raise PyCadWrongImputData("Wrong number of imput parameter")
+        if len(self.value)==2:
+            self.value.append("BOTH")   # TODO: MAKE A GLOBAL VARIABLE TO SET THIS VALUE
+                                        # AS A SETTING VALUE
         try:
             self.document.startMassiveCreation()
             for _ent in self.performTrim():

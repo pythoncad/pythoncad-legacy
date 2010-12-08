@@ -21,7 +21,7 @@
 # This module provide basic DB class for storing entity in pythoncad
 #
 
-from Kernel.Db.pycadobject              import *
+from Kernel.Db.pycadobject             import *
 from Kernel.GeoEntity.point            import Point
 
 class Entity(PyCadObject):
