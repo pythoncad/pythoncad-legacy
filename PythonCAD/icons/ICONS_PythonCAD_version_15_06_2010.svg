@@ -148,15 +148,6 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3721"
-       id="linearGradient3727"
-       x1="500"
-       y1="52.362183"
-       x2="400"
-       y2="152.36218"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3721"
        id="linearGradient3739"
        gradientUnits="userSpaceOnUse"
        x1="500"
@@ -562,6 +553,258 @@
        x2="1689.2721"
        y2="1179.3143"
        gradientTransform="matrix(1.4951175,0,0,1.4951175,-854.02116,-466.51129)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4129"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4134"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter4171"
+       x="-0.7586892"
+       width="2.5173784"
+       y="-0.7586892"
+       height="2.5173784">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.0672684"
+         id="feGaussianBlur4173" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4175"
+       x="-0.14797885"
+       width="1.2959577"
+       y="-0.14797885"
+       height="1.2959577">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.2810888"
+         id="feGaussianBlur4177" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4179"
+       x="-0.7586892"
+       width="2.5173784"
+       y="-0.7586892"
+       height="2.5173784">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.0672684"
+         id="feGaussianBlur4181" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4197"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4203"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4210"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4214"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter4216"
+       x="-0.88261397"
+       width="2.7652279"
+       y="-0.88261397"
+       height="2.7652279">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="7.0582999"
+         id="feGaussianBlur4218" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4220"
+       x="-0.15696882"
+       width="1.3139376"
+       y="-0.20046425"
+       height="1.4009285">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.8170239"
+         id="feGaussianBlur4222" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4224"
+       x="-0.88261397"
+       width="2.7652279"
+       y="-0.88261397"
+       height="2.7652279">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="7.0582999"
+         id="feGaussianBlur4226" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4242"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4246"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4253"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4257"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4261"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter4285"
+       x="-1.0455809"
+       width="3.0911618"
+       y="-1.0455809"
+       height="3.0911618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.3615532"
+         id="feGaussianBlur4287" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4289"
+       x="-1.0455809"
+       width="3.0911618"
+       y="-1.0455809"
+       height="3.0911618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.3615532"
+         id="feGaussianBlur4291" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4293"
+       x="-1.0455809"
+       width="3.0911618"
+       y="-1.0455809"
+       height="3.0911618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.3615532"
+         id="feGaussianBlur4295" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4297"
+       x="-1.0455809"
+       width="3.0911618"
+       y="-1.0455809"
+       height="3.0911618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.3615532"
+         id="feGaussianBlur4299" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4301"
+       x="-1.0455809"
+       width="3.0911618"
+       y="-1.0455809"
+       height="3.0911618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.3615532"
+         id="feGaussianBlur4303" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4305"
+       x="-0.16518458"
+       width="1.3303692"
+       y="-0.16518455"
+       height="1.3303691">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="4.521804"
+         id="feGaussianBlur4307" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4309"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -570,9 +813,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9810082"
-     inkscape:cx="1547.0816"
-     inkscape:cy="-201.39917"
+     inkscape:zoom="3.9240328"
+     inkscape:cx="1082.8225"
+     inkscape:cy="641.40287"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -583,16 +826,16 @@
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:snap-midpoints="true"
-     inkscape:snap-object-midpoints="true"
-     inkscape:snap-center="true"
+     inkscape:snap-midpoints="false"
+     inkscape:snap-object-midpoints="false"
+     inkscape:snap-center="false"
      inkscape:snap-grids="false"
      inkscape:object-paths="false"
      inkscape:snap-intersection-paths="false"
      inkscape:snap-global="true"
      inkscape:snap-bbox="false"
-     inkscape:snap-nodes="true"
-     inkscape:object-nodes="true">
+     inkscape:snap-nodes="false"
+     inkscape:object-nodes="false">
     <sodipodi:guide
        orientation="1,0"
        position="400,1000"
@@ -715,11 +958,11 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="opacity:1;fill:url(#linearGradient3727);fill-opacity:1;stroke:none"
+       style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-opacity:1"
        id="rect2942"
        width="100"
        height="100"
-       x="400"
+       x="887.25812"
        y="52.362183" />
     <rect
        y="52.362183"
@@ -728,6 +971,13 @@
        width="100"
        id="rect3731"
        style="opacity:1;fill:url(#linearGradient3739);fill-opacity:1;stroke:none" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="rect4183"
+       width="100"
+       height="100"
+       x="1064.5739"
+       y="202.36218" />
     <rect
        y="202.36218"
        x="400"
@@ -1187,6 +1437,13 @@
        id="rect3921"
        style="fill:url(#linearGradient3956);fill-opacity:1;stroke:none" />
     <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="rect4228"
+       width="100"
+       height="100"
+       x="1023.054"
+       y="352.36218" />
+    <rect
        y="352.36218"
        x="851.80164"
        height="100"
@@ -1257,31 +1514,75 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;opacity:1"
-       d="M 419.66386,132.69832 481.13971,71.222471"
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4136"
+       d="M 914.36557,131.37086 967.58002,78.156411"
+       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter4175);opacity:0.6109215"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 911.05265,128.56762 964.2671,75.353172"
        id="path2948"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       transform="matrix(0.54078517,0,0,0.54078517,753.00427,46.075003)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4138"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916316999999997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4179);opacity:0.6109215"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
     <path
        sodipodi:type="arc"
-       style="opacity:1;fill:none;stroke:#000000;stroke-width:3.48961772;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path2950"
+       style="fill:url(#linearGradient4134);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4132"
        sodipodi:cx="303.55084"
        sodipodi:cy="151.81119"
        sodipodi:rx="9.5964489"
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
-       transform="matrix(0.28656434,0,0,0.28656434,330.73329,91.138372)" />
+       transform="matrix(0.54078517,0,0,0.54078517,749.69135,43.271764)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
     <path
-       transform="matrix(0.28656434,0,0,0.28656434,396.4315,25.440162)"
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916316999999997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4171);opacity:0.6109215"
+       id="path4143"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,799.89481,-0.92109035)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       transform="matrix(0.54078517,0,0,0.54078517,796.58189,-3.7243289)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
        sodipodi:ry="9.5964489"
        sodipodi:rx="9.5964489"
        sodipodi:cy="151.81119"
        sodipodi:cx="303.55084"
        id="path3729"
-       style="opacity:1;fill:none;stroke:#000000;stroke-width:3.48961772;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       sodipodi:type="arc" />
+       style="fill:url(#linearGradient4129);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
@@ -1356,6 +1657,24 @@
        sodipodi:ry="9.5964489"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
        transform="matrix(0.28656434,0,0,0.28656434,396.4315,185.44016)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4220);opacity:0.611"
+       d="m 1090.6478,233.26861 58.361,0 0,45.69821 -58.361,0 z"
+       id="path4206"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-ydpi="32.779999" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4192"
+       d="m 1085.9626,228.94383 58.361,0 0,45.69821 -58.361,0 z"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;stroke-dasharray:none"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-ydpi="32.779999" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
        d="m 417.72012,228.94383 65.69821,0 0,45.69821 -65.69821,0 z"
@@ -2106,6 +2425,25 @@
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
        transform="matrix(0.28656434,0,0,0.28656434,848.23312,325.44017)" />
     <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path4263"
+       d="m 1044.378,438.96683 0,-32.84911 32.8492,0 -10e-5,-32.8491"
+       style="opacity:0.61000001;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4305)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231"
+       transform="matrix(0.95721899,0.28936448,-0.28936448,0.95721899,176.53981,-289.19742)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m 1047.0186,428.01327 9.5054,-31.4438 31.4439,9.50539 9.5052,-31.4438"
+       id="path4236"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231" />
+    <path
        sodipodi:nodetypes="ccccc"
        inkscape:connector-curvature="0"
        id="path4144"
@@ -2608,5 +2946,161 @@
            style="fill:none;stroke:#000000;stroke-width:1.18761826;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#TriangleInL);marker-mid:none;marker-end:url(#TriangleOutL)" />
       </g>
     </g>
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient4210);fill-opacity:1;stroke:#000000;stroke-width:1.84916316999999997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4216);opacity:0.611"
+       id="path4208"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,926.49748,196.54647)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-ydpi="32.779999" />
+    <path
+       inkscape:export-ydpi="34.545231"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,916.4991,304.35058)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4265"
+       style="opacity:0.61000001;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4301)"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient4261);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4259"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,914.30074,299.16798)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.61000001;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4297)"
+       id="path4269"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,925.34809,275.07808)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231" />
+    <path
+       inkscape:export-ydpi="34.545231"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,923.14973,269.89546)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4255"
+       style="fill:url(#linearGradient4257);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="34.545231"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,957.54785,284.81197)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4273"
+       style="opacity:0.61000001;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4293)"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient4253);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4251"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,955.34949,279.62936)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.61000001;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4289)"
+       id="path4277"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,966.83929,254.07585)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-ydpi="34.545231" />
+    <path
+       inkscape:export-ydpi="34.545231"
+       inkscape:export-xdpi="34.545231"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polyline.png"
+       transform="matrix(0.51764983,0.15648403,-0.15648403,0.51764983,964.64093,248.89323)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4244"
+       style="fill:url(#linearGradient4309);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="32.779999"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       transform="matrix(0.54078517,0,0,0.54078517,921.81231,192.22169)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4195"
+       style="fill:url(#linearGradient4197);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient4214);fill-opacity:1;stroke:#000000;stroke-width:1.84916316999999997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4224);opacity:0.611"
+       id="path4212"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,984.67084,151.34744)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-ydpi="32.779999" />
+    <path
+       inkscape:export-ydpi="32.779999"
+       inkscape:export-xdpi="32.779999"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/rectangle.png"
+       transform="matrix(0.54078517,0,0,0.54078517,979.98567,147.02266)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4200"
+       style="fill:url(#linearGradient4203);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
   </g>
 </svg>

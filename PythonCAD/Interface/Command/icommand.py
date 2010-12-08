@@ -157,6 +157,7 @@ class ICommand(object):
         """
             apply the command 
         """
+        self.scene.hideSnapMarks()
         try:
             self.kernelCommand.applyCommand()    
             if RESTART_COMMAND_OPTION:
