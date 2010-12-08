@@ -143,7 +143,6 @@ class CadScene(QtGui.QGraphicsScene):
         #This seems needed to preview commands
         #
         if self.activeICommand:
-            
             #SNAP PREVIEW
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
                 item=self.activeICommand.getEntity(self.mouseOnScene)
@@ -153,7 +152,6 @@ class CadScene(QtGui.QGraphicsScene):
                         self.endMark.move(ps.getx(), ps.gety()*-1)
                 else:
                     self.hideSnapMarks()
-            #scenePos=event.scenePos()
             distance=None
             point=Point(scenePos.x(), scenePos.y()*-1.0)
             qtItem=[self.itemAt(scenePos)] 

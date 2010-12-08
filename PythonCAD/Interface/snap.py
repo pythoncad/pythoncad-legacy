@@ -257,24 +257,7 @@ class SnapMark(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
         self.lineWith=2.0
         self.hide()
-        
-    def move(self, x, y):
-        self.show()
-        self.setPos(x, y)
-        
-class SnapEndMark(SnapMark):
-    def __init__(self, x, y):
-        super(SnapEndMark, self).__init__()
-        self.setToolTip("EndPoint")
-        self.x=x
-        self.y=y
-    
-    def definePath(self):
-        rect=QtCore.QRectF(self.x-5.0, self.y-5.0, 10.0, 10.0)
-        path=QtGui.QPainterPath()
-        path.addRect(rect)
-        return path
-    
+
     def shape(self):            
         """
             overloading of the shape method 
@@ -295,4 +278,23 @@ class SnapEndMark(SnapMark):
         painter.setBrush(QtGui.QColor(0,0,128))
         painter.drawPath(self.definePath())
         
-
+    def move(self, x, y):
+        """
+            show the previously added mark and place it in snap position
+        """
+        self.show()
+        self.setPos(x, y)
+        
+class SnapEndMark(SnapMark):
+    def __init__(self, x, y):
+        super(SnapEndMark, self).__init__()
+        self.setToolTip("EndPoint")
+        self.x=x
+        self.y=y
+    
+    def definePath(self):
+        rect=QtCore.QRectF(self.x-5.0, self.y-5.0, 10.0, 10.0)
+        path=QtGui.QPainterPath()
+        path.addRect(rect)
+        return path
+   
