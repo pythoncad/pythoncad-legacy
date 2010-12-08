@@ -41,6 +41,7 @@ interface from the core program is a viable approach of
 application design. It is hoped that interfaces for GNOME,
 QT, KDE, and other packages will eventually be added to
 PythonCAD.
+Now PythonCAD is developer using the pyQT toolkit
 
 A second code design goal is to write a powerful graphical
 program without writing much, if any, C or C++ code. The Python
@@ -55,31 +56,10 @@ and a fun language to work with.
 Requirements
 ============
 
-Python: Version 2.2 at a minimum, with the zlib module. At the
-time of the thirtieth release the final 2.2 based release is
-2.2.3, the (final?) 2.3 release is 2.3.5, and the latest 2.4
-release is 2.4.2.  PythonCAD should run without problem in any
-of the releases. There are as yet no plans to raise the minimum
-Python release to the 2.3 series.
+Python: Version 2.6 at a minimum.
+Sympy: last git version
+PyQt: 
 
-PyGTK-2.0: Version 1.99.16 at least, with version 2.0 recommended.
-The PyGTK developers have released PyGTK-2.6, which has support
-for more features in the latest GTK code. The PyGTK-2.4 release
-as well as the PyGTK-2.2 release work also, but these releases
-are tied to older GTK releases and are consequently in maintenance
-mode (at best).
-
-GTK and its dependencies: It is strongly recommended
-to use the latest release of GTK, Pango, ATK, and Glib. At the
-thirtieth PythonCAD release, GTK is at version 2.8.16, Pango
-is version 1.12.0, ATK is release 1.11.3, and Glib is release 2.10.1.
-
-The fifteenth release of PythonCAD offered a native Cocoa interface
-utilizing the Py-Objc bridge for Mac OS X users. Unfortunately
-the developer maintaining the Cocoa interface is no longer able to
-do so, and current PythonCAD releases do not work with the Py-Objc
-bindings. Developers wishing to pick up this code and maintain
-it would be welcomed.
 
 License
 =======

@@ -219,6 +219,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('delete', hasMdiChild)
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
         self.__cmd_intf.setVisible('rotate', hasMdiChild)
+        self.__cmd_intf.setVisible('trim', hasMdiChild)
         #Draw
         self.__cmd_intf.setVisible('point', hasMdiChild)
         self.__cmd_intf.setVisible('segment', hasMdiChild)
@@ -324,6 +325,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'rotate', '&Rotate', self._onRotate)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'mirror', '&Mirror', self._onMirror)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'delete', '&Delete', self._onDelete)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Modify, 'trim', '&Trim', self._onTrim)
         # Draw
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'point', '&Point', self._onPoint)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'segment', '&Segment', self._onSegment)
@@ -555,7 +557,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
-        
+    def _onTrim(self):    
+        self.statusBar().showMessage("CMD:Trim")
+        self.callCommand('TRIM')
+        self.statusBar().showMessage("Ready")
+        return       
     def _onMirror(self):
         self.statusBar().showMessage("CMD:Mirror")
         self.callCommand('MIRROR')
@@ -628,7 +634,7 @@ class CadWindowMdi(QtGui.QMainWindow):
                    The PythonCAD project aims to produce a scriptable, open-source,
                    easy to use CAD package for any Python/PyQt supported Platforms
                    <p>
-                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.4)<b><P>
+                   This is an Alfa Release For The new R38 Vesion <b>(R38.0.0.5)<b><P>
                    <p>
                    <a href="http://sourceforge.net/projects/pythoncad/">PythonCAD Web Site On Sourceforge</a>
                    <p>

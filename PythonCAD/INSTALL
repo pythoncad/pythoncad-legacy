@@ -1,48 +1,19 @@
 Installation
 ============
 
-The installation of PythonCAD is a two-step process. First,
-execute the setup.py script
+Windows from binary: Just use the installer provided
 
-$ python setup.py install
+From Source (All Platform)
+Install Python 2.6 or later
+Install Sympy
+Install Pyqt
 
-This command will install the files in the "Generic" and
-"Interface" directories into the Python library directory.
-You may need to be root to do this on your machine.
+execute python pythoncad_qt.py (under the pythoncad Folder)
 
-Next, copy the file "gtkpycad.py" into one of the directories
-in your PATH. Commonly this will be "/usr/local/bin", or
-"/usr/bin".
-
-At this point you should be able to invoke the gtkpycad.py
-file at a prompt:
-
-$ gtkpycad.py
-
-After a few seconds, the application should start.
-
-Work has begun on making PythonCAD offer native language
-support. Translation files are in the 'po/' subdirectory.
-The '.po' file needs to be converted to a '.mo' file, a
-job for the 'msgfmt' program. Once the '.mo' file has
-been generated, it should be copied into the appropriate
-'locale' directory for your system and the user environment
-adjusted to access the correct locale. For the time being
-the installation of these files requires much manual work;
-as more translations appear it is hoped the installation
-of the '.mo' files will become more automated.
 
 Problems
 ========
 
-If something doesn't work, there are a couple of things to
-check. For the sake of a few examples, pretend that the
-python installation is in "/usr" and Python-2.2.X is installed,
-so the site-packages directory is "/usr/lib/python2.2/site-packages",
-and the python binary is "/usr/bin/python". Also pretend that
-the "gtkpycad.py" file is copied into "/usr/bin".
-
-Does "/usr/bin/gtkpycad.py" have the execute bits set? If
-not, do a "chmod a+x /usr/bin/gtkpycad.py" to set these bits.
+If something doesn't work plese call me at matteo.boscolo@boscolini.eu or go to the official web site http://sourceforge.net/projects/pythoncad/
 
 

@@ -81,7 +81,7 @@ class GeometricalEntity(dict):
         """
         return self
         
-    def setConstructionElements(self, **kw):
+    def setConstructionElements(self, kw):
         """
             set the construction elemtnts
         """
