@@ -396,6 +396,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onOpenDrawing(self):
+        '''
+            Open an existing drawing PDR or DXF 
+        '''
         # ask the user to select an existing drawing
         drawing = QtGui.QFileDialog.getOpenFileName(parent=self,directory=self.lastDirectory,  caption ="Open Drawing", filter ="Drawings (*.pdr *.dxf)");
         # open a document and load the drawing
@@ -415,6 +418,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
     
     def _onImportDrawing(self):
+        '''
+            Import existing drawing in current drawing (some issues with PyQt4.7)
+        '''
         drawing = QtGui.QFileDialog.getOpenFileName(parent=self, caption="Import Drawing", directory=self.lastDirectory, filter="Dxf (*.dxf)");
         # open a document and load the drawing
         if len(drawing)>0:
