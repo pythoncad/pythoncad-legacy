@@ -106,7 +106,7 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         
-    def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None):
+    def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None, correct=True):
         """
             add value to a new slot of the command 
         """
@@ -114,12 +114,14 @@ class ICommand(object):
         # Compute snap distance and position force
         #
         print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
-        snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point), force)
-        snap=self.correctPositionForcedDirection(snap, self.scene.forceDirection)
+        if correct!=None:
+            snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point), force)
+            snap=self.correctPositionForcedDirection(snap, self.scene.forceDirection)
+        else:
+            snap=point
     #    if point!=None:
     #        snapPoint=point
         self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["ALL"]
-        self.scene.fromPoint=snap
         if angle==None:
             angle=self.calculateAngle(snap)
         if distance==None:
@@ -129,6 +131,7 @@ class ICommand(object):
         #
         try:
             self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
+            self.scene.fromPoint=snap
         except:
             print "Exceprion  ICommand.addMauseEvent "
             self.updateInput("msg")
@@ -223,7 +226,7 @@ class ICommand(object):
         else:
             try:
                 tValue=self.decodeText(value)
-                self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4])
+                self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4], correct=None)
             except PyCadWrongImputData, msg:
                 print "Problem on ICommand.addTextEvent"
                 self.updateInput(msg)

@@ -18,10 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-# This Module provide a Interface Command managing the preview the and the snap
-# system
-#
-#  THIS MODULE IS NOT YET ACTIVE
+# This Module provide a snap management for the drawing scene and icommand
 # 
 #
 
@@ -255,7 +252,6 @@ class SnapMark(QtGui.QGraphicsItem):
         super(SnapMark, self).__init__()
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
-        self.lineWith=2.0
         self.hide()
 
     def shape(self):            
@@ -274,8 +270,7 @@ class SnapMark(QtGui.QGraphicsItem):
         """
             overloading of the paint method
         """
-        painter.setPen(QtGui.QPen(QtGui.QColor(79, 106, 25)))
-        painter.setBrush(QtGui.QColor(0,0,128))
+        painter.setPen(QtGui.QPen(QtGui.QColor(255, 50, 50), 2, join=QtCore.Qt.MiterJoin))
         painter.drawPath(self.definePath())
         
     def move(self, x, y):
