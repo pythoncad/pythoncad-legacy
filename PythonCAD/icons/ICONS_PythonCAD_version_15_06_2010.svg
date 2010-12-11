@@ -726,18 +726,6 @@
        y2="142.48111" />
     <filter
        inkscape:collect="always"
-       id="filter4285"
-       x="-1.0455809"
-       width="3.0911618"
-       y="-1.0455809"
-       height="3.0911618">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="8.3615532"
-         id="feGaussianBlur4287" />
-    </filter>
-    <filter
-       inkscape:collect="always"
        id="filter4289"
        x="-1.0455809"
        width="3.0911618"
@@ -805,6 +793,110 @@
        y1="161.80771"
        x2="313.55923"
        y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter4576"
+       x="-0.47378445"
+       width="1.9475689"
+       y="-0.47378445"
+       height="1.9475689">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="13.455676"
+         id="feGaussianBlur4578" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4580"
+       x="-0.30395642"
+       width="1.6079128"
+       y="-0.091186822"
+       height="1.1823736">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.0984051"
+         id="feGaussianBlur4582" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4584"
+       x="-0.19197256"
+       width="1.3839451"
+       y="-0.52106767"
+       height="2.0421353">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.0984051"
+         id="feGaussianBlur4586" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4588"
+       x="-0.19197256"
+       width="1.3839451"
+       y="-0.52106767"
+       height="2.0421353">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.0984051"
+         id="feGaussianBlur4590" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4592"
+       x="-0.19197256"
+       width="1.3839451"
+       y="-0.52106767"
+       height="2.0421353">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.0984051"
+         id="feGaussianBlur4594" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4155"
+       id="linearGradient4638"
+       x1="1228.1998"
+       y1="393.73987"
+       x2="1254.397"
+       y2="357.76825"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0.25483987,-0.25483987)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4155"
+       id="linearGradient4650"
+       x1="1252.1556"
+       y1="406.85278"
+       x2="1286.1769"
+       y2="378.94785"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0.25483987,-0.25483987)" />
+    <filter
+       inkscape:collect="always"
+       id="filter4696"
+       x="-0.10729644"
+       width="1.2145929"
+       y="-0.28643476"
+       height="1.5728695">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.4976763"
+         id="feGaussianBlur4698" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4700"
+       x="-0.28153806"
+       width="1.5630761"
+       y="-0.10871284"
+       height="1.2174257">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.4976763"
+         id="feGaussianBlur4702" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -814,8 +906,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.9240328"
-     inkscape:cx="1082.8225"
-     inkscape:cy="641.40287"
+     inkscape:cx="1257.4499"
+     inkscape:cy="640.3107"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -3102,5 +3194,73 @@
        id="path4200"
        style="fill:url(#linearGradient4203);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        sodipodi:type="arc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4402"
+       d="m 1211.1846,420.03513 38.7356,-14.27103"
+       style="opacity:0.61000001;fill:none;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4588)"
+       transform="matrix(1,0,0,1.0348247,0.25483987,-12.943555)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30.738432"
+       inkscape:export-ydpi="30.738432" />
+    <path
+       style="opacity:0.61000001;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98039216;stroke-dasharray:none;filter:url(#filter4584)"
+       d="m 1207.941,416.79155 38.7356,-14.27103"
+       id="path4193"
+       inkscape:connector-curvature="0"
+       transform="matrix(1,0,0,1.0348247,0.25483987,-12.943555)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30.738432"
+       inkscape:export-ydpi="30.738432" />
+    <path
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4638);fill-opacity:0.98039216;fill-rule:nonzero;stroke:none;stroke-width:6;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="m 1231.4736,366.24516 1.9374,5.09375 5.625,-2.15625 -1.9374,-5.09375 z m 4.0937,10.6875 4.25,11.21875 5.625,-2.125 -4.2813,-11.21875 z m 6.4063,16.8125 4.2812,11.21875 5.5938,-2.125 -4.2813,-11.21875 z"
+       id="path4630"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30"
+       inkscape:export-ydpi="30" />
+    <path
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4650);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="m 1280.411,387.30766 2.1563,5.59375 5.0937,-1.9375 -2.125,-5.625 z m -16.8124,6.40625 2.1562,5.59375 11.1875,-4.28125 -2.125,-5.59375 z m -16.8126,6.40625 2.125,5.59375 11.2188,-4.25 -2.125,-5.625 z"
+       id="path4400"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30"
+       inkscape:export-ydpi="30" />
+    <path
+       inkscape:export-ydpi="30.738432"
+       inkscape:export-xdpi="30.738432"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       style="fill:none;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98039216;stroke-dasharray:none"
+       d="M 1264.1096,443.01376 1247.5577,400.0733"
+       id="path4632"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4430"
+       d="m 1208.7408,417.98429 42.5582,-16.04222"
+       style="fill:none;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98039216;stroke-dasharray:none"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30.738432"
+       inkscape:export-ydpi="30.738432"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4696)"
+       d="m 1206.7055,423.81091 78.2358,-29.30658"
+       id="path4652"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30"
+       inkscape:export-ydpi="30" />
+    <path
+       style="opacity:0.6;fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4700)"
+       d="m 1232.1894,371.3139 29.8163,77.21648"
+       id="path4654"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/trim.png"
+       inkscape:export-xdpi="30"
+       inkscape:export-ydpi="30" />
   </g>
 </svg>
