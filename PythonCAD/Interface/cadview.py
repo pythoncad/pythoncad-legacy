@@ -20,7 +20,7 @@ class CadView(QtGui.QGraphicsView):
     def Pan(self, panActive, eventPoint):
         
         if panActive==True:
-            self.setDragMode(QtGui.QGraphicsView.NoDrag)
+            self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self.firstPanPoint=eventPoint
         elif panActive==False:
             self.firstPanPoint=None

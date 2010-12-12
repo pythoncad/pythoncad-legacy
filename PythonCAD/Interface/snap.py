@@ -27,8 +27,9 @@ from PyQt4 import QtCore, QtGui
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 
 class SnapPoint():
-    def __init__(self):
+    def __init__(self, scene):
         self.activeSnap=SNAP_POINT_ARRAY["ALL"]
+        self.__scene=scene
         
     def getSnapPoint(self,  point, entity,force=None):
         """
@@ -108,16 +109,22 @@ class SnapPoint():
             return point
         return snapPoint
         
-    def getSnapOrtoPoint(self, point):
+    def getSnapOrtoPoint(self, entity):
         """
             this fucnticion compute the orto to point snap constraint
         """
+        # Now only works for segments. USES THE getPROJECTION ATTRIBUTE
         returnVal=None
-        #TODO: getSnapOrtoPoint
-        #this function have to be implemented as follow
-        #   1) get the orto point from the previews entity
-        #   2) update the previews snap point
-        return returnVal
+        if self.__scene.fromPoint==None or entity == None:
+            print "log: getSnapEndPoint :point or entity is none "
+            return None
+            
+        if getattr(entity, 'geoItem', None):
+            if getattr(entity.geoItem, 'getProjection', None):
+                pT=entity.geoItem.getProjection(self.__scene.fromPoint)
+                return pT
+        else:
+            return None
         
     def getSnapTangentPoint(selfself, point):    
         """
@@ -169,16 +176,6 @@ class SnapPoint():
         # may be somthing with simpy
         return returnVal
         
-    def getPointOrtoSnap(self, entity):
-        """
-            this fucnticion compute the  snap from point to Ortogonal entity
-        """
-        #TODO: getPointOrtoSnap
-        returnVal=None
-        #this function have to be implemented as follow
-        # 1) ask to the entity the orto point from point
-        return returnVal
-    
     def getSnapCenterPoint(self, entity):
         """
             this fucnticion compute the  snap from the center of an entity

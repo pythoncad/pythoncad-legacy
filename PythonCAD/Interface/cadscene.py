@@ -89,7 +89,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.selectionAddMode=False
         
         # Init loading of snap marks
-        self.snappingPoint=SnapPoint()
+        self.snappingPoint=SnapPoint(self)
         self.endMark=SnapEndMark(0.0, 0.0)
         self.addItem(self.endMark)
         
