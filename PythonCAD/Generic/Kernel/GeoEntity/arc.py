@@ -496,7 +496,6 @@ class Arc(GeometricalEntity):
             Return the circle intersection with the line x,y passing through the
             center
         """
-        print "call getQuadrant"
         x, y=self.center.getCoords()
         p1=Point(x, y+self.radius)
         p2=Point(x-self.radius, y)

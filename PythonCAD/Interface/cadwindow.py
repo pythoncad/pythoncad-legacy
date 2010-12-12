@@ -225,6 +225,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('segment', hasMdiChild)
         self.__cmd_intf.setVisible('rectangle', hasMdiChild)
         self.__cmd_intf.setVisible('polyline', hasMdiChild)
+        self.__cmd_intf.setVisible('circle', hasMdiChild)
         self.__cmd_intf.setVisible('arc', hasMdiChild)
         self.__cmd_intf.setVisible('ellipse', hasMdiChild)
         self.__cmd_intf.setVisible('polygon', hasMdiChild)
@@ -333,6 +334,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'rectangle', '&Rectangle', self._onRectangle)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polyline', '&Polyline', self._onPolyline)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'circle', '&Circle', self._onCircle)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'arc', '&Arc', self._onArc)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'ellipse', '&Ellipse', self._onEllipse)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
@@ -483,6 +485,10 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onSegment(self):
         self.statusBar().showMessage("CMD:Segment")
         self.callCommand('SEGMENT')
+        return
+    def _onCircle(self):
+        self.statusBar().showMessage("CMD:Circle")
+        self.callCommand('CIRCLE')
         return
     def _onArc(self):
         self.statusBar().showMessage("CMD:Arc")
@@ -826,7 +832,7 @@ class statusButton(QtGui.QToolButton):
     def __init__(self, icon,  tooltip):
         super(statusButton, self).__init__()
         self.setCheckable(True)
-        self.setFixedSize(20, 20)
+        self.setFixedSize(30, 20)
         self.getIcon(icon)
         self.setToolTip(tooltip)
 
