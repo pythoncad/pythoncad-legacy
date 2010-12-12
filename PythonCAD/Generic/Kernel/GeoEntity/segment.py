@@ -181,14 +181,14 @@ class Segment(GeometricalEntity):
         return Point(retX,retY)
         #return Point((_x1+_x2)/2.0,(_y1+_y2)/2.0) <<<<why not like this? it seems to work too
 
-    def getProjection(self,point):
+    def getProjection(self,fromPoint):
         """
             get Projection of the point x,y in the line
         """
         p1=self.p1
         p2=self.p2
         v=Vector(p1,p2)
-        v1=Vector(p1,point)
+        v1=Vector(p1,fromPoint)
         pjPoint=v.map(v1.point).point
         return p1+pjPoint
 
