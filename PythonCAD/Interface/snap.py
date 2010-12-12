@@ -60,7 +60,7 @@ class SnapPoint():
 #                elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
 #                    snapPoint=self.getSnapTangentPoint(snapPoint)
         elif SNAP_POINT_ARRAY["ORTO"] == self.activeSnap:
-            snapPoint =self.getSnapOrtoPoint(entity)
+            snapPoint =self.getSnapOrtoPoint(entity, point)
 #            if lastSnapType:
 #                if lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:    
 #                    snapPoint=self.getTangentOrtoSnap(entity)
@@ -109,18 +109,19 @@ class SnapPoint():
             return point
         return snapPoint
         
-    def getSnapOrtoPoint(self, entity):
+    def getSnapOrtoPoint(self, entity, point):
         """
             this fucnticion compute the orto to point snap constraint
         """
         # Now only works for segments. USES THE getPROJECTION ATTRIBUTE
         returnVal=None
         if self.__scene.fromPoint==None or entity == None:
-            print "log: getSnapEndPoint :point or entity is none "
+            print "log: getSnapEndPoint :frompoint or entity is none "
             return None
             
         if getattr(entity, 'geoItem', None):
             if getattr(entity.geoItem, 'getProjection', None):
+                
                 pT=entity.geoItem.getProjection(self.__scene.fromPoint)
                 return pT
         else:

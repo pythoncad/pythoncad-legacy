@@ -241,6 +241,19 @@ class Arc(GeometricalEntity):
         """
         return pow(self.radius, 2) * (self.getAngle()/2)
 
+    def getProjection(self,point):
+        """
+            get Projection of the point x,y on the arc
+        """
+        c=self.center
+        v=Vector(point,c)
+        if  v.norm>self.radius:
+            a=v.absAng
+            pj1=Point((v.X+point.getx()-self.radius*math.cos(a)), (v.Y+point.gety()-self.radius*math.sin(a)))
+            pj2=Point((v.X+point.getx()+self.radius*math.cos(a)), (v.Y+point.gety()+self.radius*math.sin(a)))
+            return pj1 # ######################## adding return value for pj2
+        else:
+            return None
     def GetTangentPoint(self,x,y,outx,outy):
         """
             Get the tangent from an axternal point

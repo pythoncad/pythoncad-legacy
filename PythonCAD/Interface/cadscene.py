@@ -89,13 +89,17 @@ class CadScene(QtGui.QGraphicsScene):
         self.selectionAddMode=False
         
         # Init loading of snap marks
-        self.snappingPoint=SnapPoint(self)
-        self.endMark=SnapEndMark(0.0, 0.0)
-        self.addItem(self.endMark)
-        
+        self.initSnap()
+                
         # scene aspect
         r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
         self.setBackgroundBrush(QtGui.QBrush(QtGui.QColor(r, g, b), QtCore.Qt.SolidPattern))
+    
+    def initSnap(self):
+        # Init loading of snap marks
+        self.snappingPoint=SnapPoint(self)
+        self.endMark=SnapEndMark(0.0, 0.0)
+        self.addItem(self.endMark)
         
     @property
     def activeKernelCommand(self):
@@ -379,6 +383,7 @@ class CadScene(QtGui.QGraphicsScene):
         """
         self.clear()
         self.populateScene(document)
+        self.initSnap()
 
 
     def eventShow(self, document, entity):        

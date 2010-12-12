@@ -547,7 +547,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         p=ConfigDialog()
         #p.exec_()
 
-#---------------------------ON COMMANDS in EDIT
+#---------------------------ON COMMANDS in MODIFY
 
     def _onCopy(self):
         self.statusBar().showMessage("CMD:Copy")
