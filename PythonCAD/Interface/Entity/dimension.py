@@ -58,6 +58,7 @@ class Dimension(BaseEntity):
         p1p2vn=p1p2v.mag()
         p1p2vn.mult(p1p2v.norm/2.0)
         baseMiddlePoint=p1p2vn.point+self.firstPoint
+        p3ppv.mult(2)
         pe=p3ppv.point+baseMiddlePoint
         return QtCore.QPointF(pe.x, pe.y*-1.0) 
     
