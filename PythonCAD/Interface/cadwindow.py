@@ -233,6 +233,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('chamfer', hasMdiChild)
         self.__cmd_intf.setVisible('bisect', hasMdiChild)
         self.__cmd_intf.setVisible('text', hasMdiChild)
+        #Dimension
+        self.__cmd_intf.setVisible('dimension', hasMdiChild)
         #View
         self.__cmd_intf.setVisible('fit', hasMdiChild)
         self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
@@ -345,6 +347,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'bisect', '&Bisect', self._onBisect)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'text', '&Text', self._onText)
+        #   Dimension
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Dimension, 'dimension', '&Dimension', self._onDimension)
         # View
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'fit', '&Fit', self._onFit)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'Zoom&Window', self._onZoomWindow)
@@ -529,7 +533,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Text")
         self.callCommand('TEXT')
         return      
-
+    def _onDimension(self):
+        self.statusBar().showMessage("CMD:Dimension")
+        self.callCommand('DIMENSION')
+        return         
 #-------------------------ON COMMANDS in EDIT
 
     def _onUndo(self):

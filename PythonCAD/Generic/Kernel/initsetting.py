@@ -45,6 +45,7 @@ from Kernel.Command.mirrorcommand       import MirrorCommand
 from Kernel.Command.rotatecommand       import RotateCommand
 from Kernel.Command.trimcommand         import TrimCommand
 from Kernel.Command.deletecommand       import DeleteCommand
+from Kernel.Command.dimensioncommand    import DimensionCommand
 #
 # Entity List
 #
@@ -57,6 +58,7 @@ from Kernel.GeoEntity.style        import Style
 from Kernel.GeoEntity.cline        import CLine
 from Kernel.GeoEntity.ccircle      import CCircle
 from Kernel.GeoEntity.text         import Text
+from Kernel.GeoEntity.dimension    import Dimension
 
 from Kernel.GeoComposedEntity.chamfer   import Chamfer
 from Kernel.GeoComposedEntity.fillet    import Fillet
@@ -94,7 +96,8 @@ PY_CAD_ENT=['POINT',
             'CLINE', 
             'CCIRCLE', 
             'TEXT', 
-            'COMPOSED_ENTITY' ]
+            'COMPOSED_ENTITY', 
+            'DIMENSION' ]
 
 PY_CAD_COMPOSED_ENT=['CHAMFER', 'FILLET', 'BISECTOR']
 #
@@ -119,7 +122,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'MIRROR':MirrorCommand, 
                         'ROTATE':RotateCommand, 
                         'TRIM':TrimCommand, 
-                        'DELETE':DeleteCommand}
+                        'DELETE':DeleteCommand, 
+                        'DIMENSION':DimensionCommand}
 #
 # Match object Name
 #
@@ -131,7 +135,8 @@ DRAWIN_ENTITY={ Point:'POINT',
                 CLine:'CLINE', 
                 CCircle:'CCIRCLE', 
                 Text:'TEXT', 
-                ComposedEntity:'COMPOSED_ENTITY'}
+                ComposedEntity:'COMPOSED_ENTITY', 
+                Dimension:'DIMENSION'}
                 
 DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
                         Chamfer:'CHAMFER', 

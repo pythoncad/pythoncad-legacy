@@ -25,7 +25,7 @@ from PyQt4  import QtCore, QtGui
 
 from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR
 
-from Kernel.GeoEntity.point         import Point
+from Kernel.GeoEntity.point     import Point
 
 
 class BaseEntity(QtGui.QGraphicsItem):

@@ -25,6 +25,7 @@
 from PyQt4 import QtCore, QtGui
 
 from Kernel.initsetting             import SNAP_POINT_ARRAY
+from Kernel.GeoEntity.point         import Point
 
 class SnapPoint():
     def __init__(self, scene):
