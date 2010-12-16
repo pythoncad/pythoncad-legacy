@@ -28,8 +28,9 @@ from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
 
 class SnapPoint():
-    def __init__(self):
+    def __init__(self, scene):
         self.activeSnap=SNAP_POINT_ARRAY["ALL"]
+        self.__scene=scene
         
     def getSnapPoint(self,  point, entity,force=None):
         """
@@ -41,57 +42,41 @@ class SnapPoint():
         """
         
         snapPoint=point
-    #    point=self.correctPositionForcedDirection(point, force)
-    #    if point!=None:
-    #        snapPoint=point
-    #    lastSnapType=self.getLastForceSnap()
+        
         if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
             snapPoint = self.getSnapMiddlePoint(entity)
-#            if lastSnapType: #Calculete in case of before constraint
-#                if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
-#                    snapPoint=self.getSnapOrtoPoint(snapPoint)
-#                elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
-#                    snapPoint=self.getSnapTangentPoint(snapPoint)
         elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
             snapPoint =self.getSnapEndPoint(entity, point)
-#            if lastSnapType: #Calculete in case of before constraint
-#                if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
-#                    snapPoint=self.getSnapOrtoPoint(snapPoint)
-#                elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
-#                    snapPoint=self.getSnapTangentPoint(snapPoint)
         elif SNAP_POINT_ARRAY["ORTO"] == self.activeSnap:
-            snapPoint =self.getSnapOrtoPoint(entity)
-#            if lastSnapType:
-#                if lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:    
-#                    snapPoint=self.getTangentOrtoSnap(entity)
-#                else:
-#                    snapPoint=self.getPointOrtoSnap(entity)
+            snapPoint =self.getSnapOrtoPoint(entity, point)
         elif SNAP_POINT_ARRAY["CENTER"]== self.activeSnap:
             snapPoint =self.getSnapCenterPoint(entity)
-#            if lastSnapType: #Calculete in case of before constraint
-#                if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
-#                    snapPoint=self.getSnapOrtoPoint(snapPoint)
-#                elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
-#                    snapPoint=self.getSnapTangentPoint(snapPoint) 
         elif SNAP_POINT_ARRAY["QUADRANT"]== self.activeSnap:
             snapPoint =self.getSnapQuadrantPoint(entity, snapPoint)
-#            if lastSnapType: #Calculete in case of before constraint
-#                if lastSnapType==SNAP_POINT_ARRAY["ORTO"]:
-#                    snapPoint=self.getSnapOrtoPoint(snapPoint)
-#                elif lastSnapType==SNAP_POINT_ARRAY["TANGENT"]:
-#                    snapPoint=self.getSnapTangentPoint(snapPoint) 
         elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
             snapPoint=Point(0.0, 0.0)
         elif SNAP_POINT_ARRAY["INTERSECTION"]== self.activeSnap:
             snapPoint=self.getIntersection(entity,snapPoint )
         elif SNAP_POINT_ARRAY["ALL"]== self.activeSnap:
+            #this should be used when checklist of snap will be enabled
             snapPoints=[]
+            
             pnt=self.getSnapMiddlePoint(entity)
             if pnt!=None:
                 snapPoints.append(pnt)
+                
             pnt=self.getSnapEndPoint(entity, snapPoint)
             if pnt!=None:
                 snapPoints.append(pnt)
+                
+            pnt=self.getSnapQuadrantPoint(entity, snapPoint)
+            if pnt!=None:
+                snapPoints.append(pnt)       
+                
+            pnt=self.getSnapOrtoPoint(entity, snapPoint)
+            if pnt!=None:
+                snapPoints.append(pnt)
+                
             outPoint=(None, None)
             for p in snapPoints:
                 if p!=None:
@@ -109,16 +94,22 @@ class SnapPoint():
             return point
         return snapPoint
         
-    def getSnapOrtoPoint(self, point):
+    def getSnapOrtoPoint(self, entity, point):
         """
             this fucnticion compute the orto to point snap constraint
         """
+        # Now only works for segments and arcs. USES THE getPROJECTION METHOD
         returnVal=None
-        #TODO: getSnapOrtoPoint
-        #this function have to be implemented as follow
-        #   1) get the orto point from the previews entity
-        #   2) update the previews snap point
-        return returnVal
+        if self.__scene.fromPoint==None or entity == None:
+            #print "log: getSnapOrtoPoint :frompoint or entity is none "
+            return None
+            
+        if getattr(entity, 'geoItem', None):
+            if getattr(entity.geoItem, 'getProjection', None):
+                pT=entity.geoItem.getProjection(self.__scene.fromPoint)
+                return pT
+        else:
+            return None
         
     def getSnapTangentPoint(selfself, point):    
         """
@@ -158,27 +149,6 @@ class SnapPoint():
                     return p2
         else:
             return None
-        
-    def getTangentOrtoSnap(self, entity):
-        """
-            this fucnticion compute the snap from Tangent entity  to Orto entity
-        """
-        #TODO: getTangentOrtoSnap
-        returnVal=None
-        #this function have to be implemented as follow
-        # no idea how to implements this think ..
-        # may be somthing with simpy
-        return returnVal
-        
-    def getPointOrtoSnap(self, entity):
-        """
-            this fucnticion compute the  snap from point to Ortogonal entity
-        """
-        #TODO: getPointOrtoSnap
-        returnVal=None
-        #this function have to be implemented as follow
-        # 1) ask to the entity the orto point from point
-        return returnVal
     
     def getSnapCenterPoint(self, entity):
         """

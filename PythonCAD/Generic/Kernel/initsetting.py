@@ -26,6 +26,7 @@
 #
 from Kernel.Command                     import *
 from Kernel.Command.segmentcommand      import SegmentCommand
+from Kernel.Command.circlecommand          import CircleCommand
 from Kernel.Command.arccommand          import ArcCommand
 from Kernel.Command.pointcommand        import PointCommand
 from Kernel.Command.ellipsecommand      import EllipseCommand
@@ -104,6 +105,7 @@ PY_CAD_COMPOSED_ENT=['CHAMFER', 'FILLET', 'BISECTOR']
 #
 APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
+                        'CIRCLE':CircleCommand, 
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
                         'POLYLINE':PolylineCommand, 

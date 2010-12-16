@@ -241,6 +241,19 @@ class Arc(GeometricalEntity):
         """
         return pow(self.radius, 2) * (self.getAngle()/2)
 
+    def getProjection(self,fromPoint):
+        """
+            get Projection of the point x,y on the arc
+        """
+        c=self.center
+        v=Vector(fromPoint,c)
+        if  v.norm>self.radius:
+            a=v.absAng
+            pj1=Point((v.X+fromPoint.getx()-self.radius*math.cos(a)), (v.Y+fromPoint.gety()-self.radius*math.sin(a)))
+            pj2=Point((v.X+fromPoint.getx()+self.radius*math.cos(a)), (v.Y+fromPoint.gety()+self.radius*math.sin(a)))
+            return pj1 # ######################## adding return value for pj2
+        else:
+            return None
     def GetTangentPoint(self,x,y,outx,outy):
         """
             Get the tangent from an axternal point
@@ -483,7 +496,6 @@ class Arc(GeometricalEntity):
             Return the circle intersection with the line x,y passing through the
             center
         """
-        print "call getQuadrant"
         x, y=self.center.getCoords()
         p1=Point(x, y+self.radius)
         p2=Point(x-self.radius, y)
