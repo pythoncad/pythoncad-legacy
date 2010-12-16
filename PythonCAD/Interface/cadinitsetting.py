@@ -21,12 +21,13 @@
 #
 # This  module PROVIDE ALL GLOBAL VARIABLE NEEDE TO THE SCENE
 #
-from Interface.Entity.point     import Point
-from Interface.Entity.segment   import Segment
-from Interface.Entity.arc       import Arc
-from Interface.Entity.text      import Text
-from Interface.Entity.ellipse   import Ellipse
-from Interface.Entity.polyline  import Polyline
+from Interface.Entity.point         import Point
+from Interface.Entity.segment       import Segment
+from Interface.Entity.arc           import Arc
+from Interface.Entity.text          import Text
+from Interface.Entity.ellipse       import Ellipse
+from Interface.Entity.polyline      import Polyline
+from Interface.Entity.dimension     import Dimension
 
 from PyQt4 import QtCore
 
@@ -37,7 +38,8 @@ SCENE_SUPPORTED_TYPE=["SEGMENT",
                         "ARC",
                         "TEXT", 
                         "ELLIPSE", 
-                        "POLYLINE"]
+                        "POLYLINE", 
+                        "DIMENSION"]
 
 SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE, 
                        (
@@ -46,7 +48,8 @@ SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE,
                         Arc, 
                         Text, 
                         Ellipse, 
-                        Polyline
+                        Polyline, 
+                        Dimension
                        )))
 
 INTERFACE_COMMAND={'DISTANCE2POINT':Distance2Point}

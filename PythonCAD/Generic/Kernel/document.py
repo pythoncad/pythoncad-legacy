@@ -360,8 +360,6 @@ class Document(BaseDb):
     def _savePyCadEnt(self, entity):
         """
             save the entity in the database
-            if this entity have an id mark pycad_visible = 0
-            and then save the entity
         """
         return self._saveDbEnt(entity=entity)
 
