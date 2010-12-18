@@ -18,6 +18,40 @@
    sodipodi:docname="ICONS_PythonCAD_version_15_06_2010.svg">
   <defs
      id="defs23626">
+    <linearGradient
+       id="linearGradient4596">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4598" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop4600" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4590">
+      <stop
+         style="stop-color:#ffb600;stop-opacity:1;"
+         offset="0"
+         id="stop4592" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1"
+         id="stop4594" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4582">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4584" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop4586" />
+    </linearGradient>
     <marker
        inkscape:stockid="TriangleInL"
        orient="auto"
@@ -1135,6 +1169,176 @@
        x2="224.45905"
        y2="1723.3051"
        gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       id="filter4278"
+       x="-0.1992331"
+       width="1.3984662"
+       y="-0.167203"
+       height="1.334406">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.8496177"
+         id="feGaussianBlur4280" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4314"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4326"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient4332"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter5296"
+       x="-0.3340175"
+       width="1.668035"
+       y="-0.21094733"
+       height="1.4218947">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.3725115"
+         id="feGaussianBlur5298" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5312"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5318"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5345"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5349"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5359"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5377"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3212"
+       id="linearGradient5381"
+       gradientUnits="userSpaceOnUse"
+       x1="293.20926"
+       y1="161.80771"
+       x2="313.55923"
+       y2="142.48111" />
+    <filter
+       inkscape:collect="always"
+       id="filter5395"
+       x="-0.16948572"
+       width="1.3389714"
+       y="-0.17820783"
+       height="1.3564157">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.267632"
+         id="feGaussianBlur5397" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4338"
+       x="-0.26694509"
+       width="1.5338902"
+       y="-0.26638882"
+       height="1.5327776">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.9399699"
+         id="feGaussianBlur4340" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4374"
+       x="-0.25618698"
+       width="1.512374"
+       y="-0.25292483"
+       height="1.5058497">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="5.9629654"
+         id="feGaussianBlur4376" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4582"
+       id="linearGradient4588"
+       x1="1949.2876"
+       y1="258.96515"
+       x2="1938.4006"
+       y2="282.91245"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.77589676,0,0,0.77589676,434.34006,63.846625)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4596"
+       id="linearGradient4602"
+       x1="1940.0225"
+       y1="283.27286"
+       x2="1989.4823"
+       y2="264.6041"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.77589676,0,0,0.77589676,434.34006,63.846625)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1144,8 +1348,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.3873551"
-     inkscape:cx="802.44155"
-     inkscape:cy="-311.21553"
+     inkscape:cx="1920.7055"
+     inkscape:cy="764.80843"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -1766,6 +1970,124 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="ICONS">
+    <path
+       style="fill:url(#linearGradient4602);fill-opacity:1;stroke:none"
+       d="m 1939.3175,283.14776 14.9953,-14.99524 4.7887,7.09564 1.7477,8.03942 z"
+       id="path5442"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <path
+       sodipodi:open="true"
+       sodipodi:end="5.4961985"
+       sodipodi:start="4.7309054"
+       transform="matrix(0.54864186,0.54864186,-0.54864186,0.54864186,999.75748,-935.43058)"
+       d="m 1967.5727,227.05558 a 28.111044,28.111044 0 0 1 19.3255,8.19716"
+       sodipodi:ry="28.111044"
+       sodipodi:rx="28.111044"
+       sodipodi:cy="255.1618"
+       sodipodi:cx="1967.0522"
+       id="path5426"
+       style="fill:none;stroke:#808080;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4352"
+       d="m 1722.847,424.94489 0,-3.78418 -52.7983,-52.79831 -3.0637,0"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4374)"
+       transform="matrix(0.92426251,0,0,0.92426251,131.68161,26.70135)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936" />
+    <path
+       transform="matrix(1.4925875,0,0,1.4925875,-458.12336,43.099006)"
+       d="m 1294.8413,218.01645 a 35.422745,35.422745 0 0 1 35.4227,35.49671"
+       sodipodi:ry="35.422745"
+       sodipodi:rx="35.422745"
+       sodipodi:cy="253.43919"
+       sodipodi:cx="1294.8413"
+       id="path3534"
+       style="fill:none;stroke:#000000;stroke-width:2.00993252000000000;stroke-miterlimit:4;stroke-opacity:0.99215686000000003;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4338)"
+       sodipodi:type="arc"
+       sodipodi:start="4.712389"
+       sodipodi:end="6.2852735"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-ydpi="31.422338"
+       sodipodi:open="true" />
+    <path
+       style="fill:url(#linearGradient4588);fill-opacity:1;stroke:none"
+       d="m 1939.1777,261.26658 0,21.53164 14.8205,-14.82048 -6.9209,-4.75374 z"
+       id="path5440"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <path
+       sodipodi:type="star"
+       style="opacity:0.69235499;fill:none;stroke:#000000;stroke-width:3.93405294;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter5395)"
+       id="path5383"
+       sodipodi:sides="5"
+       sodipodi:cx="1828.299"
+       sodipodi:cy="210.47246"
+       sodipodi:r1="46.660061"
+       sodipodi:r2="23.33003"
+       sodipodi:arg1="-1.5707963"
+       sodipodi:arg2="-0.9424778"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 1828.299,163.8124 44.3763,32.24131 -16.9503,52.16753 -54.8521,0 -16.9503,-52.16754 z"
+       inkscape:transform-center-y="-3.3977426"
+       transform="matrix(0.76257233,0,0,0.76257233,461.90901,95.707345)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-ydpi="30.59" />
+    <text
+       xml:space="preserve"
+       style="font-size:34.87757111px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.66894196;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter5296);font-family:Sans"
+       x="1480.9441"
+       y="88.36248"
+       id="text5300"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,366.55748,1083.355)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38"><tspan
+         sodipodi:role="line"
+         id="tspan5302"
+         x="1480.9441"
+         y="88.36248">d</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5292"
+       y="88.36248"
+       x="1325.9729"
+       style="font-size:34.87757110999999810px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;filter:url(#filter5296);opacity:0.66894198"
+       xml:space="preserve"><tspan
+         y="88.36248"
+         x="1325.9729"
+         id="tspan5294"
+         sodipodi:role="line">d</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3468"
+       y="127.99052"
+       x="1086.1344"
+       style="font-size:83.455513px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.63529017;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter4278);font-family:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-ydpi="35.048435"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+         y="127.99052"
+         x="1086.1344"
+         id="tspan3470"
+         sodipodi:role="line">T</tspan></text>
     <g
        id="g4545"
        transform="translate(-1.0529836,97.403163)"
@@ -1846,6 +2168,54 @@
          inkscape:export-xdpi="32.295715"
          inkscape:export-ydpi="32.295715" />
     </g>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       d="m 1752.4046,256.50992 -70.52,0"
+       style="opacity:0.28668943;fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0;filter:url(#filter4371)"
+       id="path5331"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-ydpi="31.620054" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.6;fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0.99215686;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4287)"
+       id="path5333"
+       sodipodi:cx="1294.8413"
+       sodipodi:cy="253.43919"
+       sodipodi:rx="35.422745"
+       sodipodi:ry="35.422745"
+       d="m 1330.2641,253.43919 a 35.422745,35.422745 0 1 1 -70.8455,0 35.422745,35.422745 0 1 1 70.8455,0 z"
+       transform="matrix(1.0056814,0,0,0.71140377,414.87412,75.933144)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-ydpi="31.620054" />
+    <path
+       inkscape:export-ydpi="31.620054"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       transform="matrix(0.54078517,0,0,0.54078517,1588.0841,174.13345)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5335"
+       style="opacity:0.6;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4283)"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.6;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4279)"
+       id="path5337"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,1519.5322,174.13345)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-ydpi="31.620054" />
     <g
        id="g4295"
        transform="translate(2.0326385,126.53532)"
@@ -1962,12 +2332,58 @@
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
+       id="path5304"
+       d="m 1462.8137,125.06342 53.2144,-53.214446"
+       style="opacity:0.61092152;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter4175);enable-background:accumulate"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       style="opacity:0.61092152;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter4175);enable-background:accumulate"
+       d="m 1311.9158,131.37086 53.2144,-53.214449"
+       id="path4318"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,463.04219,-923.0021)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
        id="path4136"
        d="M 914.36557,131.37086 967.58002,78.156411"
        style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter4175);opacity:0.6109215"
        inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
        inkscape:export-xdpi="38.847721"
        inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="31.422338"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4378"
+       d="m 1475.2987,420.67627 32.8274,-32.82733"
+       style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#TriangleOutL);visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#TriangleInL);marker-end:url(#TriangleOutL);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 1468.5828,111.48794 32.8274,-32.82733"
+       id="path5306"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4320"
+       d="m 1311.4923,92.035794 46.4249,4e-5"
+       style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#TriangleInL);marker-end:url(#TriangleOutL);visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <path
        style="color:#000000;fill:#e7f88d;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 911.05265,128.56762 964.2671,75.353172"
@@ -1977,6 +2393,32 @@
        inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
        inkscape:export-xdpi="38.847721"
        inkscape:export-ydpi="38.847721" />
+    <path
+       transform="matrix(0.54078517,0,0,0.54078517,1324.8056,60.825083)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5308"
+       style="opacity:0.61092152;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4179)"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       sodipodi:type="arc"
+       style="opacity:0.61092152;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4179)"
+       id="path4322"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.38239286,0.38239286,-0.38239286,0.38239286,1245.6505,-45.45411)" />
     <path
        transform="matrix(0.54078517,0,0,0.54078517,753.00427,46.075003)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -1992,6 +2434,32 @@
        inkscape:export-ydpi="38.847721" />
     <path
        sodipodi:type="arc"
+       style="fill:url(#linearGradient5312);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path5310"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,1321.2377,60.085781)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       transform="matrix(0.38239286,0.38239286,-0.38239286,0.38239286,1243.6504,-48.499741)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4324"
+       style="fill:url(#linearGradient4326);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
        style="fill:url(#linearGradient4134);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path4132"
        sodipodi:cx="303.55084"
@@ -2005,6 +2473,32 @@
        inkscape:export-ydpi="38.847721" />
     <path
        sodipodi:type="arc"
+       style="opacity:0.61092152;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4171)"
+       id="path5314"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.38239286,-0.38239286,0.38239286,0.38239286,1360.9854,153.21108)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       transform="matrix(0.54078517,0,0,0.54078517,1205.9067,45.455615)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4328"
+       style="opacity:0.61092152;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4171)"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916316999999997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4171);opacity:0.6109215"
        id="path4143"
        sodipodi:cx="303.55084"
@@ -2016,6 +2510,32 @@
        inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
        inkscape:export-xdpi="38.847721"
        inkscape:export-ydpi="38.847721" />
+    <path
+       transform="matrix(0.54078517,0,0,0.54078517,1368.1283,13.089701)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5316"
+       style="fill:url(#linearGradient5318);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-ydpi="38.847721" />
+    <path
+       inkscape:export-ydpi="38.847721"
+       inkscape:export-xdpi="38.847721"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/segment.png"
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient4332);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4330"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.38239286,0.38239286,-0.38239286,0.38239286,1310.0383,-48.574335)" />
     <path
        transform="matrix(0.54078517,0,0,0.54078517,796.58189,-3.7243289)"
        d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
@@ -3074,6 +3594,24 @@
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
+       d="m 1750.5541,252.23074 -71.0296,-6e-5"
+       style="fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
+       id="path5355"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-ydpi="31.620054" />
+    <path
+       inkscape:export-ydpi="31.620054"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       id="path5339"
+       style="fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
+       d="m 1714.8572,226.42421 0,25.41326"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
        d="m 1329.8235,252.64138 -34.3327,0"
        style="fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
        id="path4235"
@@ -3514,6 +4052,22 @@
        inkscape:export-xdpi="30"
        inkscape:export-ydpi="30" />
     <path
+       sodipodi:open="true"
+       inkscape:export-ydpi="31.422338"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       sodipodi:end="6.2852735"
+       sodipodi:start="4.712389"
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.34988736;stroke-miterlimit:4;stroke-opacity:0.99215686000000003;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3532"
+       sodipodi:cx="1294.8413"
+       sodipodi:cy="253.43919"
+       sodipodi:rx="35.422745"
+       sodipodi:ry="35.422745"
+       d="m 1294.8413,218.01645 a 35.422745,35.422745 0 0 1 35.4227,35.49671"
+       transform="matrix(1.4925875,0,0,1.4925875,-454.12336,39.099006)" />
+    <path
        transform="matrix(1.4925875,0,0,1.4925875,-466.10084,-99.533882)"
        d="m 1276.0664,223.40131 a 35.422745,35.422745 0 0 1 54.1976,30.11185"
        sodipodi:ry="35.422745"
@@ -3529,6 +4083,32 @@
        inkscape:export-xdpi="25.331539"
        inkscape:export-ydpi="25.331539"
        sodipodi:open="true" />
+    <path
+       inkscape:export-ydpi="31.620054"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       transform="matrix(1.0066838,0,0,0.70452557,411.54351,73.676342)"
+       d="m 1330.2641,253.43919 a 35.422745,35.422745 0 1 1 -70.8455,0 35.422745,35.422745 0 1 1 70.8455,0 z"
+       sodipodi:ry="35.422745"
+       sodipodi:rx="35.422745"
+       sodipodi:cy="253.43919"
+       sodipodi:cx="1294.8413"
+       id="path5341"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0.99215686;stroke-dasharray:none;stroke-dashoffset:0"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="30.59"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       transform="translate(559.27789,-1.0770111)"
+       d="m 1330.2641,253.43919 a 35.422745,35.422745 0 1 1 -70.8455,0 35.422745,35.422745 0 1 1 70.8455,0 z"
+       sodipodi:ry="35.422745"
+       sodipodi:rx="35.422745"
+       sodipodi:cy="253.43919"
+       sodipodi:cx="1294.8413"
+       id="path5373"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:0.99215686000000003;stroke-dasharray:4,2;stroke-dashoffset:0"
+       sodipodi:type="arc" />
     <path
        sodipodi:type="arc"
        style="opacity:1;fill:none;fill-opacity:0.99215686000000003;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:0.99215686000000003;stroke-dasharray:none;stroke-dashoffset:0"
@@ -3582,6 +4162,32 @@
        inkscape:export-xdpi="25.331539"
        inkscape:export-ydpi="25.331539" />
     <path
+       inkscape:export-ydpi="31.620054"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       transform="matrix(0.54078517,0,0,0.54078517,1551.3933,144.39465)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5357"
+       style="fill:url(#linearGradient5359);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient5345);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path5343"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,1586.0515,170.13344)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-ydpi="31.620054" />
+    <path
        inkscape:export-ydpi="33.056553"
        inkscape:export-xdpi="33.056553"
        inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/circle.png"
@@ -3593,6 +4199,19 @@
        sodipodi:cx="303.55084"
        id="path4231"
        style="fill:url(#linearGradient4233);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="31.620054"
+       inkscape:export-xdpi="31.620054"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/ellipse.png"
+       transform="matrix(0.54078517,0,0,0.54078517,1515.7157,170.13346)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5347"
+       style="fill:url(#linearGradient5349);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        sodipodi:type="arc" />
     <path
        sodipodi:type="arc"
@@ -3607,5 +4226,313 @@
        inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/circle.png"
        inkscape:export-xdpi="33.056553"
        inkscape:export-ydpi="33.056553" />
+    <g
+       style="font-size:83.455513px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="text3464"
+       transform="translate(1.7838474,-1.7839108)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-ydpi="35.048435">
+      <path
+         d="m 1128.3648,69.759466 0.6112,12.958425 -1.5485,0 c -0.2989,-2.281942 -0.7064,-3.911931 -1.2225,-4.889972 -0.8422,-1.575609 -1.9696,-2.730184 -3.3822,-3.46373 -1.3855,-0.76061 -3.2193,-1.140941 -5.5012,-1.140993 l -7.7832,0 0,42.216754 c -10e-5,3.39582 0.3667,5.5148 1.1002,6.35696 1.0323,1.141 2.6216,1.71149 4.7677,1.71149 l 1.9153,0 0,1.50774 -23.4311,0 0,-1.50774 1.956,0 c 2.3363,0 3.9934,-0.70632 4.9714,-2.11899 0.5977,-0.86932 0.8965,-2.85247 0.8965,-5.94946 l 0,-42.216754 -6.6422,0 c -2.5808,5.2e-5 -4.4146,0.190217 -5.5012,0.570497 -1.4127,0.516214 -2.6216,1.507791 -3.6267,2.974732 -1.0052,1.467039 -1.6029,3.450192 -1.793,5.949466 l -1.5485,0 0.652,-12.958425 45.11,0"
+         style="font-variant:normal;font-stretch:normal;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+         id="path4285"
+         inkscape:connector-curvature="0" />
+    </g>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       d="m 1152.7287,134.81415 -61.6006,0"
+       style="opacity:0.28668943;fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0;filter:url(#filter4371)"
+       id="path4298"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-ydpi="35.048435" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.6;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4279)"
+       id="path4304"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0.54078517,0,0,0.54078517,925.97237,52.43771)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-ydpi="35.048435" />
+    <path
+       inkscape:export-ydpi="35.048435"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       id="path4310"
+       style="fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
+       d="m 1147.0896,131.79479 -61.6006,0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="35.048435"
+       inkscape:export-xdpi="35.048435"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/text.png"
+       transform="matrix(0.54078517,0,0,0.54078517,920.33327,49.418349)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path4312"
+       style="fill:url(#linearGradient4314);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.86938751;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.73877501, 1.86938751;stroke-dashoffset:0"
+       d="m 1528.7166,91.607648 -28.7207,-28.72075"
+       id="path5320"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5286"
+       d="m 1368.0708,120.49931 0,-40.617273"
+       style="fill:none;stroke:#000000;stroke-width:1.86938751;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.73877501, 1.86938751;stroke-dashoffset:0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5322"
+       d="m 1481.5713,138.753 -28.7208,-28.72075"
+       style="fill:none;stroke:#000000;stroke-width:1.86938751;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.73877501, 1.86938751;stroke-dashoffset:0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.86938751;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.73877501, 1.86938751;stroke-dashoffset:0"
+       d="m 1301.3972,120.49931 0,-40.617273"
+       id="path5284"
+       inkscape:connector-curvature="0" />
+    <text
+       inkscape:export-ydpi="31.422338"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)"
+       xml:space="preserve"
+       style="font-size:29.08819771px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="759.62579"
+       y="1335.6172"
+       id="text4380"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4382"
+         x="759.62579"
+         y="1335.6172">r</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5324"
+       y="1111.3119"
+       x="972.05298"
+       style="font-size:34.87757111px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"
+       transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/dimension.png"
+       inkscape:export-xdpi="38"
+       inkscape:export-ydpi="38"><tspan
+         y="1111.3119"
+         x="972.05298"
+         id="tspan5326"
+         sodipodi:role="line">d</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:21.60513115px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1727.9425"
+       y="393.85757"
+       id="text4578"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936"><tspan
+         sodipodi:role="line"
+         id="tspan4580"
+         x="1727.9425"
+         y="393.85757">d</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4574"
+       y="361.06137"
+       x="1696.5879"
+       style="font-size:21.60513115px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936"><tspan
+         y="361.06137"
+         x="1696.5879"
+         id="tspan4576"
+         sodipodi:role="line">d</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:34.87757111px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1323.9342"
+       y="86.068924"
+       id="text5288"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5290"
+         x="1323.9342"
+         y="86.068924">d</tspan></text>
+    <path
+       transform="matrix(0.76257233,0,0,0.76257233,460.62981,92.428141)"
+       inkscape:transform-center-y="-3.3977426"
+       d="m 1828.299,163.8124 44.3763,32.24131 -16.9503,52.16753 -54.8521,0 -16.9503,-52.16754 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="true"
+       sodipodi:arg2="-0.9424778"
+       sodipodi:arg1="-1.5707963"
+       sodipodi:r2="23.33003"
+       sodipodi:r1="46.660061"
+       sodipodi:cy="210.47246"
+       sodipodi:cx="1828.299"
+       sodipodi:sides="5"
+       id="path5385"
+       style="fill:none;stroke:#000000;stroke-width:3.93405294;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       sodipodi:type="star"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-ydpi="30.59" />
+    <path
+       inkscape:export-ydpi="30.59"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       id="path5371"
+       style="fill:#000000;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
+       d="m 1853.1192,217.02948 0,34.3327"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient5377);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path5375"
+       sodipodi:cx="303.55084"
+       sodipodi:cy="151.81119"
+       sodipodi:rx="9.5964489"
+       sodipodi:ry="9.5964489"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       transform="matrix(0,-0.54078517,0.54078517,0,1771.1031,381.34998)"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-ydpi="30.59" />
+    <path
+       inkscape:export-ydpi="30.59"
+       inkscape:export-xdpi="30.59"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/polygon.png"
+       transform="matrix(0,-0.54078517,0.54078517,0,1771.1031,416.51788)"
+       d="m 313.14729,151.81119 a 9.5964489,9.5964489 0 1 1 -19.1929,0 9.5964489,9.5964489 0 1 1 19.1929,0 z"
+       sodipodi:ry="9.5964489"
+       sodipodi:rx="9.5964489"
+       sodipodi:cy="151.81119"
+       sodipodi:cx="303.55084"
+       id="path5379"
+       style="fill:url(#linearGradient5381);fill-opacity:1;stroke:#000000;stroke-width:1.84916317;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;stroke-dasharray:4,2"
+       d="m 2007.6285,282.74578 -68.2971,0 0,-68.29708"
+       id="rect5399"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 1939.3314,282.74578 66.768,-66.76804"
+       id="path5402"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path5404"
+       sodipodi:cx="1967.0522"
+       sodipodi:cy="255.1618"
+       sodipodi:rx="28.111044"
+       sodipodi:ry="28.111044"
+       d="m 1967.5727,227.05558 a 28.111044,28.111044 0 0 1 19.3255,8.19716"
+       transform="matrix(0.77589676,0,0,0.77589676,412.65539,85.425089)"
+       sodipodi:start="4.7309054"
+       sodipodi:end="5.4961985"
+       sodipodi:open="true"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text5434"
+       y="274.56659"
+       x="1972.0103"
+       style="font-size:31.30012894px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102"><tspan
+         y="274.56659"
+         x="1972.0103"
+         id="tspan5436"
+         sodipodi:role="line">α</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:31.30012894px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1946.6292"
+       y="247.49338"
+       id="text5430"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/bisect.png"
+       inkscape:export-xdpi="41.530102"
+       inkscape:export-ydpi="41.530102"><tspan
+         sodipodi:role="line"
+         id="tspan5432"
+         x="1946.6292"
+         y="247.49338">α</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4346"
+       d="m 1726.2651,368.54015 0,77.67795"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 2;stroke-dashoffset:0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 2;stroke-dashoffset:0"
+       d="m 1531.5674,368.54015 0,77.67795"
+       id="path5448"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-ydpi="31.422338" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 2;stroke-dashoffset:0"
+       d="m 1722.0805,364.47739 -77.6779,0"
+       id="path4348"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5450"
+       d="m 1527.3828,364.47739 -77.6779,0"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4,2;stroke-dashoffset:0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/fillet.png"
+       inkscape:export-xdpi="31.422338"
+       inkscape:export-ydpi="31.422338" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1726.0572,413.51697 0,-3.25018 -45.3479,-45.34785 -2.6314,0"
+       id="path4350"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/chamfer.png"
+       inkscape:export-xdpi="28.845936"
+       inkscape:export-ydpi="28.845936" />
   </g>
 </svg>

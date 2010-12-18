@@ -132,6 +132,8 @@ class ICommand(object):
         try:
             self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
             self.scene.fromPoint=snap
+            if self.kernelCommand.activeException()==ExcPoint or self.kernelCommand.activeException()==ExcLenght:
+                self.scene.guideHandler.setHVGuide(snap.getx(), snap.gety())
         except:
             print "Exceprion  ICommand.addMauseEvent "
             self.updateInput("msg")
@@ -168,6 +170,7 @@ class ICommand(object):
                 self.updateInput(self.kernelCommand.activeMessage) 
                 self.scene.clearSelection()
                 self.scene.fromPoint=None
+                self.scene.guideHandler.reset()
             else:
                 self.scene.cancelCommand()
                 self.updateInput("Ready") 
