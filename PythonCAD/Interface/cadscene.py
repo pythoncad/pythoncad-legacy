@@ -90,7 +90,11 @@ class CadScene(QtGui.QGraphicsScene):
         
         # Init loading of snap marks
         self.initSnap()
-                
+        
+        # Init loading of guides
+        self.guideHandler=guideHandler(self, 0.0, 0.0, 0.0)
+        self.addItem(self.guideHandler)
+        
         # scene aspect
         r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
         self.setBackgroundBrush(QtGui.QBrush(QtGui.QColor(r, g, b), QtCore.Qt.SolidPattern))
@@ -269,8 +273,10 @@ class CadScene(QtGui.QGraphicsScene):
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
+        
         self.hideSnapMarks()
         self.fromPoint=None
+        self.guideHandler.reset()
         
 # ################################################# KEY EVENTS
 # ##########################################################  
@@ -463,3 +469,48 @@ class CadScene(QtGui.QGraphicsScene):
                 self.removeItem(item)
         for ent in entities:
                 self.addGraficalObject(ent)
+
+
+
+class guideHandler(QtGui.QGraphicsLineItem):
+    def __init__(self, parent, x, y, a):
+        super(guideHandler, self).__init__()
+        self.scene=parent
+
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
+        self.setAcceptsHoverEvents(True)
+        
+        self.x=x
+        self.y=y
+        line=QtCore.QLineF(x, y*-1, x+(2000*math.cos(a)), y+(20000*math.sin(a)))
+        self.setLine(line)
+        
+        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 3, QtCore.Qt.DotLine)
+        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),3, QtCore.Qt.DotLine)
+        
+        self.setPen(self.hidePen)
+        self.hide()
+        
+    def hoverEnterEvent(self, event):
+        self.setPen(self.highlightPen)
+        self.scene.forceDirection=True
+        super(guideHandler, self).hoverEnterEvent(event)
+        return
+        
+    def hoverLeaveEvent(self, event):
+        self.setPen(self.hidePen)
+        self.scene.forceDirection=False
+        #self.update(self.boundingRect())
+        super(guideHandler, self).hoverLeaveEvent(event)
+        return
+        
+    def reset(self):
+        self.scene.forceDirection=None
+        self.setPos(0.0, 0.0)
+        self.hide()
+    
+    def setHVGuide(self, x, y):
+        self.show()
+        self.setPen(self.hidePen)
+        self.setPos(x, y*-1)

@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,11 +42,11 @@
      bordercolor="#666666"
      pagecolor="#ffffff"
      id="base"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="744.93518"
-     inkscape:cy="396.38033"
-     inkscape:window-x="0"
-     inkscape:window-y="155"
+     inkscape:zoom="2"
+     inkscape:cx="668.01926"
+     inkscape:cy="365.51706"
+     inkscape:window-x="6"
+     inkscape:window-y="102"
      inkscape:current-layer="svg2"
      width="210mm"
      height="40mm"
@@ -838,7 +838,7 @@
      x="651.72949"
      y="212.72528"
      ry="0"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187.01299"
      inkscape:export-ydpi="187.01299" />
   <g
@@ -1183,7 +1183,7 @@
   <text
      inkscape:export-ydpi="187.01299"
      inkscape:export-xdpi="187.01299"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      transform="scale(0.94360283,1.0597679)"
      sodipodi:linespacing="125%"
      id="text3197"
@@ -1213,7 +1213,7 @@
   <text
      inkscape:export-ydpi="187.01299"
      inkscape:export-xdpi="187.01299"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      xml:space="preserve"
      style="font-size:7.51278638999999870px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#cccccc;fill-opacity:1;stroke:none;font-family:Sans"
      x="723.36292"
@@ -1282,7 +1282,7 @@
      sodipodi:ry="8.6066771"
      d="m 110.46717,132.28575 a 48.948284,8.6066771 0 1 1 -97.896571,0 48.948284,8.6066771 0 1 1 97.896571,0 z"
      transform="matrix(0.9588872,0,0,0.809524,680.41894,207.51153)"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <path
@@ -1290,7 +1290,7 @@
      d="m 705.48755,249.25405 c -7.45495,-1e-5 -13.40625,6.13816 -13.40625,13.625 l 0,26.84375 c 0,7.48684 5.9513,13.625 13.40625,13.625 l 20.8125,0 0,-54.09375 -20.8125,0 z"
      id="path3123"
      inkscape:connector-curvature="0"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <path
@@ -1298,14 +1298,14 @@
      d="m 713.2688,221.0353 -0.0312,24.8125 15,0 c 0.96427,0 2,1.12948 2,2.09375 l 0,55.40625 25,0 0,-68.84375 c 0,-7.48684 -5.95129,-13.62501 -13.40625,-13.625 -9.55238,-0.28772 -19.05587,0.10006 -28.5625,0.15625 z"
      id="path3127"
      inkscape:connector-curvature="0"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <path
      style="fill:url(#linearGradient3999);fill-opacity:1"
      d="m 677.9767,220.9375 c -7.37034,0 -13.40626,7.42116 -13.40625,14.6875 l 0,25.53125 c 0,7.48684 5.95129,13.625 13.40625,13.625 l 10.8125,0 0,-13.25 c 0,-8.09858 7.6331,-15.6875 15.9375,-15.6875 l 5.4375,0 0,-24.90625 -32.1875,0 z m 19.125,7.875 c 2.77948,0 5.03126,2.29865 5.03125,5.125 0,2.81634 -2.25177,5.09375 -5.03125,5.09375 -2.76954,0 -5.03124,-2.27741 -5.03125,-5.09375 0,-2.82635 2.26171,-5.125 5.03125,-5.125 z"
      id="path3131"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187"
      inkscape:connector-curvature="0" />
@@ -1314,7 +1314,7 @@
      d="m 774.11481,249.25405 c 7.45495,-1e-5 13.40625,6.13816 13.40625,13.625 l 0,26.84375 c 0,7.48684 -5.9513,13.625 -13.40625,13.625 l -15.35289,0 0,-54.09375 15.35289,0 z"
      id="path3137"
      inkscape:connector-curvature="0"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <path
@@ -1322,24 +1322,24 @@
      d="m 709.86351,276.01776 -16.27248,-19.09547 0.35852,-0.70469 c 0.43975,-0.86434 1.91558,-2.70353 2.66864,-3.32567 l 0.55607,-0.4594 14.53934,17.06081 14.53934,17.06081 -0.0585,4.27954 -0.0585,4.27955 -16.27247,-19.09548 z"
      id="path3147"
      inkscape:connector-curvature="0"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187" />
   <text
      xml:space="preserve"
-     style="font-size:15.54498481999999981px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#e6e6e6;fill-opacity:1;stroke:none;font-family:Sans"
+     style="font-size:15.54498482px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#e6e6e6;fill-opacity:1;stroke:none;font-family:Sans"
      x="-326.27313"
      y="710.62982"
      id="text3933"
      sodipodi:linespacing="125%"
      transform="matrix(0,-0.85490765,1.169717,0,0,0)"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187"><tspan
        sodipodi:role="line"
        id="tspan3935"
        x="-326.27313"
-       y="710.62982">alpha 04</tspan></text>
+       y="710.62982">alpha 05</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:25.78048324999999963px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#e6e6e6;fill-opacity:1;stroke:none;font-family:Sans;"
@@ -1348,7 +1348,7 @@
      id="text3929"
      sodipodi:linespacing="125%"
      transform="scale(0.879349,1.1372049)"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187"><tspan
        sodipodi:role="line"
@@ -1367,7 +1367,7 @@
   <g
      id="g4024"
      style="opacity:0.88395906"
-     inkscape:export-filename="/home/casa/Scrivania/PythonCAD/icons/splashScreen1.png"
+     inkscape:export-filename="/home/casa/PyCAD/PythonCAD/icons/splashScreen1.png"
      inkscape:export-xdpi="187"
      inkscape:export-ydpi="187"
      transform="translate(-0.58578642,0)">
