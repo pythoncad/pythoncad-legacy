@@ -92,6 +92,8 @@ class CadScene(QtGui.QGraphicsScene):
         self.initSnap()
         
         # Init loading of guides
+        self.isGuided=None
+        self.isGuideLocked=None
         self.guideHandler=guideHandler(self, 0.0, 0.0, 0.0)
         self.addItem(self.guideHandler)
         
@@ -262,7 +264,7 @@ class CadScene(QtGui.QGraphicsScene):
             self.fireZoomFit()
         else:
             pass
-    
+
     def cancelCommand(self):
         """
             cancel the active command
@@ -290,8 +292,12 @@ class CadScene(QtGui.QGraphicsScene):
         elif event.key()==QtCore.Qt.Key_Space:
             self.fireCommandlineFocus(self, event)
         elif event.key()==QtCore.Qt.Key_Shift:
-            self.selectionAddMode=True
-            print self.selectionAddMode
+            if self.isGuided==True:
+                self.isGuideLocked=True
+                print "GUIDE LOCKED"
+            else:
+                self.selectionAddMode=True
+                print self.selectionAddMode
 #        elif event.key()==QtCore.Qt.Key_F8:  <<<<this must maybe be implemented in cadwindow
 #            if self.forceDirection is None:
 #                self.forceDirection=True
@@ -316,8 +322,13 @@ class CadScene(QtGui.QGraphicsScene):
         if event.key()==QtCore.Qt.Key_Shift:
 #            if self.activeICommand!=None:
 #                if self.activeKernelCommand.activeException()==ExcMultiEntity:
-            self.selectionAddMode=False
-            print self.selectionAddMode
+            if self.isGuided==True:
+                self.isGuideLocked=None
+                self.isGuided=None
+                self.guideHandler.hide()
+            else:
+                self.selectionAddMode=False
+                print self.selectionAddMode
         else:
             pass
             
@@ -480,7 +491,7 @@ class guideHandler(QtGui.QGraphicsLineItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
         self.setAcceptsHoverEvents(True)
-        
+        self.setToolTip("Guide [Press Shift to lock direction]")
         self.x=x
         self.y=y
         line=QtCore.QLineF(x, y*-1, x+(2000*math.cos(a)), y+(20000*math.sin(a)))
@@ -495,15 +506,22 @@ class guideHandler(QtGui.QGraphicsLineItem):
     def hoverEnterEvent(self, event):
         self.setPen(self.highlightPen)
         self.scene.forceDirection=True
+        self.scene.isGuided=True
         super(guideHandler, self).hoverEnterEvent(event)
         return
         
     def hoverLeaveEvent(self, event):
-        self.setPen(self.hidePen)
-        self.scene.forceDirection=False
-        #self.update(self.boundingRect())
+        print self.scene.isGuideLocked
+        if self.scene.isGuideLocked==None:
+            self.hide()
+            #self.update(self.boundingRect())
         super(guideHandler, self).hoverLeaveEvent(event)
         return
+    
+    def hide(self):
+        self.setPen(self.hidePen)
+        self.scene.forceDirection=False
+        self.scene.isGuided=None
         
     def reset(self):
         try:

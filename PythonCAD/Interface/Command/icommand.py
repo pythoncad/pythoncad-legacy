@@ -170,6 +170,8 @@ class ICommand(object):
                 self.updateInput(self.kernelCommand.activeMessage) 
                 self.scene.clearSelection()
                 self.scene.fromPoint=None
+                self.scene.isGuided=None
+                self.scene.isGuideLocked=None
                 self.scene.guideHandler.reset()
             else:
                 self.scene.cancelCommand()
