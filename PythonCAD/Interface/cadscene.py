@@ -514,3 +514,23 @@ class guideHandler(QtGui.QGraphicsLineItem):
         self.show()
         self.setPen(self.hidePen)
         self.setPos(x, y*-1)
+
+class guide(QtGui.QGraphicsItem):
+    def __init__(self):
+        super(SnapMark, self).__init__()
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
+        self.hide()
+
+    def drawShape(self, painterPath):    
+        """
+            overloading of the shape method 
+        """
+        painterPath.moveTo(self.x, self.y)
+        painterPath.lineTo(self.x1, self.y1)
+        
+    def drawGeometry(self, painter, option, widget):
+        #Create Segment
+        p1=QtCore.QPointF(self.x, self.y)
+        p2=QtCore.QPointF(self.x1, self.y1)
+        painter.drawLine(p1,p2)
