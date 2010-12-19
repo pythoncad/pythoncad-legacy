@@ -94,7 +94,8 @@ class CadScene(QtGui.QGraphicsScene):
         # Init loading of guides
         self.isGuided=None
         self.isGuideLocked=None
-        self.guideHandler=guideHandler(self, 0.0, 0.0, 0.0)
+        pi=math.pi/4
+        self.guideHandler=guideHandler(self, 0.0, 0.0,pi ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.addItem(self.guideHandler)
         
         # scene aspect
@@ -157,7 +158,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
                 item=self.activeICommand.getEntity(self.mouseOnScene)
                 if item:
-                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item, None)
+                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item)
                     if ps!=self.mouseOnScene:
                         self.endMark.move(ps.getx(), ps.gety()*-1)
                 else:
@@ -482,7 +483,6 @@ class CadScene(QtGui.QGraphicsScene):
                 self.addGraficalObject(ent)
 
 
-
 class guideHandler(QtGui.QGraphicsLineItem):
     def __init__(self, parent, x, y, a):
         super(guideHandler, self).__init__()
@@ -491,10 +491,11 @@ class guideHandler(QtGui.QGraphicsLineItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
         self.setAcceptsHoverEvents(True)
-        self.setToolTip("Guide [Press Shift to lock direction]")
+        self.setToolTip("Guide [Press Shift to lock direction] "+ str(a)+"rad")
         self.x=x
         self.y=y
-        line=QtCore.QLineF(x, y*-1, x+(2000*math.cos(a)), y+(20000*math.sin(a)))
+        self.a=a
+        line=QtCore.QLineF(x, y*-1, x+(20000*math.cos(self.a)), y*-1+(20000*math.sin(self.a))*-1)
         self.setLine(line)
         
         self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 3, QtCore.Qt.DotLine)
@@ -505,7 +506,8 @@ class guideHandler(QtGui.QGraphicsLineItem):
         
     def hoverEnterEvent(self, event):
         self.setPen(self.highlightPen)
-        self.scene.forceDirection=True
+        self.scene.forceDirection=self.a
+        #print "FORCE DIR "+str(self.scene.forceDirection)
         self.scene.isGuided=True
         super(guideHandler, self).hoverEnterEvent(event)
         return
@@ -520,7 +522,7 @@ class guideHandler(QtGui.QGraphicsLineItem):
     
     def hide(self):
         self.setPen(self.hidePen)
-        self.scene.forceDirection=False
+        self.scene.forceDirection=None
         self.scene.isGuided=None
         
     def reset(self):
@@ -536,22 +538,4 @@ class guideHandler(QtGui.QGraphicsLineItem):
         self.setPen(self.hidePen)
         self.setPos(x, y*-1)
 
-class guide(QtGui.QGraphicsItem):
-    def __init__(self):
-        super(SnapMark, self).__init__()
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
-        self.hide()
 
-    def drawShape(self, painterPath):    
-        """
-            overloading of the shape method 
-        """
-        painterPath.moveTo(self.x, self.y)
-        painterPath.lineTo(self.x1, self.y1)
-        
-    def drawGeometry(self, painter, option, widget):
-        #Create Segment
-        p1=QtCore.QPointF(self.x, self.y)
-        p2=QtCore.QPointF(self.x1, self.y1)
-        painter.drawLine(p1,p2)

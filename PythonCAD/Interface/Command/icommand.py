@@ -115,8 +115,8 @@ class ICommand(object):
         #
         print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
         if correct!=None:
-            snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point), force)
-            snap=self.correctPositionForcedDirection(snap, self.scene.forceDirection)
+            snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point))
+            snap=self.correctPositionForcedDirection(snap, self.__scene.forceDirection)
         else:
             snap=point
     #    if point!=None:
@@ -435,20 +435,19 @@ class ICommand(object):
             return None
         if force==None:
             return point
-        x, y=point.getCoords()
-        lastSnap=None
-        lastSnap=self.getActiveSnapClick()
-        if force and  lastSnap !=None:
-            if abs(x-lastSnap.x)>abs(y-lastSnap.y):
-                y=lastSnap.y
-            else:
-                x=lastSnap.x
-            #elif self.forceDirection.find("F")>=0:
-            #    angle=convertAngle(self.forceDirection.split("F")[1])
-            #    if angle:
-            #        x=self.lastSnap.x+x
-            #        y=self.lastSnap.y+math.cos(angle)*x
-        return Point(x, y)
+        lastSnap=self.__scene.fromPoint
+        if force!=None and lastSnap!=None:
+            v=Vector(lastSnap, Point(lastSnap.x+10.0*math.cos(force),  lastSnap.y+10.0*math.sin(force)))
+            v1=Vector(lastSnap,point)
+            pF=v.map(v1.point).point
+            pF=pF+lastSnap
+
+#            if abs(x-lastSnap.x)>abs(y-lastSnap.y):
+#                y=lastSnap.y
+#            else:
+#                x=lastSnap.x
+
+        return pF #Point(x, y)
 
     def getIntersection(self, entity, point): 
         """
