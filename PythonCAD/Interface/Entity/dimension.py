@@ -27,14 +27,14 @@ from Kernel.GeoUtil.geolib                 import Vector
 
 from Interface.Entity.base import *
 
-
-
 class Dimension(BaseEntity):
     def __init__(self, entity):
         super(Dimension, self).__init__(entity)
         self.updateInfo()
-        self.textPoint=self.calculateTextPoint()       
+        self.location=self.calculateTextPoint()       
         self.font=QtGui.QFont() # This have to be derived from the geoent as son is implemented       return
+        #self.setPos(QtCore.QPointF(self.firstPoint.x, self.firstPoint.y) )
+        #self.rotate(self.angle)        
         
     def updateInfo(self):
         geoEnt=self.geoItem
@@ -47,20 +47,18 @@ class Dimension(BaseEntity):
         self.segments=self.getDimensioLines()
         
     def calculateTextPoint(self):       # TODO : test if the position is ok
-
         """
             calculate the text position
         """
-        p1p2v=Vector(self.firstPoint, self.secondPoint) 
-        v=Vector(self.firstPoint,self.thirdPoint)
-        pp=self.firstPoint+p1p2v.map(v.point).point
-        p3ppv=Vector(pp, self.thirdPoint)
-        p1p2vn=p1p2v.mag()
-        p1p2vn.mult(p1p2v.norm/2.0)
-        baseMiddlePoint=p1p2vn.point+self.firstPoint
-        p3ppv.mult(2)
-        pe=p3ppv.point+baseMiddlePoint
-        return QtCore.QPointF(pe.x, pe.y*-1.0) 
+        t=self.getDimensioLines()
+        p1, p2=t[0]
+        p1=Point(p1.x(), p1.y())
+        v=Vector(p1, Point(p2.x(), p2.y()))
+        vm=v.mag()
+        vm.mult(v.norm/2)
+        pe=p1+vm.point
+        return QtCore.QPointF(pe.x, pe.y) 
+        
     
     def getDimensioLines(self):
         """
@@ -85,7 +83,7 @@ class Dimension(BaseEntity):
         """
             overloading of the shape method 
         """
-        painterPath.addText(self.textPoint, self.font, self.text) 
+        painterPath.addText(self.location, self.font, self.text) 
         for p1, p2 in self.segments:
             painterPath.moveTo(p1)
             painterPath.lineTo(p2)
@@ -93,7 +91,7 @@ class Dimension(BaseEntity):
         
     def drawGeometry(self, painter, option, widget):
         #Create Text
-        painter.drawText(self.boundingRect(),QtCore.Qt.AlignCenter,  self.text)
+        painter.drawText(self.location,  self.text)
         for p1, p2 in self.segments:
             painter.drawLine(p1, p2)
         

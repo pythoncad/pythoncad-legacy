@@ -423,7 +423,8 @@ class CadWindowMdi(QtGui.QMainWindow):
                 self.critical("Wrong command selected")
                 return
             child.show() 
-            self.updateRecentFileList()           
+            self.updateRecentFileList()  
+            self.view.fit()
         return
     
     def _onImportDrawing(self):
@@ -452,6 +453,7 @@ class CadWindowMdi(QtGui.QMainWindow):
                 child = self.createMdiChild(fileName)
                 child.show() 
                 self.updateRecentFileList()
+                self.view.fit()
         return
         
     def _onSaveAsDrawing(self):
