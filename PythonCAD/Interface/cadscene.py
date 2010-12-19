@@ -506,9 +506,12 @@ class guideHandler(QtGui.QGraphicsLineItem):
         return
         
     def reset(self):
-        self.scene.forceDirection=None
-        self.setPos(0.0, 0.0)
-        self.hide()
+        try:
+            self.scene.forceDirection=None
+            self.setPos(0.0, 0.0)
+            self.hide()
+        except:
+            return
     
     def setHVGuide(self, x, y):
         self.show()
