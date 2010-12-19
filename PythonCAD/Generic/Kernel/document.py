@@ -578,10 +578,10 @@ class Document(BaseDb):
             self.__logger.error('UnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledErrorEvent(self,_err)#todo : test it not sure it works
-
+    @property
     def getTreeLayer(self):
         """
-            retrive the layer from the tree
+            Retrive the layer tree object
         """
         return self.__LayerTree
 

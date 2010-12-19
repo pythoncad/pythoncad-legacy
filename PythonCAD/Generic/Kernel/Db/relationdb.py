@@ -90,7 +90,7 @@ class RelationDb(BaseDb):
         _sqlSelect="""SELECT pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id,
+                            pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
                             pycad_visible

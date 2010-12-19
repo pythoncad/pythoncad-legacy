@@ -29,7 +29,7 @@ from Kernel.initsetting         import MAIN_LAYER
 
 class LayerTree(object):
     """
-        this class rappresent the layer tree strucrute
+        this class represents the layer tree structure
     """
     def __init__(self,kernel):
         self.__kr=kernel
@@ -137,6 +137,8 @@ class LayerTree(object):
                 childs[l.getId()]=(ca, createNode(l))
             if childs:
                 tree[id]=(c, childs)
+            else:
+                tree[id]=(c, None)
             return tree
 
         return createNode(rootDbEnt)

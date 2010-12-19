@@ -16,7 +16,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.isUntitled = True
         # layer list
-        self.__layer_dock = LayerDock(self)
+        self.__layer_dock = LayerDock(self,self.__document.getTreeLayer)
         self.__scene = CadScene(document)
         self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
         self.__view = CadView(self.__scene, self)

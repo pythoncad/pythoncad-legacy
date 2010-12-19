@@ -28,8 +28,6 @@ class Layer(object):
     def __init__(self, layerName=None):
         """
             name            = name of the layer
-            parentLayerObj  = parent layer object
-            styleObj        = styleObject
         """
         self.name=layerName
 
