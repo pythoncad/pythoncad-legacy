@@ -535,7 +535,11 @@ class guideHandler(QtGui.QGraphicsItem):
             self.hide()
         except:
             return
-            
+    
+    def hideGuides(self):
+        for i in self.childItems():
+            i.hide()
+        
     def boundingRect(self):
         return self.childrenBoundingRect()
     
@@ -557,8 +561,8 @@ class guide(QtGui.QGraphicsLineItem):
         self.setLine(line)
         self.setToolTip("Guide [Press Shift to lock direction] "+ str(self.a)+"rad")
         
-        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 3, QtCore.Qt.DotLine)
-        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),3, QtCore.Qt.DotLine)
+        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 2, QtCore.Qt.DotLine)
+        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),2, QtCore.Qt.DotLine)
         
         self.setPen(self.hidePen)
         self.hide()
@@ -570,6 +574,7 @@ class guide(QtGui.QGraphicsLineItem):
         
     def hoverEnterEvent(self, event):
         if self.handler.scene.isGuideLocked==None:
+            self.handler.hideGuides()
             self.setPen(self.highlightPen)
             self.handler.setForceDirection(self.a)
             self.handler.setIsGuided(True)
