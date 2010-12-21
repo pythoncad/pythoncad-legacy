@@ -565,8 +565,8 @@ class guide(QtGui.QGraphicsLineItem):
         self.setLine(line)
         self.setToolTip("Guide [Press Shift to lock direction] "+ str(self.a)+"rad")
         
-        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 2, QtCore.Qt.DotLine)
-        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),2, QtCore.Qt.DotLine)
+        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 1, QtCore.Qt.DotLine)
+        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),1, QtCore.Qt.DotLine)
         
         self.setPen(self.hidePen)
         self.hide()
@@ -576,6 +576,20 @@ class guide(QtGui.QGraphicsLineItem):
         self.handler.setForceDirection(None)
         self.handler.setIsGuided(None)
         
+    def shape(self):
+        x=self.pos().x()
+        y=self.pos().y()
+        P1=QtCore.QPointF(x+10*math.cos(self.a-0.4), y-10*math.sin(self.a-0.4))
+        P2=QtCore.QPointF(x+20000*math.cos(self.a-0.03), y-20000*math.sin(self.a-0.03))
+        P3=QtCore.QPointF(x+20000*math.cos(self.a+0.03), y-20000*math.sin(self.a+0.03))
+        P4=QtCore.QPointF(x+10*math.cos(self.a+0.4), y-10*math.sin(self.a+0.4))
+        poly=QtGui.QPolygonF([P1, P2, P3, P4])
+        #self.handler.scene.addPolygon(poly) #this is for checking the design of snapping guides
+        shp=QtGui.QPainterPath()
+        shp.addPolygon(poly)
+        return shp
+        
+        return shp
     def hoverEnterEvent(self, event):
         if self.handler.scene.isGuideLocked==None:
             self.handler.hideGuides()
