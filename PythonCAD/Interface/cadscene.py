@@ -94,9 +94,8 @@ class CadScene(QtGui.QGraphicsScene):
         # Init loading of guides
         self.isGuided=None
         self.isGuideLocked=None
-        pi=math.pi/4
-        self.guideHandler=guideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.addItem(self.guideHandler)
+        self.initGuides()
+
         
         # scene aspect
         r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
@@ -107,6 +106,10 @@ class CadScene(QtGui.QGraphicsScene):
         self.snappingPoint=SnapPoint(self)
         self.endMark=SnapEndMark(0.0, 0.0)
         self.addItem(self.endMark)
+    
+    def initGuides(self):
+        self.guideHandler=guideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        self.addItem(self.guideHandler)
         
     @property
     def activeKernelCommand(self):
@@ -402,6 +405,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.clear()
         self.populateScene(document)
         self.initSnap()
+        self.initGuides()
 
 
     def eventShow(self, document, entity):        
