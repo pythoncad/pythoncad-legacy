@@ -45,7 +45,7 @@ class LayerDock(QtGui.QDockWidget):
         The layer list contains all visible layers.
     '''
     
-    def __init__(self, parent, layertree):
+    def __init__(self, parent, document):
         '''
         Creates an edit line in which commands or expressions are evaluated.
         Evaluation of expressions is done by the FunctionHandler object.
@@ -55,14 +55,13 @@ class LayerDock(QtGui.QDockWidget):
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
         #self.__layer_ctrl = QtGui.QTreeWidget(self, itemDoubleClicked=self._itemActivated, itemActivated=self._itemActivated, itemSelectionChanged=self._itemSelectionChanged)
         #self.setWidget(self.__layer_ctrl)
-        self._layerModel=LayerTreeObject(self, layertree)
+        self._layerModel=LayerTreeObject(self, document)
         self.setWidget(self._layerModel)
   
     def ShowAllLayers(self):
         '''
             Show all layers from the kernel in the control
         '''
-        layer_tree = doc.LayerTree
         if self._layerTreeObject:
             self._populateLayerCtrl(self.__layer_ctrl.invisibleRootItem(), layer_tree)
         return

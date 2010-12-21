@@ -33,7 +33,7 @@ if sys.version_info <(2, 7):
 from PyQt4                      import QtCore, QtGui
 
 from Kernel.initsetting                 import MAIN_LAYER
-
+from Kernel.layer                       import Layer
 class LayerItem(QtGui.QTreeWidgetItem):
     """
         Single item
@@ -53,9 +53,9 @@ class LayerTreeObject(QtGui.QTreeWidget):
     """
         PythonCAD Layer tree Structure
     """
-    def __init__(self, parent, kernelTree):
+    def __init__(self, parent, document):
         super(LayerTreeObject, self).__init__(parent)
-        self._kernelTree=kernelTree
+        self._document=document
         self.setColumnCount(1)
         self.setHeaderLabel("Layer Name")
         self.populateStructure()
@@ -64,13 +64,74 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             populate the tree view structure
         """
-        layerTreeStructure=self._kernelTree.getLayerTree()
+        self.clear()
+        layerTreeStructure=self._document.getTreeLayer.getLayerTree()
         #tree[id]=(c, childs)
-        for key in layerTreeStructure:
-            c, childs=layerTreeStructure[key]
-            self.addTopLevelItem(LayerItem(c))
+        def populateChild(layers, parentItem):
+            for key in layers:
+                c, childs=layers[key]
+                parent=LayerItem(c)
+                self.expandItem(parent)
+                if parentItem==None:
+                    self.addTopLevelItem(parent)
+                else:
+                    parentItem.addChild(parent)
+                if childs!=None:
+                    populateChild(childs,parent )
+        populateChild(layerTreeStructure, None)
+
+    def contextMenuEvent(self, event):
+        """
+            context menu event remapped
+        """
+        contexMenu=QtGui.QMenu(self)
+        # Create Actions
+        addAction=QtGui.QAction("Add Child", self, triggered=self._addChild)
+        removeAction=QtGui.QAction("Remove", self, triggered=self._remove)
+        hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
+        showAction=QtGui.QAction("Show", self, triggered=self._show)
+        propertyAction=QtGui.QAction("Property", self, triggered=self._property)
+        #
+        contexMenu.addAction(addAction)
+        contexMenu.addAction(removeAction)
+        contexMenu.addAction(hideAction)
+        contexMenu.addAction(showAction)
+        contexMenu.addAction(propertyAction)
+        #
+        contexMenu.exec_(event.globalPos())
+        del(contexMenu)
         
-        
+    def _addChild(self):
+        """
+            Add a child layer
+        """
+        # SHOW POP UP MENU FOR THE LAYER THE BEST IS IF WE PROMPT THE PROPERTY FORM
+        layerName="Test Layer"
+        parentLayer=self._document.getTreeLayer.getActiveLater()
+        newLayer=self._document.saveEntity(Layer(layerName))
+        self._document.getTreeLayer.insert(newLayer, parentLayer)
+        self.populateStructure()
+        pass
+    def _remove(self):
+        """
+            Remove the selected layer
+        """
+        pass
+    def _hide(self):
+        """
+            Hide the selected layer
+        """
+        pass
+    def _show(self):
+        """
+            Show the selected layer
+        """
+        pass
+    def _property(self):
+        """
+            Show the layer property dialog
+        """
+        pass
         
         
         
