@@ -92,7 +92,10 @@ class CadScene(QtGui.QGraphicsScene):
         self.initSnap()
         
         # Init loading of guides
-        self.guideHandler=guideHandler(self, 0.0, 0.0, 0.0)
+        self.isGuided=None
+        self.isGuideLocked=None
+        pi=math.pi/4
+        self.guideHandler=guideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.addItem(self.guideHandler)
         
         # scene aspect
@@ -155,7 +158,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
                 item=self.activeICommand.getEntity(self.mouseOnScene)
                 if item:
-                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item, None)
+                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item)
                     if ps!=self.mouseOnScene:
                         self.endMark.move(ps.getx(), ps.gety()*-1)
                 else:
@@ -262,7 +265,7 @@ class CadScene(QtGui.QGraphicsScene):
             self.fireZoomFit()
         else:
             pass
-    
+
     def cancelCommand(self):
         """
             cancel the active command
@@ -290,8 +293,12 @@ class CadScene(QtGui.QGraphicsScene):
         elif event.key()==QtCore.Qt.Key_Space:
             self.fireCommandlineFocus(self, event)
         elif event.key()==QtCore.Qt.Key_Shift:
-            self.selectionAddMode=True
-            print self.selectionAddMode
+            if self.isGuided==True:
+                self.isGuideLocked=True
+                print "GUIDE LOCKED"
+            else:
+                self.selectionAddMode=True
+                print self.selectionAddMode
 #        elif event.key()==QtCore.Qt.Key_F8:  <<<<this must maybe be implemented in cadwindow
 #            if self.forceDirection is None:
 #                self.forceDirection=True
@@ -316,8 +323,13 @@ class CadScene(QtGui.QGraphicsScene):
         if event.key()==QtCore.Qt.Key_Shift:
 #            if self.activeICommand!=None:
 #                if self.activeKernelCommand.activeException()==ExcMultiEntity:
-            self.selectionAddMode=False
-            print self.selectionAddMode
+            if self.isGuided==True:
+                self.isGuideLocked=None
+                self.isGuided=None
+                self.guideHandler.hide()
+            else:
+                self.selectionAddMode=False
+                print self.selectionAddMode
         else:
             pass
             
@@ -472,39 +484,50 @@ class CadScene(QtGui.QGraphicsScene):
 
 
 
-class guideHandler(QtGui.QGraphicsLineItem):
+class guideHandler(QtGui.QGraphicsItem):
     def __init__(self, parent, x, y, a):
         super(guideHandler, self).__init__()
         self.scene=parent
-
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
-        self.setAcceptsHoverEvents(True)
         
         self.x=x
         self.y=y
-        line=QtCore.QLineF(x, y*-1, x+(2000*math.cos(a)), y+(20000*math.sin(a)))
-        self.setLine(line)
+        self.a=a
         
-        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 3, QtCore.Qt.DotLine)
-        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),3, QtCore.Qt.DotLine)
+        self.HDxGuide=guide(self, 0.0)
+        self.HSxGuide=guide(self, math.pi)
+        self.VUpGuide=guide(self, math.pi/2)
+        self.VDownGuide=guide(self, math.pi*3/2)
         
-        self.setPen(self.hidePen)
-        self.hide()
+        self.ang45=guide(self, math.pi/4)
+        self.ang135=guide(self, math.pi/4*3)
+        self.ang136=guide(self, math.pi/4*5)
+        self.ang137=guide(self, math.pi/4*7)
         
-    def hoverEnterEvent(self, event):
-        self.setPen(self.highlightPen)
-        self.scene.forceDirection=True
-        super(guideHandler, self).hoverEnterEvent(event)
+        #incremental angle guides <<<<<<<<<<still to be inplemented
+        x=0
+        while x<(2*math.pi):
+            self.addGuide(x)
+            x=x+math.pi/6
+    
+    def setForceDirection(self, a):
+        self.scene.forceDirection=a
+        
+    def setIsGuided(self, bool):
+        self.scene.isGuided=bool
+        
+    def setIsGuidLocked(self, bool):
+        self.scene.isGuideLocked=bool
+    
+    def addGuide(self, a):
+        
+        print "AGGIUNTA"+str(a)
+        
         return
-        
-    def hoverLeaveEvent(self, event):
-        self.setPen(self.hidePen)
-        self.scene.forceDirection=False
-        #self.update(self.boundingRect())
-        super(guideHandler, self).hoverLeaveEvent(event)
-        return
-        
+    
+    def place(self, x, y):
+        self.show()
+        self.setPos(x, y*-1)
+    
     def reset(self):
         try:
             self.scene.forceDirection=None
@@ -513,7 +536,53 @@ class guideHandler(QtGui.QGraphicsLineItem):
         except:
             return
     
-    def setHVGuide(self, x, y):
-        self.show()
+    def hideGuides(self):
+        for i in self.childItems():
+            i.hide()
+        
+    def boundingRect(self):
+        return self.childrenBoundingRect()
+    
+    def paint(self, painte, option, widget):
+        return
+        
+class guide(QtGui.QGraphicsLineItem):
+    def __init__(self, parent=None, a=0.0):
+        super(guide, self).__init__(parent)
+        self.handler=parent
+        #Flags
+        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
+        self.setAcceptsHoverEvents(True)
+        #Events
+        
+        self.a=parent.a+a
+        line=QtCore.QLineF(0.0, 0.0, 20000*math.cos(a), (20000*math.sin(a))*-1)
+        self.setLine(line)
+        self.setToolTip("Guide [Press Shift to lock direction] "+ str(self.a)+"rad")
+        
+        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 2, QtCore.Qt.DotLine)
+        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),2, QtCore.Qt.DotLine)
+        
         self.setPen(self.hidePen)
-        self.setPos(x, y*-1)
+        self.hide()
+    
+    def hide(self):
+        self.setPen(self.hidePen)
+        self.handler.setForceDirection(None)
+        self.handler.setIsGuided(None)
+        
+    def hoverEnterEvent(self, event):
+        if self.handler.scene.isGuideLocked==None:
+            self.handler.hideGuides()
+            self.setPen(self.highlightPen)
+            self.handler.setForceDirection(self.a)
+            self.handler.setIsGuided(True)
+        super(guide, self).hoverEnterEvent(event)
+        return
+        
+    def hoverLeaveEvent(self, event):
+        if self.handler.scene.isGuideLocked==None:
+            self.hide()
+            #self.update(self.boundingRect())
+        super(guide, self).hoverLeaveEvent(event)

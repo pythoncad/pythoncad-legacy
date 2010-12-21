@@ -32,7 +32,7 @@ class SnapPoint():
         self.activeSnap=SNAP_POINT_ARRAY["ALL"]
         self.__scene=scene
         
-    def getSnapPoint(self,  point, entity,force=None):
+    def getSnapPoint(self,  point, entity):
         """
             Get snapPoints
             Remarks:
