@@ -127,7 +127,6 @@ class LayerTree(object):
         """
         rootDbEnt=self.getEntLayerDb(MAIN_LAYER)
         def createNode(layer):
-            tree={}
             childs={}
             c=self._getLayerConstructionElement(layer)
             id=layer.getId()
@@ -135,13 +134,13 @@ class LayerTree(object):
             for l in layers:
                 ca=self._getLayerConstructionElement(l)
                 childs[l.getId()]=(ca, createNode(l))
-            if childs:
-                tree[id]=(c, childs)
-            else:
-                tree[id]=(c, None)
-            return tree
-
-        return createNode(rootDbEnt)
+            #else:
+            #    tree[id]=(c, {})
+            return childs
+        c=self._getLayerConstructionElement(rootDbEnt)
+        exitDb={}
+        exitDb[rootDbEnt.getId()]=(c,createNode(rootDbEnt) )
+        return exitDb
 
     def getParentLayer(self,layer):
         """

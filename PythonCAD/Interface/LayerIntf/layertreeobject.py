@@ -30,18 +30,21 @@ if sys.version_info <(2, 7):
     sip.setapi('QString', 2)
     sip.setapi('QVariant', 2)
 
-from PyQt4                      import QtCore, QtGui
+from PyQt4                              import QtCore, QtGui
 
 from Kernel.initsetting                 import MAIN_LAYER
 from Kernel.layer                       import Layer
+
 class LayerItem(QtGui.QTreeWidgetItem):
     """
         Single item
     """
-    def __init__(self, kernelItem,type=0):
+    def __init__(self, kernelItem,type=0, id=None, active=False):
         super(LayerItem, self).__init__(type)
         self._kernelItem=kernelItem
+        self._id=id
         self.setText(0, self.name)
+        self.setActive(active)
     @property
     def name(self):
         """
@@ -49,9 +52,23 @@ class LayerItem(QtGui.QTreeWidgetItem):
         """
         return self._kernelItem.name
         
+    @property
+    def id(self):
+        """
+            Get the id of the layer
+        """
+        return self._id
+        
+    def setActive(self, active):
+        if active:
+            self.setBackgroundColor(0, QtCore.Qt.lightGray)
+        else:
+            self.setBackgroundColor(0, QtCore.Qt.white)
+
 class LayerTreeObject(QtGui.QTreeWidget):
     """
-        PythonCAD Layer tree Structure
+        Python
+        CAD Layer tree Structure
     """
     def __init__(self, parent, document):
         super(LayerTreeObject, self).__init__(parent)
@@ -66,19 +83,22 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
         self.clear()
         layerTreeStructure=self._document.getTreeLayer.getLayerTree()
-        #tree[id]=(c, childs)
-        def populateChild(layers, parentItem):
+        activeLayer=self._document.getTreeLayer.getActiveLater()
+        def populateChild(layers, parentItem, activeLayerId):
             for key in layers:
                 c, childs=layers[key]
-                parent=LayerItem(c)
+                if key==activeLayerId:
+                    parent=LayerItem(c, id=key, active=True)
+                else:
+                    parent=LayerItem(c, id=key, active=False)
                 self.expandItem(parent)
                 if parentItem==None:
                     self.addTopLevelItem(parent)
                 else:
                     parentItem.addChild(parent)
                 if childs!=None:
-                    populateChild(childs,parent )
-        populateChild(layerTreeStructure, None)
+                    populateChild(childs,parent,activeLayerId)
+        populateChild(layerTreeStructure, None, activeLayerId=activeLayer.getId())
 
     def contextMenuEvent(self, event):
         """
@@ -90,12 +110,14 @@ class LayerTreeObject(QtGui.QTreeWidget):
         removeAction=QtGui.QAction("Remove", self, triggered=self._remove)
         hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
         showAction=QtGui.QAction("Show", self, triggered=self._show)
+        setCurrentAction=QtGui.QAction("Set Current", self, triggered=self._setCurrent)
         propertyAction=QtGui.QAction("Property", self, triggered=self._property)
         #
         contexMenu.addAction(addAction)
         contexMenu.addAction(removeAction)
         contexMenu.addAction(hideAction)
         contexMenu.addAction(showAction)
+        contexMenu.addAction(setCurrentAction)
         contexMenu.addAction(propertyAction)
         #
         contexMenu.exec_(event.globalPos())
@@ -112,21 +134,36 @@ class LayerTreeObject(QtGui.QTreeWidget):
         self._document.getTreeLayer.insert(newLayer, parentLayer)
         self.populateStructure()
         pass
+        
     def _remove(self):
         """
             Remove the selected layer
         """
         pass
+        
     def _hide(self):
         """
             Hide the selected layer
         """
         pass
+        
     def _show(self):
         """
             Show the selected layer
         """
         pass
+        
+    def _setCurrent(self):
+        """
+            set the current layer
+        """
+        for item in self.selectedItems():
+            if(item.id!=None):
+                self._document.getTreeLayer.setActiveLayer(item.id)
+                item.setActive(True)
+            break
+        self.populateStructure()
+        
     def _property(self):
         """
             Show the layer property dialog
