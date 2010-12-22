@@ -26,6 +26,9 @@ from PyQt4 import QtCore, QtGui
 
 from Kernel.initsetting             import SNAP_POINT_ARRAY
 from Kernel.GeoEntity.point         import Point
+from Kernel.GeoUtil.intersection    import *
+
+from Interface.Entity.base          import BaseEntity
 
 class SnapPoint():
     def __init__(self, scene):
@@ -177,17 +180,18 @@ class SnapPoint():
             geoEntityFrom=entity.geoItem
             entityList=self.__scene.collidingItems(entity)
             for ent in entityList:
-                intPoint=find_intersections(ent.geoItem,geoEntityFrom)
-                for tp in intPoint:
-                    iPoint=Point(tp[0], tp[1])
-                    if distance==None:
-                        distance=iPoint.dist(point)
-                        returnVal=iPoint
-                    else:
-                        spoolDist=iPoint.dist(point)
-                        if distance>spoolDist:
-                            distance=spoolDist
+                if isinstance(ent, BaseEntity):
+                    intPoint=find_intersections(ent.geoItem,geoEntityFrom)
+                    for tp in intPoint:
+                        iPoint=Point(tp[0], tp[1])
+                        if distance==None:
+                            distance=iPoint.dist(point)
                             returnVal=iPoint
+                        else:
+                            spoolDist=iPoint.dist(point)
+                            if distance>spoolDist:
+                                distance=spoolDist
+                                returnVal=iPoint
         return returnVal    
 
     def getSnapQuadrantPoint(self, entity, point):

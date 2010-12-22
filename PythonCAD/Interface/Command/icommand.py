@@ -34,7 +34,6 @@ import math, string
 #Kernel Import
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY
-from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.geolib          import Vector   
 from Kernel.GeoUtil.intersection    import *
@@ -44,6 +43,8 @@ from Kernel.exception               import *
 #
 # Interface Import
 #
+from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
+from Interface.Entity.base          import BaseEntity
 from Interface.Preview.factory      import *
 from Interface.snap import *
 
@@ -197,7 +198,8 @@ class ICommand(object):
             #in case of overlapping entity selection
             print "more than one entity under the mouse"
         for e in ents:
-            return e
+            if isinstance(e, BaseEntity):
+                return e
         return None
         
     def updateMauseEvent(self, point, distance, entity, force=None):
