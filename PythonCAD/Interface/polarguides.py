@@ -31,6 +31,7 @@ def getPolarMenu():
     returns a menu to operate with guide objects STILL TO BE IMPLEMENTED
     '''
     menu=QtGui.QMenu()
+    
     return menu
         
 class guideHandler(QtGui.QGraphicsItem):
@@ -48,7 +49,7 @@ class guideHandler(QtGui.QGraphicsItem):
         
         self.guides=[]
         
-        self.addGuidesByIncrement(math.pi/4)
+        self.addGuidesByIncrement(math.pi/6)
 
         
     def setForceDirection(self, a):

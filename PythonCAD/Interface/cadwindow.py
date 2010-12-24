@@ -147,7 +147,8 @@ class CadWindowMdi(QtGui.QMainWindow):
             print "abilita"
             self.scene.forceDirectionEnabled=True
             self.forceDirectionStatus.setFocus(False)
-            self.scene.guideHandler.show()
+            if self.scene.activeICommand!=None:
+                self.scene.guideHandler.show()
         else:
             self.scene.forceDirectionEnabled=False
             self.scene.guideHandler.hide()
