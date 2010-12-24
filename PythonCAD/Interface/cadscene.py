@@ -39,7 +39,9 @@ from Interface.Entity.actionhandler import PositionHandler
 from Interface.cadinitsetting       import *
 from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
+
 from Interface.snap import *
+from Interface.polarguides import guideHandler
 
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
@@ -329,7 +331,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.isGuided==True:
                 self.isGuideLocked=None
                 self.isGuided=None
-                self.guideHandler.hide()
+                self.guideHandler.hideGuides()
             else:
                 self.selectionAddMode=False
                 print self.selectionAddMode
@@ -485,122 +487,3 @@ class CadScene(QtGui.QGraphicsScene):
                 self.removeItem(item)
         for ent in entities:
                 self.addGraficalObject(ent)
-
-
-
-class guideHandler(QtGui.QGraphicsItem):
-    def __init__(self, parent, x, y, a):
-        super(guideHandler, self).__init__()
-        self.scene=parent
-        
-        self.x=x
-        self.y=y
-        self.a=a
-        
-        self.HDxGuide=guide(self, 0.0)
-        self.HSxGuide=guide(self, math.pi)
-        self.VUpGuide=guide(self, math.pi/2)
-        self.VDownGuide=guide(self, math.pi*3/2)
-        
-        self.ang45=guide(self, math.pi/4)
-        self.ang135=guide(self, math.pi/4*3)
-        self.ang136=guide(self, math.pi/4*5)
-        self.ang137=guide(self, math.pi/4*7)
-        
-        #incremental angle guides <<<<<<<<<<still to be inplemented
-        x=0
-        while x<(2*math.pi):
-            self.addGuide(x)
-            x=x+math.pi/6
-    
-    def setForceDirection(self, a):
-        self.scene.forceDirection=a
-        
-    def setIsGuided(self, bool):
-        self.scene.isGuided=bool
-        
-    def setIsGuidLocked(self, bool):
-        self.scene.isGuideLocked=bool
-    
-    def addGuide(self, a):
-        
-        print "AGGIUNTA"+str(a)
-        
-        return
-    
-    def place(self, x, y):
-        self.show()
-        self.setPos(x, y*-1)
-    
-    def reset(self):
-        try:
-            self.scene.forceDirection=None
-            self.setPos(0.0, 0.0)
-            self.hide()
-        except:
-            return
-    
-    def hideGuides(self):
-        for i in self.childItems():
-            i.hide()
-        
-    def boundingRect(self):
-        return self.childrenBoundingRect()
-    
-    def paint(self, painte, option, widget):
-        return
-        
-class guide(QtGui.QGraphicsLineItem):
-    def __init__(self, parent=None, a=0.0):
-        super(guide, self).__init__(parent)
-        self.handler=parent
-        #Flags
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
-        self.setAcceptsHoverEvents(True)
-        #Events
-        
-        self.a=parent.a+a
-        line=QtCore.QLineF(0.0, 0.0, 20000*math.cos(a), (20000*math.sin(a))*-1)
-        self.setLine(line)
-        self.setToolTip("Guide [Press Shift to lock direction] "+ str(self.a)+"rad")
-        
-        self.highlightPen=QtGui.QPen(QtGui.QColor(150, 150, 150, 255), 1, QtCore.Qt.DotLine)
-        self.hidePen=QtGui.QPen(QtGui.QColor(255, 50, 50, 0),1, QtCore.Qt.DotLine)
-        
-        self.setPen(self.hidePen)
-        self.hide()
-    
-    def hide(self):
-        self.setPen(self.hidePen)
-        self.handler.setForceDirection(None)
-        self.handler.setIsGuided(None)
-        
-    def shape(self):
-        x=self.pos().x()
-        y=self.pos().y()
-        P1=QtCore.QPointF(x+10*math.cos(self.a-0.4), y-10*math.sin(self.a-0.4))
-        P2=QtCore.QPointF(x+20000*math.cos(self.a-0.03), y-20000*math.sin(self.a-0.03))
-        P3=QtCore.QPointF(x+20000*math.cos(self.a+0.03), y-20000*math.sin(self.a+0.03))
-        P4=QtCore.QPointF(x+10*math.cos(self.a+0.4), y-10*math.sin(self.a+0.4))
-        poly=QtGui.QPolygonF([P1, P2, P3, P4])
-        #self.handler.scene.addPolygon(poly) #this is for checking the design of snapping guides
-        shp=QtGui.QPainterPath()
-        shp.addPolygon(poly)
-        return shp
-        
-        return shp
-    def hoverEnterEvent(self, event):
-        if self.handler.scene.isGuideLocked==None:
-            self.handler.hideGuides()
-            self.setPen(self.highlightPen)
-            self.handler.setForceDirection(self.a)
-            self.handler.setIsGuided(True)
-        super(guide, self).hoverEnterEvent(event)
-        return
-        
-    def hoverLeaveEvent(self, event):
-        if self.handler.scene.isGuideLocked==None:
-            self.hide()
-            #self.update(self.boundingRect())
-        super(guide, self).hoverLeaveEvent(event)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2010 Matteo Boscolo
+# Copyright (c) 2010 Matteo Boscolo, Carlo Pavan
 #
 # This file is part of PythonCAD.
 #
