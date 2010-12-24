@@ -47,6 +47,7 @@ from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POIN
 
 from Interface.caddialogs import *
 
+from Interface.polarguides import getPolarMenu
 
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
@@ -116,7 +117,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         #Force Direction
         self.forceDirectionStatus=statusButton('SForceDir.png', 'Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
+        self.forceDirectionStatus.setMenu(getPolarMenu())
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
+        
         
         #Snap
         self.SnapStatus=statusButton('SSnap.png', 'Snap [right click displays snap list]\n for future implementation it should be a checkist')
@@ -142,10 +145,12 @@ class CadWindowMdi(QtGui.QMainWindow):
     def setForceDirection(self):
         if self.forceDirectionStatus.isChecked():
             print "abilita"
-            self.scene.forceDirection=True
+            self.scene.forceDirectionEnabled=True
             self.forceDirectionStatus.setFocus(False)
+            self.scene.guideHandler.show()
         else:
-            self.scene.forceDirection=False
+            self.scene.forceDirectionEnabled=False
+            self.scene.guideHandler.hide()
 
     def setSnapStatus(self):
         print "status"

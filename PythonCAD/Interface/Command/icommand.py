@@ -135,6 +135,8 @@ class ICommand(object):
             self.scene.fromPoint=snap
             if self.kernelCommand.activeException()==ExcPoint or self.kernelCommand.activeException()==ExcLenght:
                 self.scene.guideHandler.place(snap.getx(), snap.gety())
+                if self.scene.forceDirectionEnabled==True:
+                    self.scene.guideHandler.show()
         except:
             print "Exceprion  ICommand.addMauseEvent "
             self.updateInput("msg")

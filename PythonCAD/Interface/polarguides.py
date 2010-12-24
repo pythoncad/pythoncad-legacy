@@ -26,7 +26,13 @@ import math
 
 from PyQt4 import QtCore, QtGui
 
-
+def getPolarMenu():
+    '''
+    returns a menu to operate with guide objects STILL TO BE IMPLEMENTED
+    '''
+    menu=QtGui.QMenu()
+    return menu
+        
 class guideHandler(QtGui.QGraphicsItem):
     '''
     This class provide management of a guide Handler to be instanced by the scene
@@ -94,7 +100,6 @@ class guideHandler(QtGui.QGraphicsItem):
         '''
         set position of the handler (called by icommand)
         '''
-        self.show()
         self.setPos(x, y*-1)
     
     def reset(self):
@@ -120,14 +125,6 @@ class guideHandler(QtGui.QGraphicsItem):
     
     def paint(self, painte, option, widget):
         return
-        
-    def getMenu(self):
-        '''
-        returns a menu to operate with guide objects
-        '''
-        menu=QtGui.QMenu()
-        
-        return menu
         
 class guide(QtGui.QGraphicsLineItem):
     '''

@@ -68,6 +68,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.__document=document
         self.__oldClickPoint=None
         self.needPreview=False
+        self.forceDirectionEnabled=False
         self.forceDirection=None
         self.__lastPickedEntity=None
         self.isInPan=False
