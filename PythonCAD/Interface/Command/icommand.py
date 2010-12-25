@@ -33,7 +33,7 @@ import math, string
 #
 #Kernel Import
 #
-from Kernel.initsetting             import SNAP_POINT_ARRAY
+from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT, ACTIVE_SNAP_LIST
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.geolib          import Vector   
 from Kernel.GeoUtil.intersection    import *
@@ -52,7 +52,7 @@ class ICommand(object):
     """
         this class provide base command operation 
     """
-    #self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
+    #self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["LIST"]  # Define the active snap system
     drawPreview=False                   # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
     #restartCommandOption=False         # moved to Interface.cadinitsetting  > RESTART_COMMAND_OPTION
@@ -70,7 +70,7 @@ class ICommand(object):
         self.__forceSnap=[]
         self.__index=-1
         self.updateInput=PyCadEvent()
-        self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["ALL"]  # Define the active snap system
+        #self.scene.snappingPoint.activeSnap=#SNAP_POINT_ARRAY["LIST"]  # Define the active snap system
     @property
     def forceDirection(self):
         """
@@ -122,7 +122,7 @@ class ICommand(object):
             snap=point
     #    if point!=None:
     #        snapPoint=point
-        self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["ALL"]
+        #self.scene.snappingPoint.activeSnap=SNAP#SNAP_POINT_ARRAY["LIST"]
         if angle==None:
             angle=self.calculateAngle(snap)
         if distance==None:

@@ -24,7 +24,7 @@
 
 from PyQt4 import QtCore, QtGui
 
-from Kernel.initsetting             import SNAP_POINT_ARRAY
+from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT, ACTIVE_SNAP_LIST
 from Kernel.GeoEntity.point         import Point
 from Kernel.GeoUtil.intersection    import *
 
@@ -32,8 +32,9 @@ from Interface.Entity.base          import BaseEntity
 
 class SnapPoint():
     def __init__(self, scene):
-        self.activeSnap=SNAP_POINT_ARRAY["ALL"]
+        self.activeSnap=ACTIVE_SNAP_POINT
         self.__scene=scene
+
         
     def getSnapPoint(self,  point, entity):
         """
@@ -43,59 +44,66 @@ class SnapPoint():
             fromPoint:  [Geoent.Pointfloat]
             fromEnt:    [GeoEnt.*]
         """
-        
-        snapPoint=point
-        
-        if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
-            snapPoint = self.getSnapMiddlePoint(entity)
-        elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
-            snapPoint =self.getSnapEndPoint(entity, point)
-        elif SNAP_POINT_ARRAY["ORTO"] == self.activeSnap:
-            snapPoint =self.getSnapOrtoPoint(entity, point)
-        elif SNAP_POINT_ARRAY["CENTER"]== self.activeSnap:
-            snapPoint =self.getSnapCenterPoint(entity)
-        elif SNAP_POINT_ARRAY["QUADRANT"]== self.activeSnap:
-            snapPoint =self.getSnapQuadrantPoint(entity, snapPoint)
-        elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
-            snapPoint=Point(0.0, 0.0)
-        elif SNAP_POINT_ARRAY["INTERSECTION"]== self.activeSnap:
-            snapPoint=self.getIntersection(entity,snapPoint )
-        elif SNAP_POINT_ARRAY["ALL"]== self.activeSnap:
-            #this should be used when checklist of snap will be enabled
-            snapPoints=[]
-            
-            pnt=self.getSnapMiddlePoint(entity)
-            if pnt!=None:
-                snapPoints.append(pnt)
-                
-            pnt=self.getSnapEndPoint(entity, snapPoint)
-            if pnt!=None:
-                snapPoints.append(pnt)
-                
-            pnt=self.getSnapQuadrantPoint(entity, snapPoint)
-            if pnt!=None:
-                snapPoints.append(pnt)       
-                
-            pnt=self.getSnapOrtoPoint(entity, snapPoint)
-            if pnt!=None:
-                snapPoints.append(pnt)
-                
-            outPoint=(None, None)
-            for p in snapPoints:
-                if p!=None:
-                    distance=p.dist(snapPoint)
-                    if outPoint[0]==None:
-                        outPoint=(p, distance)
-                    else:
-                        if outPoint[1]>distance:
-                            outPoint=(p, distance)
-            else:
-                if outPoint[0]!=None:
-                    snapPoint=outPoint[0]
-        
-        if snapPoint==None:
+        if self.activeSnap==SNAP_POINT_ARRAY["NONE"]:
             return point
-        return snapPoint
+        else:
+            print self.activeSnap
+            snapPoint=point
+            
+            if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
+                snapPoint = self.getSnapMiddlePoint(entity)
+            elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
+                snapPoint =self.getSnapEndPoint(entity, point)
+            elif SNAP_POINT_ARRAY["ORTHO"] == self.activeSnap:
+                snapPoint =self.getSnapOrtoPoint(entity, point)
+            elif SNAP_POINT_ARRAY["CENTER"]== self.activeSnap:
+                snapPoint =self.getSnapCenterPoint(entity)
+            elif SNAP_POINT_ARRAY["QUADRANT"]== self.activeSnap:
+                snapPoint =self.getSnapQuadrantPoint(entity, snapPoint)
+            elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
+                snapPoint=Point(0.0, 0.0)
+            elif SNAP_POINT_ARRAY["INTERSECTION"]== self.activeSnap:
+                snapPoint=self.getIntersection(entity,snapPoint )
+            elif SNAP_POINT_ARRAY["LIST"]== self.activeSnap:
+                #this should be used when checklist of snap will be enabled
+                snapPoints=[]
+                
+                if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["MID"])>0:
+                    pnt=self.getSnapMiddlePoint(entity)
+                    if pnt!=None:
+                        snapPoints.append(pnt)
+                
+                if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["END"])>0:
+                    pnt=self.getSnapEndPoint(entity, snapPoint)
+                    if pnt!=None:
+                        snapPoints.append(pnt)
+                 
+                if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["QUADRANT"])>0:
+                    pnt=self.getSnapQuadrantPoint(entity, snapPoint)
+                    if pnt!=None:
+                        snapPoints.append(pnt)       
+                    
+                if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["ORTHO"])>0:
+                    pnt=self.getSnapOrtoPoint(entity, snapPoint)
+                    if pnt!=None:
+                        snapPoints.append(pnt)
+                    
+                outPoint=(None, None)
+                for p in snapPoints:
+                    if p!=None:
+                        distance=p.dist(snapPoint)
+                        if outPoint[0]==None:
+                            outPoint=(p, distance)
+                        else:
+                            if outPoint[1]>distance:
+                                outPoint=(p, distance)
+                else:
+                    if outPoint[0]!=None:
+                        snapPoint=outPoint[0]
+            
+            if snapPoint==None:
+                return point
+            return snapPoint
         
     def getSnapOrtoPoint(self, entity, point):
         """

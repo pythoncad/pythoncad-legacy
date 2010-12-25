@@ -330,18 +330,27 @@ def getDefaultStyle():
 global SNAP_POINT_ARRAY
 global ACTIVE_SNAP_POINT
 
-SNAP_POINT_ARRAY={'ALL':0, 
+SNAP_POINT_ARRAY={'LIST':0, 
                     'END':1,
                     'MID':2, 
-                    'ORTO':3, 
+                    'ORTHO':3, 
                     'TANGENT':4, 
                     'CENTER':5,
                     'QUADRANT':6,
                     'ORIG':7, 
-                    'INTERSECTION':8  
+                    'INTERSECTION':8, 
+                    'NONE':9
                     }
 
-ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["ALL"]
+ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["LIST"]
+
+ACTIVE_SNAP_LIST=[SNAP_POINT_ARRAY["END"], 
+                  SNAP_POINT_ARRAY["END"], 
+                  SNAP_POINT_ARRAY["MID"], 
+                  SNAP_POINT_ARRAY["ORTHO"], 
+                  SNAP_POINT_ARRAY["QUADRANT"], 
+                  SNAP_POINT_ARRAY["INTERSECTION"]                  
+                  ]
 
 #
 # Color table to define a match from Autocad external format and Pythoncad internal format
