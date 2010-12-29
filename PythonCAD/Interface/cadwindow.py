@@ -47,6 +47,7 @@ from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POIN
 
 from Interface.caddialogs import *
 
+from Interface.polarguides import getPolarMenu
 
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
@@ -116,12 +117,15 @@ class CadWindowMdi(QtGui.QMainWindow):
         #Force Direction
         self.forceDirectionStatus=statusButton('SForceDir.png', 'Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
+        self.forceDirectionStatus.setMenu(getPolarMenu())
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
+        
         
         #Snap
         self.SnapStatus=statusButton('SSnap.png', 'Snap [right click displays snap list]\n for future implementation it should be a checkist')
         self.connect(self.SnapStatus, QtCore.SIGNAL('clicked()'), self.setSnapStatus)
         self.SnapStatus.setMenu(self.__cmd_intf.Category.getMenu(6))
+        self.SnapStatus.setChecked(True)
         self.statusBar().addPermanentWidget(self.SnapStatus)
 
         
@@ -142,14 +146,19 @@ class CadWindowMdi(QtGui.QMainWindow):
     def setForceDirection(self):
         if self.forceDirectionStatus.isChecked():
             print "abilita"
-            self.scene.forceDirection=True
+            self.scene.forceDirectionEnabled=True
             self.forceDirectionStatus.setFocus(False)
+            if self.scene.activeICommand!=None and self.scene.fromPoint!=None:
+                self.scene.guideHandler.show()
         else:
-            self.scene.forceDirection=False
+            self.scene.forceDirectionEnabled=False
+            self.scene.guideHandler.hide()
 
     def setSnapStatus(self):
-        print "status"
-        pass
+        if self.SnapStatus.isChecked():
+            self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY['LIST']
+        else:
+            self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY['NONE']
         
     def setGrid(self):
         pass
@@ -617,7 +626,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         action = self.sender()
         if action:
             if action.command=="autosnap":
-                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["LIST"])
             elif action.command=="endsnap":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["END"])
             elif action.command=="middlesnap":
@@ -625,7 +634,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             elif action.command=="centersnap":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["CENTER"])
             elif action.command=="ortosnap":
-                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORTO"])
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORTHO"])
             elif action.command=="tangentsnap":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["TANGENT"])
             elif action.command=="quadrantsnap":
@@ -635,7 +644,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             elif action.command=="intersection":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["INTERSECTION"])
             else:
-                self.scene.setActiveSnap(SNAP_POINT_ARRAY["ALL"])
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["LIST"])
 
 #------------------------ON COMMANDS in TOOLS
 
@@ -838,11 +847,12 @@ class CadWindowMdi(QtGui.QMainWindow):
 # ##########################################################
 
 class statusButton(QtGui.QToolButton):
-    def __init__(self, icon,  tooltip):
+    def __init__(self, icon=None,  tooltip=None):
         super(statusButton, self).__init__()
         self.setCheckable(True)
         self.setFixedSize(30, 20)
-        self.getIcon(icon)
+        if icon:
+            self.getIcon(icon)
         self.setToolTip(tooltip)
 
     def getIcon(self, fileName):

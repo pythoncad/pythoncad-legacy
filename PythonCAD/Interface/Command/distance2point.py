@@ -42,5 +42,5 @@ class Distance2Point(BaseCommand):
         if len(self.value)<1:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         leng=self.value[0].dist(self.value[1])
-        msg="Lenght, "+ str(leng)
+        msg="Lenght: "+ str(leng)
         self.iDocuemnt.popUpInfo(msg)

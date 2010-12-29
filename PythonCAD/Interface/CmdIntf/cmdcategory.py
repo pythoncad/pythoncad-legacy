@@ -75,5 +75,3 @@ class CmdCategory(object):
             return self.__toolbars[number]
         return None
     
-    
-    
