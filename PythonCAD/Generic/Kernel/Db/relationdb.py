@@ -86,8 +86,9 @@ class RelationDb(BaseDb):
         if not childrenType:
             childrenType='%'
         if childrenType=='ALL':
-            childrenType='%'
-        _sqlSelect="""SELECT pycad_entity_id,
+            childrenType='%' # TODO : controllare questa select 
+        _sqlSelect="""SELECT MAX(pycad_id) 
+                            pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
                             pycad_object_style,

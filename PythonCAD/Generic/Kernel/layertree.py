@@ -26,6 +26,7 @@
 from Kernel.layer               import Layer
 from Kernel.exception           import *
 from Kernel.initsetting         import MAIN_LAYER
+from Kernel.pycadevent          import PyCadEvent
 
 class LayerTree(object):
     """
@@ -41,6 +42,9 @@ class LayerTree(object):
         except:
             raise StructuralError, "Unable to inizialize LayerTree"
         self.__activeLayer=self.__mainLayer
+        self.setCurrentEvent=PyCadEvent()
+        self.deleteEvent=PyCadEvent()
+        self.insertEvent=PyCadEvent()
 
     def setActiveLayer(self, layerId):
         """
@@ -49,6 +53,7 @@ class LayerTree(object):
         activeLayer=self.__kr.getEntity(layerId)
         if activeLayer:
             self.__activeLayer=activeLayer
+            self.setCurrentEvent(activeLayer)
         else:
             raise EntityMissing, "Unable to find the layer %s"%str(layerName)
 
@@ -71,7 +76,8 @@ class LayerTree(object):
         if not self.__kr.getRelatioObject().relationExsist(parentEntDb.getId(),childEndDb.getId() ):
             self.__kr.getRelatioObject().saveRelation(parentEntDb, childEndDb)
         self.__activeLayer=childEndDb
-
+        self.insertEvent(childEndDb) #Fire Event
+        
     def _getLayerConstructionElement(self, pyCadEnt):
         """
             Retrive the ConstructionElement in the pyCadEnt
@@ -103,7 +109,7 @@ class LayerTree(object):
         """
             get all dbEnt from layer of type entityType
         """
-        _children=self.__kr.__pyCadRelDb.getAllChildrenType(layer,entityType)
+        _children=self.__kr.getAllChildrenType(layer,entityType)
         return _children
 
     def getEntLayerDb(self,layerName):
@@ -152,22 +158,30 @@ class LayerTree(object):
     def delete(self,layerId):
         """
             delete the current layer an all the entity releted to it
-            todo: to be tested
+            TODO: to be tested
         """
         self.__kr.startMassiveCreation()
-        def recursiveDelete(layerId):
-            deleteLayer=self.__kr.getEntity(layerId)
-            if deleteLayer is self.__activeLayer:
-                self.setActiveLayer(self.getParentLayer(deleteLayer).getId())
-            #delete all children layer
+        deleteLayer=self.__kr.getEntity(layerId)
+        if deleteLayer is self.__activeLayer:
+            self.setActiveLayer(self.getParentLayer(deleteLayer).getId())
+        #
+        def recursiveDelete(layer):
+            # delete all children layer
             for layer in self.getLayerChildrenLayer(deleteLayer):
                 recursiveDelete(layer)
-            #delete all the children entity
-            for ent in self.getLayerChildren(deleteLayer):
-                self.__kr.deleteEntity(ent.getId())
-            recursiveDelete(layerId)
+            # delete all the children entity
+            self.deleteLayerEntity(layer)
+            # finally delete the layer
+            layerId=layer.getId()
+            self.__kr.deleteEntity(layerId)
+            self.deleteEvent(layerId) # Fire Event
+        recursiveDelete(deleteLayer)    
         self.__kr.stopMassiveCreation()
+        
+    def deleteLayerEntity(self, layer):
+        """
+            delete all layer entity
+        """
+        for ent in self.getLayerChildren(layer):
+                self.__kr.deleteEntity(ent.getId())
 
-#***************************************************
-#Todo : Test delete layer command
-#***************************************************

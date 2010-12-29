@@ -73,10 +73,34 @@ class LayerTreeObject(QtGui.QTreeWidget):
     def __init__(self, parent, document):
         super(LayerTreeObject, self).__init__(parent)
         self._document=document
+        self._document.getTreeLayer.setCurrentEvent=self.setCurrentEvent
+        self._document.getTreeLayer.deleteEvent=self.deleteEvent
+        self._document.getTreeLayer.insertEvent=self.insertEvent
         self.setColumnCount(1)
         self.setHeaderLabel("Layer Name")
         self.populateStructure()
-    
+    #
+    # Manage event
+    #
+    def setCurrentEvent(self, treeObject, layer):
+        """
+            use the set current event 
+        """
+        self.populateStructure()
+        
+    def deleteEvent(self,  layerId):    
+        """
+            use the delete event
+        """
+        self.populateStructure()
+        pass
+        
+    def insertEvent(self, treeObject, layer):
+        """
+            use the insert event
+        """
+        self.populateStructure()
+        
     def populateStructure(self):
         """
             populate the tree view structure
@@ -128,18 +152,17 @@ class LayerTreeObject(QtGui.QTreeWidget):
             Add a child layer
         """
         # SHOW POP UP MENU FOR THE LAYER THE BEST IS IF WE PROMPT THE PROPERTY FORM
-        layerName="Test Layer"
+        layerName="New Layer"
         parentLayer=self._document.getTreeLayer.getActiveLater()
         newLayer=self._document.saveEntity(Layer(layerName))
         self._document.getTreeLayer.insert(newLayer, parentLayer)
-        self.populateStructure()
-        pass
         
     def _remove(self):
         """
             Remove the selected layer
         """
-        pass
+        layerId=self.currentIterfaceTreeObject.id
+        self._document.getTreeLayer.delete(layerId)
         
     def _hide(self):
         """
@@ -157,12 +180,11 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             set the current layer
         """
-        for item in self.selectedItems():
-            if(item.id!=None):
-                self._document.getTreeLayer.setActiveLayer(item.id)
-                item.setActive(True)
-            break
-        self.populateStructure()
+        cito=self.currentIterfaceTreeObject
+        if cito!=None:
+            self._document.getTreeLayer.setActiveLayer(cito.id)
+            cito.setActive(True)
+      
         
     def _property(self):
         """
@@ -170,9 +192,17 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
         pass
         
-        
-        
-        
+    @property
+    def currentIterfaceTreeObject(self):
+        """
+            return the current interface tree Object
+        """
+        exitLayer=None
+        for item in self.selectedItems():
+            if(item.id!=None):
+                exitLayer=item           
+            break
+        return exitLayer
         
         
         

@@ -44,7 +44,7 @@ from Interface.snap import *
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
 from Kernel.exception               import *
-
+from Kernel.entity                  import Entity
 
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
@@ -448,7 +448,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
         dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:
-            self.removeItem(dicItems[ent.getId()])
+            if ent.eType!="LAYER":
+                self.removeItem(dicItems[ent.getId()])
 
     def getEntFromId(self, id):
         """
