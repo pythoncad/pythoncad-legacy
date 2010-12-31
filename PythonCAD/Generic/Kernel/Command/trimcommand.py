@@ -37,9 +37,9 @@ class TrimCommand(BaseCommand):
                         ExcEntityPoint,  
                         ExcText]
         self.defaultValue=[None, None,"BOTH"]
-        self.message=[  "Give me the First entity", 
-                        "Give me the Second entity",
-                        "Give me The Trim Mode ((FIRST,SECOND,BOTH)"]
+        self.message=[  "Give me the First Entity: ", 
+                        "Give me the Second Entity: ",
+                        "Give me The Trim Mode (FIRST,SECOND,BOTH)[BOTH]: "]
 
     def performTrim(self):
         """

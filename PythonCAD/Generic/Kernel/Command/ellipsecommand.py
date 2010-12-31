@@ -32,7 +32,7 @@ class EllipseCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcLenght]
         self.defaultValue=[None, 100, 50]
-        self.message=["Give Me the center Point", "Give Me the horizontal radius", "Give Me the vertical radius"]
+        self.message=["Give Me the Center Point (We know input sequence is at the moment very odd, sorry.): ", "Give Me First Axis Lenght: ", "Give Me Second Axis Half Lenght: "]
         
     def applyCommand(self):
         if len(self.value)>3:

@@ -32,7 +32,7 @@ class SegmentCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcPoint]
-        self.message=["Give Me the first Point","Give Me The Second Point"]
+        self.message=["Give Me the First Point: ","Give Me The Second Point: "]
         self.defaultValue=[None, None]
         
     def applyCommand(self):

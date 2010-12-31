@@ -32,7 +32,7 @@ class PointCommand(BaseCommand):
         BaseCommand.__init__(self, kernel)
         self.exception=[ExcPoint]
         self.defaultValue=[None]
-        self.message=["Give Me the Point"]
+        self.message=["Give Me the Point Position: "]
     def applyCommand(self):
         if len(self.value)!=1:
             raise PyCadWrongImputData("Wrong number of imput parameter")

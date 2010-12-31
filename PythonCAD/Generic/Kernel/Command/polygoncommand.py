@@ -45,11 +45,11 @@ class PolygonCommand(BaseCommand):
                         ExcPoint, 
                         ExcInt, 
                         ExcBool]
-        self.defaultValue=[None, None,6,"E"]
-        self.message=["Give Me the first Point",
-                        "Give Me The Second Point", 
-                        "Give Me The Number of Segment", 
-                        "Give Me External or Internal (TRUE/FALSE)"]
+        self.defaultValue=[None, None,6,"I"]
+        self.message=["Give Me the Polygon Center Point: ",
+                        "Give Me a Point to Define Circumference: ", 
+                        "Give Me The Number of Sides: ", 
+                        "Inscribed or Circumscribed [I]: "]
         self.__xpts = array.array("d")
         self.__ypts = array.array("d")
         self.__increment=0.0 #default value
@@ -95,7 +95,7 @@ class PolygonCommand(BaseCommand):
             circle. Invoking this method will created the polygon so that all
             sides are outside the circle.
         """
-        if value=="E":
+        if value=="I":
             self.value[3] = True
         else:
             self.value[3] = False

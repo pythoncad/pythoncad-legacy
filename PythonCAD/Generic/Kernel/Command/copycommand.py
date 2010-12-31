@@ -34,9 +34,9 @@ class CopyCommand(BaseCommand):
                         ExcPoint, 
                         ExcPoint]
         self.defaultValue=[None, None,None]
-        self.message=[  "Select the entity to copy [or give me a the keyword Text As: (10,20,30,...)]", 
-                        "Give me the base point",
-                        "Give me the destination point"]
+        self.message=[  "Select Entities to copy: ", 
+                        "Give me the Base Point: ",
+                        "Give me the Destination Point: "]
     
     def getEntsToSave(self):
         """

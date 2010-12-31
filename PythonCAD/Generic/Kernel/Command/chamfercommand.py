@@ -40,11 +40,11 @@ class ChamferCommand(BaseCommand):
                         ExcLenght 
                         ]
         self.defaultValue=[None, None, "BOTH", 10, 10]
-        self.message=[  "Select the First entity or give me a the keyword Text As: (4@10,20)", 
-                        "Select the Second entity or give me a the keyword Text As: (4@10,20)", 
-                        "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM)", 
-                        "Give me the first Lenght", 
-                        "Give me the second Lenght", 
+        self.message=[  "Select the First entity: ", 
+                        "Select the Second entity: ", 
+                        "Give me trim Mode (FIRST,SECOND,BOTH,NO_TRIM) [BOTH]: ", 
+                        "Give me the first Chamfer Lenght: ", 
+                        "Give me the second Chamfer Lenght: ", 
                         ]
     def getEntsToSave(self):
         """

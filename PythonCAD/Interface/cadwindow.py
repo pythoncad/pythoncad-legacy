@@ -304,7 +304,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save In A Different location...', self._onSaveAsDrawing)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save in a Different Location...', self._onSaveAsDrawing)
         #
         # Create recentFile structure
         #
@@ -349,7 +349,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'arc', '&Arc', self._onArc)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'ellipse', '&Ellipse', self._onEllipse)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polygon', '&polygon', self._onPolygon)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polygon', '&Polygon', self._onPolygon)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'fillet', '&Fillet', self._onFillet)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'chamfer', '&Chamfer', self._onChamfer)
@@ -384,7 +384,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'next', 'Ne&xt', self.mdiArea.activateNextSubWindow)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'previous', 'Pre&vious', self.mdiArea.activatePreviousSubWindow)
         # Help
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PythonCAD', self._onAbout)
         return
         
     def updateRecentFileList(self):

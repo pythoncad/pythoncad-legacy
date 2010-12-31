@@ -34,10 +34,10 @@ class ArcCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
         self.defaultValue=[None, 10, 0, math.pi*2]
-        self.message=["Give Me the center Point", 
-                        "Give Me the radius", 
-                        "Give Me the start Angle (Could Be None)", 
-                        "Give Me the span Angle (Could Be None)"]
+        self.message=["Give Me the Center Point: ", 
+                        "Give Me the Radius: ", 
+                        "Give Me the Start Angle [Create a circle]: ", 
+                        "Give Me the Span Angle: "]
         
     def applyCommand(self):
         if len(self.value)<2:

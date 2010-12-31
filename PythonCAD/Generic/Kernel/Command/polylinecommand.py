@@ -34,7 +34,7 @@ class PolylineCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint]
         self.defaultValue=[None]
-        self.message=["Give Me A Point"]
+        self.message=["Give Me A Point: "]
         self.raiseStop=False
         self.automaticApply=False #In case of polyline we need to stop the automatic apply
     def __setitem__(self, key, value):
