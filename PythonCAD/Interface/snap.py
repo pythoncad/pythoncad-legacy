@@ -87,7 +87,12 @@ class SnapPoint():
                     pnt=self.getSnapOrtoPoint(entity, snapPoint)
                     if pnt!=None:
                         snapPoints.append(pnt)
-                    
+
+                if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["INTERSECTION"])>0:
+                    pnt=self.getIntersection(entity, snapPoint)
+                    if pnt!=None:
+                        snapPoints.append(pnt)
+
                 outPoint=(None, None)
                 for p in snapPoints:
                     if p!=None:
