@@ -86,15 +86,16 @@ class RelationDb(BaseDb):
         if not childrenType:
             childrenType='%'
         if childrenType=='ALL':
-            childrenType='%' # TODO : controllare questa select 
-        _sqlSelect="""SELECT MAX(pycad_id) 
+            childrenType='%' # TODO : controllare questa select pycad_id,
+        _sqlSelect="""SELECT 
                             pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
                             pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
-                            pycad_visible
+                            pycad_visible,
+                            pycad_id
                             FROM pycadent
                             WHERE pycad_entity_id IN
                                 (
@@ -102,6 +103,11 @@ class RelationDb(BaseDb):
                                     FROM pycadrel
                                     WHERE pycad_parent_id =%s
                                 )
+                            AND pycad_id IN (
+                                SELECT max(pycad_id) 
+                                FROM pycadent  
+                                WHERE pycad_undo_visible=1  
+                                GROUP BY pycad_entity_id ORDER BY pycad_id)
                             AND pycad_entity_state NOT LIKE "DELETE"
                             AND pycad_object_type LIKE '%s'
                             AND pycad_undo_visible=1

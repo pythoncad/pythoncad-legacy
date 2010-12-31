@@ -69,12 +69,15 @@ class IDocument(QtGui.QMdiSubWindow):
             perform undo on the active document
         """
         self.document.unDo()
+        self.__layer_dock.RefreshStructure()
         
     def reDo(self):
         """
             perform redo on the active document
         """
         self.document.reDo()
+        self.__layer_dock.RefreshStructure()
+        
     def importExternalFormat(self, file):
         """
             import an external document
@@ -118,7 +121,7 @@ class IDocument(QtGui.QMdiSubWindow):
             
     def keyEvent(self, event): #fire the key event in the scene to the commandline
         self.__cmdInf.commandLine._keyPress(event)
-        pass
+       
         
     def keyShortcut(self, command):
         self.__cadwindow.statusBar().showMessage(str(command))

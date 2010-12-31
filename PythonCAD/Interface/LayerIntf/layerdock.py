@@ -65,29 +65,13 @@ class LayerDock(QtGui.QDockWidget):
         if self._layerTreeObject:
             self._populateLayerCtrl(self.__layer_ctrl.invisibleRootItem(), layer_tree)
         return
+        
+    def RefreshStructure(self):
+        """
+            refresh the tree view
+        """
+        self._layerModel.updateTreeStructure(None)
 
 
-    def _itemActivated(self, item):
-        '''
-        Make the selected layer in the list the active layer
-        '''
-        
-        return
-    
-    
-    def _itemSelectionChanged(self, item):
-        '''
-        The user selects an layer from the list
-        '''
-        
-        return
-    
-    
-    def addLayer(self, layer):
-        '''
-        Add a new layer to the drawing
-        '''
-        
-        return
     
     

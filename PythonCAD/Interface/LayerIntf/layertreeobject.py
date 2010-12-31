@@ -45,6 +45,7 @@ class LayerItem(QtGui.QTreeWidgetItem):
         self._id=id
         self.setText(0, self.name)
         self.setActive(active)
+        self.setExpanded(True)
     @property
     def name(self):
         """
@@ -60,11 +61,14 @@ class LayerItem(QtGui.QTreeWidgetItem):
         return self._id
         
     def setActive(self, active):
+        self.setExpanded(True)
         if active:
             self.setBackgroundColor(0, QtCore.Qt.lightGray)
         else:
             self.setBackgroundColor(0, QtCore.Qt.white)
+            
 
+        
 class LayerTreeObject(QtGui.QTreeWidget):
     """
         Python
@@ -73,31 +77,23 @@ class LayerTreeObject(QtGui.QTreeWidget):
     def __init__(self, parent, document):
         super(LayerTreeObject, self).__init__(parent)
         self._document=document
-        self._document.getTreeLayer.setCurrentEvent=self.setCurrentEvent
-        self._document.getTreeLayer.deleteEvent=self.deleteEvent
-        self._document.getTreeLayer.insertEvent=self.insertEvent
+        self._document.getTreeLayer.setCurrentEvent=self.updateTreeStructure
+        self._document.getTreeLayer.deleteEvent=self.updateTreeStructure
+        self._document.getTreeLayer.insertEvent=self.updateTreeStructure
         self.setColumnCount(1)
         self.setHeaderLabel("Layer Name")
+        self.TopLevelItem=None
         self.populateStructure()
+        
+    def itemDoubleClicked(self, qTreeWidgetItem ,column):
+        
+        return QtGui.QTreeWidget.itemDoubleClicked(self, qTreeWidgetItem, column)   
     #
     # Manage event
     #
-    def setCurrentEvent(self, treeObject, layer):
+    def updateTreeStructure(self, layer):
         """
-            use the set current event 
-        """
-        self.populateStructure()
-        
-    def deleteEvent(self,  layerId):    
-        """
-            use the delete event
-        """
-        self.populateStructure()
-        pass
-        
-    def insertEvent(self, treeObject, layer):
-        """
-            use the insert event
+            update the tree structure
         """
         self.populateStructure()
         
@@ -118,12 +114,15 @@ class LayerTreeObject(QtGui.QTreeWidget):
                 self.expandItem(parent)
                 if parentItem==None:
                     self.addTopLevelItem(parent)
+                    self.TopLevelItem=parent
                 else:
                     parentItem.addChild(parent)
                 if childs!=None:
                     populateChild(childs,parent,activeLayerId)
         populateChild(layerTreeStructure, None, activeLayerId=activeLayer.getId())
-
+        if self.TopLevelItem!= None:
+            self.expandItem(self.TopLevelItem)
+        
     def contextMenuEvent(self, event):
         """
             context menu event remapped
@@ -132,17 +131,17 @@ class LayerTreeObject(QtGui.QTreeWidget):
         # Create Actions
         addAction=QtGui.QAction("Add Child", self, triggered=self._addChild)
         removeAction=QtGui.QAction("Remove", self, triggered=self._remove)
-        hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
-        showAction=QtGui.QAction("Show", self, triggered=self._show)
+        #hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
+        #showAction=QtGui.QAction("Show", self, triggered=self._show)
         setCurrentAction=QtGui.QAction("Set Current", self, triggered=self._setCurrent)
-        propertyAction=QtGui.QAction("Property", self, triggered=self._property)
+        #propertyAction=QtGui.QAction("Property", self, triggered=self._property)
         #
         contexMenu.addAction(addAction)
         contexMenu.addAction(removeAction)
-        contexMenu.addAction(hideAction)
-        contexMenu.addAction(showAction)
+        #contexMenu.addAction(hideAction)
+        #contexMenu.addAction(showAction)
         contexMenu.addAction(setCurrentAction)
-        contexMenu.addAction(propertyAction)
+        #contexMenu.addAction(propertyAction)
         #
         contexMenu.exec_(event.globalPos())
         del(contexMenu)
@@ -161,7 +160,10 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             Remove the selected layer
         """
-        layerId=self.currentIterfaceTreeObject.id
+        if self.currentIterfaceTreeObject.name==MAIN_LAYER:
+            print "Put on popUp Unable to delate the main layer "
+            return
+        layerId=self.currentIterfaceTreeObject.id      
         self._document.getTreeLayer.delete(layerId)
         
     def _hide(self):
@@ -183,7 +185,7 @@ class LayerTreeObject(QtGui.QTreeWidget):
         cito=self.currentIterfaceTreeObject
         if cito!=None:
             self._document.getTreeLayer.setActiveLayer(cito.id)
-            cito.setActive(True)
+            #cito.setActive(True)
       
         
     def _property(self):

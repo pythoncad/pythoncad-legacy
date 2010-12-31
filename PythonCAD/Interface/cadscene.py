@@ -270,7 +270,7 @@ class CadScene(QtGui.QGraphicsScene):
         if event.button()==QtCore.Qt.MidButton:
             self.fireZoomFit()
         else:
-            pass
+            return QtGui.QGraphicsScene.mouseDoubleClickEvent(self, event)   
 
     def cancelCommand(self):
         """
@@ -452,7 +452,9 @@ class CadScene(QtGui.QGraphicsScene):
         dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:
             if ent.eType!="LAYER":
-                self.removeItem(dicItems[ent.getId()])
+                itemId=ent.getId()
+                if dicItems.has_key(itemId):
+                    self.removeItem(dicItems[itemId])
 
     def getEntFromId(self, id):
         """
