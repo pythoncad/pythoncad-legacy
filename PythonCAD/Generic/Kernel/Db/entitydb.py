@@ -271,11 +271,11 @@ class EntityDb(BaseDb):
                     pycad_index,
                     pycad_visible
                     FROM pycadent
-                    WHERE PyCad_Id IN (
-                        SELECT max(PyCad_Id) 
+                    WHERE pycad_id IN (
+                        SELECT max(pycad_id) 
                         FROM pycadent  
                         WHERE pycad_undo_visible=1  
-                        GROUP BY pycad_entity_id ORDER BY PyCad_Id)
+                        GROUP BY pycad_entity_id ORDER BY pycad_id)
                     AND pycad_entity_state NOT LIKE "DELETE"
                     AND pycad_visible =%s
                     %s

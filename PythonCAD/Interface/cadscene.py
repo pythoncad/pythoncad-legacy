@@ -46,7 +46,7 @@ from Interface.polarguides import guideHandler
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
 from Kernel.exception               import *
-
+from Kernel.entity                  import Entity
 
 class CadScene(QtGui.QGraphicsScene):
     def __init__(self, document, parent=None):
@@ -270,7 +270,7 @@ class CadScene(QtGui.QGraphicsScene):
         if event.button()==QtCore.Qt.MidButton:
             self.fireZoomFit()
         else:
-            pass
+            return QtGui.QGraphicsScene.mouseDoubleClickEvent(self, event)   
 
     def cancelCommand(self):
         """
@@ -451,7 +451,10 @@ class CadScene(QtGui.QGraphicsScene):
         """
         dicItems=dict([( item.ID, item)for item in self.items() if isinstance(item, BaseEntity)])
         for ent in entitys:
-            self.removeItem(dicItems[ent.getId()])
+            if ent.eType!="LAYER":
+                itemId=ent.getId()
+                if dicItems.has_key(itemId):
+                    self.removeItem(dicItems[itemId])
 
     def getEntFromId(self, id):
         """
