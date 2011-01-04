@@ -44,7 +44,7 @@ class PolygonCommand(BaseCommand):
         self.exception=[ExcPoint, 
                         ExcPoint, 
                         ExcInt, 
-                        ExcBool]
+                        ExcText]
         self.defaultValue=[None, None,6,"I"]
         self.message=["Give Me the Polygon Center Point: ",
                         "Give Me a Point to Define Circumference: ", 
@@ -149,9 +149,9 @@ class PolygonCommand(BaseCommand):
             This method calculates the polygon
             points.
         """
-        if self.external:
+        if self.value[3]=="C" or self.value[3]=="c":
             _offset = self.__increment/2.0
-        else:
+        elif self.value[3]=="I" or self.value[3]=="i":
             _offset = 0.0
         _cx, _cy = self.center.getCoords()
         _x, _y = self.externalPick.getCoords()
