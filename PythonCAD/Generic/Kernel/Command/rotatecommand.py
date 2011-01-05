@@ -48,7 +48,7 @@ class RotateCommand(BaseCommand):
         """
         copy=True
         if self.value[3]:
-            if self.value[3]=='M' or self.value[3]=='m':
+            if self.value[3].upper()=='M':
                 copy=False
         updEnts=[]
         for id in str(self.value[0]).split(','):

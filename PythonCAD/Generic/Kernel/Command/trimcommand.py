@@ -39,7 +39,7 @@ class TrimCommand(BaseCommand):
         self.defaultValue=[None, None,"BOTH"]
         self.message=[  "Give me the First Entity: ", 
                         "Give me the Second Entity: ",
-                        "Give me The Trim Mode (FIRST,SECOND,BOTH)[BOTH]: "]
+                        "Give me The Trim Mode (First,Second,Both)[Both]: "]
 
     def performTrim(self):
         """
@@ -81,7 +81,7 @@ class TrimCommand(BaseCommand):
             else:
                 return None
             
-        if self.value[2]=='FIRST' or self.value[2]=='BOTH':
+        if self.value[2].upper()=='FIRST' or self.value[2].upper()=='F' or self.value[2].upper()=='BOTH' or self.value[2].upper()=='B':
             nearestIntersectionPoint=getNearestPoint(intPoint, p0)
             if nearestIntersectionPoint!=None:
                 _cElements=getSegmentCelements(seg1, p0,nearestIntersectionPoint)
@@ -89,7 +89,7 @@ class TrimCommand(BaseCommand):
                     geoEnt1.setConstructionElements(_cElements)
                     updEnts.append(geoEnt1)
             
-        if self.value[2]=='SECOND' or self.value[2]=='BOTH':
+        if self.value[2].upper()=='SECOND' or self.value[2].upper()=='S' or self.value[2].upper()=='BOTH' or self.value[2].upper()=='B':
             nearestIntersectionPoint=getNearestPoint(intPoint, p1)
             if nearestIntersectionPoint!=None:
                 _cElements=getSegmentCelements(seg2, p1,nearestIntersectionPoint)

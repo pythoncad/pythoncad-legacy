@@ -45,7 +45,7 @@ class MirrorCommand(BaseCommand):
         """
         move=True
         if self.value[2]:
-            if self.value[2]=='C':
+            if self.value[2].upper()=='C':
                 move=False
         mirrorRef=self.document.getEntity(self.value[1])
         geoMirrorRef=self.document.convertToGeometricalEntity(mirrorRef)

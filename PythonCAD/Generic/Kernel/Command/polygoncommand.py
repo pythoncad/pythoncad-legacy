@@ -149,9 +149,9 @@ class PolygonCommand(BaseCommand):
             This method calculates the polygon
             points.
         """
-        if self.value[3]=="C" or self.value[3]=="c":
+        if self.value[3].upper()=="C":
             _offset = self.__increment/2.0
-        elif self.value[3]=="I" or self.value[3]=="i":
+        elif self.value[3].upper()=="I":
             _offset = 0.0
         _cx, _cy = self.center.getCoords()
         _x, _y = self.externalPick.getCoords()
