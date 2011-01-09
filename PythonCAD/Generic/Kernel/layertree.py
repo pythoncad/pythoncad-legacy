@@ -45,6 +45,7 @@ class LayerTree(object):
         self.setCurrentEvent=PyCadEvent()
         self.deleteEvent=PyCadEvent()
         self.insertEvent=PyCadEvent()
+        self.update=PyCadEvent()
 
     def setActiveLayer(self, layerId):
         """
@@ -184,4 +185,12 @@ class LayerTree(object):
         """
         for ent in self.getLayerChildren(layer):
                 self.__kr.deleteEntity(ent.getId())
-
+    
+    def rename(self, layerId, newName):
+        """
+            rename the layer
+        """
+        layer=self.__kr.getEntity(layerId)
+        layer.getConstructionElements()['LAYER'].name=newName
+        self.__kr.saveEntity(layer)
+        self.update(layerId) # fire update event
