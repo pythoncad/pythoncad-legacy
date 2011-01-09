@@ -32,5 +32,15 @@ class ConfigDialog(QtGui.QDialog):
         
         self.exec_()
         
+
         
+        self.setWindowTitle(self._dialogTitle)
+        self.setGeometry(300, 300, 350, 80)
         
+    
+    def showDialog(self):
+        text, ok = QtGui.QInputDialog.getText(self, self.dialogTitle, 
+            self._message)
+        
+        if ok:
+            self.label.setText(str(text))

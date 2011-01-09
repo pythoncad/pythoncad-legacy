@@ -80,6 +80,7 @@ class LayerTreeObject(QtGui.QTreeWidget):
         self._document.getTreeLayer.setCurrentEvent=self.updateTreeStructure
         self._document.getTreeLayer.deleteEvent=self.updateTreeStructure
         self._document.getTreeLayer.insertEvent=self.updateTreeStructure
+        self._document.getTreeLayer.update=self.updateTreeStructure
         self.setColumnCount(1)
         self.setHeaderLabel("Layer Name")
         self.TopLevelItem=None
@@ -131,6 +132,7 @@ class LayerTreeObject(QtGui.QTreeWidget):
         # Create Actions
         addAction=QtGui.QAction("Add Child", self, triggered=self._addChild)
         removeAction=QtGui.QAction("Remove", self, triggered=self._remove)
+        renameAction=QtGui.QAction("Rename", self, triggered=self._rename)
         #hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
         #showAction=QtGui.QAction("Show", self, triggered=self._show)
         setCurrentAction=QtGui.QAction("Set Current", self, triggered=self._setCurrent)
@@ -138,6 +140,7 @@ class LayerTreeObject(QtGui.QTreeWidget):
         #
         contexMenu.addAction(addAction)
         contexMenu.addAction(removeAction)
+        contexMenu.addAction(renameAction)
         #contexMenu.addAction(hideAction)
         #contexMenu.addAction(showAction)
         contexMenu.addAction(setCurrentAction)
@@ -150,11 +153,13 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             Add a child layer
         """
-        # SHOW POP UP MENU FOR THE LAYER THE BEST IS IF WE PROMPT THE PROPERTY FORM
-        layerName="New Layer"
-        parentLayer=self._document.getTreeLayer.getActiveLater()
-        newLayer=self._document.saveEntity(Layer(layerName))
-        self._document.getTreeLayer.insert(newLayer, parentLayer)
+        text, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+                                                'Enter Layer Name :')
+        if ok:
+            layerName=text
+            parentLayer=self._document.getTreeLayer.getActiveLater()
+            newLayer=self._document.saveEntity(Layer(layerName))
+            self._document.getTreeLayer.insert(newLayer, parentLayer)
         
     def _remove(self):
         """
@@ -165,7 +170,17 @@ class LayerTreeObject(QtGui.QTreeWidget):
             return
         layerId=self.currentIterfaceTreeObject.id      
         self._document.getTreeLayer.delete(layerId)
-        
+    
+    def _rename(self): 
+        """
+            rename the current layer
+        """   
+        text, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+                                                'Enter Layer Name :')
+        if ok:
+            layerId=self.currentIterfaceTreeObject.id  
+            self._document.getTreeLayer.rename(layerId, text)
+            
     def _hide(self):
         """
             Hide the selected layer
