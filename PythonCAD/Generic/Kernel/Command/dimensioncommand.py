@@ -33,10 +33,10 @@ class DimensionCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint,ExcPoint,ExcPoint, ExcAngle]
         self.defaultValue=[None, None, None, 0]
-        self.message=["Give Me The First Point",
-                        "Give Me The Second Point",
-                        "Give Me The third Point", 
-                        "Give Me The Orientation Angle"]
+        self.message=["Give Me The First Point: ",
+                        "Give Me The Second Point: ",
+                        "Give Me Dimesion Position: ", 
+                        "Give Me The Orientation Angle"]   # what does it mean???
     @property
     def getAngle(self):
         """

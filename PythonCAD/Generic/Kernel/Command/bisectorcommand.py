@@ -35,12 +35,11 @@ class BisectorCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcEntityPoint,
                         ExcEntityPoint, 
-                        ExcLenght,  
-                        ]
+                        ExcLenght]
         self.defaultValue=[None, None, 100]
-        self.message=[  "Select the First entity or give me a the keyword Text As: (4@10,20)", 
-                        "Select the Second entity or give me a the keyword Text As: (4@10,20)", 
-                        "Give me the bisector lengh"]
+        self.message=[  "Select the First Segment: ", 
+                        "Select the Second Segment: ", 
+                        "Give me the Bisector Lengh: "]
         
     def getEntsToSave(self):
         """
@@ -75,7 +74,7 @@ class BisectorCommand(BaseCommand):
             apply the champfer command
         """
         if len(self.value)!=3:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongImputData("Wrong number of input parameters")
         for _ent in self.getEntsToSave():
             self.document.saveEntity(_ent)
        

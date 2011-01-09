@@ -226,10 +226,10 @@ class ICommand(object):
             self.kernelCommand.applyDefault()
             self.applyCommand()
             return
-        elif value=="back":
+        elif value.upper()=="UNDO":
             #TODO: perform a back operatio to the command
             return
-        elif value=="forward":
+        elif value.upper()=="REDO":
             #TODO: perform a forward operatio to the command
             return
         else:
@@ -433,7 +433,12 @@ class ICommand(object):
     
     def correctPositionForcedDirection(self, point, force):
         """
-            correct the point cords 
+            correct the POINT coords
+            FORCE is the angle the defines the correction direction
+            
+            return the projection point of the POINT to the straight line defined by FORCE angle
+            
+            FORCE angle, in current inplementation, is setted by polarguides module when the mouse cursor is over a guide item
         """
         if point ==None:
             return None

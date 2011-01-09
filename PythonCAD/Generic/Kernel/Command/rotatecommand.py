@@ -36,11 +36,11 @@ class RotateCommand(BaseCommand):
                         ExcPoint, 
                         ExcAngle, 
                         ExcText]
-        self.defaultValue=[None, None, math.pi/2, "C"]
-        self.message=[  "Select the entity to rotate or give me a the keyword Text As: (10,20,30,...)", 
-                        "Give me the reference rotation point", 
-                        "Give me the rotation angle[rad]", 
-                        "Give me the Mode (M or None ->Move,C ->Copy)"]
+        self.defaultValue=[None, None, math.pi/2, "M"]
+        self.message=[  "Select Entities: ", 
+                        "Give me the Rotation Center Point: ", 
+                        "Give me the rotation angle [rad]: ", 
+                        "Move or Copy? [M]: "]
               
     def performRotation(self):
         """
@@ -48,7 +48,7 @@ class RotateCommand(BaseCommand):
         """
         copy=True
         if self.value[3]:
-            if self.value[3]=='C':
+            if self.value[3].upper()=='M':
                 copy=False
         updEnts=[]
         for id in str(self.value[0]).split(','):

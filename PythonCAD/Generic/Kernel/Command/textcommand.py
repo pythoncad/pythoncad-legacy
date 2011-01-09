@@ -32,10 +32,10 @@ class TextCommand(BaseCommand):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcText, ExcAngle,ExcText ]
         self.defaultValue=[None, "Dummy Text", 0, "sw"]
-        self.message=["Give Me the first Point",
-                        "Give Me The Text string",
-                        "Give Me The angle", 
-                        "Give me the position of the text referred to the point"]
+        self.message=["Give Me the Insert Point: ",
+                        "Type The Text String: ",
+                        "Give Me The Rotation Angle [0]: ", 
+                        "Give me a Point to Justify Text [sw]: "]
 
     def applyCommand(self):
         if len(self.value)!=4:

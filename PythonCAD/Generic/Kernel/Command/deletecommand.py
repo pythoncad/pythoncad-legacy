@@ -33,7 +33,7 @@ class DeleteCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity]
-        self.message=["Select the entity to delete or give me a the keyword Text As: (10,20,30,..)"]
+        self.message=["Select Entities to be Deleted: "]
         
     def applyDefault(self):    
         """

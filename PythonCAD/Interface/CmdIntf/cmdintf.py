@@ -106,8 +106,8 @@ class CmdIntf(object):
             if not menu is None:
                 menu.addSeparator()
 #            # add a separator to the tool-bar
-#            if not toolbar is None:
-#                toolbar.addSeparator()
+            if not toolbar is None:
+                toolbar.addSeparator()
         elif cmd=='>':
             #add subMenu
             pass

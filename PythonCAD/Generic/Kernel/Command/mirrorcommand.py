@@ -37,7 +37,7 @@ class MirrorCommand(BaseCommand):
         self.defaultValue=[None, None, "C"]
         self.message=[  "Select the entity to mirror or give me a the keyword Text As: (10,20,30,...)", 
                         "Select the reference line ", 
-                        "Give me the Mode (M or None ->Move,C ->Copy)"]
+                        "Move or Copy? [M]: "]
                
     def performMirror(self):
         """
@@ -45,7 +45,7 @@ class MirrorCommand(BaseCommand):
         """
         move=True
         if self.value[2]:
-            if self.value[2]=='C':
+            if self.value[2].upper()=='C':
                 move=False
         mirrorRef=self.document.getEntity(self.value[1])
         geoMirrorRef=self.document.convertToGeometricalEntity(mirrorRef)

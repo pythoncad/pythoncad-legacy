@@ -249,15 +249,15 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('zoomwindow', hasMdiChild)
         self.__cmd_intf.setVisible('zoomitem', hasMdiChild)
         #snap
-        self.__cmd_intf.setVisible('autosnap', hasMdiChild)
-        self.__cmd_intf.setVisible('endsnap', hasMdiChild)
-        self.__cmd_intf.setVisible('middlesnap', hasMdiChild)
-        self.__cmd_intf.setVisible('centersnap', hasMdiChild)
-        self.__cmd_intf.setVisible('ortosnap', hasMdiChild)
-        self.__cmd_intf.setVisible('tangentsnap', False)
-        self.__cmd_intf.setVisible('quadrantsnap', hasMdiChild)
-        self.__cmd_intf.setVisible('originsnap', hasMdiChild)
-        self.__cmd_intf.setVisible('intersection', hasMdiChild)
+        self.__cmd_intf.setVisible('snapauto', hasMdiChild)
+        self.__cmd_intf.setVisible('snapend', hasMdiChild)
+        self.__cmd_intf.setVisible('snapmid', hasMdiChild)
+        self.__cmd_intf.setVisible('snapcen', hasMdiChild)
+        self.__cmd_intf.setVisible('snapper', hasMdiChild)
+        self.__cmd_intf.setVisible('snaptan', False)
+        self.__cmd_intf.setVisible('snapqua', hasMdiChild)
+        self.__cmd_intf.setVisible('snap00', hasMdiChild)
+        self.__cmd_intf.setVisible('snapint', hasMdiChild)
         #Tools
         self.__cmd_intf.setVisible('info2p', hasMdiChild)
         #window
@@ -304,7 +304,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save In A Different location...', self._onSaveAsDrawing)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save in a Different Location...', self._onSaveAsDrawing)
         #
         # Create recentFile structure
         #
@@ -349,7 +349,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'arc', '&Arc', self._onArc)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'ellipse', '&Ellipse', self._onEllipse)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polygon', '&polygon', self._onPolygon)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'polygon', '&Polygon', self._onPolygon)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'fillet', '&Fillet', self._onFillet)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Draw, 'chamfer', '&Chamfer', self._onChamfer)
@@ -363,15 +363,18 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomwindow', 'Zoom&Window', self._onZoomWindow)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.View, 'zoomitem', 'Zoom&Item',self._onCenterItem)
         # Snap
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'autosnap', 'Automatic Snap', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'endsnap', 'End', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'middlesnap', 'Middle', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'centersnap', 'Center', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'ortosnap', 'Ortogonal', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'tangentsnap', 'Tangent', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'quadrantsnap', 'Quadrant', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'intersection', 'Intersection', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'originsnap', 'Origin', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapauto', 'Automatic Snap', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapend', 'End', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapmid', 'Middle', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapint', 'Intersection', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapper', 'Perpendicular', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, '-')
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapcen', 'Center', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapqua', 'Quadrant', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snaptan', 'Tangent', self._onSnapCommand)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, '-') 
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snap00', 'Origin', self._onSnapCommand)
         
         #Tools
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Tools, 'info2p', 'Info Two Points', self._onInfo2p)
@@ -381,7 +384,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'next', 'Ne&xt', self.mdiArea.activateNextSubWindow)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'previous', 'Pre&vious', self.mdiArea.activatePreviousSubWindow)
         # Help
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PyCAD', self._onAbout)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PythonCAD', self._onAbout)
         return
         
     def updateRecentFileList(self):
@@ -625,23 +628,23 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.scene.clearSelection()
         action = self.sender()
         if action:
-            if action.command=="autosnap":
+            if action.command=="snapauto":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["LIST"])
-            elif action.command=="endsnap":
+            elif action.command=="snapend":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["END"])
-            elif action.command=="middlesnap":
+            elif action.command=="snapmid":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["MID"])
-            elif action.command=="centersnap":
+            elif action.command=="snapcen":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["CENTER"])
-            elif action.command=="ortosnap":
+            elif action.command=="snapper":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORTHO"])
-            elif action.command=="tangentsnap":
+            elif action.command=="snaptan":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["TANGENT"])
-            elif action.command=="quadrantsnap":
+            elif action.command=="snapqua":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["QUADRANT"]) 
-            elif action.command=="originsnap":
+            elif action.command=="snap00":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORIG"])
-            elif action.command=="intersection":
+            elif action.command=="snapint":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["INTERSECTION"])
             else:
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["LIST"])
