@@ -304,7 +304,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'new', '&New Drawing', self._onNewDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'open', '&Open Drawing...', self._onOpenDrawing)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'import', '&Import Drawing...', self._onImportDrawing)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save in a Different Location...', self._onSaveAsDrawing)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'saveas', '&Save As...', self._onSaveAsDrawing)
         #
         # Create recentFile structure
         #
@@ -469,7 +469,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onSaveAsDrawing(self):
-        drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As Drawing", "/home", "Drawings (*.pdr)");
+        drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As...", "/home", "Drawings (*.pdr)");
         if len(drawing)>0:
             self.__application.saveAs(drawing)
             
