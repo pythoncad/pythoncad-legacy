@@ -114,7 +114,7 @@ class RelationDb(BaseDb):
                             """%(str(parent.getId()), str(childrenType))
         _dbEntRow=self.makeSelect(_sqlSelect)
         for _row in _dbEntRow:
-            _style=_row[3]
+            _style=pickle.loads(str(_row[3]))
             _dumpObj=pickle.loads(str(_row[2]))
             _objEnt=Entity(_row[1],_dumpObj,_style,_row[0])
             _objEnt.state=_row[4]
