@@ -34,16 +34,18 @@ from PyQt4                              import QtCore, QtGui
 
 from Kernel.initsetting                 import MAIN_LAYER
 from Kernel.layer                       import Layer
+from Kernel.exception                   import PythonCadWarning
 
 class LayerItem(QtGui.QTreeWidgetItem):
     """
         Single item
     """
-    def __init__(self, kernelItem,type=0, id=None, active=False):
+    def __init__(self, kernelItem,type=0, id=None, active=True):
         super(LayerItem, self).__init__(type)
         self._kernelItem=kernelItem
         self._id=id
         self.setText(0, self.name)
+        self.setText(1, "Visible")
         self.setActive(active)
         self.setVisible(kernelItem.Visible)
         
@@ -145,7 +147,7 @@ class LayerTreeObject(QtGui.QTreeWidget):
         hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
         showAction=QtGui.QAction("Show", self, triggered=self._show)
         setCurrentAction=QtGui.QAction("Set Current", self, triggered=self._setCurrent)
-        #propertyAction=QtGui.QAction("Property", self, triggered=self._property)
+        #TODO : propertyAction=QtGui.QAction("Property", self, triggered=self._property)
         #
         contexMenu.addAction(addAction)
         contexMenu.addAction(removeAction)
@@ -194,16 +196,27 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             Hide the selected layer
         """
-        layerId=self.currentIterfaceTreeObject.id  
-        self._document.getTreeLayer.Hide(layerId)
-        
+        try:
+            layerId=self.currentIterfaceTreeObject.id  
+            self._document.getTreeLayer.Hide(layerId)
+        except PythonCadWarning as e:
+            QtGui.QMessageBox.information(self, 
+                                                "PythonCad -Warning", 
+                                                str(e) , 
+                                                QtGui.QMessageBox.Ok)
+
     def _show(self):
         """
             Show the selected layer
         """
-        layerId=self.currentIterfaceTreeObject.id 
-        self._document.getTreeLayer.Hide(layerId, False) 
-        
+        try:
+            layerId=self.currentIterfaceTreeObject.id 
+            self._document.getTreeLayer.Hide(layerId, False) 
+        except PythonCadWarning as e:
+            QtGui.QMessageBox.information(self, 
+                                                "PythonCad -Warning", 
+                                                str(e) , 
+                                                QtGui.QMessageBox.Ok)
     def _setCurrent(self):
         """
             set the current layer

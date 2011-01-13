@@ -67,7 +67,7 @@ class StyleUndefinedAttribute(Exception):
     def __str__(self):
         return repr(self.value)  
 
-class PythopnCadWarning(Exception):
+class PythonCadWarning(Exception):
     """
         Class for raise a warning exception
     """

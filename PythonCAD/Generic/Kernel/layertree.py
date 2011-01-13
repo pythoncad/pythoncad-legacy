@@ -203,13 +203,26 @@ class LayerTree(object):
         """
             inner function for hiding the layer
         """
+        # Hide/Show all the children entity
+        self.hideLayerEntity(layer, hide)
+        # Hide and update the layer object    
         layer.getConstructionElements()['LAYER'].Visible=hide
         self.__kr.saveEntity(layer)
         self.update(layer)
         
+    def isMainLayer(self, layer):
+        """
+            check if the layer is the main layer
+        """
+        if layer.getConstructionElements()['LAYER'].name==MAIN_LAYER:
+            return True
+        return False
+        
     def Hide(self, layerId, hide=True):
         self.__kr.startMassiveCreation()
-        topLayer=self.__kr.getEntity(layerId)     
+        topLayer=self.__kr.getEntity(layerId)  
+        if self.isMainLayer(topLayer):
+            raise PythonCadWarning("Unable to hide/show the main Layer")   
         if topLayer is self.__activeLayer:
             self.setActiveLayer(self.getParentLayer(topLayer).getId())
         #
@@ -218,8 +231,7 @@ class LayerTree(object):
             # hide/show all children layer
             for layer in self.getLayerChildrenLayer(layer):
                 recursiveHide(layer)
-            # hide/show all the children entity
-            self.hideLayerEntity(layer, hide)
+           
         recursiveHide(topLayer)    
         self.__kr.stopMassiveCreation()
     
