@@ -45,7 +45,24 @@ class LayerItem(QtGui.QTreeWidgetItem):
         self._id=id
         self.setText(0, self.name)
         self.setActive(active)
+        self.setVisible(kernelItem.Visible)
+        
+    def setActive(self, activate):
+        """
+            overwrite the set active property
+        """
         self.setExpanded(True)
+        if activate:
+            self.setBackgroundColor(0, QtCore.Qt.lightGray)
+        else:
+            self.setBackgroundColor(0, QtCore.Qt.white)
+    
+    def setVisible(self, activate):        
+        if activate:
+            self.setText(1, "Hide")    
+        else:
+            self.setText(1, "Visible")
+        
     @property
     def name(self):
         """
@@ -60,15 +77,6 @@ class LayerItem(QtGui.QTreeWidgetItem):
         """
         return self._id
         
-    def setActive(self, active):
-        self.setExpanded(True)
-        if active:
-            self.setBackgroundColor(0, QtCore.Qt.lightGray)
-        else:
-            self.setBackgroundColor(0, QtCore.Qt.white)
-            
-
-        
 class LayerTreeObject(QtGui.QTreeWidget):
     """
         Python
@@ -81,8 +89,9 @@ class LayerTreeObject(QtGui.QTreeWidget):
         self._document.getTreeLayer.deleteEvent=self.updateTreeStructure
         self._document.getTreeLayer.insertEvent=self.updateTreeStructure
         self._document.getTreeLayer.update=self.updateTreeStructure
-        self.setColumnCount(1)
-        self.setHeaderLabel("Layer Name")
+        self.setColumnCount(2)
+        #self.setHeaderLabel("Layer Name")
+        self.setHeaderLabels(("Layer Name ", "Visible"))
         self.TopLevelItem=None
         self.populateStructure()
         
@@ -133,16 +142,16 @@ class LayerTreeObject(QtGui.QTreeWidget):
         addAction=QtGui.QAction("Add Child", self, triggered=self._addChild)
         removeAction=QtGui.QAction("Remove", self, triggered=self._remove)
         renameAction=QtGui.QAction("Rename", self, triggered=self._rename)
-        #hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
-        #showAction=QtGui.QAction("Show", self, triggered=self._show)
+        hideAction=QtGui.QAction("Hide", self, triggered=self._hide)
+        showAction=QtGui.QAction("Show", self, triggered=self._show)
         setCurrentAction=QtGui.QAction("Set Current", self, triggered=self._setCurrent)
         #propertyAction=QtGui.QAction("Property", self, triggered=self._property)
         #
         contexMenu.addAction(addAction)
         contexMenu.addAction(removeAction)
         contexMenu.addAction(renameAction)
-        #contexMenu.addAction(hideAction)
-        #contexMenu.addAction(showAction)
+        contexMenu.addAction(hideAction)
+        contexMenu.addAction(showAction)
         contexMenu.addAction(setCurrentAction)
         #contexMenu.addAction(propertyAction)
         #
@@ -185,13 +194,15 @@ class LayerTreeObject(QtGui.QTreeWidget):
         """
             Hide the selected layer
         """
-        pass
+        layerId=self.currentIterfaceTreeObject.id  
+        self._document.getTreeLayer.Hide(layerId)
         
     def _show(self):
         """
             Show the selected layer
         """
-        pass
+        layerId=self.currentIterfaceTreeObject.id 
+        self._document.getTreeLayer.Hide(layerId, False) 
         
     def _setCurrent(self):
         """

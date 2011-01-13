@@ -25,28 +25,33 @@ class Layer(object):
     """
         this class manage a single layer
     """
-    def __init__(self, layerName=None):
+    def __init__(self, layerName=None, visible=True):
         """
             name            = name of the layer
         """
-        self.name=layerName
+        self.__name=layerName
+        self.__visible=visible
 
-    def getName(self):
+    @property
+    def name(self):
         """
-            get the layer name
+            Get/Set The layer name
         """
         return self.__name
-
-    def setName(self,layerName):
+    @name.setter
+    def name(self, value):
+        self.__name=value
+            
+    @property
+    def Visible(self):
         """
-            set the layer name
+            manage layer visibility 
         """
-        if len(layerName)==0:
-            raise ValueError,"You mast provide a name for the layer"
-        self.__name=layerName
-    
-    name=property(getName,setName,None,"Get/Set The layer name")
-
+        return self.__visible
+    @Visible.setter
+    def Visible(self, value):
+        self.__visible=value
+        
   
     
  

@@ -561,7 +561,7 @@ class Document(BaseDb):
             activeEnt=self.__EntityDb.getEntityEntityId(entityId)
         if activeEnt.visible!=visible:
             activeEnt.visible=visible
-            self.__EntityDb.uptateEntity(activeEnt)
+            self.saveEntity(activeEnt)
 
     def importExternalFormat(self, fileName):
         """

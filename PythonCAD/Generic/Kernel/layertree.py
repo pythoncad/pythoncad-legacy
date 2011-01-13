@@ -46,7 +46,7 @@ class LayerTree(object):
         self.deleteEvent=PyCadEvent()
         self.insertEvent=PyCadEvent()
         self.update=PyCadEvent()
-
+        
     def setActiveLayer(self, layerId):
         """
             set the active layer
@@ -117,9 +117,9 @@ class LayerTree(object):
         """
             get the pycadent  layer by giving a name
         """
-        #to do manage logger self.__logger.debug('getEntLayerDb')
+        #TODO: manage logger self.__logger.debug('getEntLayerDb')
         _layersEnts=self.__kr.getEntityFromType('LAYER')
-        #TODO : Optimaze this loop with the build in type [...] if possible
+        #TODO: Optimaze this loop with the build in type [...] if possible
         for layersEnt in _layersEnts:
             unpickleLayers=layersEnt.getConstructionElements()
             for key in unpickleLayers:
@@ -141,8 +141,6 @@ class LayerTree(object):
             for l in layers:
                 ca=self._getLayerConstructionElement(l)
                 childs[l.getId()]=(ca, createNode(l))
-            #else:
-            #    tree[id]=(c, {})
             return childs
         c=self._getLayerConstructionElement(rootDbEnt)
         exitDb={}
@@ -159,7 +157,6 @@ class LayerTree(object):
     def delete(self,layerId):
         """
             delete the current layer an all the entity releted to it
-            TODO: to be tested
         """
         self.__kr.startMassiveCreation()
         deleteLayer=self.__kr.getEntity(layerId)
@@ -185,12 +182,54 @@ class LayerTree(object):
         """
         for ent in self.getLayerChildren(layer):
                 self.__kr.deleteEntity(ent.getId())
-    
+                
     def rename(self, layerId, newName):
         """
             rename the layer
         """
         layer=self.__kr.getEntity(layerId)
+        self._rename(layer, newName)
+        self.update(layerId) # fire update event
+        
+    def _rename(self, layer, newName):
+        """
+            rename the layer internal use
+        """
         layer.getConstructionElements()['LAYER'].name=newName
         self.__kr.saveEntity(layer)
-        self.update(layerId) # fire update event
+        self.update(layer)
+        
+    def _Hide(self, layer, hide=True):
+        """
+            inner function for hiding the layer
+        """
+        layer.getConstructionElements()['LAYER'].Visible=hide
+        self.__kr.saveEntity(layer)
+        self.update(layer)
+        
+    def Hide(self, layerId, hide=True):
+        self.__kr.startMassiveCreation()
+        topLayer=self.__kr.getEntity(layerId)     
+        if topLayer is self.__activeLayer:
+            self.setActiveLayer(self.getParentLayer(topLayer).getId())
+        #
+        def recursiveHide(layer):
+            self._Hide(layer, hide)
+            # hide/show all children layer
+            for layer in self.getLayerChildrenLayer(layer):
+                recursiveHide(layer)
+            # hide/show all the children entity
+            self.hideLayerEntity(layer, hide)
+        recursiveHide(topLayer)    
+        self.__kr.stopMassiveCreation()
+    
+    def hideLayerEntity(self, layer, hide=True):    
+        """
+            hide all the entity of the layer
+        """
+        if hide:
+            for ent in self.getLayerChildren(layer):
+                self.__kr.hideEntity(entity=ent)
+        else:
+            for ent in self.getLayerChildren(layer):
+                self.__kr.unHideEntity(entity=ent)

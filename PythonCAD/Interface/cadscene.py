@@ -375,6 +375,7 @@ class CadScene(QtGui.QGraphicsScene):
             self.__document.deleteEntityEvent   += self.eventDelete
             self.__document.massiveDeleteEvent  += self.eventMassiveDelete
             self.__document.undoRedoEvent       += self.eventUndoRedo
+            self.__document.hideEntEvent        += self.eventDelete
 
     def populateScene(self, document):
         """

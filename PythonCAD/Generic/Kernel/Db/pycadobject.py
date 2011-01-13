@@ -129,11 +129,13 @@ class PyCadObject(object):
         """
             return the inner style of type Style
         """
-        if self.getStyle():
-            styleEnt=self.getStyle().getConstructionElements() 
+        style=self.getStyle()
+        if style!=None:
+            styleEnt=style.getConstructionElements() 
             return styleEnt[styleEnt.keys()[0]]
         else:
             return None
+            
     def setEntType(self, type):
         """
             Set the entity type
