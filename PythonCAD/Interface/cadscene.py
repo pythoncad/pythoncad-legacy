@@ -98,7 +98,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.isGuided=None
         self.isGuideLocked=None
         self.initGuides()
-
         
         # scene aspect
         r, g, b=BACKGROUND_COLOR #defined in cadinitsetting
@@ -195,6 +194,10 @@ class CadScene(QtGui.QGraphicsScene):
             if qtItem:
                 qtItem.setSelected(True)
                 self.updateSelected()
+                if event.button()==QtCore.Qt.RightButton:
+                    print "qtItems", qtItem
+                    self.showContextMenu(qtItem, event)
+                
             #else:
             #    print "No item selected"
             #re fire the event
@@ -242,6 +245,20 @@ class CadScene(QtGui.QGraphicsScene):
             
         super(CadScene, self).mouseReleaseEvent(event)
         return
+    
+    def showContextMenu(self, selectedQtItems, event):
+        """
+            show a context menu
+        """
+        def delete():
+            self.fireKeyShortcut('DELETE')
+            
+        contexMenu=QtGui.QMenu()
+        # Create Actions
+        removeAction=contexMenu.addAction("Delete")
+        QtCore.QObject.connect(removeAction, QtCore.SIGNAL('triggered()'), delete)
+        contexMenu.exec_(event.screenPos())
+        del(contexMenu)
         
     def hanhlerDoubleClick(self):  
         """
