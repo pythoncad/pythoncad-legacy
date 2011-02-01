@@ -132,7 +132,7 @@ class RelationDb(BaseDb):
         _sqlSelect="""SELECT pycad_entity_id,
                             pycad_object_type,
                             pycad_object_definition,
-                            pycad_style_id,
+                            pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
                             pycad_visible
@@ -146,7 +146,7 @@ class RelationDb(BaseDb):
                             AND pycad_entity_state NOT LIKE "DELETE"
                             AND pycad_object_type LIKE '%s'
                             AND pycad_undo_visible=1
-                            """%(str(parent.getId()))
+                            """%(str(entity.getId()), str(entity.eType))
         _dbEntRow=self.makeSelect(_sqlSelect)
         for _row in _dbEntRow:
             _style=_row[3]

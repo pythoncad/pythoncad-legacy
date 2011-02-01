@@ -223,7 +223,7 @@ class LayerTree(object):
         topLayer=self.__kr.getEntity(layerId)  
         if self.isMainLayer(topLayer):
             raise PythonCadWarning("Unable to hide/show the main Layer")   
-        if topLayer is self.__activeLayer:
+        if layerId is self.__activeLayer.getId():
             self.setActiveLayer(self.getParentLayer(topLayer).getId())
         #
         def recursiveHide(layer):
