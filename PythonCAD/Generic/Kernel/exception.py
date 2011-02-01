@@ -209,9 +209,16 @@ class ExcMultiEntity(CommandException):
         when this exception is trown it means that the command need an array of id
     """
     pass  
+    
 class ExcEntityPoint(CommandException):
     """
         when this exception is trown it means that the command need an a string
         like id@x,y
+    """
+    pass
+    
+class ExcDicTuple(CommandException):
+    """
+        require a dictionary of tuple
     """
     pass

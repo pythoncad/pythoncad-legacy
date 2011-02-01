@@ -229,6 +229,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.setVisible('mirror', hasMdiChild)
         self.__cmd_intf.setVisible('rotate', hasMdiChild)
         self.__cmd_intf.setVisible('trim', hasMdiChild)
+        self.__cmd_intf.setVisible('property', hasMdiChild)
         #Draw
         self.__cmd_intf.setVisible('point', hasMdiChild)
         self.__cmd_intf.setVisible('segment', hasMdiChild)
@@ -328,6 +329,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'property', '&Property', self._onProperty)
+        
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'preferences', '&User Preferences', self.preferences)
@@ -569,7 +572,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         except UndoDbExc:
             self.critical("Unable To Perform Redo")
         self.statusBar().showMessage("Ready")
-    
+   
+    def _onProperty(self):
+        self.statusBar().showMessage("CMD:Property")
+        self.callCommand('PROPERTY')
+        
     def preferences(self):
         p=ConfigDialog()
         #p.exec_()
@@ -696,7 +703,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         except EntityMissing:
             self.scene.cancelCommand()
             self.critical("You need to have an active document to perform this command")
-        #checks if scene has selected items and lauches them direclty to the Icommand if it's first prompt it's "give me entities"
+        #checks if scene has selected items and launches them directly to the ICommand 
+        #if it's first prompt it's "give me entities"
         if len(self.scene.selectedItems())>0:
             print 'selezioneesiste'
             if  self.scene.activeKernelCommand.activeException()==ExcMultiEntity:

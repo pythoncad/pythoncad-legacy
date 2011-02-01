@@ -46,6 +46,7 @@ from Kernel.Command.rotatecommand       import RotateCommand
 from Kernel.Command.trimcommand         import TrimCommand
 from Kernel.Command.deletecommand       import DeleteCommand
 from Kernel.Command.dimensioncommand    import DimensionCommand
+from Kernel.Command.propertycommand     import PropertyCommand
 #
 # Entity List
 #
@@ -123,7 +124,8 @@ APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ROTATE':RotateCommand, 
                         'TRIM':TrimCommand, 
                         'DELETE':DeleteCommand, 
-                        'DIMENSION':DimensionCommand}
+                        'DIMENSION':DimensionCommand, 
+                        'PROPERTY':PropertyCommand}
 #
 # Match object Name
 #
@@ -321,7 +323,7 @@ PYTHONCAD_STYLE_DEFAULT_VALUE=[(0, 0, 0),
                                 '10',
                                 'left'
                                 'sw']
-
+                                
 def getDefaultStyle():
     return dict(zip(PYTHONCAD_STYLE_ATTRIBUTES,PYTHONCAD_STYLE_DEFAULT_VALUE))
 #

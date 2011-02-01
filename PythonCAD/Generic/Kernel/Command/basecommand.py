@@ -158,7 +158,7 @@ class BaseCommand(object):
         """
             translate the imput value based on exception
         """
-        point, entitys, distance, angle , text= value
+        point, entitys, distance, angle , text=value
         exitValue=None
         print "Try to except ", self.activeException()
         try:
@@ -197,6 +197,8 @@ class BaseCommand(object):
                 exitValue=True    
             else:
                 exitValue=False
+        except(ExcDicTuple):
+            exitValue=eval(text)
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue

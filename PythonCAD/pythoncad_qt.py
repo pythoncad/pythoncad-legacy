@@ -36,7 +36,6 @@ def getPythonCAD():
     
     # end splashscreen
     splash.finish(w)
-
     return w, app
 #
 if __name__ == '__main__':

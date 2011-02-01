@@ -29,6 +29,11 @@ from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.polyline      import Polyline
 from Interface.Entity.dimension     import Dimension
 
+from Interface.Dialogs.Widget.widgets import PyCadQColor
+from Interface.Dialogs.Widget.widgets import PyCadQLineType
+from Interface.Dialogs.Widget.widgets import PyCadQDouble
+from Interface.Dialogs.Widget.widgets import PyCadQFont
+
 from PyQt4 import QtCore
 
 from Interface.Command.distance2point import Distance2Point
@@ -68,3 +73,12 @@ KEY_MAP={
          QtCore.Qt.Key_R:'ROTATE', 
          QtCore.Qt.Key_M:'MIRROR'
          }
+
+
+   
+PYTHONCAD_STYLE_WIDGET={'entity_color':PyCadQColor, 
+                        'entity_linetype':PyCadQLineType,
+                        'entity_tichness':PyCadQDouble, 
+                        'text_font':PyCadQFont, 
+                        'text_haigt':PyCadQDouble, 
+                        }

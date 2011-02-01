@@ -39,12 +39,12 @@ from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoUtil.intersection    import *
 from Kernel.pycadevent              import *
 from Kernel.exception               import *
-
 #
 # Interface Import
 #
 from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
 from Interface.Entity.base          import BaseEntity
+from Interface.Dialogs.property      import Property
 from Interface.Preview.factory      import *
 from Interface.snap import *
 
@@ -160,7 +160,17 @@ class ICommand(object):
         if self.automaticApply and self.kernelCommand.automaticApply:
             if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
-        
+        # try to impelements the property dialog
+        if self.kernelCommand.activeException()==ExcDicTuple:
+            #TODO: Mettere a primo argomento l'applicazione ..
+            #nella properti cosi viene fuori l'icona giusta
+            dialog=Property(entity=entity)
+            if dialog.value!=None:
+                self.kernelCommand[self.__index]=(None,entity,None, None, dialog.value)
+                self.applyCommand()
+            else:
+                #TODO: mettere il reset del comando 
+                return
     def applyCommand(self):    
         """
             apply the command 

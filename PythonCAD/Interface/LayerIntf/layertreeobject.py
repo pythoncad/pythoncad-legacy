@@ -91,13 +91,12 @@ class LayerTreeObject(QtGui.QTreeWidget):
         self._document.getTreeLayer.insertEvent=self.updateTreeStructure
         self._document.getTreeLayer.update=self.updateTreeStructure
         self.setColumnCount(2)
-        #self.setHeaderLabel("Layer Name")
         self.setHeaderLabels(("Layer Name ", "Visible"))
         self.TopLevelItem=None
+        self.setSortingEnabled(True)
         self.populateStructure()
         
     def itemDoubleClicked(self, qTreeWidgetItem ,column):
-        
         return QtGui.QTreeWidget.itemDoubleClicked(self, qTreeWidgetItem, column)   
     #
     # Manage event

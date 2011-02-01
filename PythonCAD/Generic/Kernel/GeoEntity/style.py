@@ -83,3 +83,6 @@ class Style(GeometricalEntity):
                 self['STYLE_1'][name]=value
             else:
                 raise EntityMissing,"Unable to find the property %s"%str(name)
+        @property 
+        def props(self):
+            return  self['STYLE_1']
