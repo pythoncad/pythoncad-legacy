@@ -206,7 +206,7 @@ class LayerTree(object):
         # Hide/Show all the children entity
         self.hideLayerEntity(layer, hide)
         # Hide and update the layer object    
-        layer.getConstructionElements()['LAYER'].Visible=hide
+        layer.getConstructionElements()['LAYER'].Visible=not hide
         self.__kr.saveEntity(layer)
         self.update(layer)
         

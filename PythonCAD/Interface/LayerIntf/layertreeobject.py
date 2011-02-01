@@ -47,8 +47,6 @@ class LayerItem(QtGui.QTreeWidgetItem):
         self.setText(0, self.name)
         self.setActive(active)
         self.setVisible(kernelItem.Visible)
-        if self.name==MAIN_LAYER: #TODO: I do not like this way ...
-            self.setText(1, "Visible")
         
     def setActive(self, activate):
         """
@@ -62,9 +60,9 @@ class LayerItem(QtGui.QTreeWidgetItem):
     
     def setVisible(self, activate):        
         if activate:
-            self.setText(1, "Hide")    
+            self.setText(1, "Visible")    
         else:
-            self.setText(1, "Visible")
+            self.setText(1, "Hide")
         
     @property
     def name(self):
