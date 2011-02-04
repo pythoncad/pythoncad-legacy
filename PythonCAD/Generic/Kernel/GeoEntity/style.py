@@ -31,7 +31,6 @@ class Style(GeometricalEntity):
         """
         def __init__(self,kw):
             """
-                Initialize a Arc/Circle.
                 kw['STYLE_0'] 
                 kw['STYLE_1'] 
             """
@@ -45,24 +44,25 @@ class Style(GeometricalEntity):
             else:
                 from Kernel.initsetting import getDefaultStyle
                 self['STYLE_1']=getDefaultStyle()
+                
             if self.has_key('STYLE_0'):
                 if self['STYLE_0'] ==None:
                     self.name=getRandomString()       
             else:
                 self['STYLE_0']=getRandomString()       
-        def setName(self, name):
-            """
-                set the name of the style
-            """
-            self['STYLE_0']=name
-
-        def getName(self):
+        @property
+        def name(self):
             """
                 get the style name
             """
             return self['STYLE_0']
-        
-        name=property(setName, getName, None, "Style Name")
+        @name.setter
+        def name(self, name):
+            """
+                set the name of the style
+            """
+            self['STYLE_0']=name
+       
         
         def getStyleProp(self, name):
             """
@@ -83,6 +83,11 @@ class Style(GeometricalEntity):
                 self['STYLE_1'][name]=value
             else:
                 raise EntityMissing,"Unable to find the property %s"%str(name)
+        
+        def Derived(self):
+            self.name=str(self)
+            self['STYLE_1']['derived']=str(self.name)
+            
         @property 
         def props(self):
             return  self['STYLE_1']

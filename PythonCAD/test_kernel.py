@@ -562,7 +562,7 @@ class textApplication(object):
             if not type:
                 type="ALL"
             startTime=time.clock()
-            activeDoc=self.__pyCadApplication.getActiveDocument()
+            activeDoc=self.__pyCadApplication.ActiveDocument
             if activeDoc == None:
                 self.outputMsg("No Object opened")
                 return
@@ -602,7 +602,7 @@ class textApplication(object):
         """
         styleName=self.inputMsg("Write style name")
         stl=Style(styleName)
-        doc=self.__pyCadApplication.getActiveDocument()
+        doc=self.__pyCadApplication.ActiveDocument
         doc.saveEntity(stl);
         
     def getActiveDoc(self):            
@@ -610,7 +610,7 @@ class textApplication(object):
             print the active document
         """ 
         try:
-            doc=self.__pyCadApplication.getActiveDocument()
+            doc=self.__pyCadApplication.ActiveDocument
             self.outputMsg("Active Document is %s"%str(doc.dbPath))
         except:
             self.outputMsg("Unable To Perform the getActiveDoc") 
@@ -628,7 +628,7 @@ class textApplication(object):
                 return
             for key in docs:
                 if i == int(lookIndex):
-                    self.__pyCadApplication.setActiveDocument(docs[key])
+                    self.__pyCadApplication.ActiveDocument=docs[key]
                     return
                 i+=1
             else:
@@ -713,14 +713,14 @@ class textApplication(object):
         self.outputMsg("Create a new document 2")
         doc2=self.__pyCadApplication.newDocument()
         self.outputMsg("Set Current p1")
-        self.__pyCadApplication.setActiveDocument(doc1)
+        self.__pyCadApplication.ActiveDocument=doc1
         self.outputMsg("Create Point")
         self.performCommandRandomly("POINT")
         self.outputMsg("Create Segment")
         self.performCommandRandomly("SEGMENT")
         self.outputMsg("Create Arc")
         self.performCommandRandomly("ARC")
-        self.__pyCadApplication.setActiveDocument(doc2)
+        self.__pyCadApplication.ActiveDocument=doc2
         self.outputMsg("Create Ellipse")
         self.performCommandRandomly("ELLIPSE")
         self.outputMsg("Create Polyline")
@@ -729,13 +729,13 @@ class textApplication(object):
         self.performCommandRandomly("ACLINE")
         
         self.outputMsg("Get Entitys for doc 1")
-        self.__pyCadApplication.setActiveDocument(doc1)
-        activeDoc=self.__pyCadApplication.getActiveDocument()
+        self.__pyCadApplication.ActiveDocument=doc1
+        activeDoc=self.__pyCadApplication.ActiveDocument
         ents=activeDoc.getEntityFromType("ALL")
         self.printEntity(ents)
         self.outputMsg("Get Entitys for doc 2")
-        self.__pyCadApplication.setActiveDocument(doc2)
-        activeDoc=self.__pyCadApplication.getActiveDocument()
+        self.__pyCadApplication.ActiveDocument=doc2
+        activeDoc=self.__pyCadApplication.ActiveDocument
         ents=activeDoc.getEntityFromType("ALL")
         self.printEntity(ents)
         # Working with styles

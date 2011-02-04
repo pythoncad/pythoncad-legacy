@@ -57,6 +57,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
         self.mdiArea.subWindowActivated.connect(self.subWindowActivatedEvent)
+        self.oldSubWin=None
 #        self.readSettings() #now works for position and size, support for toolbars is still missing(http://www.opendocs.net/pyqt/pyqt4/html/qsettings.html)
         self.setWindowTitle("PythonCAD")
         qIcon=self._getIcon('pythoncad')
@@ -195,8 +196,10 @@ class CadWindowMdi(QtGui.QMainWindow):
             Sub windows activation
         """
         if self.mdiArea.activeSubWindow():
-            self.resetCommand()
-            self.__application.setActiveDocument(self.mdiArea.activeSubWindow().document)   
+            if (self.mdiArea.activeSubWindow().document!=
+                        self.__application.ActiveDocument):
+                self.resetCommand()
+                self.__application.ActiveDocument=self.mdiArea.activeSubWindow().document  
         self.updateMenus()
         
     def resetCommand(self):    
@@ -749,15 +752,15 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.showMaximized()
         else: #else set it to the previous position and size
             try:
-                self.resize(settings.value("size").toSize()) # self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
-                self.move(settings.value("pos").toPoint())   # self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())+
+                self.resize(settings.value("size")) # self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
+                self.move(settings.value("pos"))   # self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())+
             except:    
                 print "Warning: unable to set the previews values"
         settings.endGroup()
         
         settings.beginGroup("CadWindowState")
         try:
-            self.restoreState(settings.value('State').toByteArray())
+            self.restoreState(settings.value('State'))
         except:
             print "Warning: Unable to set state"
         settings.endGroup()
@@ -844,7 +847,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             get an array of sympy object
         """
-        #if self.Application.getActiveDocument()==None:
+        #if self.Application.ActiveDocument==None:
         if self.mdiArea.currentSubWindow()==None:
             raise StructuralError("unable to get the active document")
         

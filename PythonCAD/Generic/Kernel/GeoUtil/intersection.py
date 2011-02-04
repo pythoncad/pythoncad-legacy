@@ -122,11 +122,11 @@ def _sympy_intersection(ipts, obj1, obj2):
     from sympy.geometry import intersection as sIntersection
     sympySegment=obj1.getSympy()
     sympyObj2=obj2.getSympy()
-    print "try intersect ", sympySegment, sympyObj2
+    #print "try intersect ", sympySegment, sympyObj2
     for p in sIntersection(sympySegment, sympyObj2 ):
         if isinstance(p, sPoint):
             ipts.append((float(p[0]),float(p[1])))
-    print "Intersection",ipts
+    #print "Intersection",ipts
 def _pol_obj_intersection(ipts, pol, obj):
     """
         calculate the intersection beteen polyline and a generic object

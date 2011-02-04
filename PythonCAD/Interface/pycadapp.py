@@ -79,7 +79,7 @@ class PyCadApp(object):
         Gets the current active document in the editor.
         '''
         if not PyCadApp.__application is None:
-            return PyCadApp.__application.getActiveDocument()
+            return PyCadApp.__application.ActiveDocument
         return None
 
 
@@ -90,7 +90,7 @@ class PyCadApp(object):
         '''
         if not PyCadApp.__application is None:
             PyCadApp.__application.newDocument()
-            return PyCadApp.__application.getActiveDocument()
+            return PyCadApp.__application.ActiveDocument
         return None
     
 

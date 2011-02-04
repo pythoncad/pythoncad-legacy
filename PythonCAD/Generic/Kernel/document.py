@@ -125,7 +125,7 @@ class Document(BaseDb):
         for styleEntity in styleEntitys:
             styles=styleEntity.getConstructionElements()
             for stl in styles:
-                if styles[stl].getName()=="Main":
+                if styles[stl].name=="Main":
                     return styleEntity
                     break
         else:

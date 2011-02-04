@@ -164,13 +164,13 @@ class ICommand(object):
         if self.kernelCommand.activeException()==ExcDicTuple:
             #TODO: Mettere a primo argomento l'applicazione ..
             #nella properti cosi viene fuori l'icona giusta
-            dialog=Property(entity=entity)
-            if dialog.value!=None:
+            dialog=Property(self.scene.parent(),  entity=entity)
+            if dialog.changed:
                 self.kernelCommand[self.__index]=(None,entity,None, None, dialog.value)
                 self.applyCommand()
             else:
-                #TODO: mettere il reset del comando 
-                return
+                self.restartCommand()
+
     def applyCommand(self):    
         """
             apply the command 
@@ -194,7 +194,6 @@ class ICommand(object):
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
-        
         return
     
     def getEntity(self, position):
@@ -213,7 +212,7 @@ class ICommand(object):
             if isinstance(e, BaseEntity):
                 return e
         return None
-        
+
     def updateMauseEvent(self, point, distance, entity, force=None):
         """
             update value to the active slot of the command
@@ -455,6 +454,7 @@ class ICommand(object):
         if force==None:
             return point
         lastSnap=self.__scene.fromPoint
+        pF=point
         if force!=None and lastSnap!=None:
             v=Vector(lastSnap, Point(lastSnap.x+10.0*math.cos(force),  lastSnap.y+10.0*math.sin(force)))
             v1=Vector(lastSnap,point)

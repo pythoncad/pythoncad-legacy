@@ -253,10 +253,16 @@ class CadScene(QtGui.QGraphicsScene):
         def delete():
             self.fireKeyShortcut('DELETE')
             
+        def property():
+            self.fireKeyShortcut('PROPERTY')
+            
         contexMenu=QtGui.QMenu()
         # Create Actions
         removeAction=contexMenu.addAction("Delete")
         QtCore.QObject.connect(removeAction, QtCore.SIGNAL('triggered()'), delete)
+        
+        propertyAction=contexMenu.addAction("Property")
+        QtCore.QObject.connect(propertyAction, QtCore.SIGNAL('triggered()'), property)
         contexMenu.exec_(event.screenPos())
         del(contexMenu)
         

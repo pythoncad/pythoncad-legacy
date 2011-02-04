@@ -18,7 +18,7 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the arc command
+# This module provide a class for the property command
 #
 import math
 
@@ -27,7 +27,7 @@ from Kernel.Command.basecommand        import *
 
 class PropertyCommand(BaseCommand):
     """
-        this class rappresent the arc command
+        this class represents the property command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -36,22 +36,25 @@ class PropertyCommand(BaseCommand):
         self.message=["Select Entities: ", 
                         "Give me the property name and value :('color','green') ", 
                         ]
+
     def changeProp(self, id):    
         """
             change the property at the entity 
         """
         entity=self.document.getEntity(id)
-        style=entity.style
-        for name, val in self.value[1]:
-            style.setStyleProp(name,val)
-        entity.style=style
+        style=entity.getInnerStyle()
+        style.Derived()
+        for name in self.value[1]:
+            style.setStyleProp(name,self.value[1][name])
+        entity.style=self.document.saveEntity(style)   
         self.document.saveEntity(entity)
-        
+
     def applyCommand(self):
-        if len(self.value)!=3:
+        if len(self.value)!=2:
             raise PyCadWrongImputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
+            
             for id in str(self.value[0]).split(','):
                 self.changeProp(id)
         finally:

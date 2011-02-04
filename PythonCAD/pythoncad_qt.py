@@ -20,7 +20,7 @@ genericPath=sys.path[len(sys.path)-1]
 sys.path.append(os.path.join(genericPath,  'Kernel'))
 sys.path.append(os.path.join(genericPath, 'Interface'))
 #
-from Interface.cadwindow        import CadWindowMdi
+from Interface.cadwindow    import CadWindowMdi
 #
 def getPythonCAD():
     app = QtGui.QApplication(sys.argv)

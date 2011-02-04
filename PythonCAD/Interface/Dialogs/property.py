@@ -44,12 +44,15 @@ class Property(QDialog, Ui_Dialog):
     def __init__(self, parent = None, entity=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
+        self.containers={}
+        self._isOk=False
         styleprops=entity[0].style.props
         for propName in styleprops:
             val=styleprops[propName]
             if propName in PYTHONCAD_STYLE_WIDGET:
-                container=PYTHONCAD_STYLE_WIDGET[propName](oldValue=val,label=propName)
-                self.propertyConteiner.addLayout(container)
+                propDescription=PYTHONCAD_STYLE_DESCRIPTION[propName]
+                self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](parent, oldValue=val,label=propDescription)
+                self.propertyConteiner.addLayout(self.containers[propName])
         
         self.exec_()
         
@@ -58,11 +61,29 @@ class Property(QDialog, Ui_Dialog):
         """
             implements the accept button
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        self._isOk=True
+        self.close()
+        
+    @pyqtSignature("")
+    def on_buttonBox_rejected(self):
+        """
+            implements the accept button
+        """
+        self._isOk=False
+        self.close()
+    @property 
+    def changed(self):
+        """
+            tells if the object is changed
+        """
+        return self._isOk
         
     @property
     def value(self):
-        #qui mettere a posto tutte le propieta se sono cambiate
-        #se no null
-        return null
+        exitVal={}
+        if self.changed:
+            for name in self.containers:
+                obj=self.containers[name]
+                if obj.changed:
+                    exitVal[name]=obj.value
+        return exitVal

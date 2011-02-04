@@ -100,19 +100,6 @@ class Application(object):
         files.append(name)
         objSettings.setVariable("RECENT_FILE_ARRAY", files)
         self.updateApplicationSetting(objSettings)
-        
-    def setActiveDocument(self, document):    
-        """
-            Set the document to active
-        """
-        if document:
-            if self.__Docuemnts.has_key(document.dbPath):
-                self.__ActiveDocument=self.__Docuemnts[document.dbPath]
-            else:
-                raise EntityMissing("Unable to set active the document %s"%str(document.dbPath))
-        else:
-            self.__ActiveDocument=document
-        self.activeteDocumentEvent(self, self.__ActiveDocument)   
 
     def getCommand(self,commandType):
         """
@@ -141,7 +128,7 @@ class Application(object):
         fileName=newDoc.dbPath
         self.__Docuemnts[fileName]=newDoc
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
-        self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
+        self.ActiveDocument=self.__Docuemnts[fileName]              #   Set Active the document
         self.addRecentFiles(fileName)
         return self.__Docuemnts[fileName]
         
@@ -154,7 +141,7 @@ class Application(object):
             self.__Docuemnts[fileName]=Document(fileName)
             self.addRecentFiles(fileName)
         self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
-        self.setActiveDocument(self.__Docuemnts[fileName])              #   Set Active the document
+        self.ActiveDocument=self.__Docuemnts[fileName]                  #   Set Active the document
         return self.__Docuemnts[fileName]
     
     def saveAs(self, newFileName):
@@ -176,20 +163,32 @@ class Application(object):
         if self.__Docuemnts.has_key(fileName):
             del(self.__Docuemnts[fileName])
             for keyDoc in self.__Docuemnts:
-                self.setActiveDocument(self.__Docuemnts[keyDoc])
+                self.ActiveDocument=self.__Docuemnts[keyDoc]
                 break
             else:
-                self.setActiveDocument(None)
+                self.ActiveDocument=NoneActiveDocument
         else:
             raise IOError, "Unable to remove the file %s"%str(fileName)
         self.afterCloseDocumentEvent(self)
-    
-    def getActiveDocument(self):
+    @property
+    def ActiveDocument(self):
         """
             get The active Document
         """
         return self.__ActiveDocument
-        
+    @ActiveDocument.setter
+    def ActiveDocument(self, document):    
+        """
+            Set the document to active
+        """
+        if document:
+            if self.__Docuemnts.has_key(document.dbPath):
+                self.__ActiveDocument=self.__Docuemnts[document.dbPath]
+            else:
+                raise EntityMissing("Unable to set active the document %s"%str(document.dbPath))
+        else:
+            self.__ActiveDocument=document
+        self.activeteDocumentEvent(self, self.__ActiveDocument)     
     def getDocuments(self):
         """
             get the Docuemnts Collection

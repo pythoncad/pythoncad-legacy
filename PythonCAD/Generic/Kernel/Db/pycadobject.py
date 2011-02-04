@@ -119,8 +119,6 @@ class PyCadObject(object):
         """
             set/update the entitystyle
         """
-        if not isinstance(style,Style):
-            raise TypeError,'Type error in style'
         self.__style=style
 
     style=property(getStyle,setStyle,None,"Get/Set the entity style")
@@ -129,9 +127,8 @@ class PyCadObject(object):
         """
             return the inner style of type Style
         """
-        style=self.getStyle()
-        if style!=None:
-            styleEnt=style.getConstructionElements() 
+        if self.style!=None:
+            styleEnt=self.style.getConstructionElements() 
             return styleEnt[styleEnt.keys()[0]]
         else:
             return None

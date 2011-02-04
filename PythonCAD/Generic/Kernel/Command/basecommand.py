@@ -198,7 +198,7 @@ class BaseCommand(object):
             else:
                 exitValue=False
         except(ExcDicTuple):
-            exitValue=eval(text)
+            exitValue=text
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         finally: return exitValue

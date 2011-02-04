@@ -22,17 +22,17 @@ class testCmdLine(object):
         self.__pyCadApplication=PyCadApp.Application()
         # Application Command
         self.__applicationCommand['Documents']=GetDocuments(self.__pyCadApplication.getDocuments(), self.outputMsg)
-        self.__applicationCommand['CreateStyle']=CreateStyle(self.__pyCadApplication.getActiveDocument())
+        self.__applicationCommand['CreateStyle']=CreateStyle(self.__pyCadApplication.ActiveDocument)
         #self.__applicationCommand['SetActiveDoc']=SetActiveDoc(self.__pyCadApplication)
         self.__applicationCommand['GetActiveDoc']=GetActiveDoc(self.__pyCadApplication, self.outputMsg)
-        self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
-        self.__applicationCommand['EntExsist']=EntityExsist(self.__pyCadApplication.getActiveDocument(),self.outputMsg )
-        self.__applicationCommand['Delete']=DeleteEntity(self.__pyCadApplication.getActiveDocument(),self.outputMsg )
+        self.__applicationCommand['GetEnts']=GetEnts(self.__pyCadApplication.ActiveDocument, self.outputMsg)
+        self.__applicationCommand['EntExsist']=EntityExsist(self.__pyCadApplication.ActiveDocument,self.outputMsg )
+        self.__applicationCommand['Delete']=DeleteEntity(self.__pyCadApplication.ActiveDocument,self.outputMsg )
         self.__applicationCommand['UnDo']=UnDo(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['ReDo']=ReDo(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['T']=TestKernel(self.__pyCadApplication, self.outputMsg)
         self.__applicationCommand['ET']=EasyTest(self.__pyCadApplication, self.outputMsg)
-        self.__applicationCommand['Info']=EntityInfo(self.__pyCadApplication.getActiveDocument(), self.outputMsg)
+        self.__applicationCommand['Info']=EntityInfo(self.__pyCadApplication.ActiveDocument, self.outputMsg)
         # Document Commandf
         for command in self.__pyCadApplication.getCommandList():
             self.__applicationCommand[command]=self.__pyCadApplication.getCommand(command)
@@ -56,7 +56,7 @@ class testCmdLine(object):
             try:
                 if not self.performCommand(self.activeCommand, text):
                     self.activeCommand=None
-                    #self.scene.populateScene(self.__pyCadApplication.getActiveDocument())
+                    #self.scene.populateScene(self.__pyCadApplication.ActiveDocument)
                 else:
                     self.outputMsg(self.activeCommand.getActiveMessage())
             except:
@@ -198,7 +198,7 @@ class UnDo(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=0:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        doc=self.__application.getActiveDocument()
+        doc=self.__application.ActiveDocument
         doc.unDo()
 
 class ReDo(BaseCommand):
@@ -212,7 +212,7 @@ class ReDo(BaseCommand):
     def applyCommand(self):
         if len(self.value)!=0:
             raise PyCadWrongImputData("Wrong number of imput parameter")
-        doc=self.__application.getActiveDocument()
+        doc=self.__application.ActiveDocument
         doc.reDo()
 
 class GetActiveDoc(BaseCommand):
@@ -227,8 +227,8 @@ class GetActiveDoc(BaseCommand):
         if len(self.value)!=0:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         docName=self.value[0]
-        self.__application.setActiveDocument(docName)
-        doc=self.__application.getActiveDocument()
+        self.__application.ActiveDocument=docName
+        doc=self.__application.ActiveDocument
         self.outputMsg("Active Document is %s"%str(doc.dbPath))
         
 class SetActiveDoc(BaseCommand):
@@ -242,7 +242,7 @@ class SetActiveDoc(BaseCommand):
         if len(self.value)!=1:
             raise PyCadWrongImputData("Wrong number of imput parameter")
         docName=self.value[0]
-        self.__application.setActiveDocument(docName)
+        self.__application.ActiveDocument=docName
         
 class GetDocuments(BaseCommand):
     def __init__(self, documents, msgFunction):
@@ -379,14 +379,14 @@ class TestKernel(BaseCommand):
             self.outputMsg("Create a new document 2")
             doc2=self.__pyCadApplication.newDocument()
             self.outputMsg("Set Current p1")
-            self.__pyCadApplication.setActiveDocument(doc1)
+            self.__pyCadApplication.ActiveDocument=doc1
             self.outputMsg("Create Point")
             self.performCommandRandomly("POINT")
             self.outputMsg("Create Segment")
             self.performCommandRandomly("SEGMENT")
             self.outputMsg("Create Arc")
             self.performCommandRandomly("ARC")
-            self.__pyCadApplication.setActiveDocument(doc2)
+            self.__pyCadApplication.ActiveDocument=doc2
             self.outputMsg("Create Ellipse")
             self.performCommandRandomly("ELLIPSE")
             self.outputMsg("Create Polyline")
@@ -395,13 +395,13 @@ class TestKernel(BaseCommand):
             self.performCommandRandomly("ACLINE")
             
             self.outputMsg("Get Entitys for doc 1")
-            self.__pyCadApplication.setActiveDocument(doc1)
-            activeDoc=self.__pyCadApplication.getActiveDocument()
+            self.__pyCadApplication.ActiveDocument=doc1
+            activeDoc=self.__pyCadApplication.ActiveDocument
             ents=activeDoc.getEntityFromType("ALL")
             self.printEntity(ents)
             self.outputMsg("Get Entitys for doc 2")
-            self.__pyCadApplication.setActiveDocument(doc2)
-            activeDoc=self.__pyCadApplication.getActiveDocument()
+            self.__pyCadApplication.ActiveDocument=doc2
+            activeDoc=self.__pyCadApplication.ActiveDocument
             ents=activeDoc.getEntityFromType("ALL")
             self.printEntity(ents)
             # Working with styles
@@ -543,7 +543,7 @@ class EasyTest(BaseCommand):
         try:
             import time 
             startTime=time.clock()
-            newDoc=self.__pyCadApplication.getActiveDocument()
+            newDoc=self.__pyCadApplication.ActiveDocument
             newDoc.startMassiveCreation()
             for i in range(1000):
                 intPoint=Point(i, i)
@@ -568,7 +568,7 @@ class EasyTest(BaseCommand):
             this function is usefoul for short test
             as soon it works copy the code into featureTest
         """
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         newDoc.startMassiveCreation()
         #self.testChamfer()
         #self.testFillet1()
@@ -583,7 +583,7 @@ class EasyTest(BaseCommand):
         """
             test the trim command
         """
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         
         sArg1={"SEGMENT_0":Point(0, 0), "SEGMENT_1":Point(150, 0)}
         _st1=Segment(sArg1)
@@ -606,7 +606,7 @@ class EasyTest(BaseCommand):
         """
             perform a rotate operation
         """
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         ang=1.5707963267948966
         cp=Point(0, 0)
         newDoc.saveEntity(cp)
@@ -642,7 +642,7 @@ class EasyTest(BaseCommand):
             perform a move operation
         """
         #Arc 
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         centerPoint=Point(100, 100)
         arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
         arc=Arc(arg)
@@ -677,7 +677,7 @@ class EasyTest(BaseCommand):
             perform a mirror operation of all the entity
         """
         #Arc mirror
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         centerPoint=Point(100, 100)
         arg={"ARC_0":centerPoint, "ARC_1":50, "ARC_2":0.78539816339500002,"ARC_3":1.5707963267948966}
         arc=Arc(arg)
@@ -710,7 +710,7 @@ class EasyTest(BaseCommand):
         
         
     def testFillet(self, p1, p2, p3, pp1, pp2, R=100):
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         args={"SEGMENT_0":p1, "SEGMENT_1":p2}
         s1=Segment(args)
         args={"SEGMENT_0":p1, "SEGMENT_1":p3}
@@ -730,7 +730,7 @@ class EasyTest(BaseCommand):
         cObject.applyCommand() 
         
     def testBisector(self, p1, p2, p3, pp1, pp2, L=100):
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         args={"SEGMENT_0":p1, "SEGMENT_1":p2}
         s1=Segment(args)
         args={"SEGMENT_0":p1, "SEGMENT_1":p3}
@@ -798,7 +798,7 @@ class EasyTest(BaseCommand):
         self.testFillet(p1, p2, p3, pp1, pp2, 30)   
 
     def testFillet1(self):
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         intPoint=Point(0.0, 0.0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
         s1=Segment(args)
@@ -820,7 +820,7 @@ class EasyTest(BaseCommand):
         
         
     def testFillet2(self):    
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         intPoint=Point(0, 0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(1000, 1000)}
         s1=Segment(args)
@@ -860,7 +860,7 @@ class EasyTest(BaseCommand):
         cObject.applyCommand()
         
     def testChamfer(self):
-        newDoc=self.__pyCadApplication.getActiveDocument()
+        newDoc=self.__pyCadApplication.ActiveDocument
         intPoint=Point(2.0, 2.0)
         args={"SEGMENT_0":intPoint, "SEGMENT_1":Point(10.0, 0.0)}
         s1=Segment(args)
