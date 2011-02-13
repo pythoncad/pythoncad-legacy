@@ -45,7 +45,6 @@ from Interface.cadinitsetting       import *
 from Kernel.exception               import *  
 from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
-from Interface.caddialogs import *
 
 from Interface.polarguides import getPolarMenu
 
