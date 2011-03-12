@@ -95,7 +95,7 @@ class BaseEntity(QtGui.QGraphicsItem):
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemSelectedChange:
             #selected, spool=value.toUInt()
-            print "value", value, value==1
+            #print "value", value, value==1
             #selected, spool=value
             #self.setColor(selected==True)
             self.setColor(value==1)
