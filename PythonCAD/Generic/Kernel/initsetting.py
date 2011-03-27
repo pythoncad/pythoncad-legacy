@@ -310,7 +310,7 @@ PYTHONCAD_LINETYPE={
     
 PYTHONCAD_STYLE_ATTRIBUTES=['entity_color',
                             'entity_linetype', 
-                            'entity_tichness',
+                            'entity_thickness',
                             'text_font', 
                             'text_haigt',
                             'text_aling', 
