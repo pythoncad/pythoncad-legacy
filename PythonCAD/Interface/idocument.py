@@ -17,7 +17,7 @@ class IDocument(QtGui.QMdiSubWindow):
         self.isUntitled = True
         # layer list
         self.__layer_dock = LayerDock(self,self.__document)
-        self.__scene = CadScene(document)
+        self.__scene = CadScene(document, parent=self)
         self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
         self.__view = CadView(self.__scene, self)
         # the graphics view is the main/central component

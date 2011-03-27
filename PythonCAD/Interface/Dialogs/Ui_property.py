@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\Interface\Dialogs\property.ui'
 #
-# Created: Tue Feb 01 20:25:53 2011
+# Created: Sun Mar 27 08:20:03 2011
 #      by: PyQt4 UI code generator 4.7.7
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,16 +20,19 @@ class Ui_Dialog(object):
         Dialog.resize(306, 300)
         self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.propertyConteiner = QtGui.QVBoxLayout()
         self.propertyConteiner.setObjectName(_fromUtf8("propertyConteiner"))
-        self.verticalLayout.addLayout(self.propertyConteiner)
+        self.verticalLayout_2.addLayout(self.propertyConteiner)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
         self.verticalLayout_2.addLayout(self.verticalLayout)
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 

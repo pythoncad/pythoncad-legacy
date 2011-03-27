@@ -160,11 +160,9 @@ class ICommand(object):
         if self.automaticApply and self.kernelCommand.automaticApply:
             if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
-        # try to impelements the property dialog
+        
         if self.kernelCommand.activeException()==ExcDicTuple:
-            #TODO: Mettere a primo argomento l'applicazione ..
-            #nella properti cosi viene fuori l'icona giusta
-            dialog=Property(self.scene.parent(),  entity=entity)
+            dialog=Property(parent =self.scene.parent(),  entity=entity)
             if dialog.changed:
                 self.kernelCommand[self.__index]=(None,entity,None, None, dialog.value)
                 self.applyCommand()
