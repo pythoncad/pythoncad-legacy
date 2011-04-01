@@ -53,7 +53,6 @@ class Property(QDialog, Ui_Dialog):
                 propDescription=PYTHONCAD_STYLE_DESCRIPTION[propName]
                 self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](parent, oldValue=val,label=propDescription)
                 self.propertyConteiner.addLayout(self.containers[propName])
-        
         self.exec_()
         
     @pyqtSignature("")

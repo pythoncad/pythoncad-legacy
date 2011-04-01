@@ -33,7 +33,6 @@ from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR
 
 from Kernel.GeoEntity.point     import Point
 
-
 class BaseEntity(QtGui.QGraphicsItem):
     shapeSize=10
     showShape=False #This Flag is used for debughing porpouse
@@ -45,9 +44,20 @@ class BaseEntity(QtGui.QGraphicsItem):
         #Get the geometry
         self.__entity=entity
         self.setToolTip(str(self.toolTipMessage))
+        #Set color from style
         r, g, b= self.style.getStyleProp("entity_color")
-        self.color = QtGui.QColor.fromRgb(r, g, b)
-        self.lineWith=1.0
+        color = QtGui.QColor.fromRgb(r, g, b)
+        #set line thickness
+        lineWith=self.style.getStyleProp("entity_thickness")
+        #set line style
+        penStyle=self.style.getStyleProp("entity_linetype")
+        pen=QtGui.QPen(color)
+        #TODO: Actually disable because the line with is not very nice 
+        #in the drawing ..
+        #pen.setWidthF(float(lineWith)) 
+        pen.setStyle(int(penStyle))
+        self.pen=pen
+        
         return
     
     def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromEntity=None):
@@ -94,11 +104,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemSelectedChange:
-            #selected, spool=value.toUInt()
-            print "value", value, value==1
-            #selected, spool=value
-            #self.setColor(selected==True)
-            self.setColor(value==1)
+            #self.setColor(value==1)
             self.update(self.boundingRect())
         return QtGui.QGraphicsItem.itemChange(self, change, value)
         
@@ -113,12 +119,14 @@ class BaseEntity(QtGui.QGraphicsItem):
                 r, g, b=PYTHONCAD_HIGLITGT_COLOR
             else:
                 r, g, b=self.style.getStyleProp("entity_color")
-        self.color = QtGui.QColor.fromRgb(r, g, b)       
+        color = QtGui.QColor.fromRgb(r, g, b)   
+        self.pen.setColor(color)
         return
         
     def setHiglight(self):
         r, g, b=PYTHONCAD_HIGLITGT_COLOR
-        self.color = QtGui.QColor.fromRgb(r, g, b)
+        color = QtGui.QColor.fromRgb(r, g, b)
+        self.pen.setColor(color)
         return
     
     def hoverEnterEvent(self, event):
@@ -151,7 +159,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         painterStrock=QtGui.QPainterPathStroker()
         path=QtGui.QPainterPath()
         self.drawShape(path)
-        painterStrock.setWidth(self.lineWith*self.shapeSize)
+        painterStrock.setWidth(self.pen.widthF()*self.shapeSize)
         path1=painterStrock.createStroke(path)
         return path1
         
@@ -168,10 +176,9 @@ class BaseEntity(QtGui.QGraphicsItem):
         if self.showBBox:
             r, g, b= PYTHONCAD_COLOR["darkblue"]
             painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
-            painter.setPen(QtGui.QPen(self.color))
             painter.drawRect(self.boundingRect())
             
-        painter.setPen(QtGui.QPen(self.color))
+        painter.setPen(self.pen)
         self.drawGeometry(painter,option,widget)
         return 
         
