@@ -28,7 +28,7 @@ from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
 from Kernel.unitparser          import decodePoint, convertLengh, convertAngle
 
-from Interface.evaluator        import Evaluator
+from Interface.DrawingHelper.evaluator        import Evaluator
 from Interface.Preview.factory  import getPreviewObject
 
 class FunctionHandler(object):

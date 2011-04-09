@@ -46,7 +46,7 @@ from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
 from Interface.Entity.base          import BaseEntity
 from Interface.Dialogs.property      import Property
 from Interface.Preview.factory      import *
-from Interface.snap import *
+from Interface.DrawingHelper.snap import *
 
 class ICommand(object):
     """
@@ -114,7 +114,7 @@ class ICommand(object):
         #
         # Compute snap distance and position force
         #
-        print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
+        #print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
         if correct!=None:
             snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point))
             snap=self.correctPositionForcedDirection(snap, self.__scene.forceDirection)
@@ -134,9 +134,9 @@ class ICommand(object):
             self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
             self.scene.fromPoint=snap
             if self.kernelCommand.activeException()==ExcPoint or self.kernelCommand.activeException()==ExcLenght:
-                self.scene.guideHandler.place(snap.getx(), snap.gety())
+                self.scene.GuideHandler.place(snap.getx(), snap.gety())
                 if self.scene.forceDirectionEnabled==True:
-                    self.scene.guideHandler.show()
+                    self.scene.GuideHandler.show()
         except:
             print "Exceprion  ICommand.addMauseEvent "
             self.updateInput("msg")
@@ -183,7 +183,7 @@ class ICommand(object):
                 self.scene.fromPoint=None
                 self.scene.isGuided=None
                 self.scene.isGuideLocked=None
-                self.scene.guideHandler.reset()
+                self.scene.GuideHandler.reset()
             else:
                 self.scene.cancelCommand()
                 self.updateInput("Ready") 

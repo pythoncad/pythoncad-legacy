@@ -34,13 +34,13 @@ def getPolarMenu():
     
     return menu
         
-class guideHandler(QtGui.QGraphicsItem):
+class GuideHandler(QtGui.QGraphicsItem):
     '''
     This class provide management of a guide Handler to be instanced by the scene
     on startup, and to be placed by iCommand when a point is succesfully added to a command
     '''
     def __init__(self, parent, x, y, a):
-        super(guideHandler, self).__init__()
+        super(GuideHandler, self).__init__()
         self.scene=parent
         
         self.x=x
@@ -74,7 +74,7 @@ class guideHandler(QtGui.QGraphicsItem):
         '''
         add guide by a angle
         '''
-        guide(self, a)
+        Guide(self, a)
         self.guides.append(a)
         
     def addGuidesByIncrement(self, a=math.pi/2):
@@ -82,10 +82,10 @@ class guideHandler(QtGui.QGraphicsItem):
         add guides by a increment angle
         '''
         self.clearGuides()
-        guide(self, 0.0)
+        Guide(self, 0.0)
         i=0.0
         while i<math.pi*2:
-            g=guide(self, i)
+            g=Guide(self, i)
             self.guides.append(g)
             i=i+a
         return
@@ -127,13 +127,13 @@ class guideHandler(QtGui.QGraphicsItem):
     def paint(self, painte, option, widget):
         return
         
-class guide(QtGui.QGraphicsLineItem):
+class Guide(QtGui.QGraphicsLineItem):
     '''
     This class provide a guide object and it's management
-    it's added to the guideHandler object
+    it's added to the GuideHandler object
     '''
     def __init__(self, parent=None, a=0.0):
-        super(guide, self).__init__(parent)
+        super(Guide, self).__init__(parent)
         self.handler=parent
         #Flags
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
@@ -182,11 +182,11 @@ class guide(QtGui.QGraphicsLineItem):
             self.setPen(self.highlightPen)
             self.handler.setForceDirection(self.a)
             self.handler.setIsGuided(True)
-        super(guide, self).hoverEnterEvent(event)
+        super(Guide, self).hoverEnterEvent(event)
         return
         
     def hoverLeaveEvent(self, event):
         if self.handler.scene.isGuideLocked==None:
             self.hide()
             #self.update(self.boundingRect())
-        super(guide, self).hoverLeaveEvent(event)
+        super(Guide, self).hoverLeaveEvent(event)
