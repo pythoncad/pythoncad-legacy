@@ -82,24 +82,61 @@ class Application(object):
             objSettings.setVariable("RECENT_FILE_ARRAY",[] )
             self.updateApplicationSetting(objSettings)
         return []
+
     
-    def addRecentFiles(self, name):
-        """
-            add recent file into the application
-        """
-        objSettings=self.getApplicationSetting()
-        nFiles=objSettings.getVariable("MAX_RECENT_FILE")
-        if not nFiles:
-            objSettings.setVariable("MAX_RECENT_FILE",MAX_RECENT_FILE )
-        
-        files=objSettings.getVariable("RECENT_FILE_ARRAY")
-        if not files:
-            files=[]
-        while(len(files)>nFiles-1):
-            files.pop(0)
-        files.append(name)
-        objSettings.setVariable("RECENT_FILE_ARRAY", files)
-        self.updateApplicationSetting(objSettings)
+    def addRecentFiles(self,fPath):
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+#                                                                   S-PM 110427
+#Method to add the given full file name on top of the "Open history list",
+#provided it is different from the one already present on top of the list.
+#
+#--Req-global
+#MAX_RECENT_FILE    local default max. history list length
+#
+#--Req
+#fPath   full file name to add to the list
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+        #--standard "Documentation String"
+        """Add a new file name on top of the history list"""
+
+        #--Register
+        rgO=None    #Object
+        rgN=None    #Integer
+        rgL=None    #List
+
+        #--Action
+        rgO=self.getApplicationSetting()    #get current settings
+
+        #--get and consider history list lenght parameter
+        rgN=rgO.getVariable("MAX_RECENT_FILE")
+        if (not rgN): rgN=0 #assure it's numeric
+        if (rgN<1):   #<-force a local default value, if not given
+            rgN=MAX_RECENT_FILE
+            if (rgN<1): rgN=1   #force anyhow at least a length=1
+            rgO.setVariable("MAX_RECENT_FILE",rgN)
+        #>
+
+        #--get and consider current history list
+        rgL=rgO.getVariable("RECENT_FILE_ARRAY")
+        if (not rgL):   #<-assign an empty list, if not given
+            rgL=[]
+        #>
+
+        #--conditioned addition of the given full file name
+        if (len(rgL)==0):       #<-empty list:
+            rgL.insert(0,fPath)      #add given file path
+        elif (rgL[0]!=fPath):   #=-last recorded path is not the same:
+            rgL.insert(0,fPath)      #add given file path
+        #>
+
+        while(len(rgL)>(rgN)):    #--chop the list to the desired length
+            rgL.pop(-1)
+        #>
+
+        rgO.setVariable("RECENT_FILE_ARRAY", rgL)   #--update current settings
+        self.updateApplicationSetting(rgO)
+    #addRecentFiles>
+
 
     def getCommand(self,commandType):
         """
