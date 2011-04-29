@@ -55,7 +55,7 @@ class Application(object):
         self.afterCloseDocumentEvent=PyCadEvent()
         self.activeteDocumentEvent=PyCadEvent()
         # manage Document inizialization
-        self.__Docuemnts={}
+        self.__Documents={}
         if args.has_key('open'):
             self.openDocument(args['open'])
         else:
@@ -82,24 +82,61 @@ class Application(object):
             objSettings.setVariable("RECENT_FILE_ARRAY",[] )
             self.updateApplicationSetting(objSettings)
         return []
+
     
-    def addRecentFiles(self, name):
-        """
-            add recent file into the application
-        """
-        objSettings=self.getApplicationSetting()
-        nFiles=objSettings.getVariable("MAX_RECENT_FILE")
-        if not nFiles:
-            objSettings.setVariable("MAX_RECENT_FILE",MAX_RECENT_FILE )
-        
-        files=objSettings.getVariable("RECENT_FILE_ARRAY")
-        if not files:
-            files=[]
-        while(len(files)>nFiles-1):
-            files.pop(0)
-        files.append(name)
-        objSettings.setVariable("RECENT_FILE_ARRAY", files)
-        self.updateApplicationSetting(objSettings)
+    def addRecentFiles(self,fPath):
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+#                                                                   S-PM 110427
+#Method to add the given full file name on top of the "Open history list",
+#provided it is different from the one already present on top of the list.
+#
+#--Req-global
+#MAX_RECENT_FILE    local default max. history list length
+#
+#--Req
+#fPath   full file name to add to the list
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+        #--standard "Documentation String"
+        """Add a new file name on top of the history list"""
+
+        #--Register
+        rgO=None    #Object
+        rgN=None    #Integer
+        rgL=None    #List
+
+        #--Action
+        rgO=self.getApplicationSetting()    #get current settings
+
+        #--get and consider history list lenght parameter
+        rgN=rgO.getVariable("MAX_RECENT_FILE")
+        if (not rgN): rgN=0 #assure it's numeric
+        if (rgN<1):   #<-force a local default value, if not given
+            rgN=MAX_RECENT_FILE
+            if (rgN<1): rgN=1   #force anyhow at least a length=1
+            rgO.setVariable("MAX_RECENT_FILE",rgN)
+        #>
+
+        #--get and consider current history list
+        rgL=rgO.getVariable("RECENT_FILE_ARRAY")
+        if (not rgL):   #<-assign an empty list, if not given
+            rgL=[]
+        #>
+
+        #--conditioned addition of the given full file name
+        if (len(rgL)==0):       #<-empty list:
+            rgL.insert(0,fPath)      #add given file path
+        elif (rgL[0]!=fPath):   #=-last recorded path is not the same:
+            rgL.insert(0,fPath)      #add given file path
+        #>
+
+        while(len(rgL)>(rgN)):    #--chop the list to the desired length
+            rgL.pop(-1)
+        #>
+
+        rgO.setVariable("RECENT_FILE_ARRAY", rgL)   #--update current settings
+        self.updateApplicationSetting(rgO)
+    #addRecentFiles>
+
 
     def getCommand(self,commandType):
         """
@@ -126,23 +163,23 @@ class Application(object):
         """
         newDoc=Document(fileName)
         fileName=newDoc.dbPath
-        self.__Docuemnts[fileName]=newDoc
-        self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
-        self.ActiveDocument=self.__Docuemnts[fileName]              #   Set Active the document
+        self.__Documents[fileName]=newDoc
+        self.afterOpenDocumentEvent(self, self.__Documents[fileName])   #   Fire the open document event
+        self.ActiveDocument=self.__Documents[fileName]              #   Set Active the document
         self.addRecentFiles(fileName)
-        return self.__Docuemnts[fileName]
+        return self.__Documents[fileName]
         
     def openDocument(self, fileName):
         """
             open a saved document 
         """
         self.beforeOpenDocumentEvent(self, fileName)
-        if not self.__Docuemnts.has_key(fileName):
-            self.__Docuemnts[fileName]=Document(fileName)
+        if not self.__Documents.has_key(fileName):
+            self.__Documents[fileName]=Document(fileName)
             self.addRecentFiles(fileName)
-        self.afterOpenDocumentEvent(self, self.__Docuemnts[fileName])   #   Fire the open document event
-        self.ActiveDocument=self.__Docuemnts[fileName]                  #   Set Active the document
-        return self.__Docuemnts[fileName]
+        self.afterOpenDocumentEvent(self, self.__Documents[fileName])   #   Fire the open document event
+        self.ActiveDocument=self.__Documents[fileName]                  #   Set Active the document
+        return self.__Documents[fileName]
     
     def saveAs(self, newFileName):
         """
@@ -155,21 +192,38 @@ class Application(object):
             return self.openDocument(newFileName)
         raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
     
-    def closeDocument(self, fileName):
-        """
-            close the document
-        """
-        self.beforeCloseDocumentEvent(self, fileName)
-        if self.__Docuemnts.has_key(fileName):
-            del(self.__Docuemnts[fileName])
-            for keyDoc in self.__Docuemnts:
-                self.ActiveDocument=self.__Docuemnts[keyDoc]
+
+    def closeDocument(self,dFile):
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+#                                                                   S-PM 110427
+#Method to "Close" the named drawing file.
+#--Rq-local
+# __Documents   dictionary of currently opened drawing files
+#               (was misspelled: "__Docuemnts")
+#--Rq
+# dFile         drawing file to close
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+        "Close current document"    #standard "Documentation String"
+
+        self.beforeCloseDocumentEvent(self,dFile)   #initial house-keeping
+
+        if self.__Documents.has_key(dFile): #<-file to Close is there:
+            del(self.__Documents[dFile])    #delete from dictionary
+            #--check dictionary for possible next active document
+            for keyDoc in self.__Documents: #<-dictionary is not empty:
+                self.ActiveDocument=self.__Documents[keyDoc]    #pick next
                 break
-            else:
-                self.ActiveDocument=None
-        else:
-            raise IOError, "Unable to remove the file %s"%str(fileName)
-        self.afterCloseDocumentEvent(self)
+            else:   #=-dictionary is empty:
+                self.ActiveDocument=None  #set no active document
+            #>
+        else:   #=-file to Close is NOT there:
+            raise IOError("Unable to close the file:  %s"%str(dFile))
+        #>
+
+        self.afterCloseDocumentEvent(self)          #final house-keeping
+    #closeDocument>
+
+
     @property
     def ActiveDocument(self):
         """
@@ -182,8 +236,8 @@ class Application(object):
             Set the document to active
         """
         if document:
-            if self.__Docuemnts.has_key(document.dbPath):
-                self.__ActiveDocument=self.__Docuemnts[document.dbPath]
+            if self.__Documents.has_key(document.dbPath):
+                self.__ActiveDocument=self.__Documents[document.dbPath]
             else:
                 raise EntityMissing("Unable to set active the document %s"%str(document.dbPath))
         else:
@@ -193,7 +247,7 @@ class Application(object):
         """
             get the Docuemnts Collection
         """    
-        return self.__Docuemnts
+        return self.__Documents
 
     #
     # manage application style
