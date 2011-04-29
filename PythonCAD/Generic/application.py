@@ -166,7 +166,7 @@ class Application(object):
                 self.ActiveDocument=self.__Docuemnts[keyDoc]
                 break
             else:
-                self.ActiveDocument=NoneActiveDocument
+                self.ActiveDocument=None
         else:
             raise IOError, "Unable to remove the file %s"%str(fileName)
         self.afterCloseDocumentEvent(self)
