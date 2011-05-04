@@ -27,9 +27,9 @@ dxfDebug=False
 
 import math # added to handle arc start and end point defination
 import re # added to handle Mtext
-
+import os, sys
 from Kernel.initsetting               import cgcol
-
+from Kernel.layer                     import Layer
 from Kernel.GeoEntity.point           import Point
 from Kernel.GeoEntity.segment         import Segment
 from Kernel.GeoEntity.arc             import Arc
@@ -296,8 +296,12 @@ class Dxf(DrawingFile):
         """
         dPrint( "Debug: import entitys") 
         self.readAsci();
-        #_layerName,_ext=os.path.splitext(os.path.basename(self.getFileName()))
-        #_layerName="Imported_"+_layerName
+        _layerName,_ext=os.path.splitext(os.path.basename(self.getFileName()))
+        _layerName="Imported_"+_layerName
+        parentLayer=self.__kernel.getTreeLayer.getActiveLater()
+        newLayer=self.__kernel.saveEntity(Layer(_layerName))
+        self.__kernel.getTreeLayer.insert(newLayer, parentLayer)
+        
         #_dxfLayer=Layer(_layerName)
         #self.__image.addLayer(_dxfLayer) # TODO : when we have the layer
         #self.__dxfLayer=_dxfLayer

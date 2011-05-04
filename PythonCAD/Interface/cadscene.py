@@ -22,7 +22,7 @@
 #
 #
 
-import math
+import math, time
 
 from PyQt4 import QtCore, QtGui
 
@@ -36,12 +36,12 @@ from Interface.Entity.text          import Text
 from Interface.Entity.ellipse       import Ellipse
 from Interface.Entity.arrowitem     import ArrowItem
 from Interface.Entity.actionhandler import PositionHandler
+from Interface.Entity.dinamicentryobject   import DinamicEntryLine
 from Interface.cadinitsetting       import *
-from Interface.dinamicentryobject   import DinamicEntryLine
 from Interface.Preview.base         import BaseQtPreviewItem
 
-from Interface.snap import *
-from Interface.polarguides import guideHandler
+from Interface.DrawingHelper.snap import *
+from Interface.DrawingHelper.polarguides import GuideHandler
 
 from Kernel.pycadevent              import PyCadEvent
 from Kernel.GeoEntity.point         import Point
@@ -110,8 +110,9 @@ class CadScene(QtGui.QGraphicsScene):
         self.addItem(self.endMark)
     
     def initGuides(self):
-        self.guideHandler=guideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.addItem(self.guideHandler)
+        self.GuideHandler=GuideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        self.addItem(self.GuideHandler)
+        self.GuideHandler.reset()
         
     @property
     def activeKernelCommand(self):
@@ -163,7 +164,9 @@ class CadScene(QtGui.QGraphicsScene):
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
                 item=self.activeICommand.getEntity(self.mouseOnScene)
                 if item:
+                    deltaTime = time.clock()
                     ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item)
+                    print "snapping time " +str(time.clock()-deltaTime)
                     if ps!=self.mouseOnScene:
                         self.endMark.move(ps.getx(), ps.gety()*-1)
                 else:
@@ -308,7 +311,7 @@ class CadScene(QtGui.QGraphicsScene):
         
         self.hideSnapMarks()
         self.fromPoint=None
-        self.guideHandler.reset()
+        self.GuideHandler.reset()
         
 # ################################################# KEY EVENTS
 # ##########################################################  
@@ -355,7 +358,7 @@ class CadScene(QtGui.QGraphicsScene):
             if self.isGuided==True:
                 self.isGuideLocked=None
                 self.isGuided=None
-                self.guideHandler.hideGuides()
+                self.GuideHandler.hideGuides()
             else:
                 self.selectionAddMode=False
                 print self.selectionAddMode

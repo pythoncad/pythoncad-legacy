@@ -46,7 +46,7 @@ from Kernel.exception               import *
 from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
 
-from Interface.polarguides import getPolarMenu
+from Interface.DrawingHelper.polarguides import getPolarMenu
 
 class CadWindowMdi(QtGui.QMainWindow):
     def __init__(self):
@@ -149,10 +149,10 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.forceDirectionEnabled=True
             self.forceDirectionStatus.setFocus(False)
             if self.scene.activeICommand!=None and self.scene.fromPoint!=None:
-                self.scene.guideHandler.show()
+                self.scene.GuideHandler.show()
         else:
             self.scene.forceDirectionEnabled=False
-            self.scene.guideHandler.hide()
+            self.scene.GuideHandler.hide()
 
     def setSnapStatus(self):
         if self.SnapStatus.isChecked():
