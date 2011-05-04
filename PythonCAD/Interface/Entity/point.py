@@ -37,7 +37,7 @@ class Point(BaseEntity):
         """
             overloading of the shape method 
         """
-        painterPath.addRect (QtCore.QRectF(self.xc-2,self.yc-2 ,4 ,4))   
+        painterPath.addRect (QtCore.QRectF(self.xc-self.shapeSize/2,self.yc-self.shapeSize/2 ,self.shapeSize ,self.shapeSize))   
         
     def drawGeometry(self, painter, option, widget):
         """
