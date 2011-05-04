@@ -474,10 +474,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
         
     def _onSaveAsDrawing(self):
-        drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As...", "/home", "Drawings (*.pdr)");
+        drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As...", "/home", filter ="Drawings (*.pdr *.dxf)");
         if len(drawing)>0:
             self.__application.saveAs(drawing)
-            
+ 
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
         self.scene.clearSelection()

@@ -26,7 +26,7 @@ from Kernel.GeoEntity.point            import Point
 from Kernel.GeoEntity.style            import Style
 class Entity(PyCadObject):
     """
-        basic PythonCad entity structure
+        basic PythonCAD entity structure
     """
     def __init__(self,entType,constructionElements,style,objId):
         from Kernel.initsetting             import PY_CAD_ENT
@@ -98,15 +98,6 @@ class Entity(PyCadObject):
                     geoEnt=key(cObjecs)
                 break
         return geoEnt
-
-    @property
-    def geoStyle(self):
-        """
-            get the geo style entity
-        """ 
-        entStyle=self.style
-        cObjecs=entStyle.getConstructionElements()
-        return Style(cObjecs)
 
 
 

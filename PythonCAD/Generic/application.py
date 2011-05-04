@@ -186,10 +186,15 @@ class Application(object):
             seve the current document to the new position
         """
         if self.__ActiveDocument:
-            oldFileName=self.__ActiveDocument.getName()
-            self.closeDocument(oldFileName)
-            shutil.copy2(oldFileName,newFileName)
-            return self.openDocument(newFileName)
+            (name, extension)=os.path.splitext(newFileName)
+            if extension.upper()=='.DXF':
+                self.__ActiveDocument.exportExternalFormat(newFileName)
+                return self.__ActiveDocument
+            else:
+                oldFileName=self.__ActiveDocument.getName()
+                self.closeDocument(oldFileName)
+                shutil.copy2(oldFileName,newFileName)
+                return self.openDocument(newFileName)
         raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
     
 

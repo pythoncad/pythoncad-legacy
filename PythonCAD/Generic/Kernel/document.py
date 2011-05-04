@@ -578,6 +578,21 @@ class Document(BaseDb):
             self.__logger.error('UnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledErrorEvent(self,_err)#todo : test it not sure it works
+    def exportExternalFormat(self, fileName):
+        """
+            This method allow you to export a file to an external format\
+        """
+        try:
+            extFormat=ExtFormat(self)
+            extFormat.saveFile(fileName)
+        except DxfReport:
+            self.__logger.error('DxfReport')
+            _err={'object':extFormat, 'error':DxfReport}
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
+        except DxfUnsupportedFormat:
+            self.__logger.error('UnsupportedFormat')
+            _err={'object':extFormat, 'error':DxfUnsupportedFormat}
+            self.handledErrorEvent(self,_err)#todo : test it not sure it works
     @property
     def getTreeLayer(self):
         """

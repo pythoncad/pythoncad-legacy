@@ -136,7 +136,6 @@ class LayerTree(object):
         def createNode(layer):
             childs={}
             c=self._getLayerConstructionElement(layer)
-            id=layer.getId()
             layers=self.getLayerChildrenLayer(layer)
             for l in layers:
                 ca=self._getLayerConstructionElement(l)
@@ -146,7 +145,22 @@ class LayerTree(object):
         exitDb={}
         exitDb[rootDbEnt.getId()]=(c,createNode(rootDbEnt) )
         return exitDb
-
+    
+    def getLayerdbTree(self):
+        """
+            create a dictionary with all the layer nested as db entity
+        """
+        rootDbEnt=self.getEntLayerDb(MAIN_LAYER)
+        def createNode(layer):
+            childs={}
+            layers=self.getLayerChildrenLayer(layer)
+            for l in layers:
+                childs[l.getId()]=(l, createNode(l))
+            return childs
+        exitDb={}
+        exitDb[rootDbEnt.getId()]=(rootDbEnt,createNode(rootDbEnt) )
+        return exitDb
+        
     def getParentLayer(self,layer):
         """
             get the parent layer

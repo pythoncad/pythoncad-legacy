@@ -24,7 +24,6 @@
 
 dxfDebug=False
 
-
 import math # added to handle arc start and end point defination
 import re # added to handle Mtext
 import os, sys
@@ -35,7 +34,7 @@ from Kernel.GeoEntity.segment         import Segment
 from Kernel.GeoEntity.arc             import Arc
 from Kernel.GeoEntity.text            import Text
 from Kernel.GeoEntity.ellipse         import Ellipse
-
+from Kernel.GeoEntity.polyline        import Polyline
 def ChangeColor(x):
     try:
         newcolor = cgcol[x]
@@ -160,24 +159,25 @@ class Dxf(DrawingFile):
         """
             export The current file in dxf format
         """
-        #TODO : Implements this part with the new kernel
-        pass
         _fo=self.createAsci()               #open the file for writing
         _layersEnts=self.getAllEntitis()    #get all the entities from the file
         self.writeLine("999\nExported from Pythoncad\nSECTION\n  2\nENTITIES\n")#header section for entities
         for _key in _layersEnts:            #Looping at all layer
             #create header section#
             for _obj in _layersEnts[_key]:  #looping at all entities in the layer
-                if isinstance(_obj,Segment):#if it's segment
-                    self.writeSegment(_obj) # ad it at the dxf drawing
-                if isinstance(_obj,Circle):
-                    self.writeCircle(_obj)
-                if isinstance(_obj,Arc):
-                    self.writeArc(_obj)
-                if isinstance(_obj,Polyline):
-                    self.writePolyline(_obj)
-                if isinstance(_obj,TextBlock):
-                    self.writeText(_obj)
+                obj=_obj.toGeometricalEntity()
+                if isinstance(obj,Segment):#if it's segment
+                    self.writeSegment(obj, _obj.getInnerStyle()) # ad it at the dxf drawing
+                    continue
+                if isinstance(obj,Arc):
+                    self.writeArc(obj, _obj.getInnerStyle())
+                    continue
+                if isinstance(obj,Polyline):
+                    self.writePolyline(obj, _obj.getInnerStyle())
+                    continue
+                if isinstance(obj,Text):
+                    self.writeText(obj, _obj.getInnerStyle())
+                    continue
                 # go on end implements the other case arc circle ...
         self.writeLine("  0\nENDSEC\n  0\nEOF")#writing End Of File
         self.close()
@@ -186,27 +186,42 @@ class Dxf(DrawingFile):
         """
             retrive all the entitys from the drawing
         """
-        #TODO : implement this part with the new kernel
         _outLayers={}
-        _layers = [self.__image.getActiveLayer()]
-        while len(_layers):
-            _layerEnts=[]
-            _layer = _layers.pop()
-            _layerName=_layer.getName()
-            _objs=_layer.getAllEntitys()
-            for _o in _objs:
-                _layerEnts.append(_o)
-            _outLayers[_layerName]=_layerEnts
+        getChildrenEnt=self.__kernel.getTreeLayer.getLayerChildren
+        layerNodes=self.__kernel.getTreeLayer.getLayerdbTree()
+        def populateDxfStructure(layers):
+            for key in layers:
+                _layerEnts=[]
+                layer, childs=layers[key]
+                for ent in getChildrenEnt(layer):
+                    _layerEnts.append(ent)
+                l=self.__kernel.getTreeLayer._getLayerConstructionElement(layer)
+                _outLayers[l.name]=_layerEnts
+                populateDxfStructure(childs)
+        populateDxfStructure(layerNodes)   
         return _outLayers
+        #_outLayers={}
+        #_layers = [self.__kernel.getTreeLayer.]
+#        while len(_layers):
+#            _layerEnts=[]
+#            _layer = _layers.pop()
+#            _layerName=_layer.getName()
+#            _objs=_layer.getAllEntitys()
+#            for _o in _objs:
+#                _layerEnts.append(_o)
+#            _outLayers[_layerName]=_layerEnts
+#        return _outLayers
 
-    def writeSegment(self,e):
+    def writeSegment(self,e, style):
         """
            write segment to the dxf file
         """
         x1,y1=e.getP1().getCoords()
         x2,y2=e.getP2().getCoords()
-        _c = e.getColor()
-        _c = str(_c)
+        
+        #_c = e.getColor()
+        #_c = str(_c)
+        _c=style.getStyleProp('entity_color')
         _c = ChangeColor(_c)
         dPrint("debug line color are %s"%str( _c)) # TODO : replace the dprint with the logging
         self.writeLine("  0\nLINE\n100\nAcdbLine\n")
@@ -215,23 +230,8 @@ class Dxf(DrawingFile):
         self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
         self.writeLine(" 11\n" +str(x2) +"\n")
         self.writeLine(" 21\n" +str(y2) +"\n 31\n0.0\n")
-
-    def writeCircle(self,e):
-        """
-           Write Circle to the dxf file
-        """
-        x1,y1=e.getCenter().getCoords()
-        r=e.getRadius()
-        _c = e.getColor()
-        _c = str(_c)
-        _c = ChangeColor(_c)
-        dPrint(" circle color are %s"%str(_c)) # TODO : replace the dprint with the logging
-        self.writeLine("  0\nCIRCLE\n100\nAcDbCircle\n")
-        self.writeLine(" 62\n" +str(_c) +"\n")
-        self.writeLine(" 10\n" +str(x1) +"\n")
-        self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
-        self.writeLine(" 40\n" +str(r) +"\n")
-    def writeArc(self,e):
+        
+    def writeArc(self,e, style):
         """
            Write Arc to the dxf file
         """
@@ -239,8 +239,7 @@ class Dxf(DrawingFile):
         r = e.getRadius()
         sa = e.getStartAngle()
         ea = e.getEndAngle()
-        _c = e.getColor()
-        _c = str(_c)
+        _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
         dprint("debug Arc color are %s "%str( _c))
         self.writeLine("  0\nARC\n100\nAcDbCircle\n")
@@ -249,12 +248,12 @@ class Dxf(DrawingFile):
         self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
         self.writeLine(" 40\n" +str(r) +"\n")
         self.writeLine(" 50\n" +str(sa) +"\n 51\n"+str(ea)+"\n")
-    def writePolyline(self,e):
+        
+    def writePolyline(self,e, style):
         """
            Write Polyline to the dxf file
         """
-        _c = e.getColor()
-        _c = str(_c)
+        _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
         dprint( "debug Arc color are %s"%str(_c))
         self.writeLine("  0\nLWPOLYLINE\n100\nAcDbPolyline\n")
@@ -270,14 +269,15 @@ class Dxf(DrawingFile):
             self.writeLine(" 10\n" +str(x1) +"\n")
             self.writeLine(" 20\n" +str(y1) +"\n")
             c = c + 1
-    def writeText(self,e):
+            
+    def writeText(self,e, style):
         """
            Write Text to the dxf file
         """
         x1,y1=e.getLocation()
         h = e.getSize()
         _c = e.getColor()
-        _c = str(_c)
+        _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
         dprint("debug Text color are %s "%str( _c))
         txt = e.getText()
@@ -302,9 +302,6 @@ class Dxf(DrawingFile):
         newLayer=self.__kernel.saveEntity(Layer(_layerName))
         self.__kernel.getTreeLayer.insert(newLayer, parentLayer)
         
-        #_dxfLayer=Layer(_layerName)
-        #self.__image.addLayer(_dxfLayer) # TODO : when we have the layer
-        #self.__dxfLayer=_dxfLayer
         try:
             self.__kernel.startMassiveCreation()
             while True:
