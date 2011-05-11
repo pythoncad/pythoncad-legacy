@@ -58,7 +58,7 @@ from Kernel.GeoEntity.polyline     import Polyline
 from Kernel.GeoEntity.style        import Style
 from Kernel.GeoEntity.entityutil   import *
 
-#   Define the log 
+#   Define the log
 LEVELS = {'PyCad_Debug':    logging.DEBUG,
           'PyCad_Info':     logging.INFO,
           'PyCad_Warning':  logging.WARNING,
@@ -114,12 +114,12 @@ class Document(BaseDb):
         except StructuralError:
             raise StructuralError, 'Unable to create LayerTree structure'
         self.__logger.debug('Done inizialization')
-    
+
     def getMainStyle(self):
         """
             get all the db styles
         """
-        
+
         self.__logger.debug('getDbSettingsObject')
         styleEntitys=self.getEntityFromType('STYLE')
         for styleEntity in styleEntitys:
@@ -130,8 +130,8 @@ class Document(BaseDb):
                     break
         else:
             style=Style({"STYLE_0":"Main"})
-            return self.saveEntity(style) 
-        
+            return self.saveEntity(style)
+
     def getDbSettingsObject(self):
         """
             get the pythoncad settings object
@@ -186,13 +186,13 @@ class Document(BaseDb):
             return self.__EntityDb.getEntityFromTypeArray(entityType)
         else:
             return self.__EntityDb.getEntityFromType(entityType)
-        
+
     def getAllDrawingEntity(self):
         """
             get all drawing entity from the db
         """
         return self.__EntityDb.getEntityFromTypeArray([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-   
+
     def getEntInDbTableFormat(self, visible=1, entityType='ALL', entityTypeArray=None):
         """
             return a db table of the entity
@@ -207,22 +207,22 @@ class Document(BaseDb):
     def convertToGeometricalEntity(self, entity):
         """
             Convert an entity into a geometrical entity
-        """ 
+        """
         return entity.toGeometricalEntity()
-        
+
     def haveDrawingEntitys(self):
         """
             check if the drawing have some data in it
         """
         return self.__EntityDb.haveDrwEntitys([DRAWIN_ENTITY[key] for key in DRAWIN_ENTITY.keys()])
-    
+
     def saveSympyEnt(self, sympyEnt):
         """
             save the sympy entity
         """
         ent=getEntityEntity(sympyEnt)
         self.saveEntity(ent)
-    
+
     def saveEntity(self,entity):
         """
             save the entity into the database
@@ -239,7 +239,7 @@ class Document(BaseDb):
             #self.__RelationDb.suspendCommit()
             BaseDb.commit=False
             if isinstance(entity,GeometricalEntity):
-                _obj=self._saveGeometricalEntity(entity)    
+                _obj=self._saveGeometricalEntity(entity)
             elif isinstance(entity,ComposedEntity):
                 _obj=self._saveComposedEntity(entity)
             elif isinstance(entity,Layer):
@@ -260,7 +260,7 @@ class Document(BaseDb):
         except:
             msg="Unexpected error: %s "%str(sys.exc_info()[0])
             raise StructuralError, msg
-            
+
     def _saveComposedEntity(self, entity):
         """
             save all the geometrical entity composed
@@ -278,7 +278,7 @@ class Document(BaseDb):
         for c in relComp:
             self.__RelationDb.saveRelation(_obj,c)
         return _obj
-        
+
     def _saveGeometricalEntity(self, entity):
         """
             save all the geometrical entity
@@ -290,8 +290,8 @@ class Document(BaseDb):
         else:
             _obj=self._saveDrwEnt(entity)
         return _obj
-        
-        
+
+
     def _saveDrwEnt(self,entity):
         """
             Save a PythonCad drawing entity
@@ -303,14 +303,14 @@ class Document(BaseDb):
         _obj=self._saveDbEnt(entityType,_cElements)
         self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
         return _obj
-        
+
     def getNewId(self):
         """
             get a new id
         """
-        self.__entId+=1    
+        self.__entId+=1
         return self.__entId
-        
+
     def _getCelements(self, entity):
         """
             get an array of construction elements
@@ -321,7 +321,7 @@ class Document(BaseDb):
                 entityType=DRAWIN_ENTITY[t]
                 break
         return entity.getConstructionElements(), entityType
-        
+
     def _saveSettings(self,settingsObj):
         """
             save the settings object
@@ -331,7 +331,7 @@ class Document(BaseDb):
         _cElements={}
         _cElements['SETTINGS']=settingsObj
         return self._saveDbEnt('SETTINGS',_cElements)
-        
+
     def _saveStyle(self, styleObject):
         """
             save the style object
@@ -346,7 +346,7 @@ class Document(BaseDb):
         self.saveEntityEvent(self,_newDbEnt)
         self.showEntEvent(self,_newDbEnt)
         return _newDbEnt
-        
+
     def _saveLayer(self,layerObj):
         """
             save the layer object
@@ -391,7 +391,7 @@ class Document(BaseDb):
             check id the entity exsist in the database
         """
         return self.__EntityDb.exsisting(id)
-        
+
     def getStyle(self, id=None, name=None):
         """
             get the style object
@@ -407,7 +407,7 @@ class Document(BaseDb):
                 _styleObj=sto.getConstructionElements()
                 stlName=_styleObj[_styleObj.keys()[0]].getName()
                 if stlName==name:
-                   return sto 
+                   return sto
         raise EntityMissing, "Miss entity style in db id: <%s> name : <%s>"%(str(id), str(name))
 
     def getActiveStyle(self):
@@ -416,9 +416,9 @@ class Document(BaseDb):
         """
         self.__logger.debug('getActiveStyle')
         if self.__activeStyleObj==None:
-            
+
             self.setActiveStyle(0) # In this case get the first style
-            
+
         return self.__activeStyleObj
 
     def setActiveStyle(self, id=None, name=None):
@@ -514,10 +514,10 @@ class Document(BaseDb):
         entity.delete()
         self.saveEntity(entity)
         self.deleteEntityEvent(self,entity)
-        
+
     def massiveDelete(self, entityIds):
         """
-            perform a massive delete more then one entity 
+            perform a massive delete more then one entity
         """
         self.__logger.debug('massiveDelete')
         _delEnity=[]
@@ -528,12 +528,12 @@ class Document(BaseDb):
                 entity.delete()
                 self.saveEntity(entity)
                 _delEnity.append(entity)
-            else:    
-                self.performCommit()    
+            else:
+                self.performCommit()
         finally:
             self.massiveDeleteEvent(self, _delEnity)
             self.stopMassiveCreation()
-        
+
     def hideEntity(self, entity=None, entityId=None):
         """
             Hide an entity
@@ -573,11 +573,12 @@ class Document(BaseDb):
         except DxfReport:
             self.__logger.error('DxfReport')
             _err={'object':extFormat, 'error':DxfReport}
-            self.handledErrorEvent(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(_err)
         except DxfUnsupportedFormat:
             self.__logger.error('UnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
-            self.handledErrorEvent(self,_err)#todo : test it not sure it works
+            self.handledErrorEvent(_err)
+
     def exportExternalFormat(self, fileName):
         """
             This method allow you to export a file to an external format\
@@ -611,7 +612,7 @@ class Document(BaseDb):
             getRelationObject
         """
         return self.__RelationDb
-    
+
     def getName(self):
         """
             get the name of the active document

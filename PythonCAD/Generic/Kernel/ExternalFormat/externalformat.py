@@ -21,6 +21,7 @@
 import os.path
 #
 from Kernel.ExternalFormat.Dxf.dxf import Dxf
+from Kernel.exception import *
 #
 class ExtFormat(object):
     """

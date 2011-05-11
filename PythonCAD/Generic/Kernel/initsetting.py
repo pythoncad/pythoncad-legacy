@@ -50,12 +50,12 @@ from Kernel.Command.propertycommand     import PropertyCommand
 #
 # Entity List
 #
-from Kernel.GeoEntity.point        import Point 
-from Kernel.GeoEntity.segment      import Segment 
+from Kernel.GeoEntity.point        import Point
+from Kernel.GeoEntity.segment      import Segment
 from Kernel.GeoEntity.arc          import Arc
 from Kernel.GeoEntity.ellipse      import Ellipse
 from Kernel.GeoEntity.polyline     import Polyline
-from Kernel.GeoEntity.style        import Style 
+from Kernel.GeoEntity.style        import Style
 from Kernel.GeoEntity.cline        import CLine
 from Kernel.GeoEntity.ccircle      import CCircle
 from Kernel.GeoEntity.text         import Text
@@ -73,10 +73,10 @@ from Kernel.layer               import Layer
 from Kernel.composedentity      import ComposedEntity
 #
 # Default LAyer
-# 
+#
 MAIN_LAYER="MAIN"
 #
-# Max Number of recent file 
+# Max Number of recent file
 #
 MAX_RECENT_FILE=5
 #
@@ -90,14 +90,14 @@ PY_CAD_ENT=['POINT',
             'SEGMENT',
             'SETTINGS',
             'LAYER',
-            'STYLE', 
-            'ARC', 
-            'ELLIPSE', 
-            'POLYLINE', 
-            'CLINE', 
-            'CCIRCLE', 
-            'TEXT', 
-            'COMPOSED_ENTITY', 
+            'STYLE',
+            'ARC',
+            'ELLIPSE',
+            'POLYLINE',
+            'CLINE',
+            'CCIRCLE',
+            'TEXT',
+            'COMPOSED_ENTITY',
             'DIMENSION' ]
 
 PY_CAD_COMPOSED_ENT=['CHAMFER', 'FILLET', 'BISECTOR']
@@ -106,42 +106,42 @@ PY_CAD_COMPOSED_ENT=['CHAMFER', 'FILLET', 'BISECTOR']
 #
 APPLICATION_COMMAND={'SEGMENT':SegmentCommand,
                         'ARC':ArcCommand,
-                        'CIRCLE':CircleCommand, 
+                        'CIRCLE':CircleCommand,
                         'POINT':PointCommand,
                         'ELLIPSE':EllipseCommand,
-                        'POLYLINE':PolylineCommand, 
-#                        'CLINE':ACLineCommand, 
-                        'CCIRCLE':CCircleCommand, 
-                        'TEXT':TextCommand, 
-                        'CHAMFER':ChamferCommand, 
-                        'FILLET':FilletCommand, 
-                        'BISECTOR':BisectorCommand, 
-                        'RECTANGLE':RectangleCommand, 
-                        'POLYGON':PolygonCommand, 
-                        'COPY':CopyCommand, 
-                        'MOVE':MoveCommand, 
-                        'MIRROR':MirrorCommand, 
-                        'ROTATE':RotateCommand, 
-                        'TRIM':TrimCommand, 
-                        'DELETE':DeleteCommand, 
-                        'DIMENSION':DimensionCommand, 
+                        'POLYLINE':PolylineCommand,
+#                        'CLINE':ACLineCommand,
+                        'CCIRCLE':CCircleCommand,
+                        'TEXT':TextCommand,
+                        'CHAMFER':ChamferCommand,
+                        'FILLET':FilletCommand,
+                        'BISECTOR':BisectorCommand,
+                        'RECTANGLE':RectangleCommand,
+                        'POLYGON':PolygonCommand,
+                        'COPY':CopyCommand,
+                        'MOVE':MoveCommand,
+                        'MIRROR':MirrorCommand,
+                        'ROTATE':RotateCommand,
+                        'TRIM':TrimCommand,
+                        'DELETE':DeleteCommand,
+                        'DIMENSION':DimensionCommand,
                         'PROPERTY':PropertyCommand}
 #
 # Match object Name
 #
 DRAWIN_ENTITY={ Point:'POINT',
                 Segment:'SEGMENT',
-                Arc:'ARC', 
-                Ellipse:'ELLIPSE', 
-                Polyline:'POLYLINE', 
-                CLine:'CLINE', 
-                CCircle:'CCIRCLE', 
-                Text:'TEXT', 
-                ComposedEntity:'COMPOSED_ENTITY', 
+                Arc:'ARC',
+                Ellipse:'ELLIPSE',
+                Polyline:'POLYLINE',
+                CLine:'CLINE',
+                CCircle:'CCIRCLE',
+                Text:'TEXT',
+                ComposedEntity:'COMPOSED_ENTITY',
                 Dimension:'DIMENSION'}
-                
-DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET', 
-                        Chamfer:'CHAMFER', 
+
+DRAWIN_COMPOSED_ENTITY={Fillet:'FILLET',
+                        Chamfer:'CHAMFER',
                         Bisector:'BISECTOR'}
 
 
@@ -305,25 +305,25 @@ PYTHONCAD_PREVIEW_COLOR=PYTHONCAD_COLOR['steelblue']
 
 PYTHONCAD_LINETYPE={
     'continue':             (1),
-    'dash':                 (10, 10), 
+    'dash':                 (10, 10),
     'central':              (10, 8, 1, 8)}
-    
+
 PYTHONCAD_STYLE_ATTRIBUTES=['entity_color',
-                            'entity_linetype', 
+                            'entity_linetype',
                             'entity_thickness',
-                            'text_font', 
-                            'text_haigt',
-                            'text_aling', 
+                            'text_font',
+                            'text_height',
+                            'text_aling',
                             'text_aline_to_point']
-                            
+
 PYTHONCAD_STYLE_DEFAULT_VALUE=[(0, 0, 0),
-                                '1', 
                                 '1',
-                                'arial', 
+                                '1',
+                                'arial',
                                 '10',
                                 'left'
                                 'sw']
-                                
+
 def getDefaultStyle():
     return dict(zip(PYTHONCAD_STYLE_ATTRIBUTES,PYTHONCAD_STYLE_DEFAULT_VALUE))
 #
@@ -332,26 +332,26 @@ def getDefaultStyle():
 global SNAP_POINT_ARRAY
 global ACTIVE_SNAP_POINT
 
-SNAP_POINT_ARRAY={'LIST':0, 
+SNAP_POINT_ARRAY={'LIST':0,
                     'END':1,
-                    'MID':2, 
-                    'ORTHO':3, 
-                    'TANGENT':4, 
+                    'MID':2,
+                    'ORTHO':3,
+                    'TANGENT':4,
                     'CENTER':5,
                     'QUADRANT':6,
-                    'ORIG':7, 
-                    'INTERSECTION':8, 
+                    'ORIG':7,
+                    'INTERSECTION':8,
                     'NONE':9
                     }
 
 ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["LIST"]
 
-ACTIVE_SNAP_LIST=[SNAP_POINT_ARRAY["END"], 
-                  SNAP_POINT_ARRAY["END"], 
-                  SNAP_POINT_ARRAY["MID"], 
-                  SNAP_POINT_ARRAY["ORTHO"], 
-                  SNAP_POINT_ARRAY["QUADRANT"], 
-                  SNAP_POINT_ARRAY["INTERSECTION"]                  
+ACTIVE_SNAP_LIST=[SNAP_POINT_ARRAY["END"],
+                  SNAP_POINT_ARRAY["END"],
+                  SNAP_POINT_ARRAY["MID"],
+                  SNAP_POINT_ARRAY["ORTHO"],
+                  SNAP_POINT_ARRAY["QUADRANT"],
+                  SNAP_POINT_ARRAY["INTERSECTION"]
                   ]
 
 #

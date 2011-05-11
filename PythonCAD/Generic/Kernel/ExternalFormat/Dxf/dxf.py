@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2009 Matteo Boscolo
+# Copyright (c) 2009,2010,2011 Matteo Boscolo,Yagnesh Desai
 #
 # This file is part of PythonCAD.
 #
@@ -17,15 +17,11 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
-#
-# This code is written by Yagnesh Desai
-#
 
 dxfDebug=False
 
-import math # added to handle arc start and end point defination
-import re # added to handle Mtext
+import math         # added to handle arc start and end point defination
+import re           # added to handle Mtext
 import os, sys
 from Kernel.initsetting               import cgcol
 from Kernel.layer                     import Layer
@@ -48,7 +44,7 @@ def changeColorFromDxf(col):
     else:
         newcol = ChangeColor(col)
     return newcol
-    
+
 class DrawingFile(object):
     """
         This Class provide base capability to read write a  file
@@ -198,19 +194,8 @@ class Dxf(DrawingFile):
                 l=self.__kernel.getTreeLayer._getLayerConstructionElement(layer)
                 _outLayers[l.name]=_layerEnts
                 populateDxfStructure(childs)
-        populateDxfStructure(layerNodes)   
+        populateDxfStructure(layerNodes)
         return _outLayers
-        #_outLayers={}
-        #_layers = [self.__kernel.getTreeLayer.]
-#        while len(_layers):
-#            _layerEnts=[]
-#            _layer = _layers.pop()
-#            _layerName=_layer.getName()
-#            _objs=_layer.getAllEntitys()
-#            for _o in _objs:
-#                _layerEnts.append(_o)
-#            _outLayers[_layerName]=_layerEnts
-#        return _outLayers
 
     def writeSegment(self,e, style):
         """
@@ -218,9 +203,6 @@ class Dxf(DrawingFile):
         """
         x1,y1=e.getP1().getCoords()
         x2,y2=e.getP2().getCoords()
-        
-        #_c = e.getColor()
-        #_c = str(_c)
         _c=style.getStyleProp('entity_color')
         _c = ChangeColor(_c)
         dPrint("debug line color are %s"%str( _c)) # TODO : replace the dprint with the logging
@@ -230,7 +212,7 @@ class Dxf(DrawingFile):
         self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
         self.writeLine(" 11\n" +str(x2) +"\n")
         self.writeLine(" 21\n" +str(y2) +"\n 31\n0.0\n")
-        
+
     def writeArc(self,e, style):
         """
            Write Arc to the dxf file
@@ -241,21 +223,21 @@ class Dxf(DrawingFile):
         ea = e.getEndAngle()
         _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
-        dprint("debug Arc color are %s "%str( _c))
+        dPrint("debug Arc color are %s "%str( _c))
         self.writeLine("  0\nARC\n100\nAcDbCircle\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
         self.writeLine(" 10\n" +str(x1) +"\n")
         self.writeLine(" 20\n" +str(y1) +"\n 30\n0.0\n")
         self.writeLine(" 40\n" +str(r) +"\n")
         self.writeLine(" 50\n" +str(sa) +"\n 51\n"+str(ea)+"\n")
-        
+
     def writePolyline(self,e, style):
         """
            Write Polyline to the dxf file
         """
         _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
-        dprint( "debug Arc color are %s"%str(_c))
+        dPrint( "debug Arc color are %s"%str(_c))
         self.writeLine("  0\nLWPOLYLINE\n100\nAcDbPolyline\n")
         self.writeLine(" 62\n" +str(_c) +"\n")
         count = e.getNumPoints()
@@ -269,18 +251,17 @@ class Dxf(DrawingFile):
             self.writeLine(" 10\n" +str(x1) +"\n")
             self.writeLine(" 20\n" +str(y1) +"\n")
             c = c + 1
-            
+
     def writeText(self,e, style):
         """
            Write Text to the dxf file
         """
-        x1,y1=e.getLocation()
-        h = e.getSize()
-        _c = e.getColor()
+        x1,y1=e.location.getCoords()
+        h = style.getStyleProp('text_height')
         _c = str(style.getStyleProp('entity_color'))
         _c = ChangeColor(_c)
-        dprint("debug Text color are %s "%str( _c))
-        txt = e.getText()
+        dPrint("debug Text color are %s "%str( _c))
+        txt = e.text
         txt = txt.replace(' ', '\~')
         txt = txt.replace('\n', '\P')
         self.writeLine("  0\nMTEXT\n100\nAcDbMText\n")
@@ -294,14 +275,14 @@ class Dxf(DrawingFile):
         """
             Open The file and create The entity in pythonCad
         """
-        dPrint( "Debug: import entitys") 
+        dPrint( "Debug: import entitys")
         self.readAsci();
         _layerName,_ext=os.path.splitext(os.path.basename(self.getFileName()))
         _layerName="Imported_"+_layerName
         parentLayer=self.__kernel.getTreeLayer.getActiveLater()
         newLayer=self.__kernel.saveEntity(Layer(_layerName))
         self.__kernel.getTreeLayer.insert(newLayer, parentLayer)
-        
+
         try:
             self.__kernel.startMassiveCreation()
             while True:
@@ -426,7 +407,7 @@ class Dxf(DrawingFile):
                 z2 = (float(_k[0:-1]))
                 g = 119
                 continue
-                #Z co ordinates are not used in PythonCAD we can live without this line
+                #Z coordinates are not used in PythonCAD we can live without this line
         if c == None:
             c = 7
         if not ( x1==None or y1 ==None or
@@ -440,34 +421,9 @@ class Dxf(DrawingFile):
     def createLine(self,x1,y1,x2,y2,c):
         """
           Create the line into the current drawing
-          In this implementation all the lines gose to the active layer and use the global settings of pythoncad
-          Feauture implementation could be :
-          1) Create a new layer(ex: Dxf Import)
-          2) Read dxf import style propertis and set it to the line
         """
-        ##print "debug c=", c
-        #dPrint( "Debug Creatre line %s,%s,%s,%s"%(str(x1),str(y1),str(x2),str(y2)) ) # TODO : replace the dprint with the logging
-        #_active_layer = self.__dxfLayer
-        #_p1 = Point(x1, y1)
-        #_active_layer.addObject(_p1)
-        #_p2 = Point(x2, y2)
-        #_active_layer.addObject(_p2)
-        #_s = self.__image.getOption('LINE_STYLE')
-        #_seg = Segment(_p1, _p2, _s)
         args={"SEGMENT_0":Point(x1, y1), "SEGMENT_1":Point(x2, y2)}
         _seg = Segment(args)
-        #_l = self.__image.getOption('LINE_TYPE')
-        #if _l != _s.getLinetype():
-        #  _seg.setLinetype(_l)
-        #_c = changeColorFromDxf(int(c))
-        #_c = self.__image.getOption('LINE_COLOR')
-        #if _c != _s.getColor():
-        #  _seg.setColor(_c)
-        ##print _c
-        #_t = self.__image.getOption('LINE_THICKNESS')
-        #if abs(_t - _s.getThickness()) > 1e-10:
-        #  _seg.setThickness(_t)
-        #_active_layer.addObject(_seg)
         self.__kernel.saveEntity(_seg)
 
     def createCircleFromDxf(self):
@@ -517,37 +473,40 @@ class Dxf(DrawingFile):
         _t= ''
         while g < 1:
             _k = self.readLine()
-            dPrint("line value k="+ _k)
-            #if _k[0:3] == ' 62':# COLOR
-            #    _k = self.readLine()
-            #    c = (int(_k[0:-1]))
-            if _k[0:3] == ' 10':
-                _k = self.readLine()
-                x = (float(_k[0:-1]))
-                ##print "Text Loc x =", x
-                continue
-            if _k[0:3] == ' 20':
-                _k = self.readLine()
-                y = (float(_k[0:-1]))
-                #rint "Text Loc y =", y
-                continue
-            if _k[0:3] == ' 30':
-                _k = self.readLine()
-                z = (float(_k[0:-1]))
-                ##print "Text Loc z =", z
-                continue
-            if _k[0:3] == ' 40':
-                _k = self.readLine()
-                h = (float(_k[0:-1]))
-                dPrint("Text Height =%s"%str(h))
-                continue
-            if _k[0:3] == '  1':
-                _k = self.readLine()
-                _t = _k.replace('\~', ' ')
-                _t = _t.replace('\P', '\n')
-                ##print "Text itself is ", x, y, z, 'height', h, _t#
-                g = 10 # g > 1 for break
-                continue
+            try:
+                dPrint("line value k="+ _k)
+                #if _k[0:3] == ' 62':# COLOR
+                #    _k = self.readLine()
+                #    c = (int(_k[0:-1]))
+                if _k[0:3] == ' 10':
+                    _k = self.readLine()
+                    x = (float(_k[0:-1]))
+                    ##print "Text Loc x =", x
+                    continue
+                if _k[0:3] == ' 20':
+                    _k = self.readLine()
+                    y = (float(_k[0:-1]))
+                    #rint "Text Loc y =", y
+                    continue
+                if _k[0:3] == ' 30':
+                    _k = self.readLine()
+                    z = (float(_k[0:-1]))
+                    ##print "Text Loc z =", z
+                    continue
+                if _k[0:3] == ' 40':
+                    _k = self.readLine()
+                    h = (float(_k[0:-1]))
+                    dPrint("Text Height =%s"%str(h))
+                    continue
+                if _k[0:3] == '  1':
+                    _k = self.readLine()
+                    _t = _k.replace('\~', ' ')
+                    _t = _t.replace('\P', '\n')
+                    ##print "Text itself is ", x, y, z, 'height', h, _t#
+                    g = 10 # g > 1 for break
+                    continue
+            except:
+                print "Error on reading "+str(_k)
         if not (x is None or y is None or h is None):
             self.createText(x,y,h,_t)
         else:
@@ -598,79 +557,29 @@ class Dxf(DrawingFile):
         """
             Create a Arc entitys into the current drawing
         """
-        #_active_layer = self.__dxfLayer
         _center = Point(x, y)
-        #_active_layer.addObject(_center)
-        #_s = self.__image.getOption('LINE_STYLE')
         if sa is None or ea is None:
             sa=ea=0 #This is the case of circle
         else:
             sa=(sa*math.pi)/180
             ea=(ea*math.pi)/180
             ea=ea-sa
-        #ex = x + r*math.cos(sa)
-        #ey = y + r*math.sin(sa)
-        #lpx = x + r*math.cos(ea)
-        #lpy = y + r*math.sin(ea)
-        #ep = Point(ex, ey)
-        #lp = Point(lpx, lpy)
-        #_active_layer.addObject(ep)
-        #_active_layer.addObject(lp)
         args={"ARC_0":_center, "ARC_1":r, "ARC_2":sa, "ARC_3":ea}
         _arc = Arc(args)
-        #_l = self.__image.getOption('LINE_TYPE')
-        #if _l != _s.getLinetype():
-        #    _arc.setLinetype(_l)
-        #_c = changeColorFromDxf(color)
-        #_c = self.__image.getOption('LINE_COLOR')
-        #if _c != _s.getColor():
-        #    _arc.setColor(_c)
-        #_t = self.__image.getOption('LINE_THICKNESS')
-        #if abs(_t - _s.getThickness()) > 1e-10:
-        #    _arc.setThickness(_t)
-        #_active_layer.addObject(_arc)
         self.__kernel.saveEntity(_arc)
 
     def createText(self,x,y,h,t):
         """
             Create a Text entitys into the current drawing
         """
-        #_active_layer = self.__dxfLayer
         try:
             _text = t.replace('\x00', '').decode('utf8', 'ignore').encode('utf8')
         except:
             self.writeError("createText","Debug Error Converting in unicode [%s]"%t)
             _text ='Unable to convert in unicode'
         _p = Point(x, y)
-        #_ts = self.__image.getOption('TEXT_STYLE')
         args={"TEXT_0":_p,"TEXT_1":_text, "TEXT_2":0.0, "TEXT_3":""}
         _tb = Text(args)
-
-        #_f = self.__image.getOption('FONT_FAMILY')
-        #if _f != _ts.getFamily():
-        #    _tb.setFamily(_f)
-
-        #_s = self.__image.getOption('FONT_STYLE')
-        #if _s != _ts.getStyle():
-        #    _tb.setStyle(_s)
-
-        #_w = self.__image.getOption('FONT_WEIGHT')
-        #if _w != _ts.getWeight():
-        #    _tb.setWeight(_w)
-        #_c = changeColorFromDxf(c)
-        #_c = self.__image.getOption('FONT_COLOR')
-        #if _c != _ts.getColor():
-        #    _tb.setColor(_c)
-        #_sz = h
-        #if abs(_sz - _ts.getSize()) > 1e-10:
-        #    _tb.setSize(_sz)
-        #_a = self.__image.getOption('TEXT_ANGLE')
-        #if abs(_a - _ts.getAngle()) > 1e-10:
-        #_tb.setAngle(_a)
-        #_al = self.__image.getOption('TEXT_ALIGNMENT')
-        #if _al != _ts.getAlignment():
-        #    _tb.setAlignment(_al)
-        #_active_layer.addObject(_tb)
         self.__kernel.saveEntity(_tb)
 
     def createPolylineFromDxf(self):
@@ -718,33 +627,17 @@ class Dxf(DrawingFile):
         """
             Crate poliline into Pythoncad
         """
+        pass #TODO: must be implemented
+
         dPrint("Exec createPolyline")
-        _active_layer = self.__dxfLayer
-        _x = 0.0
-        _y = 0.0
-        _pts = []
+        i=0
+        args={}
         for _x, _y in points:
-            dPrint(_x)
-            dPrint(_y)
             _p = Point(_x, _y)
-            _active_layer.addObject(_p)
-            _pts.append(_p)
-        dPrint("Exec createPolyline lenPts(%s)"%str(len(_pts)))
-        _s = self.__image.getOption('LINE_STYLE')
-        _pline = Polyline(_pts, _s)
-        _l = self.__image.getOption('LINE_TYPE')
-        if _l != _s.getLinetype():
-          _pline.setLinetype(_l)
-        _c = changeColorFromDxf(c)
-        #_c = self.__image.getOption('LINE_COLOR')
-        if _c != _s.getColor():
-          _pline.setColor(_c)
-        _t = self.__image.getOption('LINE_THICKNESS')
-        if abs(_t - _s.getThickness()) > 1e-10:
-          _pline.setThickness(_t)
-        _active_layer.addObject(_pline)
-
-
+            args["POLYLINE_%s"%str(i)]=_p
+            i+=1
+        pline=Polyline(args)
+        self.__kernel.saveEntity(pline)
 
 def dPrint(msg):
     """
