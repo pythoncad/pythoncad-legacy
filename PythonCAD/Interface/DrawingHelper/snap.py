@@ -19,7 +19,7 @@
 #
 #
 # This Module provide a snap management for the drawing scene and icommand
-# 
+#
 #
 
 from PyQt4 import QtCore, QtGui
@@ -35,7 +35,7 @@ class SnapPoint():
         self.activeSnap=ACTIVE_SNAP_POINT
         self.__scene=scene
 
-        
+
     def getSnapPoint(self,  point, entity):
         """
             Get snapPoints
@@ -49,7 +49,7 @@ class SnapPoint():
         else:
             print self.activeSnap
             snapPoint=point
-            
+
             if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
                 snapPoint = self.getSnapMiddlePoint(entity)
             elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
@@ -67,22 +67,22 @@ class SnapPoint():
             elif SNAP_POINT_ARRAY["LIST"]== self.activeSnap:
                 #this should be used when checklist of snap will be enabled
                 snapPoints=[]
-                
+
                 if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["MID"])>0:
                     pnt=self.getSnapMiddlePoint(entity)
                     if pnt!=None:
                         snapPoints.append(pnt)
-                
+
                 if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["END"])>0:
                     pnt=self.getSnapEndPoint(entity, snapPoint)
                     if pnt!=None:
                         snapPoints.append(pnt)
-                 
+
                 if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["QUADRANT"])>0:
                     pnt=self.getSnapQuadrantPoint(entity, snapPoint)
                     if pnt!=None:
-                        snapPoints.append(pnt)       
-                    
+                        snapPoints.append(pnt)
+
                 if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["ORTHO"])>0:
                     pnt=self.getSnapOrtoPoint(entity, snapPoint)
                     if pnt!=None:
@@ -105,11 +105,11 @@ class SnapPoint():
                 else:
                     if outPoint[0]!=None:
                         snapPoint=outPoint[0]
-            
+
             if snapPoint==None:
                 return point
             return snapPoint
-        
+
     def getSnapOrtoPoint(self, entity, point):
         """
             this fucnticion compute the orto to point snap constraint
@@ -119,15 +119,15 @@ class SnapPoint():
         if self.__scene.fromPoint==None or entity == None:
             #print "log: getSnapOrtoPoint :frompoint or entity is none "
             return None
-            
+
         if getattr(entity, 'geoItem', None):
             if getattr(entity.geoItem, 'getProjection', None):
                 pT=entity.geoItem.getProjection(self.__scene.fromPoint)
                 return pT
         else:
             return None
-        
-    def getSnapTangentPoint(selfself, point):    
+
+    def getSnapTangentPoint(selfself, point):
         """
             this fucnticion compute the Tangent to point snap constraint
         """
@@ -137,8 +137,8 @@ class SnapPoint():
         #   1) get the Tangent point from the previews entity
         #   2) update the previews snap point
         return returnVal
-        
-    def getSnapMiddlePoint(self, entity):    
+
+    def getSnapMiddlePoint(self, entity):
         """
             this fucnticion compute midpoint snap constraint to the entity argument
         """
@@ -147,15 +147,15 @@ class SnapPoint():
             if getattr(entity.geoItem, 'getMiddlePoint', None):
                 returnVal=entity.geoItem.getMiddlePoint()
         return returnVal
-    
+
     def getSnapEndPoint(self, entity, point):
         """
-            this fucnticion compute the  snap endpoint 
+            this fucnticion compute the  snap endpoint
         """
         if point == None or entity == None:
             print "log: getSnapEndPoint :point or entity is none "
             return None
-            
+
         if getattr(entity, 'geoItem', None):
             if getattr(entity.geoItem, 'getEndpoints', None):
                 p1, p2=entity.geoItem.getEndpoints()
@@ -165,7 +165,7 @@ class SnapPoint():
                     return p2
         else:
             return None
-    
+
     def getSnapCenterPoint(self, entity):
         """
             this fucnticion compute the  snap from the center of an entity
@@ -181,17 +181,21 @@ class SnapPoint():
             else:
                 returnVal=None
         return returnVal
-        
-    def getIntersection(self, entity, point): 
+
+    def getIntersection(self, entity, point):
         """
             this fucnticion compute the  snap intersection point
         """
-        print "intersection"
         returnVal=None
         distance=None
         if entity!=None:
             geoEntityFrom=entity.geoItem
+            import time
+            startTime=time.clock()
             entityList=self.__scene.collidingItems(entity)
+            endTime=time.clock()-startTime
+            print "getIntersection, collidingItems in %s"%str(endTime)
+            startTime=time.clock()
             for ent in entityList:
                 if isinstance(ent, BaseEntity):
                     intPoint=find_intersections(ent.geoItem,geoEntityFrom)
@@ -205,11 +209,13 @@ class SnapPoint():
                             if distance>spoolDist:
                                 distance=spoolDist
                                 returnVal=iPoint
-        return returnVal    
+            endTime=time.clock()-startTime
+            print "find intersection in %s"%str(endTime)
+        return returnVal
 
     def getSnapQuadrantPoint(self, entity, point):
         """
-            this fucnticion compute the  snap from the quadrant 
+            this fucnticion compute the  snap from the quadrant
         """
         returnVal=None
         if getattr(entity, 'geoItem', None):
@@ -227,14 +233,14 @@ class SnapPoint():
                             dist=newDist
                             returnVal=p
         return returnVal
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
 class SnapMark(QtGui.QGraphicsItem):
     def __init__(self):
         super(SnapMark, self).__init__()
@@ -242,42 +248,42 @@ class SnapMark(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
         self.hide()
 
-    def shape(self):            
+    def shape(self):
         """
-            overloading of the shape method 
+            overloading of the shape method
         """
         return self.definePath()
-        
+
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
         """
         return self.shape().boundingRect()
-    
+
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
         """
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 50, 50), 2, join=QtCore.Qt.MiterJoin))
         painter.drawPath(self.definePath())
-        
+
     def move(self, x, y):
         """
             show the previously added mark and place it in snap position
         """
         self.show()
         self.setPos(x, y)
-        
+
 class SnapEndMark(SnapMark):
     def __init__(self, x, y):
         super(SnapEndMark, self).__init__()
         self.setToolTip("EndPoint")
         self.x=x
         self.y=y
-    
+
     def definePath(self):
         rect=QtCore.QRectF(self.x-5.0, self.y-5.0, 10.0, 10.0)
         path=QtGui.QPainterPath()
         path.addRect(rect)
         return path
-   
+

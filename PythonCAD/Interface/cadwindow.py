@@ -1,24 +1,24 @@
 ############################################################################
-# 
+#
 #  Copyright (C) 2004-2005 Trolltech AS. All rights reserved.
-# 
+#
 #  This file is part of the example classes of the Qt Toolkit.
-# 
+#
 #  This file may be used under the terms of the GNU General Public
 #  License version 2.0 as published by the Free Software Foundation
 #  and appearing in the file LICENSE.GPL included in the packaging of
 #  this file.  Please review the following information to ensure GNU
 #  General Public Licensing requirements will be met:
 #  http://www.trolltech.com/products/qt/opensource.html
-# 
+#
 #  If you are unsure which license is appropriate for your use, please
 #  review the following information:
 #  http://www.trolltech.com/products/qt/licensing.html or contact the
 #  sales department at sales@trolltech.com.
-# 
+#
 #  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 #  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-# 
+#
 ############################################################################
 
 # This is only needed for Python v2 but is harmless for Python v3.
@@ -29,7 +29,7 @@ import os
 import sys
 
 from PyQt4 import QtCore, QtGui
-   
+
 import cadwindow_rc
 
 from Generic.application            import Application
@@ -42,7 +42,7 @@ from Interface.CmdIntf.cmdintf      import CmdIntf
 from Interface.Entity.base          import BaseEntity
 from Interface.Command.icommand     import ICommand
 from Interface.cadinitsetting       import *
-from Kernel.exception               import *  
+from Kernel.exception               import *
 from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
 
@@ -75,10 +75,10 @@ class CadWindowMdi(QtGui.QMainWindow):
         self._registerCommands()
         self.updateMenus()
         self.lastDirectory=os.getenv('USERPROFILE') or os.getenv('HOME')
-        
+
         self.readSettings() #now works for position and size and ismaximized, and finally toolbar position
         return
-      
+
     @property
     def scene(self):
         if self.mdiArea.activeSubWindow():
@@ -86,7 +86,7 @@ class CadWindowMdi(QtGui.QMainWindow):
     @property
     def view(self):
         if self.mdiArea.activeSubWindow():
-            return self.mdiArea.activeSubWindow().view 
+            return self.mdiArea.activeSubWindow().view
     @property
     def Application(self):
         """
@@ -98,7 +98,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         """
             get the layer tree dockable window
         """
-        return self.__layer_dock   
+        return self.__layer_dock
 
 # ###############################################STATUSBAR
 # ##########################################################
@@ -112,15 +112,13 @@ class CadWindowMdi(QtGui.QMainWindow):
 
         #------------------------------------------------------------------------------------Create status buttons
 
-        
-        
         #Force Direction
         self.forceDirectionStatus=statusButton('SForceDir.png', 'Orthogonal Mode [right click will in the future set increment constrain angle]')
         self.connect(self.forceDirectionStatus, QtCore.SIGNAL('clicked()'), self.setForceDirection)
         self.forceDirectionStatus.setMenu(getPolarMenu())
         self.statusBar().addPermanentWidget(self.forceDirectionStatus)
-        
-        
+
+
         #Snap
         self.SnapStatus=statusButton('SSnap.png', 'Snap [right click displays snap list]\n for future implementation it should be a checkist')
         self.connect(self.SnapStatus, QtCore.SIGNAL('clicked()'), self.setSnapStatus)
@@ -128,12 +126,12 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.SnapStatus.setChecked(True)
         self.statusBar().addPermanentWidget(self.SnapStatus)
 
-        
+
         #Grid
-        self.GridStatus=statusButton('SGrid.png', 'Grid Mode [not available yet]') 
+        self.GridStatus=statusButton('SGrid.png', 'Grid Mode [not available yet]')
         self.connect(self.GridStatus, QtCore.SIGNAL('clicked()'), self.setGrid)
         self.statusBar().addPermanentWidget(self.GridStatus)
-        
+
         #------------------------------------------------------------------------------------Set coordinates label on statusbar (updated by idocumet)
         self.coordLabel=QtGui.QLabel("x=0.000\ny=0.000")
         self.coordLabel.setAlignment(QtCore.Qt.AlignVCenter)
@@ -142,7 +140,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.coordLabel.setMaximumHeight(20)
         self.coordLabel.setFont(QtGui.QFont("Sans", 6))
         self.statusBar().addPermanentWidget(self.coordLabel)
-       
+
     def setForceDirection(self):
         if self.forceDirectionStatus.isChecked():
             print "abilita"
@@ -159,7 +157,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY['LIST']
         else:
             self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY['NONE']
-        
+
     def setGrid(self):
         pass
 # ###############################################END STATUSBAR
@@ -167,7 +165,7 @@ class CadWindowMdi(QtGui.QMainWindow):
 
     def commandExecuted(self):
         self.resetCommand()
-        
+
     def _createDockWindows(self):
         '''
             Creates all dockable windows for the application
@@ -177,8 +175,8 @@ class CadWindowMdi(QtGui.QMainWindow):
         # if the commandline exists, add it
         if not command_dock is None:
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, command_dock)
-        return    
-    
+        return
+
     def closeEvent(self, event):
         """
             manage close event
@@ -189,7 +187,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         else:
             self.writeSettings()
             event.accept()
-            
+
     def subWindowActivatedEvent(self):
         """
             Sub windows activation
@@ -198,10 +196,10 @@ class CadWindowMdi(QtGui.QMainWindow):
             if (self.mdiArea.activeSubWindow().document!=
                         self.__application.ActiveDocument):
                 self.resetCommand()
-                self.__application.ActiveDocument=self.mdiArea.activeSubWindow().document  
+                self.__application.ActiveDocument=self.mdiArea.activeSubWindow().document
         self.updateMenus()
-        
-    def resetCommand(self):    
+
+    def resetCommand(self):
         """
             Resect the active command
         """
@@ -272,15 +270,15 @@ class CadWindowMdi(QtGui.QMainWindow):
         #                self.activeMdiChild().textCursor().hasSelection())
         #self.cutAct.setEnabled(hasSelection)
         #self.copyAct.setEnabled(hasSelection)
-        
+
         #StatusBAR Satus Tools
         self.forceDirectionStatus.setEnabled(hasMdiChild)
         self.GridStatus.setEnabled(hasMdiChild)
         self.SnapStatus.setEnabled(hasMdiChild)
-        
+
     def createMdiChild(self, file=None):
         """
-            Create new IDocument 
+            Create new IDocument
         """
         if file:
             newDoc=self.__application.openDocument(file)
@@ -299,7 +297,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return child
     #def setAppDocActiveOnUi(self, doc):
     #    self.mdiArea.
-        
+
     def _registerCommands(self):
         '''
             Register all commands that are handed by this object
@@ -312,11 +310,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Create recentFile structure
         #
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
-        
+
         i=0
         for file in self.Application.getRecentFiles:
             fileName=self.strippedName(file)
-            self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'file_'+str(i), fileName, self._onOpenRecent)    
+            self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'file_'+str(i), fileName, self._onOpenRecent)
             i+=1
         #
         # separator
@@ -332,7 +330,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'property', '&Property', self._onProperty)
-        
+
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'preferences', '&User Preferences', self.preferences)
@@ -378,9 +376,9 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapcen', 'Center', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snapqua', 'Quadrant', self._onSnapCommand)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snaptan', 'Tangent', self._onSnapCommand)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, '-') 
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, '-')
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Snap, 'snap00', 'Origin', self._onSnapCommand)
-        
+
         #Tools
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Tools, 'info2p', 'Info Two Points', self._onInfo2p)
         # window
@@ -391,7 +389,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PythonCAD', self._onAbout)
         return
-        
+
     def updateRecentFileList(self):
         """
             update the menu recent file list
@@ -401,29 +399,29 @@ class CadWindowMdi(QtGui.QMainWindow):
             fileName=self.strippedName(file)
             self.__cmd_intf.updateText('file_'+str(i), fileName)
             i+=1
-            
+
     def strippedName(self, fullFileName):
         """
             get only the name of the filePath
         """
-        return QtCore.QFileInfo(fullFileName).fileName()    
-        
-        
+        return QtCore.QFileInfo(fullFileName).fileName()
+
+
 # ##########################################              ON COMMANDS
 # ##########################################################
 
     def _onNewDrawing(self):
         '''
-            Create a new drawing 
+            Create a new drawing
         '''
         child = self.createMdiChild()
         child.show()
         self.updateRecentFileList()
         return
-        
+
     def _onOpenDrawing(self):
         '''
-            Open an existing drawing PDR or DXF 
+            Open an existing drawing PDR or DXF
         '''
         # ask the user to select an existing drawing
         drawing = QtGui.QFileDialog.getOpenFileName(parent=self,directory=self.lastDirectory,  caption ="Open Drawing", filter ="Drawings (*.pdr *.dxf)");
@@ -439,11 +437,11 @@ class CadWindowMdi(QtGui.QMainWindow):
             else:
                 self.critical("Wrong command selected")
                 return
-            child.show() 
-            self.updateRecentFileList()  
+            child.show()
+            self.updateRecentFileList()
             self.view.fit()
         return
-    
+
     def _onImportDrawing(self):
         '''
             Import existing drawing in current drawing (some issues with PyQt4.7)
@@ -454,7 +452,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             self.lastDirectory=os.path.split(drawing)[0]
             self.mdiArea.activeSubWindow().importExternalFormat(drawing)
         return
-        
+
     def _onOpenRecent(self):
         """
             on open recent file
@@ -468,22 +466,22 @@ class CadWindowMdi(QtGui.QMainWindow):
             fileName=self.Application.getRecentFiles[int(index)]
             if len(fileName)>0:
                 child = self.createMdiChild(fileName)
-                child.show() 
+                child.show()
                 self.updateRecentFileList()
                 self.view.fit()
         return
-        
+
     def _onSaveAsDrawing(self):
         drawing = QtGui.QFileDialog.getSaveFileName(self, "Save As...", "/home", filter ="Drawings (*.pdr *.dxf)");
         if len(drawing)>0:
             self.__application.saveAs(drawing)
- 
+
     def _onPrint(self):
 #       printer.setPaperSize(QPrinter.A4);
         self.scene.clearSelection()
         printer=QtGui.QPrinter()
         printDialog=QtGui.QPrintDialog(printer)
-        if (printDialog.exec_() == QtGui.QDialog.Accepted): 
+        if (printDialog.exec_() == QtGui.QDialog.Accepted):
             painter=QtGui.QPainter()
             painter.begin(printer)
             painter.setRenderHint(QtGui.QPainter.Antialiasing);
@@ -492,7 +490,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             painter.end()
         self.statusBar().showMessage("Ready")
         return
-            
+
     def _onCloseDrawing(self):
         path=self.mdiArea.activeSubWindow().fileName
         self.__application.closeDocument(path)
@@ -504,7 +502,7 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onPoint(self):
         self.statusBar().showMessage("CMD:Point")
         self.callCommand('POINT')
-        return    
+        return
     def _onSegment(self):
         self.statusBar().showMessage("CMD:Segment")
         self.callCommand('SEGMENT')
@@ -533,17 +531,17 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Polyline")
         self.callCommand('POLYLINE')
         return
-    
+
     def _onFillet(self):
         self.statusBar().showMessage("CMD:Fillet")
         self.callCommand('FILLET')
         return
-        
+
     def _onChamfer(self):
         self.statusBar().showMessage("CMD:Chamfer")
         self.callCommand('CHAMFER')
         return
-            
+
     def _onBisect(self):
         self.statusBar().showMessage("CMD:Bisect")
         self.callCommand('BISECTOR')
@@ -551,22 +549,22 @@ class CadWindowMdi(QtGui.QMainWindow):
     def _onText(self):
         self.statusBar().showMessage("CMD:Text")
         self.callCommand('TEXT')
-        return      
+        return
     def _onDimension(self):
         self.statusBar().showMessage("CMD:Dimension")
         self.callCommand('DIMENSION')
-        return         
+        return
 #-------------------------ON COMMANDS in EDIT
 
     def _onUndo(self):
         self.scene.clearSelection()
         try:
-           self.mdiArea.activeSubWindow().unDo() 
+           self.mdiArea.activeSubWindow().unDo()
         except UndoDbExc:
             self.critical("Unable To Perform Undo")
         self.statusBar().showMessage("Ready")
         return
-        
+
     def _onRedo(self):
         self.scene.clearSelection()
         try:
@@ -574,11 +572,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         except UndoDbExc:
             self.critical("Unable To Perform Redo")
         self.statusBar().showMessage("Ready")
-   
+
     def _onProperty(self):
         self.statusBar().showMessage("CMD:Property")
         self.callCommand('PROPERTY')
-        
+
     def preferences(self):
         p=ConfigDialog()
         #p.exec_()
@@ -589,27 +587,27 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Copy")
         self.callCommand('COPY')
         return
-        
+
     def _onMove(self):
         self.statusBar().showMessage("CMD:Move")
         self.callCommand('MOVE')
         return
-        
+
     def _onDelete(self):
         self.statusBar().showMessage("CMD:Delete")
         self.callCommand('DELETE')
         self.statusBar().showMessage("Ready")
         return
-    def _onTrim(self):    
+    def _onTrim(self):
         self.statusBar().showMessage("CMD:Trim")
         self.callCommand('TRIM')
         self.statusBar().showMessage("Ready")
-        return       
+        return
     def _onMirror(self):
         self.statusBar().showMessage("CMD:Mirror")
         self.callCommand('MIRROR')
         return
-        
+
     def _onRotate(self):
         self.statusBar().showMessage("CMD:Rotate")
         self.callCommand('ROTATE')
@@ -619,11 +617,11 @@ class CadWindowMdi(QtGui.QMainWindow):
 
     def _onFit(self):
         self.view.fit()
-        
+
     def _onZoomWindow(self):
         self.statusBar().showMessage("CMD:ZoomWindow")
         self.scene._cmdZoomWindow=True
-    
+
     def _onCenterItem(self):
         self.view.centerOnSelection()
 
@@ -650,7 +648,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             elif action.command=="snaptan":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["TANGENT"])
             elif action.command=="snapqua":
-                self.scene.setActiveSnap(SNAP_POINT_ARRAY["QUADRANT"]) 
+                self.scene.setActiveSnap(SNAP_POINT_ARRAY["QUADRANT"])
             elif action.command=="snap00":
                 self.scene.setActiveSnap(SNAP_POINT_ARRAY["ORIG"])
             elif action.command=="snapint":
@@ -670,7 +668,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         return
 
 #-----------------------ON COMMANDS in ABOUT
-        
+
     def _onAbout(self):
         QtGui.QMessageBox.about(self, "About PythonCAD",
                 """<b>PythonCAD</b> is a CAD package written, surprisingly enough, in Python using the PyQt4 interface.<p>
@@ -684,7 +682,7 @@ class CadWindowMdi(QtGui.QMainWindow):
                    <a href="http://pythoncad.sourceforge.net/dokuwiki/doku.php">PythonCAD Wiki Page</a>
                    """)
         return
-                
+
 # ########################################## CALL COMMAND
 # ##########################################################
 
@@ -705,7 +703,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         except EntityMissing:
             self.scene.cancelCommand()
             self.critical("You need to have an active document to perform this command")
-        #checks if scene has selected items and launches them directly to the ICommand 
+        #checks if scene has selected items and launches them directly to the ICommand
         #if it's first prompt it's "give me entities"
         if len(self.scene.selectedItems())>0:
             print 'selezioneesiste'
@@ -716,17 +714,17 @@ class CadWindowMdi(QtGui.QMainWindow):
                                                     force=None)
             else:
                 self.scene.clearSelection()
-    
+
     def getCommand(self, name):
         """
             get an interface command
         """
         if INTERFACE_COMMAND.has_key(name):
-            return INTERFACE_COMMAND[name](self.mdiArea.activeSubWindow().document, 
+            return INTERFACE_COMMAND[name](self.mdiArea.activeSubWindow().document,
                                            self.mdiArea.activeSubWindow())
         else:
             self.critical("Wrong command")
-        
+
     def updateInput(self, message):
             self.__cmd_intf.commandLine.printMsg(str(message))
             self.statusBar().showMessage(str(message))
@@ -753,10 +751,10 @@ class CadWindowMdi(QtGui.QMainWindow):
             try:
                 self.resize(settings.value("size")) # self.resize(settings.value("size", QtCore.QSize(800, 600)).toSize())
                 self.move(settings.value("pos"))   # self.move(settings.value("pos", QtCore.QPoint(400, 300)).toPoint())+
-            except:    
+            except:
                 print "Warning: unable to set the previews values"
         settings.endGroup()
-        
+
         settings.beginGroup("CadWindowState")
         try:
             self.restoreState(settings.value('State'))
@@ -766,19 +764,19 @@ class CadWindowMdi(QtGui.QMainWindow):
 
     def writeSettings(self):
         settings = QtCore.QSettings('PythonCAD', 'MDI Settings')
-        
+
         settings.beginGroup("CadWindow")
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
         settings.setValue('maximized', self.isMaximized())
         settings.endGroup()
-        
+
         settings.beginGroup("CadWindowState")
-        settings.setValue("state", self.saveState()) 
+        settings.setValue("state", self.saveState())
         settings.endGroup()
-        
+
 # ########################################## END SETTINGS STORAGE
-# ########################################################## 
+# ##########################################################
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
@@ -791,7 +789,7 @@ class CadWindowMdi(QtGui.QMainWindow):
             QtGui.qApp.setLayoutDirection(QtCore.Qt.RightToLeft)
         else:
             QtGui.qApp.setLayoutDirection(QtCore.Qt.LeftToRight)
-        
+
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
@@ -815,9 +813,9 @@ class CadWindowMdi(QtGui.QMainWindow):
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Escape:
             self.resetCommand()
-            
+
         super(CadWindowMdi, self).keyPressEvent(event)
-        
+
 # ########################################## SYMPY INTEGRATION
 # ##########################################################
 
@@ -829,19 +827,19 @@ class CadWindowMdi(QtGui.QMainWindow):
             self._onNewDrawing()
         for obj in objects:
             self.plotSympyEntity(obj)
-    
+
     def plotSympyEntity(self, sympyEntity):
         """
             plot the sympy entity
         """
         self.mdiArea.currentSubWindow().document.saveSympyEnt(sympyEntity)
-    
+
     def createSympyDocument(self):
         """
             create a new document to be used by sympy plugin
         """
         self._onNewDrawing()
-        
+
     def getSympyObject(self):
         """
             get an array of sympy object
@@ -849,11 +847,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         #if self.Application.ActiveDocument==None:
         if self.mdiArea.currentSubWindow()==None:
             raise StructuralError("unable to get the active document")
-        
+
         ents=self.mdiArea.currentSubWindow().scene.getAllBaseEntity()
         return [ents[ent].geoItem.getSympy() for ent in ents if ent!=None]
-                
-                
+
+
 # ##########################################  CLASS STATUSBUTTON
 # ##########################################################
 # ##########################################################
@@ -871,9 +869,9 @@ class statusButton(QtGui.QToolButton):
     def getIcon(self, fileName):
         iconpath=os.path.join(os.getcwd(), 'icons', fileName)
         self.setIcon(QtGui.QIcon(iconpath))
-    
+
     def mousePressEvent(self, event):
         if event.button()==QtCore.Qt.LeftButton:
             self.click()
         elif event.button()==QtCore.Qt.RightButton:
-            self.showMenu()       
+            self.showMenu()
