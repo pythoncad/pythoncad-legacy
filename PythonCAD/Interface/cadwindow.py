@@ -381,11 +381,14 @@ class CadWindowMdi(QtGui.QMainWindow):
 
         #Tools
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Tools, 'info2p', 'Info Two Points', self._onInfo2p)
-        # window
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self.mdiArea.tileSubWindows)
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self.mdiArea.cascadeSubWindows)
+
+        #--menu: Windows
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'tile', '&Tile', self._onTile)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'cascade', '&Cascade', self._onCascade)
+
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'next', 'Ne&xt', self.mdiArea.activateNextSubWindow)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Windows, 'previous', 'Pre&vious', self.mdiArea.activatePreviousSubWindow)
+
         # Help
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Help, 'about', '&About PythonCAD', self._onAbout)
         return
@@ -666,6 +669,65 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.statusBar().showMessage("CMD:Info2Points")
         self.callCommand('DISTANCE2POINT', 'document')
         return
+
+
+#-- - - -=- - - - -=on commands in menu: Windows
+    def _onTile(self):   #<-(by: S-PM 110524)
+        "on Tile command"    #standard  "Documentation String"
+
+        self.mdiArea.tileSubWindows()   #--call "tile" method
+        return
+    #_onTile>
+
+
+    def _onCascade(self):   #<-(by: S-PM 110524)
+        "on Cascade command"    #standard  "Documentation String"
+
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+#                                                                       Prologue
+        def cascadeFit(self):  #<-"Fit" function definition
+            #--Register
+            rgL=[]      #List
+            rgN=0       #Integer
+            rgGp=None   #General purpose
+
+            #--Action
+            rgL=self.mdiArea.subWindowList()    #--get child-List,
+            rgN=len(rgL)                        #  and child-count
+            if (rgN<1):  return(rgN)    #no sub-window: exit
+
+            rgW = self.mdiArea.width()  #--get actually available room
+            rgH = self.mdiArea.height()
+
+            #--compute cascade offset dimensions
+            if (rgN<2):     #<-less than 2 sub-windows: no offset
+                rgCx=0
+                rgCy=0
+            elif (rgN>1):   #<-more than 1 sub-window: get offset
+                rgCx=rgL[1].x()
+                rgCy=rgL[1].y()
+            #>
+            rgCx=rgCx*(rgN-1)   #compute total cascade offset
+            rgCy=rgCy*(rgN-1)
+
+            #<-loop resize all sub-windows, so to fit them into available room
+            for rgGp in rgL:
+                rgGp.resize(rgW-rgCx, rgH-rgCy)
+            #>
+
+            return(rgN)
+        #cascadeFit>
+
+#-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
+#                                                                       Action
+        #--call "cascade" method, as-is (rudimentary)
+        self.mdiArea.cascadeSubWindows()
+
+        rgN=cascadeFit(self)    #"fit" all sub-windows into available room
+        return
+    #_onCascade>
+
+
 
 #-----------------------ON COMMANDS in ABOUT
 
