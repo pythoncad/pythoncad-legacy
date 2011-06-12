@@ -40,9 +40,9 @@ class Polyline(GeometricalEntity):
     def __init__(self,kw):
         """
             Initialize a Polyline object.
-            kw['POLYLINE_0'] must be a point 
-            kw['POLYLINE_..'] must be a point 
-            kw['POLYLINE_..n'] must be a point 
+            kw['POLYLINE_0'] must be a point
+            kw['POLYLINE_..'] must be a point
+            kw['POLYLINE_..n'] must be a point
         """
         if len(kw)<2:
             raise ValueError, "Invalid number of imput value "
@@ -53,10 +53,10 @@ class Polyline(GeometricalEntity):
     #    return len(self.points)
 
     def __str__(self):
-        return "Polyline" 
+        return "Polyline"
     @property
     def info(self):
-        return "Polyline" 
+        return "Polyline"
     def __eq__(self, obj):
         """
             Compare two Polyline objects for equality.
@@ -140,10 +140,10 @@ class Polyline(GeometricalEntity):
             the list of points defining the Polyline. The point will be
             removed only if the polyline will still have at least two Points.
         """
-    
+
         if len(self) > 2:
             del self[name]
-            
+
     def getBounds(self):
         """
             Return the bounding rectangle around a Polyline.
@@ -166,7 +166,7 @@ class Polyline(GeometricalEntity):
             if _pymax is None or _py > _pymax:
                 _pymax = _py
         return _pxmin, _pymin, _pxmax, _pymax
-    
+
     def points(self):
         """
             return a list of point
@@ -189,17 +189,17 @@ class Polyline(GeometricalEntity):
             _cpts[name]=_pt.clone()
             i+=1
         return Polyline(_cpts)
-    
+
     def getSympySegments(self):
         """
             return an array of sympy Segment
         """
         out=[]
-        
+
         for s in self.getSegments():
             out.append(s.getSympy())
         return out
-        
+
     def getSegments(self):
         """
             return an array of segments that identifie the polyline
@@ -207,7 +207,7 @@ class Polyline(GeometricalEntity):
         """
         tempPoint=None
         exitArray=[]
-        for p in self.points:
+        for p in self.points():
             if tempPoint:
                 constr={"SEGMENT_0":tempPoint, "SEGMENT_1":p}
                 exitArray.append(Segment(constr))
@@ -215,10 +215,10 @@ class Polyline(GeometricalEntity):
         else:
             return exitArray
         return []
-    
+
     def mirror(self, mirrorRef):
         """
             perform the mirror
-        """  
-        for k in self:        
-            self[k].mirror(mirrorRef) 
+        """
+        for k in self:
+            self[k].mirror(mirrorRef)

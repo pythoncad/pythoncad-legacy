@@ -123,7 +123,9 @@ def _sympy_intersection(ipts, obj1, obj2):
     sympySegment=obj1.getSympy()
     sympyObj2=obj2.getSympy()
     #print "try intersect ", sympySegment, sympyObj2
-    for p in sIntersection(sympySegment, sympyObj2 ):
+    iObjs=sIntersection(sympySegment, sympyObj2 )
+    #print "iObjs", iObjs
+    for p in iObjs:
         if isinstance(p, sPoint):
             ipts.append((float(p[0]),float(p[1])))
     #print "Intersection",ipts
@@ -134,7 +136,7 @@ def _pol_obj_intersection(ipts, pol, obj):
     for seg in pol.getSegments():
         tempIpts=[]
         _sympy_intersection(tempipts,  seg,  obj)
-        if len(tempIpts)>0: 
+        if len(tempIpts)>0:
             ipts=tempIpts
             break
 
@@ -148,7 +150,7 @@ def _pol_pol_intersection(ipts, pol1, pol2):
                 for seg2 in pol2.getSegments():
                     tempIpts=[]
                     _sympy_intersection(tempipts,  seg1,  seg2)
-                    if len(tempIpts)>0: 
+                    if len(tempIpts)>0:
                         ipts=tempIpts
                         break
 
@@ -164,11 +166,14 @@ def find_intersections(obja, objb):
             if isinstance(objb,Polyline):
                 sp=obja
                 obja=objb
-                objb=a
+                objb=sp
             _pol_obj_intersection(_ipts, obja, objb)
-                
+
     else:
-            _sympy_intersection(_ipts, obja, objb)
+            try:
+                _sympy_intersection(_ipts, obja, objb)
+            except:
+                print "problem with sympy intersection"
     return _ipts
 
 def findSegmentExtendedIntersection(obja, objb):
@@ -192,4 +197,4 @@ def findSegmentExtendedIntersectionPoint(obja, objb):
         Return a [Point,Point,..]
     """
     return [Point(x, y) for x, y in findSegmentExtendedIntersection(obja, objb)]
-    
+

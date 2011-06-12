@@ -25,7 +25,7 @@ if sys.version_info <(2, 7):
     import sip
     sip.setapi('QString', 2)
     sip.setapi('QVariant', 2)
-    
+
 import math
 from PyQt4  import QtCore, QtGui
 
@@ -52,14 +52,14 @@ class BaseEntity(QtGui.QGraphicsItem):
         #set line style
         penStyle=self.style.getStyleProp("entity_linetype")
         pen=QtGui.QPen(color)
-        #TODO: Actually disable because the line with is not very nice 
+        #TODO: Actually disable because the line with is not very nice
         #in the drawing ..
-        #pen.setWidthF(float(lineWith)) 
+        #pen.setWidthF(float(lineWith))
         pen.setStyle(int(penStyle))
         self.pen=pen
-        
+
         return
-    
+
     def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromEntity=None):
         """
             compute the nearest point and return a qtPoint
@@ -78,10 +78,10 @@ class BaseEntity(QtGui.QGraphicsItem):
         if ePoint==None:
             return qtPointEvent
         return QtCore.QPointF(ePoint.x, ePoint.y*-1.0)
-        
+
     @property
     def entity(self):
-        return self.__entity 
+        return self.__entity
     @property
     def ID(self):
         return self.__entity.getId()
@@ -91,23 +91,23 @@ class BaseEntity(QtGui.QGraphicsItem):
     @property
     def style(self):
         return self.__entity.getInnerStyle()
-    
+
     @property
     def toolTipMessage(self):
         toolTipMessage=self.geoItem.info
         return toolTipMessage
-    
-    def updateSelected(self):    
+
+    def updateSelected(self):
         self.setColor()
         self.update(self.boundingRect())
         return
-        
+
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemSelectedChange:
             #self.setColor(value==1)
             self.update(self.boundingRect())
         return QtGui.QGraphicsItem.itemChange(self, change, value)
-        
+
     def setColor(self, forceHilight=None):
         if forceHilight==None:
             if self.isSelected() or forceHilight:
@@ -119,50 +119,50 @@ class BaseEntity(QtGui.QGraphicsItem):
                 r, g, b=PYTHONCAD_HIGLITGT_COLOR
             else:
                 r, g, b=self.style.getStyleProp("entity_color")
-        color = QtGui.QColor.fromRgb(r, g, b)   
+        color = QtGui.QColor.fromRgb(r, g, b)
         self.pen.setColor(color)
         return
-        
+
     def setHiglight(self):
         r, g, b=PYTHONCAD_HIGLITGT_COLOR
         color = QtGui.QColor.fromRgb(r, g, b)
         self.pen.setColor(color)
         return
-    
+
     def hoverEnterEvent(self, event):
         self.setHiglight()
         super(BaseEntity, self).hoverEnterEvent(event)
         return
-        
+
     def hoverLeaveEvent(self, event):
         self.setColor()
         #self.update(self.boundingRect())
         super(BaseEntity, self).hoverLeaveEvent(event)
         return
-        
+
     def drawGeometry(self, painter, option, widget):
         """
              this method must be inerit from qtPycadObject
         """
         pass
-        
+
     def drawShape(self, painterPath):
         """
-            overloading of the shape method 
+            overloading of the shape method
         """
         pass
-        
-    def shape(self):            
+
+    def shape(self):
         """
-            overloading of the shape method 
+            overloading of the shape method
         """
         painterStrock=QtGui.QPainterPathStroker()
         path=QtGui.QPainterPath()
         self.drawShape(path)
-        painterStrock.setWidth(self.pen.widthF()*self.shapeSize)
+        painterStrock.setWidth(self.shapeSize)
         path1=painterStrock.createStroke(path)
         return path1
-        
+
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
@@ -172,16 +172,16 @@ class BaseEntity(QtGui.QGraphicsItem):
             r, g, b= PYTHONCAD_COLOR["cyan"]
             painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
             painter.drawPath(self.shape())
-        
+
         if self.showBBox:
             r, g, b= PYTHONCAD_COLOR["darkblue"]
             painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
             painter.drawRect(self.boundingRect())
-            
+
         painter.setPen(self.pen)
         self.drawGeometry(painter,option,widget)
-        return 
-        
+        return
+
     def getDistance(self, qtPointF_1, qtPointF_2):
         """
             calculate the distance betwing the two line
@@ -189,13 +189,13 @@ class BaseEntity(QtGui.QGraphicsItem):
         x=abs(qtPointF_1.x()-qtPointF_2.x())
         y=abs(qtPointF_1.y()- qtPointF_2.y())
         return math.sqrt(x**2+y**2)
-        
+
     def boundingRect(self):
         """
             overloading of the qt bounding rectangle
         """
         return self.shape().boundingRect()
-   
-        
-        
-        
+
+
+
+

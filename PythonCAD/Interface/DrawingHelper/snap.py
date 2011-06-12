@@ -194,10 +194,12 @@ class SnapPoint():
             startTime=time.clock()
             entityList=self.__scene.collidingItems(entity)
             endTime=time.clock()-startTime
-            print "getIntersection, collidingItems in %s"%str(endTime)
-            startTime=time.clock()
+            #print "getIntersection, collidingItems in %s"%str(endTime)
+            #startTime=time.clock()
             for ent in entityList:
                 if isinstance(ent, BaseEntity):
+                    #print "geoitem", ent.geoItem
+                    #print "geoEntityFrom", geoEntityFrom
                     intPoint=find_intersections(ent.geoItem,geoEntityFrom)
                     for tp in intPoint:
                         iPoint=Point(tp[0], tp[1])
@@ -210,7 +212,7 @@ class SnapPoint():
                                 distance=spoolDist
                                 returnVal=iPoint
             endTime=time.clock()-startTime
-            print "find intersection in %s"%str(endTime)
+            #print "find intersection in %s"%str(endTime)
         return returnVal
 
     def getSnapQuadrantPoint(self, entity, point):

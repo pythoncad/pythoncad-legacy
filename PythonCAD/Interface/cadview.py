@@ -4,21 +4,21 @@ from PyQt4 import QtCore, QtGui
 
 from Interface.Entity.base import *
 
-class CadView(QtGui.QGraphicsView):   
+class CadView(QtGui.QGraphicsView):
     def __init__(self, scene, parent=None):
         super(CadView, self).__init__(scene, parent)
         self.scaleFactor=1
         self.controlPress=False
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
-        self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse) 
-        
+        self.setResizeAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
+
         #handle mouse midbutton pan and zoom
         scene.fireZoomFit+=self.fit
         scene.firePan+=self.Pan
         self.firstPanPoint=QtCore.QPointF()
-    
+
     def Pan(self, panActive, eventPoint):
-        
+
         if panActive==True:
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
             self.firstPanPoint=eventPoint
@@ -33,7 +33,7 @@ class CadView(QtGui.QGraphicsView):
                 newC=cOnScene+vector
                 self.centerOn(newC)
 
-    
+
     def wheelEvent(self, event):
         #get the center of the view in scene coordinates
         c=QtCore.QPoint((self.width()/2.0)-10, (self.height()/2.0)-10)
@@ -44,8 +44,9 @@ class CadView(QtGui.QGraphicsView):
         #old command
         self.scaleFactor=math.pow(2.0,event.delta() / 240.0)
         self.scaleView(self.scaleFactor)
-#        self.updateShape()  <<<prova
-        
+#       self.updateShape()  <<<prova
+
+
         #get the modified position due to occurred zoom
         newPOnScene=self.mapToScene(pOnView)
         #get the vector to move the modified position in the old position
@@ -57,20 +58,20 @@ class CadView(QtGui.QGraphicsView):
         #self.scaleView(self.scaleFactor)
         self.updateShape()   # <<<prova
 
-        
+
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Control:
             self.controlPress=True
             self.scene().isInPan=True
             self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
         super(CadView, self).keyPressEvent(event)
-    
+
     def keyReleaseEvent(self, event):
         self.controlPress=False
         self.scene().isInPan=False
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         super(CadView, self).keyReleaseEvent(event)
-    
+
     def fit(self):
         """
             fit all the item in the view
@@ -83,10 +84,10 @@ class CadView(QtGui.QGraphicsView):
             else:
                 qRect=qRect.unite(bound)
         if qRect:
-            self.zoomWindows(qRect) 
+            self.zoomWindows(qRect)
             self.updateShape()
-            
-    def centerOnSelection(self):        
+
+    def centerOnSelection(self):
         """
             center the view on selected item
         """
@@ -94,8 +95,8 @@ class CadView(QtGui.QGraphicsView):
         #more info at :http://www.riverbankcomputing.co.uk/static/Docs/PyQt4/html/qgraphicsview.html#ViewportAnchor-enum
         for item in self.scene().selectedItems():
             self.centerOn(item)
-            return 
-            
+            return
+
     def zoomWindows(self, qRect):
         """
             perform a windows zoom
@@ -108,7 +109,7 @@ class CadView(QtGui.QGraphicsView):
         self.fitInView(qRect,1) #KeepAspectRatioByExpanding
         self.updateShape()
 
-            
+
     def scaleView(self, factor):
         self.scale(factor, factor)
 
