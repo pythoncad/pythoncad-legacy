@@ -34,7 +34,7 @@ from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR
 from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
-    shapeSize=10
+    shapeSize=6
     showShape=False #This Flag is used for debughing porpouse
     showBBox=False  #This Flag is used for debughing porpouse
     def __init__(self, entity):

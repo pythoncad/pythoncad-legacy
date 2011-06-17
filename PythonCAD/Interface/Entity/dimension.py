@@ -31,11 +31,12 @@ class Dimension(BaseEntity):
     def __init__(self, entity):
         super(Dimension, self).__init__(entity)
         self.updateInfo()
-        self.location=self.calculateTextPoint()       
-        self.font=QtGui.QFont() # This have to be derived from the geoent as son is implemented       return
+        self.location=self.calculateTextPoint()
+        stileFont=self.style.getStyleProp("text_font")
+        self.font=QtGui.QFont(stileFont) # This have to be derived from the geoent as son is implemented       return
         #self.setPos(QtCore.QPointF(self.firstPoint.x, self.firstPoint.y) )
-        #self.rotate(self.angle)        
-        
+        #self.rotate(self.angle)
+
     def updateInfo(self):
         geoEnt=self.geoItem
         self.firstPoint=geoEnt.firstPoint
@@ -45,7 +46,7 @@ class Dimension(BaseEntity):
         self.text=str(geoEnt.distance)  # TODO : take care of style in case of
                                         #        additional info at the text
         self.segments=self.getDimensioLines()
-        
+
     def calculateTextPoint(self):       # TODO : test if the position is ok
         """
             calculate the text position
@@ -57,14 +58,14 @@ class Dimension(BaseEntity):
         vm=v.mag()
         vm.mult(v.norm/2)
         pe=p1+vm.point
-        return QtCore.QPointF(pe.x, pe.y) 
-        
-    
+        return QtCore.QPointF(pe.x, pe.y)
+
+
     def getDimensioLines(self):
         """
             compute all the segment needed for the dimension
         """
-        p1p2v=Vector(self.firstPoint, self.secondPoint) 
+        p1p2v=Vector(self.firstPoint, self.secondPoint)
         v=Vector(self.firstPoint,self.thirdPoint)
         pp=self.firstPoint+p1p2v.map(v.point).point
         p3ppv=Vector(pp, self.thirdPoint)
@@ -78,20 +79,20 @@ class Dimension(BaseEntity):
         sp1=QtCore.QPointF(self.secondPoint.x, self.secondPoint.y*-1.0)
         #
         return [(fp, sp), (fp, fp1), (sp, sp1)]
-        
-    def drawShape(self, painterPath):    
+
+    def drawShape(self, painterPath):
         """
-            overloading of the shape method 
+            overloading of the shape method
         """
-        painterPath.addText(self.location, self.font, self.text) 
+        painterPath.addText(self.location, self.font, self.text)
         for p1, p2 in self.segments:
             painterPath.moveTo(p1)
             painterPath.lineTo(p2)
         return
-        
+
     def drawGeometry(self, painter, option, widget):
-        #Create Text
+        # Create Text
         painter.drawText(self.location,  self.text)
         for p1, p2 in self.segments:
             painter.drawLine(p1, p2)
-        
+

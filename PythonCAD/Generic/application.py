@@ -43,7 +43,7 @@ class Application(object):
         pyUserDir=os.path.join(userDirectory, "PythonCAD")
         if not os.path.exists(pyUserDir):
             os.makedirs(pyUserDir)
-        baseDbName=os.path.join(pyUserDir, 'PythonCAD_Local.pdr')    
+        baseDbName=os.path.join(pyUserDir, 'PythonCAD_Local.pdr')
         #--
         self.kernel=Document(baseDbName)
         self.__applicationCommand=APPLICATION_COMMAND
@@ -62,9 +62,9 @@ class Application(object):
             self.__ActiveDocument=None
         # Fire the Application inizialization
         self.startUpEvent(self)
-            
+
     @property
-    def getRecentFiles(self):    
+    def getRecentFiles(self):
         """
             read from application settings the recent files
         """
@@ -83,7 +83,7 @@ class Application(object):
             self.updateApplicationSetting(objSettings)
         return []
 
-    
+
     def addRecentFiles(self,fPath):
 #-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
 #                                                                   S-PM 110427
@@ -146,17 +146,17 @@ class Application(object):
             raise EntityMissing("Miss Active document in the application")
         if self.__applicationCommand.has_key(commandType):
             cmd=self.__applicationCommand[commandType]
-            cmdIstance=cmd(self.__ActiveDocument) 
+            cmdIstance=cmd(self.__ActiveDocument)
             return cmdIstance
         else:
-            raise PyCadWrongCommand("") 
+            raise PyCadWrongCommand("")
 
     def getCommandList(self):
         """
             get the list of all the command
         """
         return self.__applicationCommand.keys()
-    
+
     def newDocument(self, fileName=None):
         """
             Create a new document empty document in the application
@@ -168,10 +168,10 @@ class Application(object):
         self.ActiveDocument=self.__Documents[fileName]              #   Set Active the document
         self.addRecentFiles(fileName)
         return self.__Documents[fileName]
-        
+
     def openDocument(self, fileName):
         """
-            open a saved document 
+            open a saved document
         """
         self.beforeOpenDocumentEvent(self, fileName)
         if not self.__Documents.has_key(fileName):
@@ -180,7 +180,7 @@ class Application(object):
         self.afterOpenDocumentEvent(self, self.__Documents[fileName])   #   Fire the open document event
         self.ActiveDocument=self.__Documents[fileName]                  #   Set Active the document
         return self.__Documents[fileName]
-    
+
     def saveAs(self, newFileName):
         """
             seve the current document to the new position
@@ -196,7 +196,7 @@ class Application(object):
                 shutil.copy2(oldFileName,newFileName)
                 return self.openDocument(newFileName)
         raise EntityMissing, "No document open in the application unable to perform the saveAs comand"
-    
+
 
     def closeDocument(self,dFile):
 #-- - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=- - - - -=
@@ -213,6 +213,7 @@ class Application(object):
         self.beforeCloseDocumentEvent(self,dFile)   #initial house-keeping
 
         if self.__Documents.has_key(dFile): #<-file to Close is there:
+            self.__Documents[dFile].close()
             del(self.__Documents[dFile])    #delete from dictionary
             #--check dictionary for possible next active document
             for keyDoc in self.__Documents: #<-dictionary is not empty:
@@ -236,7 +237,7 @@ class Application(object):
         """
         return self.__ActiveDocument
     @ActiveDocument.setter
-    def ActiveDocument(self, document):    
+    def ActiveDocument(self, document):
         """
             Set the document to active
         """
@@ -247,11 +248,11 @@ class Application(object):
                 raise EntityMissing("Unable to set active the document %s"%str(document.dbPath))
         else:
             self.__ActiveDocument=document
-        self.activeteDocumentEvent(self, self.__ActiveDocument)     
+        self.activeteDocumentEvent(self, self.__ActiveDocument)
     def getDocuments(self):
         """
             get the Docuemnts Collection
-        """    
+        """
         return self.__Documents
 
     #
@@ -262,7 +263,7 @@ class Application(object):
             Get the application styles
         """
         return self.kernel.getDBStyles()
-    
+
     def getApplicationStyle(self, id=None, name=None):
         """
             retrive a style from the application
@@ -274,7 +275,7 @@ class Application(object):
             add style to the application
         """
         self.kernel.saveEntity(style)
-    
+
     def deleteApplicationStyle(self, styleID):
         """
             delete the application style
@@ -289,14 +290,14 @@ class Application(object):
             return the setting object from the application
         """
         return self.kernel.getDbSettingsObject()
-    
+
     def updateApplicationSetting(self, settingObj):
         """
             update the application settingObj
         """
         #apObj=self.kernel.getDbSettingsObject()
         #apObj.setConstructionElement(settingObj)
-        self.kernel.saveEntity(settingObj)  
+        self.kernel.saveEntity(settingObj)
 
 if __name__=='__main__':
     import application_test  as test
@@ -307,6 +308,6 @@ if __name__=='__main__':
     #print len(segments)
     #test.TestSympy()
     test.TestIntersection()
- 
-    
-    
+
+
+
