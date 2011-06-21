@@ -21,6 +21,14 @@
 #
 # This  module Provide custom exception for the db module and kernel
 #
+class NoDefaultValue(Exception):
+    """
+        no default value provided by the command
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 class NotImplementedError(Exception):
     """
@@ -30,7 +38,7 @@ class NotImplementedError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-        
+
 class DeprecatedError(Exception):
     """
         This means that the followeing method is no longer supported
@@ -39,10 +47,10 @@ class DeprecatedError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-        
+
 class StructuralError(Exception):
     """
-        Very bad error that menans that the kernel has made somthing very bad 
+        Very bad error that menans that the kernel has made somthing very bad
     """
     def __init__(self, value):
         self.value = value
@@ -51,7 +59,7 @@ class StructuralError(Exception):
 
 class EmptyFile(Exception):
     """
-        class for managin empty file 
+        class for managin empty file
     """
     def __init__(self, value):
         self.value = value
@@ -60,12 +68,12 @@ class EmptyFile(Exception):
 
 class StyleUndefinedAttribute(Exception):
     """
-        Class for managing styleAttribute problems 
+        Class for managing styleAttribute problems
     """
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)  
+        return repr(self.value)
 
 class PythonCadWarning(Exception):
     """
@@ -74,8 +82,8 @@ class PythonCadWarning(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value) 
-        
+        return repr(self.value)
+
 class EmptyDbSelect(Exception):
     """
         This exception is used for null return of
@@ -94,8 +102,8 @@ class EntityMissing(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)    
-    
+        return repr(self.value)
+
 class UndoDbExc(Exception):
     """
         This exception is used UndoDb class to manage is errors
@@ -104,7 +112,7 @@ class UndoDbExc(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-    
+
 class EntDb(Exception):
     """
         Generic error on entity db creatioin
@@ -125,7 +133,7 @@ class DxfReport(Exception):
 
 class DxfUnsupportedFormat(Exception):
     """
-        Unsupported format 
+        Unsupported format
     """
     def __init__(self, value):
         self.value = value
@@ -142,7 +150,7 @@ class PyCadWrongCommand(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value) 
+        return repr(self.value)
 
 class PyCadWrongImputData(Exception):
     """
@@ -151,8 +159,8 @@ class PyCadWrongImputData(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value) 
-        
+        return repr(self.value)
+
 #********************************
 #       imput command exception
 #********************************
@@ -160,14 +168,14 @@ class CommandException(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)   
+        return repr(self.value)
 
 class ExcPoint(CommandException):
     """
         when this exception is trown it means that the command need a point
     """
     pass
-    
+
 class ExcLenght(CommandException):
     """
         when this exception is trown it means that the command need a lenght
@@ -191,32 +199,32 @@ class ExcInt(CommandException):
         when this exception is trown it means that the command need an Integer
     """
     pass
-    
+
 class ExcBool(CommandException):
     """
         when this exception is trown it means that the command need an Boolean
     """
     pass
-    
+
 class ExcEntity(CommandException):
     """
         when this exception is trown it means that the command need an dbEnity
     """
     pass
 
-class ExcMultiEntity(CommandException): 
+class ExcMultiEntity(CommandException):
     """
         when this exception is trown it means that the command need an array of id
     """
-    pass  
-    
+    pass
+
 class ExcEntityPoint(CommandException):
     """
         when this exception is trown it means that the command need an a string
         like id@x,y
     """
     pass
-    
+
 class ExcDicTuple(CommandException):
     """
         require a dictionary of tuple

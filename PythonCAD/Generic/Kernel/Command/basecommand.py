@@ -39,8 +39,10 @@ class BaseCommand(object):
         self.index=0
         self.document=document
         self.automaticApply=True
+
     def __iter__(self):
         return self
+
     def __setitem__(self, key, value):
         """
             set the value of the command
@@ -83,6 +85,7 @@ class BaseCommand(object):
             get the index of the insert value in the command
         """
         return len(self.value)
+
     def next(self):
         """
             go on with the iteration
@@ -107,7 +110,16 @@ class BaseCommand(object):
         if len(self.message)>self.index:
             return self.message[self.index]
         else:
-            return "Press enter to ececute the command"
+            return "Press enter to execute the command"
+
+    def performDefaultValue(self):
+        """
+            perform the default value
+        """
+        if self.activeDefaultValue()!=None:
+            self.value.append(self.activeDefaultValue())
+        else:
+            raise NoDefaultValue("No default value is possible for the active command")
 
     def activeDefaultValue(self):
         """
@@ -164,7 +176,7 @@ class BaseCommand(object):
         try:
             raise self.activeException()(None)
         except ExcPoint:
-            exitValue=point
+            exitValue=decodePoint(point)
         except ExcEntity:
             if entitys:
                 exitValue=str(entitys[0].ID)

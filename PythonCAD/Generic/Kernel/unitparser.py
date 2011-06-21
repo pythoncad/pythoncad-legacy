@@ -20,17 +20,33 @@
 #
 # This module provide a parser for the imput interface
 #
-from sympy.physics import units as u
+from sympy.physics                  import units as u
 
 def decodePoint(value, previusPoint=None):
     """
-        this static method decode an imput and return a point(mm,mm)
+        this static method decode an inputs and return a point(mm,mm)
+        leng@@angle
     """
-    value=str(value).lower()
-    from Kernel.GeoEntity.point import Point
-    x, y=str(value).split(',')
-    return Point(convertLengh(x), convertLengh(y))
-    
+    if str(value).find('@@')>=1:
+        if previusPoint!=None:
+            previusPoint=Point(0.0, 0.0)
+        leng, ang=str(value).split('@@')
+        leng=convertLengh(leng)
+        ang=convertAngle(ang)
+        x=math.cos(ang)*leng
+        y=math.sin(ang)*leng
+        newPoint=Point(x, Y)
+        return newPoint + previusPoint
+    else:
+        from Kernel.GeoEntity.point import Point
+        if isinstance(value, Point):
+            return value
+        else:
+            value=str(value).lower()
+
+            x, y=str(value).split(',')
+            return Point(convertLengh(x), convertLengh(y))
+
 def convertAngle(value):
     """
         convert a angle in simpy units syntax into a rad float
@@ -53,7 +69,7 @@ def sympyConvertAngle(value):
     exec(value)
     retVal=retVal/u.rad
     return float(retVal)
-    
+
 def convertLengh(value):
     """
         convert a lengh in simpy units syntax into a mm float
@@ -83,4 +99,4 @@ if __name__ == '__main__':
     print convertAngle('10')
     print convertAngle('90*u.deg')
     print sympyConvertAngle('10*u.rad+10*u.deg')
-    
+

@@ -22,7 +22,7 @@
 # system
 #
 # How it works:
-# 
+#
 #
 #
 #Qt Import
@@ -35,7 +35,7 @@ import math, string
 #
 from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT, ACTIVE_SNAP_LIST
 from Kernel.GeoEntity.point         import Point
-from Kernel.GeoUtil.geolib          import Vector   
+from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoUtil.intersection    import *
 from Kernel.pycadevent              import *
 from Kernel.exception               import *
@@ -50,13 +50,13 @@ from Interface.DrawingHelper.snap import *
 
 class ICommand(object):
     """
-        this class provide base command operation 
+        this class provide base command operation
     """
     #self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["LIST"]  # Define the active snap system
     drawPreview=False                   # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
     #restartCommandOption=False         # moved to Interface.cadinitsetting  > RESTART_COMMAND_OPTION
-    
+
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
         self.__previewItem=None
@@ -64,7 +64,7 @@ class ICommand(object):
             scene.addItem(self.__previewItem)   # Add preview item on creation
         self.__point=[]
         self.__entity=[]
-        self.__distance=[]  
+        self.__distance=[]
         self.__angle=[]
         self.__snap=[]
         self.__forceSnap=[]
@@ -92,10 +92,10 @@ class ICommand(object):
     @property
     def index(self):
         return self.__index
-  
+
     def restartCommand(self):
         """
-            reuse the command 
+            reuse the command
         """
         if self.kernelCommand!=None:
             self.kernelCommand.reset()
@@ -106,10 +106,10 @@ class ICommand(object):
         self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
-        
+
     def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None, correct=True):
         """
-            add value to a new slot of the command 
+            add value to a new slot of the command
         """
         #
         # Compute snap distance and position force
@@ -134,33 +134,35 @@ class ICommand(object):
             self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
             self.scene.fromPoint=snap
             if self.kernelCommand.activeException()==ExcPoint or self.kernelCommand.activeException()==ExcLenght:
-                self.scene.GuideHandler.place(snap.getx(), snap.gety())
+                if snap!=None:
+                    self.scene.GuideHandler.place(snap.getx(), snap.gety())
                 if self.scene.forceDirectionEnabled==True:
                     self.scene.GuideHandler.show()
         except:
-            print "Exceprion  ICommand.addMauseEvent "
+            print "Exceprion  ICommand.addMauseEvent"
             self.updateInput("msg")
-            self.updateInput(self.kernelCommand.activeMessage) 
+            self.updateInput(self.kernelCommand.activeMessage)
             self.scene.clearSelection()
             return
         self.__point.append(point)
         self.__entity.append(entity)
-        self.__distance.append(distance)      
+        self.__distance.append(distance)
         self.__angle.append(angle)
         self.__snap.append(snap)
         self.__forceSnap.append(force)
-        self.updatePreview()   
+        self.updatePreview()
         self.__index+=1
         try:
             self.kernelCommand.next()
         except StopIteration:
             self.applyCommand()
             return
-        self.updateInput(self.kernelCommand.activeMessage) 
+
+        self.updateInput(self.kernelCommand.activeMessage)
         if self.automaticApply and self.kernelCommand.automaticApply:
             if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
-        
+
         if self.kernelCommand.activeException()==ExcDicTuple:
             dialog=Property(parent =self.scene.parent(),  entity=entity)
             if dialog.changed:
@@ -169,16 +171,30 @@ class ICommand(object):
             else:
                 self.restartCommand()
 
-    def applyCommand(self):    
+    def applyDefault(self):
         """
-            apply the command 
+            apply the default value command
+        """
+        try:
+            self.kernelCommand.performDefaultValue()
+            self.kernelCommand.next()
+            self.updateInput(self.kernelCommand.activeMessage)
+        except NoDefaultValue:
+            return
+        except StopIteration:
+                self.applyCommand()
+                return
+
+    def applyCommand(self):
+        """
+            apply the command
         """
         self.scene.hideSnapMarks()
         try:
-            self.kernelCommand.applyCommand()    
+            self.kernelCommand.applyCommand()
             if RESTART_COMMAND_OPTION:
                 self.restartCommand()
-                self.updateInput(self.kernelCommand.activeMessage) 
+                self.updateInput(self.kernelCommand.activeMessage)
                 self.scene.clearSelection()
                 self.scene.fromPoint=None
                 self.scene.isGuided=None
@@ -186,14 +202,14 @@ class ICommand(object):
                 self.scene.GuideHandler.reset()
             else:
                 self.scene.cancelCommand()
-                self.updateInput("Ready") 
+                self.updateInput("Ready")
                 self=None
         except Exception as e:
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
         return
-    
+
     def getEntity(self, position):
         """
             get the entity nearest at the mouse position
@@ -246,9 +262,9 @@ class ICommand(object):
             except PyCadWrongImputData, msg:
                 print "Problem on ICommand.addTextEvent"
                 self.updateInput(msg)
-                self.updateInput(self.kernelCommand.activeMessage) 
-                return  
-    
+                self.updateInput(self.kernelCommand.activeMessage)
+                return
+
     def getDistance(self, point):
         """
             Get The distance from 2 points
@@ -259,14 +275,14 @@ class ICommand(object):
             return d
         else:
             return None
-        
+
     def calculateAngle(self, snap):
         """
             calculate the angle betwin the point clicked
         """
         if snap==None:
             return None
-            
+
         for snapPoint in self.__snap:
             if snapPoint!=None:
                 v=Vector(snapPoint,snap )
@@ -277,7 +293,7 @@ class ICommand(object):
     def decodeText(self, value):
         """
             encode the text given from the user
-        """       
+        """
         point=None
         distance=None
         entitys=None
@@ -296,31 +312,30 @@ class ICommand(object):
                     y=self.scene.fromPoint.gety()+float(y)
                     point=Point(x, y)
                     # implement here relative coordinates
-                elif value.find('<')>-1:
-                    pass
-                    #implement here polar coordinates
+                elif value.find('@@')>-1:
+                    text=value
                 else: # DISTANCE+ANGLE FROM SCENE set coordinate based on distance input and angle from mouse position on the scene
                     d=float(value)
 
                     pX=self.scene.mouseOnSceneX
                     pY=self.scene.mouseOnSceneY
-                    
+
                     if self.scene.forceDirection is not None:
                         pc=Point(pX, pY)
                         pc=self.correctPositionForcedDirection(pc, self.scene.forceDirection)
                         pX, pY=pc.getCoords()
-                        
+
                     #if frompoint is not none else exception
                     dx=pX-self.scene.fromPoint.getx()
                     dy=pY-self.scene.fromPoint.gety()
 
                     a=math.atan2(dy, dx)
-                        
+
                     x=self.scene.fromPoint.getx()+d*math.cos(a)
                     y=self.scene.fromPoint.gety()+d*math.sin(a)
-                            
+
                     point=Point(x, y)
-                        
+
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:
@@ -339,14 +354,14 @@ class ICommand(object):
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         return (point,entitys, distance,angle, text)
-        
+
     def getIdsString(self, value):
         """
             return the entity from a string value (id)
         """
         return self.scene.getEntFromId(value)
-        
-    def updatePreview(self):        
+
+    def updatePreview(self):
         """
             make update of the preview
         """
@@ -359,7 +374,7 @@ class ICommand(object):
             return the index clicked entity
         """
         return self.getDummyElement(self.__point, index)
-        
+
     def getEntityClick(self, index):
         """
             return the index clicked entity
@@ -371,28 +386,28 @@ class ICommand(object):
             return the index clicked entity
         """
         return self.getDummyElement(self.__distanceClick, index)
-        
+
     def getSnapClick(self, index):
         """
             return the index clicked entity
         """
         return self.getDummyElement(self.__snap, index)
-        
+
     def getForceSnap(self, index):
         """
             return the index clicked entity
         """
         return self.getDummyElement(self.__forceSnap, index)
-    
+
     def getDummyElement(self, array, index):
         """
             generic function to get an item from a generic array
         """
         if len(array)>=0 and index<=self.index:
             return array[index]
-        raise IndexError   
-            
-    
+        raise IndexError
+
+
     def getDummyActive(self, func):
         """
             parametric function to return an element of an array
@@ -404,14 +419,14 @@ class ICommand(object):
         """
             get the clicked snap point
         """
-        return self.getDummyActive(self.getSnapClick)    
-    
+        return self.getDummyActive(self.getSnapClick)
+
     def getActiveDistanceClick(self):
         """
             get the clicked distance
         """
-        return self.getDummyActive(self.getDistanceClick)  
-        
+        return self.getDummyActive(self.getDistanceClick)
+
     def getDummyBefore(self, func):
         """
             parametric function to return a previews element of an array
@@ -419,7 +434,7 @@ class ICommand(object):
         if self.index>0:
             return func(self.index-1)
         return None
-        
+
     def getBeforeEntity(self):
         """
             get the before clicked entity
@@ -431,20 +446,20 @@ class ICommand(object):
             get the before clicked snap point
         """
         return self.getDummyBefore(self.getSnapClick)
-        
-    def getLastForceSnap(self):    
+
+    def getLastForceSnap(self):
         """
             get the before forced snap type
         """
         return self.getDummyBefore(self.getForceSnap)
-    
+
     def correctPositionForcedDirection(self, point, force):
         """
             correct the POINT coords
             FORCE is the angle the defines the correction direction
-            
+
             return the projection point of the POINT to the straight line defined by FORCE angle
-            
+
             FORCE angle, in current inplementation, is setted by polarguides module when the mouse cursor is over a guide item
         """
         if point ==None:
@@ -466,7 +481,7 @@ class ICommand(object):
 
         return pF #Point(x, y)
 
-    def getIntersection(self, entity, point): 
+    def getIntersection(self, entity, point):
         """
             this fucnticion compute the  snap intersection point
         """

@@ -28,8 +28,8 @@ from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
 from Kernel.unitparser          import decodePoint, convertLengh, convertAngle
 
-from Interface.DrawingHelper.evaluator        import Evaluator
-from Interface.Preview.factory  import getPreviewObject
+from Interface.DrawingHelper.evaluator      import Evaluator
+from Interface.Preview.factory              import getPreviewObject
 
 class FunctionHandler(object):
     '''
@@ -56,7 +56,7 @@ class FunctionHandler(object):
         #Evaluator
         self._eval=Evaluator(self.printCommand)
 
-        
+
     def registerCommand(self, name, callback):
         '''
         Register a command with it's callback in the command table.
@@ -98,14 +98,14 @@ class FunctionHandler(object):
         if self._value :
             self.printOutput(self._value)
         return self._value
-            
+
     def resetCommand(self, reflect=True):
         """
             reset the command if eny are set
         """
         if reflect:
             self.printOutput("Command Ended from the user")
-        
+
     def printCommand(self, msg):
         """
             print message
@@ -114,7 +114,7 @@ class FunctionHandler(object):
         if len(msg)>0:
             msg=u">>> "+msg
             self.__edit_output.printMsg(msg)
-        
+
     def printOutput(self, msg):
         """
             print a message in the output message windows
@@ -123,141 +123,6 @@ class FunctionHandler(object):
         if len(msg)>0:
             msg=u"<PythonCAD> : "+msg
             self.__edit_output.printMsg(msg)
-            
 
-#class CommandEvaluator(object):
-#    def performMauseClick(self ,exception, point, entitys, distance):
-#        from Kernel.exception import (ExcPoint, ExcEntity, ExcEntityPoint,
-#                                ExcMultiEntity, ExcLenght, ExcInt, ExcAngle)
-#        value=None
-#        try:
-#            raise exception(None)
-#        except ExcPoint:
-#            value="%s,%s"%(point)
-#        except ExcEntity:
-#            if entitys:
-#                value=str(entitys[0].ID)
-#        except ExcMultiEntity:
-#            value=self.getIdsString(entitys)
-#        except ExcEntityPoint:
-#            if entitys:
-#                sPoint="%s,%s"%(point)
-#                id=str(entitys[0].ID)
-#                value="%s@%s"%(str(id), str(sPoint))
-#        except (ExcLenght):
-#            if distance:
-#                value=self.convertToFloat(distance)
-#        except(ExcAngle):
-#            p1=Point(0.0, 0.0)
-#            x, y=point
-#            p2=Point(x, y)
-#            value=Vector(p1, p2).absAng
-#        except:
-#            pass
-#        finally: return value
-#        
-#    def performStartCommand(self, cObject,selectedItems=None):
-#        """
-#            Evaluate the first command in pre selection
-#        """
-#        from Kernel.exception import ExcEntity, ExcMultiEntity
-#        if selectedItems and len(selectedItems)>0:
-#            try:
-#                raise cObject.exception[0](None)
-#            except ExcEntity:
-#                cObject.value.append(selectedItems[0].ID)
-#                cObject.next()
-#            except ExcMultiEntity:
-#                text=self.getIdsString(selectedItems)
-#                cObject.value.append(text)
-#                cObject.next()
-#            except:
-#                return
-#        else:
-#            return
-            
-#    def getIdsString(self, selectedItems):
-#        """
-#            get the selected entity in terms of ids
-#        """
-#        text=None
-#        for ent in selectedItems:
-#            if not text:
-#                text=''
-#                text+=str(ent.ID)
-#            else:
-#                text+=","+str(ent.ID)
-#        return text   
-        
-#    def performCommand(self,exception,cObject,text):
-#        """
-#            Perform a Command
-#            cObject is the command object
-#        """
-#        from Kernel.exception import ExcPoint, ExcLenght, ExcAngle, ExcInt, ExcBool, ExcText, ExcEntity,ExcMultiEntity, ExcEntityPoint,PyCadWrongCommand
-#        if text:
-#            try:
-#                raise exception(None)
-#            except ExcPoint:
-#                return self.convertToPoint(text)  
-#            except (ExcLenght, ExcInt):
-#                return self.convertToFloat(text)
-#            except (ExcAngle):
-#                return self.convertToAngle(text)       
-#            except (ExcBool):
-#                return self.convertToBool(text)
-#            except (ExcText):
-#                return text
-#            except (ExcEntity, ExcMultiEntity):
-#                return str(text)
-#            except (ExcEntityPoint):
-#                return str(text)
-#            except:
-#                msg="Error on command imput"
-#                raise CommandException, msg
-#        else:
-#            if cObject.getActiveDefaultValue():
-#                return cObject.getActiveDefaultValue()
-                
-#    def convertToBool(self, msg):   
-#        """
-#            return an int from user
-#        """        
-#        if msg=="Yes":
-#            return True
-#        else:
-#            return False
 
-#    def convertToInt(self, msg):   
-#        """
-#            return an int from user
-#        """        
-#        if msg:
-#            return int(convertLengh(msg))
-#        return None
-        
-#    def convertToFloat(self, msg):
-#        """
-#            return a float number
-#        """
-#        if msg:
-#            return convertLengh(msg)
-#        return None
-#        
-#    def convertToAngle(self, msg):
-#        """
-#            convert the angle using sympy
-#        """
-#        if msg:
-#            p=convertAngle(msg)
-#            return p
-#        return None
-#        
-#    def convertToPoint(self, msg):
-#        """
-#            ask at the user to imput a point 
-#        """
-#        if msg:
-#            p=decodePoint(msg)
-#            return p
-#        return None
+

@@ -32,25 +32,23 @@ class Evaluator(object):
         self._error='*error*'
         self._ok='*Ok*'
         self._cadApplication=PyCadApp
-        
+
     def evaluate(self, value):
         """
-            evaluate the string 
+            evaluate the string
         """
         if len(value)<=0:
             return None
-        for cmd in RESERVED_WORK:
-            if value.count(cmd):
+        if value in RESERVED_WORK:
+            if value.count(value):
                 return self._error + "->Reserved word"
-        
-            
         if value[0]=='>': # eval
             return self._eval(value[1:])
         if value[0]=='@':
             return self._exec(value[1:])
         else:
             return value
-            
+
     def _eval(self, value):
         """
             evaluate the evaluated value
@@ -59,7 +57,7 @@ class Evaluator(object):
             return eval(value)
         except:
             return self._error
-            
+
     def _exec(self, value):
         """
             exec value
@@ -71,4 +69,4 @@ class Evaluator(object):
             return self._ok
         except:
             return self._error
-        
+

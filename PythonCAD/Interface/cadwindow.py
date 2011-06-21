@@ -768,7 +768,6 @@ class CadWindowMdi(QtGui.QMainWindow):
         #checks if scene has selected items and launches them directly to the ICommand
         #if it's first prompt it's "give me entities"
         if len(self.scene.selectedItems())>0:
-            print 'selezioneesiste'
             if  self.scene.activeKernelCommand.activeException()==ExcMultiEntity:
                 qtItems=[item for item in self.scene.selectedItems() if isinstance(item, BaseEntity)]
                 self.scene.activeICommand.addMauseEvent(point=None,
