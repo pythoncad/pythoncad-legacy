@@ -39,14 +39,15 @@ from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoUtil.intersection    import *
 from Kernel.pycadevent              import *
 from Kernel.exception               import *
+from Kernel.unitparser              import *
 #
 # Interface Import
 #
 from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
 from Interface.Entity.base          import BaseEntity
-from Interface.Dialogs.property      import Property
+from Interface.Dialogs.property     import Property
 from Interface.Preview.factory      import *
-from Interface.DrawingHelper.snap import *
+from Interface.DrawingHelper.snap   import *
 
 class ICommand(object):
     """
@@ -303,39 +304,38 @@ class ICommand(object):
             try:
                 raise self.kernelCommand.activeException()(None)
             except ExcPoint:
-                if value.find(',')>-1:   #ABSOLUTE CARTESIAN INPUT
+                if value.find(',')>-1:              # ABSOLUTE CARTESIAN INPUT
                     x, y=value.split(',')
-                    point=Point(float(x), float(y))
-                elif value.find('*')>-1:    # RELATIVE CARTESIAN INPUT
-                    x, y=value.split('*')
+                    point=Point(convertLengh(x), convertLengh(y))
+                elif value.find(';')>-1:            # RELATIVE CARTESIAN INPUT
+                    x, y=value.split(';')
+                    x=self.scene.fromPoint.getx()+convertLengh(x)
+                    y=self.scene.fromPoint.gety()+convertLengh(y)
+                    point=Point(x, y)
+                elif value.find('>')>-1:
+                    ang, distance=value.split('>')
+                    ang=convertAngle(ang)
+                    distance=convertLengh(distance)
+                    x=math.cos(float(ang))*float(distance)
+                    y=math.sin(float(ang))*float(distance)
                     x=self.scene.fromPoint.getx()+float(x)
                     y=self.scene.fromPoint.gety()+float(y)
                     point=Point(x, y)
-                    # implement here relative coordinates
-                elif value.find('@@')>-1:
-                    text=value
                 else: # DISTANCE+ANGLE FROM SCENE set coordinate based on distance input and angle from mouse position on the scene
                     d=float(value)
-
                     pX=self.scene.mouseOnSceneX
                     pY=self.scene.mouseOnSceneY
-
                     if self.scene.forceDirection is not None:
                         pc=Point(pX, pY)
                         pc=self.correctPositionForcedDirection(pc, self.scene.forceDirection)
                         pX, pY=pc.getCoords()
-
                     #if frompoint is not none else exception
                     dx=pX-self.scene.fromPoint.getx()
                     dy=pY-self.scene.fromPoint.gety()
-
                     a=math.atan2(dy, dx)
-
                     x=self.scene.fromPoint.getx()+d*math.cos(a)
                     y=self.scene.fromPoint.gety()+d*math.sin(a)
-
                     point=Point(x, y)
-
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
             except ExcEntityPoint:

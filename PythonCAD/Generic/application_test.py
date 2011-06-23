@@ -21,7 +21,7 @@ def testSympySegment():
     seg1=Segment(arg1)
     seg1.setFromSympy(symSeg)
     print "Segment ", seg1
-    print "-- Sympy Segment --"  
+    print "-- Sympy Segment --"
 
 def testSympyCline():
     print "++ Sympy CLine ++"
@@ -37,7 +37,7 @@ def testSympyCline():
     seg1.setFromSympy(symSeg)
     print "CLine ", seg1
     print "-- Sympy CLine --"
-    
+
 def testSympyCircle():
     print "++ Sympy Arc ++"
     p1=Point(0, 1)
@@ -49,6 +49,7 @@ def testSympyCircle():
     arc.setFromSympy(sympCircel)
     print "Pythonca Arc ", arc
     print "-- Sympy Arc --"
+
 def testSympyEllipse():
     print "++ Sympy Ellipse ++"
     p1=Point(0, 1)
@@ -60,7 +61,7 @@ def testSympyEllipse():
     eli.setFromSympy(sympEli1)
     print "Pythonca Ellipse ", eli
     print "-- Sympy Ellipse --"
-    
+
 def TestSympy():
     testSympySegment()
     testSympyCline()
@@ -79,7 +80,7 @@ def segment_segmet():
     p4=Point(-1,0)
     arg={"SEGMENT_0":p3, "SEGMENT_1":p4}
     seg2=Segment(arg)
-    
+
     print find_intersections(seg1, seg2)
     print "-- segment_segmet --"
 
@@ -93,7 +94,7 @@ def segment_cline():
     p4=Point(-1,0)
     arg={"SEGMENT_0":p3, "SEGMENT_1":p4}
     seg2=Segment(arg)
-    
+
     print find_intersections(seg1, seg2)
     print "-- segment_cline --"
 
@@ -119,9 +120,24 @@ def segment_ellipse():
     seg1=CLine(arg)
     print find_intersections(eli, seg1)
     print "-- segment_ellipse --"
-    
+
 def TestIntersection():
     segment_segmet()
     segment_cline()
     segment_circle()
     segment_ellipse()
+
+
+from application import Application
+
+a=Application()
+print("stored file")
+for f in a.getRecentFiles:
+    print "File :", str(f)
+
+print("available command")
+for c in a.getCommandList():
+    print "Command:", str(c)
+
+doc=a.openDocument(a.getRecentFiles[0])
+a.saveAs(r"C:\Users\mboscolo\AppData\Local\Temp\test.dxf")

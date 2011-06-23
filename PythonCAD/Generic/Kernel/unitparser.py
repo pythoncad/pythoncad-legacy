@@ -22,31 +22,6 @@
 #
 from sympy.physics                  import units as u
 
-def decodePoint(value, previusPoint=None):
-    """
-        this static method decode an inputs and return a point(mm,mm)
-        leng@@angle
-    """
-    if str(value).find('@@')>=1:
-        if previusPoint!=None:
-            previusPoint=Point(0.0, 0.0)
-        leng, ang=str(value).split('@@')
-        leng=convertLengh(leng)
-        ang=convertAngle(ang)
-        x=math.cos(ang)*leng
-        y=math.sin(ang)*leng
-        newPoint=Point(x, Y)
-        return newPoint + previusPoint
-    else:
-        from Kernel.GeoEntity.point import Point
-        if isinstance(value, Point):
-            return value
-        else:
-            value=str(value).lower()
-
-            x, y=str(value).split(',')
-            return Point(convertLengh(x), convertLengh(y))
-
 def convertAngle(value):
     """
         convert a angle in simpy units syntax into a rad float

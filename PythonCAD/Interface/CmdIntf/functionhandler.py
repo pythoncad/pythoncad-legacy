@@ -26,7 +26,7 @@
 from Kernel.GeoEntity.point     import Point
 from Kernel.GeoUtil.geolib      import Vector
 from Kernel.pycadevent          import PyCadEvent
-from Kernel.unitparser          import decodePoint, convertLengh, convertAngle
+from Kernel.unitparser          import  convertLengh, convertAngle
 
 from Interface.DrawingHelper.evaluator      import Evaluator
 from Interface.Preview.factory              import getPreviewObject

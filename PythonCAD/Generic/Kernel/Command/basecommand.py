@@ -151,8 +151,6 @@ class BaseCommand(object):
         """
         return self.exception
 
-
-
     @property
     def lenght(self):
         """
@@ -176,7 +174,7 @@ class BaseCommand(object):
         try:
             raise self.activeException()(None)
         except ExcPoint:
-            exitValue=decodePoint(point)
+            exitValue=point
         except ExcEntity:
             if entitys:
                 exitValue=str(entitys[0].ID)
@@ -262,11 +260,3 @@ class BaseCommand(object):
             return p
         return None
 
-    def convertToPoint(self, msg):
-        """
-            ask at the user to imput a point
-        """
-        if msg:
-            p=decodePoint(msg)
-            return p
-        return None

@@ -106,7 +106,7 @@ class CadView(QtGui.QGraphicsView):
         qRect.setY(qRect.y()-zb)
         qRect.setWidth(qRect.width()+zb)
         qRect.setHeight(qRect.height()+zb)
-        self.fitInView(qRect,1) #KeepAspectRatioByExpanding
+        self.fitInView(qRect,1) # KeepAspectRatioByExpanding
         self.updateShape()
 
 

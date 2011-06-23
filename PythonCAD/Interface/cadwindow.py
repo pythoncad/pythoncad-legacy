@@ -143,7 +143,6 @@ class CadWindowMdi(QtGui.QMainWindow):
 
     def setForceDirection(self):
         if self.forceDirectionStatus.isChecked():
-            print "abilita"
             self.scene.forceDirectionEnabled=True
             self.forceDirectionStatus.setFocus(False)
             if self.scene.activeICommand!=None and self.scene.fromPoint!=None:

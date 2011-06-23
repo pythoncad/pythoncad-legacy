@@ -141,7 +141,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.mouseOnSceneY=scenePos.y()*-1.0
         self.mouseOnScene=Point(self.mouseOnSceneX,self.mouseOnSceneY)
         #
-        #This event manages middle mouse button PAN
+        # This event manages middle mouse button PAN
         #
         if self.isInPan:
             self.firePan(None, event.scenePos())
@@ -155,7 +155,6 @@ class CadScene(QtGui.QGraphicsScene):
                 x=self.mouseOnSceneX-self.fromPoint.getx()
                 y=self.mouseOnSceneY-self.fromPoint.gety()
                 self.fireCoords(x, y, "rel")
-
         #
         #This seems needed to preview commands
         #

@@ -35,7 +35,6 @@ class SnapPoint():
         self.activeSnap=ACTIVE_SNAP_POINT
         self.__scene=scene
 
-
     def getSnapPoint(self,  point, entity):
         """
             Get snapPoints

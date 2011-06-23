@@ -28,7 +28,7 @@ from Kernel.GeoEntity.point            import Point
 
 class PolylineCommand(BaseCommand):
     """
-        this class rappresent the ellips command
+        this class rappresent the polyline command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -37,18 +37,19 @@ class PolylineCommand(BaseCommand):
         self.message=["Give Me A Point: "]
         self.raiseStop=False
         self.automaticApply=False #In case of polyline we need to stop the automatic apply
+
     def __setitem__(self, key, value):
         """
             overwrite the command to perform the stop operation
         """
         value=self.translateCmdValue(value)
         if isinstance(value, Point):
-            self.value.append(value) 
+            self.value.append(value)
             self.exception.append(ExcPoint)
             self.message.append("Give Me A Point")
             self.defaultValue.append(None)
         else:
-           self.raiseStop=True 
+           self.raiseStop=True
 
     def applyCommand(self):
         """
@@ -58,6 +59,6 @@ class PolylineCommand(BaseCommand):
         args={}
         for k in self.value:
            args["POLYLINE_%s"%str(i)]=k
-           i+=1 
+           i+=1
         pline=Polyline(args)
         self.document.saveEntity(pline)
