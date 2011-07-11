@@ -22,23 +22,16 @@
 #
 from PyQt4 import QtCore, QtGui
 
+
 from Kernel.exception       import *
 from Kernel.GeoEntity.point import Point as GeoPoint
 from Kernel.GeoUtil.geolib  import Vector
-from Kernel.initsetting     import PYTHONCAD_PREVIEW_COLOR
-
-class Base(object):
-    def __init__(self, command):
-        """
-            inizialize base preview items
-        """
-        self._command=command
-        self._items=command.lenght
-        
-    def getPreviewObject(self):
-        return None
+from Kernel.initsetting     import PYTHONCAD_COLOR, PYTHONCAD_PREVIEW_COLOR
 
 class BaseQtPreviewItem(QtGui.QGraphicsItem):
+    showShape=False # This Flag is used for debug porpoise
+    showBBox=False  # This Flag is used for debug porpoise
+
     def __init__(self, command):
         super(BaseQtPreviewItem, self).__init__()
         self.updateColor()
@@ -46,26 +39,28 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         for dValue in command.defaultValue:
             val=self.convertToQTObject(dValue)
             self.value.append(val)
-        
+
     def updateColor(self):
         """
-            update the preview color 
+            update the preview color
         """
         r, g, b=PYTHONCAD_PREVIEW_COLOR
         self.color = QtGui.QColor.fromRgb(r, g, b)
-        
+
     def updatePreview(self,  position, distance, kernelCommand):
         """
             update the data at the preview item
         """
+        #
         # Assing default values
+        #
         for i in range(0, len(kernelCommand.exception)):
             if len(self.value)>i:
                 self.value[i]=self.convertToQTObject(kernelCommand.defaultValue[i])
             else:
                 self.value.append(self.convertToQTObject(kernelCommand.defaultValue[i]))
         # Assing Command Values
-        for i in range(0, len(kernelCommand.exception)):        
+        for i in range(0, len(kernelCommand.exception)):
             if(i<len(kernelCommand.value)):
                 self.value[i]=self.convertToQTObject(kernelCommand.value[i])
         # Assing mouse keyboard values
@@ -81,19 +76,27 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
             p2=GeoPoint(position.x(), position.y()*-1.0)
             self.value[index]=Vector(p1, p2).absAng
         except:
-            return 
+            return
         self.update(self.boundingRect())
-    
+
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
         """
-        #painter.setPen(QtGui.QPen(self.color, self.lineWith))
-        painter.setPen(QtGui.QPen(self.color))
         #draw geometry
-        #painter.drawPath(self.shape())
-        self.drawGeometry(painter,option,widget)     
-       
+        if self.showShape:
+            r, g, b= PYTHONCAD_COLOR["cyan"]
+            painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
+            painter.drawPath(self.shape())
+
+        if self.showBBox:
+            r, g, b= PYTHONCAD_COLOR["darkblue"]
+            painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
+            painter.drawRect(self.boundingRect())
+
+        self.drawGeometry(painter,option,widget)
+        return
+
     def convertToQTObject(self, value):
         """
             convert the imput value in a proper value
@@ -106,3 +109,24 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
             return QtCore.QPointF(value.x, value.y*-1.0)
         else:
             return value
+
+    def shape(self):
+        """
+            overloading of the shape method
+        """
+        painterStrock=QtGui.QPainterPathStroker()
+        path=QtGui.QPainterPath()
+        self.drawShape(path)
+        painterStrock.setWidth(10)
+        path1=painterStrock.createStroke(path)
+        return path1
+
+    def drawShape(self, path):
+        pass
+
+    def boundingRect(self):
+        """
+            overloading of the qt bounding rectangle
+        """
+        return self.shape().boundingRect()
+

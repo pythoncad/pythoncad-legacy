@@ -617,3 +617,4 @@ cgcol = {
 }
 #descripe the text position refered to the point clicked
 TEXT_POSITION=['n','ne', 'e', 'se', 's', 'sw', 'w','nw', 'c']
+MOUSE_GRAPH_DIMENSION=6

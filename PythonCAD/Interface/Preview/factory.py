@@ -37,15 +37,15 @@ from Interface.Preview.polygon      import QtPolygonItem
 def getPreviewObject(command):
     if isinstance(command , SegmentCommand):
         return QtSegmentItem(command)
-    elif isinstance(command , ArcCommand):
-        return QtArcItem(command)
-    elif isinstance(command , RectangleCommand):
-        return QtRectangleItem(command)
-    elif isinstance(command , EllipseCommand):
-        return QtEllipseItem(command)
-    elif isinstance(command , PolylineCommand):
-        return QtPolylineItem(command)
-    elif isinstance(command ,  PolygonCommand):
-        return QtPolygonItem(command)
+#    elif isinstance(command , ArcCommand):
+#        return QtArcItem(command)
+#    elif isinstance(command , RectangleCommand):
+#        return QtRectangleItem(command)
+#    elif isinstance(command , EllipseCommand):
+#        return QtEllipseItem(command)
+#    elif isinstance(command , PolylineCommand):
+#        return QtPolylineItem(command)
+#    elif isinstance(command ,  PolygonCommand):
+#        return QtPolygonItem(command)
     else:
         return None

@@ -29,14 +29,14 @@ if sys.version_info <(2, 7):
 import math
 from PyQt4  import QtCore, QtGui
 
-from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR
+from Kernel.initsetting         import PYTHONCAD_HIGLITGT_COLOR, PYTHONCAD_COLOR, MOUSE_GRAPH_DIMENSION
 
 from Kernel.GeoEntity.point     import Point
 
 class BaseEntity(QtGui.QGraphicsItem):
-    shapeSize=6
-    showShape=False #This Flag is used for debughing porpouse
-    showBBox=False  #This Flag is used for debughing porpouse
+    shapeSize=MOUSE_GRAPH_DIMENSION
+    showShape=False #This Flag is used for debug porpoise
+    showBBox=False  #This Flag is used for debug porpoise
     def __init__(self, entity):
         super(BaseEntity, self).__init__()
         self.setAcceptsHoverEvents(True)                        #Fire over events
@@ -57,7 +57,6 @@ class BaseEntity(QtGui.QGraphicsItem):
         #pen.setWidthF(float(lineWith))
         pen.setStyle(int(penStyle))
         self.pen=pen
-
         return
 
     def nearestSnapPoint(self, qtPointEvent, snapForceType=None, fromEntity=None):
@@ -91,7 +90,6 @@ class BaseEntity(QtGui.QGraphicsItem):
     @property
     def style(self):
         return self.__entity.getInnerStyle()
-
     @property
     def toolTipMessage(self):
         toolTipMessage=self.geoItem.info
@@ -136,7 +134,6 @@ class BaseEntity(QtGui.QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.setColor()
-        #self.update(self.boundingRect())
         super(BaseEntity, self).hoverLeaveEvent(event)
         return
 

@@ -54,15 +54,13 @@ class ICommand(object):
         this class provide base command operation
     """
     #self.scene.snappingPoint.activeSnap=SNAP_POINT_ARRAY["LIST"]  # Define the active snap system
-    drawPreview=False                   # Enable the preview system
+    drawPreview=True                    # Enable the preview system
     automaticApply=True                 # Apply the command at the last insert value
     #restartCommandOption=False         # moved to Interface.cadinitsetting  > RESTART_COMMAND_OPTION
 
     def __init__(self, scene):
         self.__scene=scene              # This is needed for the preview creation
         self.__previewItem=None
-        if self.__previewItem:
-            scene.addItem(self.__previewItem)   # Add preview item on creation
         self.__point=[]
         self.__entity=[]
         self.__distance=[]
@@ -107,6 +105,7 @@ class ICommand(object):
         self.__snap=[]
         self.__forceSnap=[]
         self.__index=-1
+        self.removePreviewItemToTheScene()
 
     def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None, correct=True):
         """
@@ -121,9 +120,6 @@ class ICommand(object):
             snap=self.correctPositionForcedDirection(snap, self.__scene.forceDirection)
         else:
             snap=point
-    #    if point!=None:
-    #        snapPoint=point
-        #self.scene.snappingPoint.activeSnap=SNAP#SNAP_POINT_ARRAY["LIST"]
         if angle==None:
             angle=self.calculateAngle(snap)
         if distance==None:
@@ -140,7 +136,6 @@ class ICommand(object):
                 if self.scene.forceDirectionEnabled==True:
                     self.scene.GuideHandler.show()
         except:
-            print "Exceprion  ICommand.addMauseEvent"
             self.updateInput("msg")
             self.updateInput(self.kernelCommand.activeMessage)
             self.scene.clearSelection()
@@ -209,6 +204,7 @@ class ICommand(object):
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
+        self.removePreviewItemToTheScene()
         return
 
     def getEntity(self, position):
@@ -232,15 +228,19 @@ class ICommand(object):
         """
             update value to the active slot of the command
         """
-        return
-#        snap=self.getClickedPoint(point, entity, force)
-#        if self.index>-1:
-#            self.__point[self.index]=point
-#            self.__entity[self.index]=entity
-#            self.__distance[self.index]=distance
-#            self.__snap[self.index]=snap
-#            self.__forceSnap[self.index]=force
-#            self.updatePreview() #   mange preview
+        if self.index>-1:
+            #
+            # Implements this function if you wont to show the
+            # snap preview capability not done yet for performance
+            # problems due at the sympy calculation
+            # snap=self.getClickedPoint(point, entity, force)
+            #
+            self.__point[self.index]=point
+            self.__entity[self.index]=entity
+            self.__distance[self.index]=distance
+            self.__snap[self.index]=point
+            self.__forceSnap[self.index]=force
+            self.updatePreview() #   mange preview
 
     def addTextEvent(self, value):
         """
@@ -366,9 +366,22 @@ class ICommand(object):
             make update of the preview
         """
         if self.drawPreview:
-            self.__previewItem.updatePreview(self.getActiveSnapClick()
-                    , self.getActiveDistanceClick(), self.kernelCommand)
-
+            if self.__previewItem==None:
+                self.__previewItem=getPreviewObject(self.kernelCommand)
+                self.addPreviewItemToTheScene()
+            if self.__previewItem!=None:
+                self.__previewItem.updatePreview(self.getActiveSnapClick(),
+                                                self.getActiveDistanceClick(),
+                                                    self.kernelCommand)
+    def addPreviewItemToTheScene(self):
+        """
+            add the preview item at the scene
+        """
+        if self.__previewItem!=None:
+            self.__scene.addItem(self.__previewItem)
+    def removePreviewItemToTheScene(self):
+        if self.__previewItem!=None:
+            self.__scene.removeItem(self.__previewItem)
     def getPointClick(self, index):
         """
             return the index clicked entity
@@ -385,7 +398,7 @@ class ICommand(object):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__distanceClick, index)
+        return self.getDummyElement(self.__distance, index)
 
     def getSnapClick(self, index):
         """
@@ -415,6 +428,7 @@ class ICommand(object):
         if self.index>=0:
             return func(self.index)
         return None
+
     def getActiveSnapClick(self):
         """
             get the clicked snap point

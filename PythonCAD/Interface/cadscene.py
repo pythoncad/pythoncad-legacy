@@ -54,8 +54,6 @@ class CadScene(QtGui.QGraphicsScene):
         # drawing limits
         self.setSceneRect(-10000, -10000, 20000, 20000)
         # scene custom event
-#        self.pyCadScenePressEvent=PyCadEvent()   <<<<this seems unuseful
-        self.updatePreview=PyCadEvent()
         self.zoomWindows=PyCadEvent()
         self.fireCommandlineFocus=PyCadEvent()
         self.fireKeyShortcut=PyCadEvent()
@@ -110,7 +108,7 @@ class CadScene(QtGui.QGraphicsScene):
         self.addItem(self.endMark)
 
     def initGuides(self):
-        self.GuideHandler=GuideHandler(self, 0.0, 0.0,0.0 ) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        self.GuideHandler=GuideHandler(self, 0.0, 0.0,0.0 )
         self.addItem(self.GuideHandler)
         self.GuideHandler.reset()
 
@@ -174,8 +172,6 @@ class CadScene(QtGui.QGraphicsScene):
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
             self.activeICommand.updateMauseEvent(point, distance, qtItem)
-
-#            self.updatePreview(self,point, distance)
         #
 #        path=QtGui.QPainterPath()
 #        path.addRect(scenePos.x()-self.__grapWithd/2, scenePos.y()+self.__grapWithd/2, self.__grapWithd, self.__grapWithd)
@@ -305,11 +301,15 @@ class CadScene(QtGui.QGraphicsScene):
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
-
+        self.hidePreview()
         self.hideSnapMarks()
         self.fromPoint=None
         self.GuideHandler.reset()
 
+    def hidePreview(self):
+        """
+            hide all the preview entity
+        """
 # ################################################# KEY EVENTS
 # ##########################################################
 
@@ -422,7 +422,7 @@ class CadScene(QtGui.QGraphicsScene):
         """
             add item to the scene
         """
-        if qtItem:
+        if qtItem!=None:
             self.addItem(qtItem)
 
     def eventUndoRedo(self, document, entity):

@@ -49,10 +49,8 @@ class BaseCommand(object):
         """
         if not isinstance(value, tuple) or len(value)!=5:
             raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
-        #print "BaseCommand add command value", [str(x) for x in value]
         value=self.translateCmdValue(value)
         if value==None:
-            print "BaseCommand.__setitem__ exept"
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
         self.value.append(value)
 

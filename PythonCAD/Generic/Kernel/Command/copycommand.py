@@ -22,7 +22,7 @@
 #
 from Kernel.exception               import *
 from Kernel.Command.basecommand     import *
-from Kernel.GeoEntity.arc import Arc
+from Kernel.GeoEntity.arc           import Arc
 
 class CopyCommand(BaseCommand):
     """
@@ -31,13 +31,13 @@ class CopyCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity,
-                        ExcPoint, 
+                        ExcPoint,
                         ExcPoint]
         self.defaultValue=[None, None,None]
-        self.message=[  "Select Entities to copy: ", 
+        self.message=[  "Select Entities to copy: ",
                         "Give me the Base Point: ",
                         "Give me the Destination Point: "]
-    
+
     def getEntsToSave(self):
         """
            get entity to save
@@ -49,7 +49,7 @@ class CopyCommand(BaseCommand):
             geoEnt.move(self.value[1], self.value[2])
             updEnts.append(geoEnt)
         return updEnts
-        
+
     def applyCommand(self):
         """
             apply the champfer command
@@ -62,4 +62,4 @@ class CopyCommand(BaseCommand):
                 self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
-       
+

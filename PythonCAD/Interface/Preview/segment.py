@@ -29,25 +29,20 @@ from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
 class QtSegmentItem(BaseQtPreviewItem):
     def __init__(self,command):
         super(QtSegmentItem, self).__init__(command)
-        
+
     def drawGeometry(self, painter,option,widget):
         """
             Overloading of the paint method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            #print "drawLine", self.value[0],self.value[1]
-            painter.drawLine(self.value[0],self.value[1])
-        
-    def boundingRect(self):
+            painter.drawLine(self.convertToQTObject(self.value[0]),self.convertToQTObject(self.value[1]))
+
+    def drawShape(self, painterPath):
         """
-            Overloading of the qt bounding rectangle
+            overloading of the shape method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            x=min(self.value[0].x(), self.value[1].x())
-            y=min(self.value[0].y(), self.value[1].y())
-            d1=abs(self.value[0].x()-self.value[1].x())
-            d2=abs(self.value[0].y()-self.value[1].y())
-            #print "boundingRect", x, y, d1, d2
-            return QtCore.QRectF(x,y ,d1,d2)
-        #print "not updated"
-        return QtCore.QRectF(0.0,0.0 ,0.1,0.1)
+            painterPath.moveTo(self.convertToQTObject(self.value[0]))
+            painterPath.lineTo(self.convertToQTObject(self.value[1]))
+
+
