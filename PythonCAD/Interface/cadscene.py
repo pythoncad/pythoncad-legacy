@@ -385,6 +385,7 @@ class CadScene(QtGui.QGraphicsScene):
         """
         entitys=[item for item in self.items() if isinstance(item, BaseQtPreviewItem)]
         for ent in entitys:
+            print "remove item %s", str(ent)
             self.removeItem(ent)
         self.__oldClickPoint=None
 

@@ -381,7 +381,7 @@ class ICommand(object):
             self.__scene.addItem(self.__previewItem)
     def removePreviewItemToTheScene(self):
         if self.__previewItem!=None:
-            self.__scene.removeItem(self.__previewItem)
+            self.__scene.clearPreview()
     def getPointClick(self, index):
         """
             return the index clicked entity

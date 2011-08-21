@@ -51,19 +51,10 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             update the data at the preview item
         """
-        #
-        # Assing default values
-        #
-        for i in range(0, len(kernelCommand.exception)):
-            if len(self.value)>i:
-                self.value[i]=self.convertToQTObject(kernelCommand.defaultValue[i])
-            else:
-                self.value.append(self.convertToQTObject(kernelCommand.defaultValue[i]))
+        for i in range(0, len(kernelCommand.value)):
+            print "update preview value %s"%str(kernelCommand.value[i])
+            self.value[i]=kernelCommand.value[i]
         # Assing Command Values
-        for i in range(0, len(kernelCommand.exception)):
-            if(i<len(kernelCommand.value)):
-                self.value[i]=self.convertToQTObject(kernelCommand.value[i])
-        # Assing mouse keyboard values
         index=kernelCommand.valueIndex
         try:
             raise kernelCommand.exception[index](None)
@@ -76,7 +67,9 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
             p2=GeoPoint(position.x(), position.y()*-1.0)
             self.value[index]=Vector(p1, p2).absAng
         except:
+            print "updatePreview: Exception not managed"
             return
+        print "Updated Index %s with value %s"%(str(index), str(self.value[index]))
         self.update(self.boundingRect())
 
     def paint(self, painter,option,widget):
