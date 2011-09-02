@@ -1,4 +1,5 @@
 #
+#
 # Copyright (c) 2010 Matteo Boscolo, Gertwin Groen
 #
 # This file is part of PythonCAD.
@@ -38,7 +39,7 @@ from Interface.Entity.arrowitem     import ArrowItem
 from Interface.Entity.actionhandler import PositionHandler
 from Interface.Entity.dinamicentryobject   import DinamicEntryLine
 from Interface.cadinitsetting       import *
-from Interface.Preview.base         import BaseQtPreviewItem
+from Interface.Preview.base         import PreviewBase
 
 from Interface.DrawingHelper.snap import *
 from Interface.DrawingHelper.polarguides import GuideHandler
@@ -85,8 +86,6 @@ class CadScene(QtGui.QGraphicsScene):
         # Input implemetation by carlo
         #
         self.fromPoint=None #frompoint is assigned in icommand.getClickedPoint() and deleted by applycommand and cancelcommand, is needed for statusbar coordinates dx,dy
-        self.mouseOnSceneX=0.0
-        self.mouseOnSceneY=0.0
         self.selectionAddMode=False
 
         # Init loading of snap marks
@@ -135,9 +134,10 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
-        self.mouseOnSceneX=scenePos.x()
-        self.mouseOnSceneY=scenePos.y()*-1.0
-        self.mouseOnScene=Point(self.mouseOnSceneX,self.mouseOnSceneY)
+        print "@@scene Pos", str(scenePos)
+        mouseOnSceneX=scenePos.x()
+        mouseOnSceneY=scenePos.y()*-1.0
+        self.mouseOnScene=Point(mouseOnSceneX,mouseOnSceneY)
         #
         # This event manages middle mouse button PAN
         #
@@ -148,16 +148,17 @@ class CadScene(QtGui.QGraphicsScene):
         #
         else:
             if self.fromPoint==None:
-                self.fireCoords(self.mouseOnSceneX, self.mouseOnSceneY, "abs")
+                self.fireCoords(mouseOnSceneX, mouseOnSceneY, "abs")
             else:
-                x=self.mouseOnSceneX-self.fromPoint.getx()
-                y=self.mouseOnSceneY-self.fromPoint.gety()
+                x=mouseOnSceneX-self.fromPoint.getx()
+                y=mouseOnSceneY-self.fromPoint.gety()
                 self.fireCoords(x, y, "rel")
         #
         #This seems needed to preview commands
         #
         if self.activeICommand:
             #SNAP PREVIEW
+            ps=self.mouseOnScene
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
                 item=self.activeICommand.getEntity(self.mouseOnScene)
                 if item:
@@ -167,11 +168,11 @@ class CadScene(QtGui.QGraphicsScene):
                 else:
                     self.hideSnapMarks()
             distance=None
-            point=Point(scenePos.x(), scenePos.y()*-1.0)
             qtItem=[self.itemAt(scenePos)]
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
-            self.activeICommand.updateMauseEvent(point, distance, qtItem)
+            print "@@ ps Pos ", ps
+            self.activeICommand.updateMauseEvent(ps, distance, qtItem)
         #
 #        path=QtGui.QPainterPath()
 #        path.addRect(scenePos.x()-self.__grapWithd/2, scenePos.y()+self.__grapWithd/2, self.__grapWithd, self.__grapWithd)
@@ -301,15 +302,11 @@ class CadScene(QtGui.QGraphicsScene):
         self.__activeKernelCommand=None
         self.activeICommand=None
         self.showHandler=False
-        self.hidePreview()
+        self.clearPreview()
         self.hideSnapMarks()
         self.fromPoint=None
         self.GuideHandler.reset()
 
-    def hidePreview(self):
-        """
-            hide all the preview entity
-        """
 # ################################################# KEY EVENTS
 # ##########################################################
 
@@ -383,9 +380,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
             remove the preview items from the scene
         """
-        entitys=[item for item in self.items() if isinstance(item, BaseQtPreviewItem)]
+        entitys=[item for item in self.items() if isinstance(item, PreviewBase)]
         for ent in entitys:
-            print "remove item %s", str(ent)
             self.removeItem(ent)
         self.__oldClickPoint=None
 

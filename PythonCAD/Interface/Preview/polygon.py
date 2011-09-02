@@ -27,7 +27,7 @@ from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoEntity.point         import Point
 
 
-class QtPolygonItem(BaseQtPreviewItem):
+class QtPolygonItem(PreviewBase):
     def __init__(self, command):
         super(QtPolygonItem, self).__init__(command)
         self.command=command

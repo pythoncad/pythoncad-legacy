@@ -25,7 +25,7 @@ import math
 from Interface.Preview.base         import *
 from Kernel.GeoEntity.segment       import Segment as geoSegment
 
-class QtRectangleItem(BaseQtPreviewItem):
+class QtRectangleItem(PreviewBase):
     def __init__(self,command):
         super(QtRectangleItem, self).__init__(command)
         

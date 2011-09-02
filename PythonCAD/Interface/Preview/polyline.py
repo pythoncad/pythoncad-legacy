@@ -24,7 +24,7 @@ import math
 
 from Interface.Preview.base         import *
 
-class QtPolylineItem(BaseQtPreviewItem):
+class QtPolylineItem(PreviewBase):
     def __init__(self, command):
         super(QtPolylineItem, self).__init__(command)
 

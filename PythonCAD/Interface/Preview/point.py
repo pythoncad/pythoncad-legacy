@@ -21,37 +21,46 @@
 # qt pythoncad Point class
 #
 
-from Interface.Entity.base import *
+import math
+#
+from Interface.Preview.base         import *
+from Kernel.GeoEntity.segment       import Segment as geoSegment
+from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
+#
+from PyQt4 import QtCore, QtGui
 
-class Point(BaseEntity):
+class PreviewPoint(PreviewBase):
     """
         this class define the arcQT object
     """
-    def __init__(self, entity):
-        super(Point, self).__init__(entity)
-        self.xc,self.yc= self.geoItem.getCoords()
-        self.yc=(-1.0*self.yc)
-        return
+    def __init__(self, command):
 
-    def boundingRect(self):
-        return QtCore.QRectF(self.xc-self.shapeSize/2,self.yc-self.shapeSize/2 ,self.shapeSize ,self.shapeSize)
+        super(PreviewPoint, self).__init__(command)
 
     def drawShape(self, painterPath):
         """
             overloading of the shape method
         """
-        painterPath.addRect(self.boundingRect())
+        if len(self.value)<0:
+            return
+        qtPoinfF = self.value[0]
+        painterPath.addRect(QtCore.QRectF(qtPoinfF.x()-self.shapeSize/2,qtPoinfF.y()-self.shapeSize/2 ,self.shapeSize ,self.shapeSize))
 
     def drawGeometry(self, painter, option, widget):
         """
             overloading of the paint method
         """
-        #Create Arc/Circle
-        p=QtCore.QPoint(self.xc, self.yc)
-        painter.drawRect(self.boundingRect())
-        painter.drawPoint(p)
+        if len(self.value)<0:
+            return
+        qtPoinfF = self.value[0]
+        painter.drawRect(QtCore.QRectF(qtPoinfF.x()-self.shapeSize/2,qtPoinfF.y()-self.shapeSize/2 ,self.shapeSize ,self.shapeSize))
+        painter.drawPoint(qtPoinfF)
 
-
+    def boundingRect(self):
+        if len(self.value)<0:
+            return QtCore.QRectF(0, 0, 0, 0)
+        qtPoinfF = self.value[0]
+        return QtCore.QRectF(qtPoinfF.x()-self.shapeSize/2,qtPoinfF.y()-self.shapeSize/2 ,self.shapeSize ,self.shapeSize)
 
 
 

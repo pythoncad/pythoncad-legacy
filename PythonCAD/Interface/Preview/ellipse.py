@@ -24,7 +24,7 @@ import math
 
 from Interface.Preview.base         import *
 
-class QtEllipseItem(BaseQtPreviewItem):
+class QtEllipseItem(PreviewBase):
     def __init__(self, command):
         super(QtEllipseItem, self).__init__(command)
         # get the geometry

@@ -3,6 +3,7 @@ import math
 from PyQt4 import QtCore, QtGui
 
 from Interface.Entity.base import *
+from Interface.Preview.base import *
 
 class CadView(QtGui.QGraphicsView):
     def __init__(self, scene, parent=None):
@@ -122,3 +123,4 @@ class CadView(QtGui.QGraphicsView):
             matrixScaleFactor=0.001
         val=(1.0/matrixScaleFactor)*10
         BaseEntity.shapeSize=val
+        PreviewBase.shapeSize=val

@@ -26,14 +26,14 @@ from PyQt4 import QtCore, QtGui
 from Kernel.exception       import *
 from Kernel.GeoEntity.point import Point as GeoPoint
 from Kernel.GeoUtil.geolib  import Vector
-from Kernel.initsetting     import PYTHONCAD_COLOR, PYTHONCAD_PREVIEW_COLOR
+from Kernel.initsetting     import PYTHONCAD_COLOR, PYTHONCAD_PREVIEW_COLOR, MOUSE_GRAPH_DIMENSION
 
-class BaseQtPreviewItem(QtGui.QGraphicsItem):
+class PreviewBase(QtGui.QGraphicsItem):
     showShape=False # This Flag is used for debug porpoise
     showBBox=False  # This Flag is used for debug porpoise
-
+    shapeSize=MOUSE_GRAPH_DIMENSION
     def __init__(self, command):
-        super(BaseQtPreviewItem, self).__init__()
+        super(PreviewBase, self).__init__()
         self.updateColor()
         self.value=[]
         for dValue in command.defaultValue:
@@ -51,32 +51,32 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             update the data at the preview item
         """
+        print "##Position", str(position)
         for i in range(0, len(kernelCommand.value)):
-            print "update preview value %s"%str(kernelCommand.value[i])
             self.value[i]=kernelCommand.value[i]
         # Assing Command Values
         index=kernelCommand.valueIndex
         try:
             raise kernelCommand.exception[index](None)
         except(ExcPoint):
-            self.value[index]=position
+            self.value[index]=self.convertToQTObject(position)
         except(ExcLenght, ExcInt):
             self.value[index]=distance
         except(ExcAngle):
             p1=GeoPoint(0.0, 0.0)
-            p2=GeoPoint(position.x(), position.y()*-1.0)
+            p2=GeoPoint(position.x(), position.y())
             self.value[index]=Vector(p1, p2).absAng
         except:
             print "updatePreview: Exception not managed"
             return
-        print "Updated Index %s with value %s"%(str(index), str(self.value[index]))
+        for p in self.value:
+            print "##Value", str(p)
         self.update(self.boundingRect())
 
     def paint(self, painter,option,widget):
         """
             overloading of the paint method
         """
-        #draw geometry
         if self.showShape:
             r, g, b= PYTHONCAD_COLOR["cyan"]
             painter.setPen(QtGui.QPen(QtGui.QColor.fromRgb(r, g, b)))
@@ -97,7 +97,7 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         if isinstance(value, (float, int)):
             return value
         elif isinstance(value, tuple):
-            return QtCore.QPointF(value[0], value[1])
+            return QtCore.QPointF(value[0], value[1]*-1.0)
         elif isinstance(value, GeoPoint):
             return QtCore.QPointF(value.x, value.y*-1.0)
         else:
@@ -107,12 +107,12 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             overloading of the shape method
         """
+        PainterPath=QtGui.QPainterPath()
+        self.drawShape(PainterPath)
         painterStrock=QtGui.QPainterPathStroker()
-        path=QtGui.QPainterPath()
-        self.drawShape(path)
         painterStrock.setWidth(10)
-        path1=painterStrock.createStroke(path)
-        return path1
+        painterStrockPath=painterStrock.createStroke(PainterPath)
+        return painterStrockPath
 
     def drawShape(self, path):
         pass
@@ -121,5 +121,6 @@ class BaseQtPreviewItem(QtGui.QGraphicsItem):
         """
             overloading of the qt bounding rectangle
         """
+        print "Bounding Rectangle Is %s"%(str(self.shape().boundingRect()))
         return self.shape().boundingRect()
 

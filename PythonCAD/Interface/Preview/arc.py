@@ -24,7 +24,7 @@ import math
 
 from Interface.Preview.base         import *
 
-class QtArcItem(BaseQtPreviewItem):
+class QtArcItem(PreviewBase):
     def __init__(self, command):
         super(QtArcItem, self).__init__(command)
         # get the geometry

@@ -20,6 +20,7 @@
 #
 # This module provide a factory for the preview objects
 #
+from Kernel.Command.pointcommand        import PointCommand
 from Kernel.Command.segmentcommand      import SegmentCommand
 from Kernel.Command.arccommand          import ArcCommand
 from Kernel.Command.rectanglecommand    import RectangleCommand
@@ -27,7 +28,8 @@ from Kernel.Command.ellipsecommand      import EllipseCommand
 from Kernel.Command.polylinecommand     import PolylineCommand
 from Kernel.Command.polygoncommand      import PolygonCommand
 
-from Interface.Preview.segment      import QtSegmentItem
+from Interface.Preview.point        import PreviewPoint
+from Interface.Preview.segment      import PreviewSegment
 from Interface.Preview.arc          import QtArcItem
 from Interface.Preview.rectangle    import QtRectangleItem
 from Interface.Preview.ellipse      import QtEllipseItem
@@ -35,8 +37,10 @@ from Interface.Preview.polyline     import QtPolylineItem
 from Interface.Preview.polygon      import QtPolygonItem
 
 def getPreviewObject(command):
+    if isinstance(command , PointCommand):
+        return PreviewPoint(command)
     if isinstance(command , SegmentCommand):
-        return QtSegmentItem(command)
+        return PreviewSegment(command)
 #    elif isinstance(command , ArcCommand):
 #        return QtArcItem(command)
 #    elif isinstance(command , RectangleCommand):

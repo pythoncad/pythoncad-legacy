@@ -26,9 +26,11 @@ from Interface.Preview.base         import *
 from Kernel.GeoEntity.segment       import Segment as geoSegment
 from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
 #
-class QtSegmentItem(BaseQtPreviewItem):
+from PyQt4 import QtCore, QtGui
+
+class PreviewSegment(PreviewBase):
     def __init__(self,command):
-        super(QtSegmentItem, self).__init__(command)
+        super(PreviewSegment, self).__init__(command)
 
     def drawGeometry(self, painter,option,widget):
         """
@@ -44,5 +46,3 @@ class QtSegmentItem(BaseQtPreviewItem):
         if self.value[0]!=None and self.value[1]!=None:
             painterPath.moveTo(self.convertToQTObject(self.value[0]))
             painterPath.lineTo(self.convertToQTObject(self.value[1]))
-
-

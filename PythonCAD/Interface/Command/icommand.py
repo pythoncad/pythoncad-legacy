@@ -146,7 +146,7 @@ class ICommand(object):
         self.__angle.append(angle)
         self.__snap.append(snap)
         self.__forceSnap.append(force)
-        self.updatePreview()
+        #self.updatePreview(point,distance,entity )
         self.__index+=1
         try:
             self.kernelCommand.next()
@@ -229,18 +229,12 @@ class ICommand(object):
             update value to the active slot of the command
         """
         if self.index>-1:
-            #
-            # Implements this function if you wont to show the
-            # snap preview capability not done yet for performance
-            # problems due at the sympy calculation
-            # snap=self.getClickedPoint(point, entity, force)
-            #
             self.__point[self.index]=point
             self.__entity[self.index]=entity
             self.__distance[self.index]=distance
             self.__snap[self.index]=point
             self.__forceSnap[self.index]=force
-            self.updatePreview() #   mange preview
+        self.updatePreview(point, distance, entity) #   mange preview
 
     def addTextEvent(self, value):
         """
@@ -361,7 +355,7 @@ class ICommand(object):
         """
         return self.scene.getEntFromId(value)
 
-    def updatePreview(self):
+    def updatePreview(self, point, distance, entity):
         """
             make update of the preview
         """
@@ -370,8 +364,8 @@ class ICommand(object):
                 self.__previewItem=getPreviewObject(self.kernelCommand)
                 self.addPreviewItemToTheScene()
             if self.__previewItem!=None:
-                self.__previewItem.updatePreview(self.getActiveSnapClick(),
-                                                self.getActiveDistanceClick(),
+                self.__previewItem.updatePreview(point,
+                                                distance,
                                                     self.kernelCommand)
     def addPreviewItemToTheScene(self):
         """
@@ -380,8 +374,12 @@ class ICommand(object):
         if self.__previewItem!=None:
             self.__scene.addItem(self.__previewItem)
     def removePreviewItemToTheScene(self):
+        """
+            Remove all the preview items from the scene
+        """
         if self.__previewItem!=None:
             self.__scene.clearPreview()
+
     def getPointClick(self, index):
         """
             return the index clicked entity
