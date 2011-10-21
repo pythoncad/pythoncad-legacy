@@ -256,7 +256,7 @@ class Point(GeometricalEntity):
         v=Vector(fromPoint, toPoint)
         p=self+v.point
         self.__x=p.x
-        self.__x=p.y
+        self.__y=p.y
     
     def rotate(self, rotationPoint, angle):
         """
