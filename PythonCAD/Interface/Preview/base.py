@@ -37,7 +37,7 @@ class PreviewBase(QtGui.QGraphicsItem):
         self.updateColor()
         self.value=[]
         for dValue in command.defaultValue:
-            val=self.convertToQTObject(dValue)
+            val=self.revertToQTObject(dValue)
             self.value.append(val)
 
     def updateColor(self):
@@ -51,15 +51,15 @@ class PreviewBase(QtGui.QGraphicsItem):
         """
             update the data at the preview item
         """
-        print "##Position", str(position)
+        self.prepareGeometryChange()
         for i in range(0, len(kernelCommand.value)):
-            self.value[i]=kernelCommand.value[i]
+            self.value[i]=self.revertToQTObject(kernelCommand.value[i])
         # Assing Command Values
         index=kernelCommand.valueIndex
         try:
             raise kernelCommand.exception[index](None)
         except(ExcPoint):
-            self.value[index]=self.convertToQTObject(position)
+            self.value[index]=self.revertToQTObject(position)
         except(ExcLenght, ExcInt):
             self.value[index]=distance
         except(ExcAngle):
@@ -69,8 +69,6 @@ class PreviewBase(QtGui.QGraphicsItem):
         except:
             print "updatePreview: Exception not managed"
             return
-        for p in self.value:
-            print "##Value", str(p)
         self.update(self.boundingRect())
 
     def paint(self, painter,option,widget):
@@ -89,10 +87,23 @@ class PreviewBase(QtGui.QGraphicsItem):
 
         self.drawGeometry(painter,option,widget)
         return
-
+    
     def convertToQTObject(self, value):
         """
-            convert the imput value in a proper value
+            convert the input value in a proper value
+        """
+        if isinstance(value, (float, int)):
+            return value
+        elif isinstance(value, tuple):
+            return QtCore.QPointF(value[0], value[1])
+        elif isinstance(value, GeoPoint):
+            return QtCore.QPointF(value.x, value.y)
+        else:
+            return value
+        
+    def revertToQTObject(self, value):
+        """
+            convert the input value in a proper value GeoObject -> qtObject
         """
         if isinstance(value, (float, int)):
             return value
@@ -121,6 +132,5 @@ class PreviewBase(QtGui.QGraphicsItem):
         """
             overloading of the qt bounding rectangle
         """
-        print "Bounding Rectangle Is %s"%(str(self.shape().boundingRect()))
         return self.shape().boundingRect()
 

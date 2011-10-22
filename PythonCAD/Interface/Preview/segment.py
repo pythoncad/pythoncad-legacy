@@ -37,12 +37,12 @@ class PreviewSegment(PreviewBase):
             Overloading of the paint method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            painter.drawLine(self.convertToQTObject(self.value[0]),self.convertToQTObject(self.value[1]))
+            painter.drawLine(self.value[0],self.value[1])
 
     def drawShape(self, painterPath):
         """
             overloading of the shape method
         """
         if self.value[0]!=None and self.value[1]!=None:
-            painterPath.moveTo(self.convertToQTObject(self.value[0]))
-            painterPath.lineTo(self.convertToQTObject(self.value[1]))
+            painterPath.moveTo(self.value[0])
+            painterPath.lineTo(self.value[1])

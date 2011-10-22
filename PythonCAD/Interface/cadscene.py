@@ -134,10 +134,9 @@ class CadScene(QtGui.QGraphicsScene):
 
     def mouseMoveEvent(self, event):
         scenePos=event.scenePos()
-        print "@@scene Pos", str(scenePos)
         mouseOnSceneX=scenePos.x()
         mouseOnSceneY=scenePos.y()*-1.0
-        self.mouseOnScene=Point(mouseOnSceneX,mouseOnSceneY)
+        self.geoMousePointOnScene=Point(mouseOnSceneX,mouseOnSceneY)
         #
         # This event manages middle mouse button PAN
         #
@@ -158,12 +157,12 @@ class CadScene(QtGui.QGraphicsScene):
         #
         if self.activeICommand:
             #SNAP PREVIEW
-            ps=self.mouseOnScene
+            ps=self.geoMousePointOnScene
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
-                item=self.activeICommand.getEntity(self.mouseOnScene)
+                item=self.activeICommand.getEntity(self.geoMousePointOnScene)
                 if item:
-                    ps=self.snappingPoint.getSnapPoint(self.mouseOnScene, item)
-                    if ps!=self.mouseOnScene:
+                    ps=self.snappingPoint.getSnapPoint(self.geoMousePointOnScene, item)
+                    if ps!=self.geoMousePointOnScene:
                         self.endMark.move(ps.getx(), ps.gety()*-1)
                 else:
                     self.hideSnapMarks()
@@ -171,13 +170,8 @@ class CadScene(QtGui.QGraphicsScene):
             qtItem=[self.itemAt(scenePos)]
             if self.__oldClickPoint:
                 distance=self.getDistance(event)
-            print "@@ ps Pos ", ps
             self.activeICommand.updateMauseEvent(ps, distance, qtItem)
-        #
-#        path=QtGui.QPainterPath()
-#        path.addRect(scenePos.x()-self.__grapWithd/2, scenePos.y()+self.__grapWithd/2, self.__grapWithd, self.__grapWithd)
-#        self.setSelectionArea(path)
-        #
+
         super(CadScene, self).mouseMoveEvent(event)
         return
 

@@ -363,7 +363,7 @@ class ICommand(object):
             if self.__previewItem==None:
                 self.__previewItem=getPreviewObject(self.kernelCommand)
                 self.addPreviewItemToTheScene()
-            if self.__previewItem!=None:
+            else:
                 self.__previewItem.updatePreview(point,
                                                 distance,
                                                     self.kernelCommand)
