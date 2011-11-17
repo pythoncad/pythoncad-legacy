@@ -325,7 +325,7 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'print', '&Print', self._onPrint)
         # separator
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, '-')
-        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'quit', '&Quit PyCAD', self.close)
+        self.__cmd_intf.registerCommand(self.__cmd_intf.Category.File, 'quit', '&Quit', self.close)
         # Edit
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'undo', '&Undo', self._onUndo)
         self.__cmd_intf.registerCommand(self.__cmd_intf.Category.Edit, 'redo', '&Redo', self._onRedo)
