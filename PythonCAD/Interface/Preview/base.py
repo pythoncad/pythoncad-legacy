@@ -69,7 +69,6 @@ class PreviewBase(QtGui.QGraphicsItem):
         except:
             print "updatePreview: Exception not managed"
             return
-        self.update(self.boundingRect())
 
     def paint(self, painter,option,widget):
         """
