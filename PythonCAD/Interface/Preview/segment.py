@@ -20,29 +20,34 @@
 #
 # SegmentPreview object
 #
-import math
+from Interface.Preview.base         import PreviewBase
+from Interface.Entity.segment       import Segment 
 #
-from Interface.Preview.base         import *
-from Kernel.GeoEntity.segment       import Segment as geoSegment
-from Kernel.initsetting             import PYTHONCAD_PREVIEW_COLOR
-#
-from PyQt4 import QtCore, QtGui
 
 class PreviewSegment(PreviewBase):
     def __init__(self,command):
         super(PreviewSegment, self).__init__(command)
-
+    @property
+    def canDraw(self):
+        if self.value[0]!=None and self.value[1]!=None:
+            self.x=self.value[0].x()
+            self.y=self.value[0].y()
+            self.x1=self.value[1].x()
+            self.y1=self.value[1].y()
+            return True
+        return False
+    
     def drawGeometry(self, painter,option,widget):
         """
             Overloading of the paint method
         """
-        if self.value[0]!=None and self.value[1]!=None:
-            painter.drawLine(self.value[0],self.value[1])
+        if self.canDraw:
+            Segment.__dict__['drawGeometry'](self,painter,option,widget)
 
     def drawShape(self, painterPath):
         """
             overloading of the shape method
         """
-        if self.value[0]!=None and self.value[1]!=None:
-            painterPath.moveTo(self.value[0])
-            painterPath.lineTo(self.value[1])
+        if self.canDraw:
+            Segment.__dict__['drawShape'](self,painterPath)
+
