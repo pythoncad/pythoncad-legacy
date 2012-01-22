@@ -181,17 +181,11 @@ class CadScene(QtGui.QGraphicsScene):
             self.firePan(True, event.scenePos())
         if not self.isInPan:
             qtItem=self.itemAt(event.scenePos())
-            p= QtCore.QPointF(event.scenePos().x(),event.scenePos().y())
             if qtItem:
                 qtItem.setSelected(True)
                 self.updateSelected()
                 if event.button()==QtCore.Qt.RightButton:
-                    print "qtItems", qtItem
                     self.showContextMenu(qtItem, event)
-
-            #else:
-            #    print "No item selected"
-            #re fire the event
         super(CadScene, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
