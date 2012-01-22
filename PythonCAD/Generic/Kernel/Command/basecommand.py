@@ -168,7 +168,6 @@ class BaseCommand(object):
         """
         point, entitys, distance, angle , text=value
         exitValue=None
-        print "Try to except ", self.activeException()
         try:
             raise self.activeException()(None)
         except ExcPoint:
