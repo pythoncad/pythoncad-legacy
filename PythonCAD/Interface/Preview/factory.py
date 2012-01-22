@@ -30,11 +30,11 @@ from Kernel.Command.polygoncommand      import PolygonCommand
 
 from Interface.Preview.point        import PreviewPoint
 from Interface.Preview.segment      import PreviewSegment
-from Interface.Preview.arc          import QtArcItem
-from Interface.Preview.rectangle    import QtRectangleItem
-from Interface.Preview.ellipse      import QtEllipseItem
-from Interface.Preview.polyline     import QtPolylineItem
-from Interface.Preview.polygon      import QtPolygonItem
+#from Interface.Preview.arc          import QtArcItem
+#from Interface.Preview.rectangle    import QtRectangleItem
+#from Interface.Preview.ellipse      import QtEllipseItem
+#from Interface.Preview.polyline     import QtPolylineItem
+#from Interface.Preview.polygon      import QtPolygonItem
 
 def getPreviewObject(command):
     if isinstance(command , PointCommand):

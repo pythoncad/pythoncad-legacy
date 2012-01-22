@@ -200,6 +200,7 @@ class ICommand(object):
                 self.scene.cancelCommand()
                 self.updateInput("Ready")
                 self=None
+            self.scene.clearPreview()
         except Exception as e:
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
@@ -360,10 +361,10 @@ class ICommand(object):
             make update of the preview
         """
         if self.drawPreview:
-            if self.__previewItem==None:
+            if self.__previewItem==None:            #Create the Preview Item
                 self.__previewItem=getPreviewObject(self.kernelCommand)
                 self.addPreviewItemToTheScene()
-            else:
+            else:                                   #Use the item already stored
                 self.__previewItem.updatePreview(point,
                                                 distance,
                                                     self.kernelCommand)
@@ -379,7 +380,8 @@ class ICommand(object):
         """
         if self.__previewItem!=None:
             self.__scene.clearPreview()
-
+            self.__previewItem=None
+        
     def getPointClick(self, index):
         """
             return the index clicked entity

@@ -155,15 +155,15 @@ class CadScene(QtGui.QGraphicsScene):
         #
         #This seems needed to preview commands
         #
+        ps=self.geoMousePointOnScene
         if self.activeICommand:
             #SNAP PREVIEW
-            ps=self.geoMousePointOnScene
             if self.activeKernelCommand.activeException()==ExcPoint or self.activeKernelCommand.activeException()==ExcLenght:
-                item=self.activeICommand.getEntity(self.geoMousePointOnScene)
+                item=self.activeICommand.getEntity(ps)
                 if item:
                     ps=self.snappingPoint.getSnapPoint(self.geoMousePointOnScene, item)
                     if ps!=self.geoMousePointOnScene:
-                        self.endMark.move(ps.getx(), ps.gety()*-1)
+                        self.endMark.move(ps.getx(), ps.gety()*-1.0)
                 else:
                     self.hideSnapMarks()
             distance=None

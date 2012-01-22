@@ -4,9 +4,13 @@
 #
 import sys
 if sys.version_info <(2, 7):
-    import sip
-    sip.setapi('QString', 2)
-    sip.setapi('QVariant', 2)
+    try:
+        import sip
+        sip.setapi('QString', 2)
+        sip.setapi('QVariant', 2)
+    except:
+        pass
+    
 #
 from PyQt4 import QtCore, QtGui
 #
