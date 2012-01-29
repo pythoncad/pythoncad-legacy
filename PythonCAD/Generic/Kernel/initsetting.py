@@ -26,7 +26,7 @@
 #
 from Kernel.Command                     import *
 from Kernel.Command.segmentcommand      import SegmentCommand
-from Kernel.Command.circlecommand          import CircleCommand
+from Kernel.Command.circlecommand       import CircleCommand
 from Kernel.Command.arccommand          import ArcCommand
 from Kernel.Command.pointcommand        import PointCommand
 from Kernel.Command.ellipsecommand      import EllipseCommand
@@ -347,7 +347,6 @@ SNAP_POINT_ARRAY={'LIST':0,
 ACTIVE_SNAP_POINT=SNAP_POINT_ARRAY["LIST"]
 
 ACTIVE_SNAP_LIST=[SNAP_POINT_ARRAY["END"],
-                  SNAP_POINT_ARRAY["END"],
                   SNAP_POINT_ARRAY["MID"],
                   SNAP_POINT_ARRAY["ORTHO"],
                   SNAP_POINT_ARRAY["QUADRANT"],

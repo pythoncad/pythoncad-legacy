@@ -126,7 +126,7 @@ class SnapPoint():
         else:
             return None
 
-    def getSnapTangentPoint(selfself, point):
+    def getSnapTangentPoint(self, point):
         """
             this fucnticion compute the Tangent to point snap constraint
         """
@@ -162,6 +162,9 @@ class SnapPoint():
                     return p1
                 else:
                     return p2
+        elif getattr(entity.geoItem, 'getPoint', None):
+                return entity.geoItem.getPoint()
+                
         else:
             return None
 

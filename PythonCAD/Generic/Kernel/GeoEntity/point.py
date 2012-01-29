@@ -58,7 +58,8 @@ class Point(GeometricalEntity):
             raise SyntaxError, "Invalid call to Point()."
         self.__x = _x
         self.__y = _y
-
+    def getPoint(self):
+        return self
     def __str__(self):
         return "Point : (%g,%g)" % (self.__x, self.__y)
     @property

@@ -21,8 +21,8 @@
 # SegmentPreview object
 #
 import math
-
-from Interface.Preview.base         import *
+from PyQt4 import QtCore, QtGui
+from Interface.Preview.base         import PreviewBase
 from Interface.Entity.arc           import Arc
 
 
@@ -30,9 +30,39 @@ from Interface.Entity.arc           import Arc
 #extend it for all the preview entity
 
 class PreviewArc(PreviewBase):
-     def __init__(self,command):
+    def __init__(self,command):
         super(PreviewArc, self).__init__(command)
-        self.drawShape=Arc.drawShape
-        self.drawGeometry=Arc.drawGeometry
     
-   
+    @property
+    def canPaint(self):
+#        self.xc,
+#        self.yc,
+#        self.h,
+#        self.h
+#               
+#        return self.value[0]!=None and self.value[1]!=None
+        return False
+    
+    def arcRect(self):    
+        return QtCore.QRectF(self.xc,
+                             self.yc,
+                             self.h,
+                             self.h)
+        
+    def drawGeometry(self, painter,option,widget):
+        """
+            Overloading of the paint method
+        """
+        if self.canPaint:
+            Arc.__dict['drawGeometry'](self, painter,option,widget)
+
+    def drawShape(self, painterPath):
+        """
+            overloading of the shape method
+        """
+        if self.canPaint:
+            Arc.__dict['drawShape'](self, painterPath)
+
+      
+        
+        

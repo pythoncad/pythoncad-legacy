@@ -20,7 +20,7 @@
 #
 # qt arc class
 #
-
+from PyQt4 import QtCore, QtGui
 from Interface.Entity.base import *
 
 class Arc(BaseEntity):
