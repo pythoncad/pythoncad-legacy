@@ -61,7 +61,8 @@ class PreviewBase(QtGui.QGraphicsItem):
         except(ExcPoint):
             self.value[index]=self.revertToQTObject(position)
         except(ExcLenght, ExcInt):
-            self.value[index]=distance
+            if not distance or distance !=None:
+                self.value[index]=distance
         except(ExcAngle):
             p1=GeoPoint(0.0, 0.0)
             p2=GeoPoint(position.x(), position.y())

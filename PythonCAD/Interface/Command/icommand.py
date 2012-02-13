@@ -59,15 +59,15 @@ class ICommand(object):
     #restartCommandOption=False         # moved to Interface.cadinitsetting  > RESTART_COMMAND_OPTION
 
     def __init__(self, scene):
-        self.__scene=scene              # This is needed for the preview creation
-        self.__previewItem=None
-        self.__point=[]
-        self.__entity=[]
-        self.__distance=[]
-        self.__angle=[]
-        self.__snap=[]
-        self.__forceSnap=[]
-        self.__index=-1
+        self._scene=scene              # This is needed for the preview creation
+        self._previewItem=None
+        self._point={}
+        self._entity={}
+        self._distance={}
+        self._angle={}
+        self._snap={}
+        self._forceSnap={}
+        self._index=-1
         self.updateInput=PyCadEvent()
         #self.scene.snappingPoint.activeSnap=#SNAP_POINT_ARRAY["LIST"]  # Define the active snap system
     @property
@@ -75,7 +75,7 @@ class ICommand(object):
         """
             get scene force direction
         """
-        return self.__scene.forceDirection
+        return self.scene.forceDirection
     @property
     def kernelCommand(self):
         """
@@ -87,10 +87,10 @@ class ICommand(object):
         """
             get scene
         """
-        return self.__scene
+        return self._scene
     @property
     def index(self):
-        return self.__index
+        return self._index
 
     def restartCommand(self):
         """
@@ -98,13 +98,13 @@ class ICommand(object):
         """
         if self.kernelCommand!=None:
             self.kernelCommand.reset()
-        self.__point=[]
-        self.__entity=[]
-        self.__distance=[]
-        self.__angle=[]
-        self.__snap=[]
-        self.__forceSnap=[]
-        self.__index=-1
+        self._point={}
+        self._entity={}
+        self._distance={}
+        self._angle={}
+        self._snap={}
+        self._forceSnap={}
+        self._index=-1
         self.removePreviewItemToTheScene()
 
     def addMauseEvent(self, point, entity,distance=None,angle=None , text=None, force=None, correct=True):
@@ -117,7 +117,7 @@ class ICommand(object):
         #print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
         if correct!=None:
             snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point))
-            snap=self.correctPositionForcedDirection(snap, self.__scene.forceDirection)
+            snap=self.correctPositionForcedDirection(snap, self._scene.forceDirection)
         else:
             snap=point
         if angle==None:
@@ -128,26 +128,27 @@ class ICommand(object):
         # Assing value to the object arrays
         #
         try:
-            self.kernelCommand[self.__index]=(snap,entity,distance, angle, text)
+            self.kernelCommand[self._index]=(snap,entity,distance, angle, text) #Here you got all the magic
             self.scene.fromPoint=snap
             if self.kernelCommand.activeException()==ExcPoint or self.kernelCommand.activeException()==ExcLenght:
                 if snap!=None:
                     self.scene.GuideHandler.place(snap.getx(), snap.gety())
                 if self.scene.forceDirectionEnabled==True:
                     self.scene.GuideHandler.show()
-        except:
+        except Exception,ex:
             self.updateInput("msg")
             self.updateInput(self.kernelCommand.activeMessage)
             self.scene.clearSelection()
+            print "Error ",str(ex)
             return
-        self.__point.append(point)
-        self.__entity.append(entity)
-        self.__distance.append(distance)
-        self.__angle.append(angle)
-        self.__snap.append(snap)
-        self.__forceSnap.append(force)
+        self._index+=1
+        self._point[self._index]=(point)
+        self._entity[self._index]=(entity)
+        self._distance[self._index]=(distance)
+        self._angle[self._index]=(angle)
+        self._snap[self._index]=(snap)
+        self._forceSnap[self._index]=(force)
         #self.updatePreview(point,distance,entity )
-        self.__index+=1
         try:
             self.kernelCommand.next()
         except StopIteration:
@@ -156,17 +157,40 @@ class ICommand(object):
 
         self.updateInput(self.kernelCommand.activeMessage)
         if self.automaticApply and self.kernelCommand.automaticApply:
-            if(self.__index>=self.kernelCommand.lenght-1): #Apply the command
+            if(self._index>=self.kernelCommand.lenght-1): #Apply the command
                 self.applyCommand()
 
         if self.kernelCommand.activeException()==ExcDicTuple:
             dialog=Property(parent =self.scene.parent(),  entity=entity)
             if dialog.changed:
-                self.kernelCommand[self.__index]=(None,entity,None, None, dialog.value)
+                self.kernelCommand[self._index]=(None,entity,None, None, dialog.value)
                 self.applyCommand()
             else:
                 self.restartCommand()
-
+    
+    def addTextEvent(self, value):
+        """
+            compute imput from text
+        """
+        if value=="":
+            self.kernelCommand.applyDefault()
+            self.applyCommand()
+            return
+        elif value.upper()=="UNDO":
+            #TODO: perform a back operation to the command
+            return
+        elif value.upper()=="REDO":
+            #TODO: perform a forward operation to the command
+            return
+        else:
+            try:
+                tValue=self.decodeText(value)
+                self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4], correct=None)
+            except PyCadWrongImputData, msg:
+                print "Problem on ICommand.addTextEvent"
+                self.updateInput(msg)
+                self.updateInput(self.kernelCommand.activeMessage)
+                return
     def applyDefault(self):
         """
             apply the default value command
@@ -215,51 +239,32 @@ class ICommand(object):
         if position ==None:
             return None
         p=QtCore.QPointF(position.x, position.y*-1.0)
-        ents=self.__scene.items(p)
+        ents=self._scene.items(p)
         if len(ents)>1: # bug: it was 0
             #TODO: here it will be nice to have a sort of control for chosing one entity
             #in case of overlapping entity selection
-            print "more than one entity under the mouse"
+            pass
         for e in ents:
             if isinstance(e, BaseEntity):
                 return e
         return None
 
-    def updateMauseEvent(self, point, distance, entity, force=None):
+    def updateMauseEvent(self, point, entity, distance=None, force=None):
         """
             update value to the active slot of the command
         """
         if self.index>-1:
-            self.__point[self.index]=point
-            self.__entity[self.index]=entity
-            self.__distance[self.index]=distance
-            self.__snap[self.index]=point
-            self.__forceSnap[self.index]=force
+            updIndex=self.index+1
+            self._point[updIndex]=point
+            self._entity[updIndex]=entity
+            
+            if distance==None:
+                distance=self.getDistance(point) 
+            
+            self._distance[updIndex]=distance
+            self._snap[updIndex]=point
+            self._forceSnap[updIndex]=force
         self.updatePreview(point, distance, entity) #   mange preview
-
-    def addTextEvent(self, value):
-        """
-            compute imput from text
-        """
-        if value=="":
-            self.kernelCommand.applyDefault()
-            self.applyCommand()
-            return
-        elif value.upper()=="UNDO":
-            #TODO: perform a back operatio to the command
-            return
-        elif value.upper()=="REDO":
-            #TODO: perform a forward operatio to the command
-            return
-        else:
-            try:
-                tValue=self.decodeText(value)
-                self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4], correct=None)
-            except PyCadWrongImputData, msg:
-                print "Problem on ICommand.addTextEvent"
-                self.updateInput(msg)
-                self.updateInput(self.kernelCommand.activeMessage)
-                return
 
     def getDistance(self, point):
         """
@@ -279,10 +284,9 @@ class ICommand(object):
         if snap==None:
             return None
 
-        for snapPoint in self.__snap:
-            if snapPoint!=None:
-                v=Vector(snapPoint,snap )
-                return v.absAng
+        for snapPoint in self._snap:
+            v=Vector(self._snap[snapPoint],snap )
+            return v.absAng
         else:
             return None
 
@@ -361,56 +365,57 @@ class ICommand(object):
             make update of the preview
         """
         if self.drawPreview:
-            if self.__previewItem==None:            #Create the Preview Item
-                self.__previewItem=getPreviewObject(self.kernelCommand)
+            if self._previewItem==None:            #Create the Preview Item
+                self._previewItem=getPreviewObject(self.kernelCommand)
                 self.addPreviewItemToTheScene()
             else:                                   #Use the item already stored
-                self.__previewItem.updatePreview(point,
+                self._previewItem.updatePreview(point,
                                                 distance,
                                                     self.kernelCommand)
     def addPreviewItemToTheScene(self):
         """
             add the preview item at the scene
         """
-        if self.__previewItem!=None:
-            self.__scene.addItem(self.__previewItem)
+        if self._previewItem!=None:
+            self._scene.addItem(self._previewItem)
+            
     def removePreviewItemToTheScene(self):
         """
             Remove all the preview items from the scene
         """
-        if self.__previewItem!=None:
-            self.__scene.clearPreview()
-            self.__previewItem=None
+        if self._previewItem!=None:
+            self._scene.clearPreview()
+            self._previewItem=None
         
     def getPointClick(self, index):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__point, index)
+        return self.getDummyElement(self._point, index)
 
     def getEntityClick(self, index):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__entity, index)
+        return self.getDummyElement(self._entity, index)
 
     def getDistanceClick(self, index):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__distance, index)
+        return self.getDummyElement(self._distance, index)
 
     def getSnapClick(self, index):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__snap, index)
+        return self.getDummyElement(self._snap, index)
 
     def getForceSnap(self, index):
         """
             return the index clicked entity
         """
-        return self.getDummyElement(self.__forceSnap, index)
+        return self.getDummyElement(self._forceSnap, index)
 
     def getDummyElement(self, array, index):
         """
@@ -480,7 +485,7 @@ class ICommand(object):
             return None
         if force==None:
             return point
-        lastSnap=self.__scene.fromPoint
+        lastSnap=self._scene.fromPoint
         pF=point
         if force!=None and lastSnap!=None:
             v=Vector(lastSnap, Point(lastSnap.x+10.0*math.cos(force),  lastSnap.y+10.0*math.sin(force)))
@@ -499,12 +504,11 @@ class ICommand(object):
         """
             this fucnticion compute the  snap intersection point
         """
-        print "intersection"
         returnVal=None
         distance=None
         if entity!=None:
             geoEntityFrom=entity.geoItem
-            entityList=self.__scene.collidingItems(entity)
+            entityList=self._scene.collidingItems(entity)
             for ent in entityList:
                 intPoint=find_intersections(ent.geoItem,geoEntityFrom)
                 for tp in intPoint:

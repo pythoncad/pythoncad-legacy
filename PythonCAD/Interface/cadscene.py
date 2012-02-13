@@ -65,7 +65,6 @@ class CadScene(QtGui.QGraphicsScene):
         self.firePan=PyCadEvent()
         self.fireZoomFit=PyCadEvent()
         self.__document=document
-        self.__oldClickPoint=None
         self.needPreview=False
         self.forceDirectionEnabled=False
         self.forceDirection=None
@@ -166,15 +165,13 @@ class CadScene(QtGui.QGraphicsScene):
                         self.endMark.move(ps.getx(), ps.gety()*-1.0)
                 else:
                     self.hideSnapMarks()
-            distance=None
             qtItem=[self.itemAt(scenePos)]
-            if self.__oldClickPoint:
-                distance=self.getDistance(event)
-            self.activeICommand.updateMauseEvent(ps, distance, qtItem)
-
+            self.activeICommand.updateMauseEvent(ps, qtItem)
         super(CadScene, self).mouseMoveEvent(event)
         return
 
+
+        
     def mousePressEvent(self, event):
         if event.button()==QtCore.Qt.MidButton:
             self.isInPan=True
@@ -250,8 +247,8 @@ class CadScene(QtGui.QGraphicsScene):
         """
         point=Point(self.posHandler.scenePos.x(), self.posHandler.scenePos.y()*-1.0)
         self.activeICommand.addMauseEvent(point=point,
-                                            distance=posHandler.distance,
-                                            angle=posHandler.angle)
+                                            distance=self.posHandler.distance,
+                                            angle=self.posHandler.angle)
         self.hideHandler()
 
     def hideHandler(self):
@@ -305,7 +302,7 @@ class CadScene(QtGui.QGraphicsScene):
                 print "GUIDE LOCKED"
             else:
                 self.selectionAddMode=True
-                print self.selectionAddMode
+
 #        elif event.key()==QtCore.Qt.Key_F8:  <<<<this must maybe be implemented in cadwindow
 #            if self.forceDirection is None:
 #                self.forceDirection=True
@@ -336,7 +333,6 @@ class CadScene(QtGui.QGraphicsScene):
                 self.GuideHandler.hideGuides()
             else:
                 self.selectionAddMode=False
-                print self.selectionAddMode
         else:
             pass
 
@@ -364,7 +360,6 @@ class CadScene(QtGui.QGraphicsScene):
         entitys=[item for item in self.items() if isinstance(item, PreviewBase)]
         for ent in entitys:
             self.removeItem(ent)
-        self.__oldClickPoint=None
 
     def initDocumentEvents(self):
         """

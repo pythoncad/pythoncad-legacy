@@ -18,23 +18,23 @@ class IDocument(QtGui.QMdiSubWindow):
         self.isUntitled = True
         # layer list
         self.__layer_dock = LayerDock(self,self.__document)
-        self.__scene = CadScene(document, parent=self)
+        self._scene = CadScene(document, parent=self)
         self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
-        self.__view = CadView(self.__scene, self)
+        self.__view = CadView(self._scene, self)
         # the graphics view is the main/central component
         innerWindows = QtGui.QMainWindow()
         innerWindows.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.__layer_dock)
         innerWindows.setCentralWidget(self.__view)
         self.setWidget(innerWindows)
         #Inizialize scene
-        self.__scene.initDocumentEvents()
-        self.__scene.populateScene(document)
-        self.__scene.zoomWindows+=self.__view.zoomWindows
-        self.__scene.fireCommandlineFocus+=self.__cmdInf.commandLine.setFocus
-        self.__scene.fireKeyShortcut+=self.keyShortcut
-        self.__scene.fireKeyEvent+=self.keyEvent
-        self.__scene.fireWarning+=self.popUpWarning
-        self.__scene.fireCoords+=self.setStatusbarCoords
+        self._scene.initDocumentEvents()
+        self._scene.populateScene(document)
+        self._scene.zoomWindows+=self.__view.zoomWindows
+        self._scene.fireCommandlineFocus+=self.__cmdInf.commandLine.setFocus
+        self._scene.fireKeyShortcut+=self.keyShortcut
+        self._scene.fireKeyEvent+=self.keyEvent
+        self._scene.fireWarning+=self.popUpWarning
+        self._scene.fireCoords+=self.setStatusbarCoords
     @property
     def document(self):
         return self.__document
@@ -46,7 +46,7 @@ class IDocument(QtGui.QMdiSubWindow):
         return self.__view
     @property
     def scene(self):
-        return self.__scene
+        return self._scene
     @property
     def application(self):
         """

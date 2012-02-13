@@ -24,7 +24,7 @@ import math
 from PyQt4 import QtCore, QtGui
 from Interface.Preview.base         import PreviewBase
 from Interface.Entity.arc           import Arc
-
+from Kernel.entity                  import Point
 
 #TODO+: find a good way to retrive the geometry staff from a item in Interface.Entity.arc ..
 #extend it for all the preview entity
@@ -34,34 +34,35 @@ class PreviewArc(PreviewBase):
         super(PreviewArc, self).__init__(command)
     
     @property
-    def canPaint(self):
-#        self.xc,
-#        self.yc,
-#        self.h,
-#        self.h
-#               
-#        return self.value[0]!=None and self.value[1]!=None
+    def canDraw(self):
+        if self.value[0]!=None:
+            self.xc         =   self.value[0].x()
+            self.yc         =   self.value[0].y()
+            self.h          =   self.value[1]*2
+          
+            self.xc=self.xc-(self.h/2.0)
+            self.yc=self.yc-(self.h/2.0)
+            
+            self.startAngle =  (self.value[2]*180/math.pi)*16
+            self.spanAngle  =  (self.value[3]*180/math.pi)*16 
+            return True       
         return False
     
-    def arcRect(self):    
-        return QtCore.QRectF(self.xc,
-                             self.yc,
-                             self.h,
-                             self.h)
+   
         
     def drawGeometry(self, painter,option,widget):
         """
             Overloading of the paint method
         """
-        if self.canPaint:
-            Arc.__dict['drawGeometry'](self, painter,option,widget)
+        if self.canDraw:
+            Arc.__dict__['drawGeometry'](self, painter,option,widget)
 
     def drawShape(self, painterPath):
         """
             overloading of the shape method
         """
-        if self.canPaint:
-            Arc.__dict['drawShape'](self, painterPath)
+        if self.canDraw:
+            Arc.__dict__['drawShape'](self, painterPath)
 
       
         

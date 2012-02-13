@@ -42,7 +42,7 @@ class BaseEntity(QtGui.QGraphicsItem):
         self.setAcceptsHoverEvents(True)                        #Fire over events
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
         #Get the geometry
-        self.__entity=entity
+        self._entity=entity
         self.setToolTip(str(self.toolTipMessage))
         #Set color from style
         r, g, b= self.style.getStyleProp("entity_color")
@@ -80,16 +80,16 @@ class BaseEntity(QtGui.QGraphicsItem):
 
     @property
     def entity(self):
-        return self.__entity
+        return self._entity
     @property
     def ID(self):
-        return self.__entity.getId()
+        return self._entity.getId()
     @property
     def geoItem(self):
-        return self.__entity.toGeometricalEntity()
+        return self._entity.toGeometricalEntity()
     @property
     def style(self):
-        return self.__entity.getInnerStyle()
+        return self._entity.getInnerStyle()
     @property
     def toolTipMessage(self):
         toolTipMessage=self.geoItem.info

@@ -33,7 +33,7 @@ from Interface.Entity.base          import BaseEntity
 class SnapPoint():
     def __init__(self, scene):
         self.activeSnap=ACTIVE_SNAP_POINT
-        self.__scene=scene
+        self._scene=scene
 
     def getSnapPoint(self,  point, entity):
         """
@@ -46,9 +46,7 @@ class SnapPoint():
         if self.activeSnap==SNAP_POINT_ARRAY["NONE"]:
             return point
         else:
-            print self.activeSnap
             snapPoint=point
-
             if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
                 snapPoint = self.getSnapMiddlePoint(entity)
             elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
@@ -114,14 +112,13 @@ class SnapPoint():
             this fucnticion compute the orto to point snap constraint
         """
         # Now only works for segments and arcs. USES THE getPROJECTION METHOD
-        returnVal=None
-        if self.__scene.fromPoint==None or entity == None:
+        if self._scene.fromPoint==None or entity == None:
             #print "log: getSnapOrtoPoint :frompoint or entity is none "
             return None
 
         if getattr(entity, 'geoItem', None):
             if getattr(entity.geoItem, 'getProjection', None):
-                pT=entity.geoItem.getProjection(self.__scene.fromPoint)
+                pT=entity.geoItem.getProjection(self._scene.fromPoint)
                 return pT
         else:
             return None
@@ -152,7 +149,6 @@ class SnapPoint():
             this fucnticion compute the  snap endpoint
         """
         if point == None or entity == None:
-            print "log: getSnapEndPoint :point or entity is none "
             return None
 
         if getattr(entity, 'geoItem', None):
@@ -172,13 +168,10 @@ class SnapPoint():
         """
             this fucnticion compute the  snap from the center of an entity
         """
-        print "getSnapCenterPoint", entity
         returnVal=None
         if getattr(entity, 'geoItem', None):
-            print "isgeoitem"
             geoEntity=entity.geoItem
             if getattr(geoEntity, 'getCenter', None):
-                print "have cente attr"
                 returnVal=geoEntity.center
             else:
                 returnVal=None
@@ -193,9 +186,9 @@ class SnapPoint():
         if entity!=None:
             geoEntityFrom=entity.geoItem
             import time
-            startTime=time.clock()
-            entityList=self.__scene.collidingItems(entity)
-            endTime=time.clock()-startTime
+            #startTime=time.clock()
+            entityList=self._scene.collidingItems(entity)
+            #endTime=time.clock()-startTime
             #print "getIntersection, collidingItems in %s"%str(endTime)
             #startTime=time.clock()
             for ent in entityList:
@@ -213,7 +206,7 @@ class SnapPoint():
                             if distance>spoolDist:
                                 distance=spoolDist
                                 returnVal=iPoint
-            endTime=time.clock()-startTime
+            #endTime=time.clock()-startTime
             #print "find intersection in %s"%str(endTime)
         return returnVal
 

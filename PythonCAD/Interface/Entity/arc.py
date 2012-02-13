@@ -47,20 +47,17 @@ class Arc(BaseEntity):
         self.spanAngle=spanAngle
         return
     
-    def arcRect(self):    
-        return QtCore.QRectF(self.xc,
-                             self.yc,
-                             self.h,
-                             self.h)
-
-    
     def drawShape(self, painterPath):    
         """
             extending of the shape method 
         """
-        x, y=self.startPoint.getCoords()
-        painterPath.moveTo(x, y*-1.0)
-        painterPath.arcTo(self.arcRect(),self.startAngle/16.0,self.spanAngle/16.0) 
+        qRect=QtCore.QRectF(self.xc,
+                             self.yc,
+                             self.h,
+                             self.h)
+        #x, y=self.startPoint.getCoords()
+        painterPath.moveTo(self.xc, self.yc*-1.0)
+        painterPath.arcTo(qRect,self.startAngle/16.0,self.spanAngle/16.0) 
         return
     
     def drawGeometry(self, painter, option, widget):
@@ -68,9 +65,12 @@ class Arc(BaseEntity):
             extending of the paint method
         """
         #Create Arc/Circle
-        
-        painter.drawArc(self.arcRect(),self.startAngle,  self.spanAngle)
-    
+        qRect=QtCore.QRectF(self.xc,
+                             self.yc,
+                             self.h,
+                             self.h)
+        painter.drawArc(qRect,self.startAngle,  self.spanAngle)
+
     
     
     

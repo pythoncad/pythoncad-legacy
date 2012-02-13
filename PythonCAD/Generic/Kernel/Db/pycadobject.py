@@ -32,7 +32,7 @@ class PyCadObject(object):
         self.OBJECT_STATE=OBJECT_STATE
         self.__entityId=objId
         self.__state="MODIFIE"
-        self.__index=0
+        self._index=0
         self.__visible=1
         self.__style=style
         self.__entType=eType
@@ -77,17 +77,17 @@ class PyCadObject(object):
         """
             get the index of the revision index of the current object
         """
-        return self.__index
+        return self._index
     
     def getNewIndex(self):
         """
             Get the new index of the current entity
         """
         if index :
-            self.__index+=self.__index
+            self._index+=self._index
             self.__state=self.OBJECT_STATE[0]
         else: 
-            self.__index=0
+            self._index=0
             self.__state=self.OBJECT_STATE[0]
     
     def setIndex(self,index):
@@ -95,7 +95,7 @@ class PyCadObject(object):
             Set The index of the entity
         """
         if index:
-            self.__index=index
+            self._index=index
     index=property(getIndex, setIndex, "Get The new index of the current entity")
     
     def delete(self):

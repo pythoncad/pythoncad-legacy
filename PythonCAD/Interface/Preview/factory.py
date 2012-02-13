@@ -23,6 +23,7 @@
 from Kernel.Command.pointcommand        import PointCommand
 from Kernel.Command.segmentcommand      import SegmentCommand
 from Kernel.Command.arccommand          import ArcCommand
+from Kernel.Command.circlecommand       import CircleCommand
 from Kernel.Command.rectanglecommand    import RectangleCommand
 from Kernel.Command.ellipsecommand      import EllipseCommand
 from Kernel.Command.polylinecommand     import PolylineCommand
@@ -41,7 +42,7 @@ def getPreviewObject(command):
         return PreviewPoint(command)
     if isinstance(command , SegmentCommand):
         return PreviewSegment(command)
-    elif isinstance(command , ArcCommand):
+    elif isinstance(command , (ArcCommand,CircleCommand)):
         return PreviewArc(command)
 #    elif isinstance(command , RectangleCommand):
 #        return QtRectangleItem(command)
