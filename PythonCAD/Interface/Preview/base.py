@@ -20,8 +20,10 @@
 #
 #This module provide a class for the segment command
 #
-from PyQt4 import QtCore, QtGui
 
+import math
+
+from PyQt4 import QtCore, QtGui
 
 from Kernel.exception       import *
 from Kernel.GeoEntity.point import Point as GeoPoint
@@ -65,8 +67,10 @@ class PreviewBase(QtGui.QGraphicsItem):
                 self.value[index]=distance
         except(ExcAngle):
             p1=GeoPoint(0.0, 0.0)
-            p2=GeoPoint(position.x(), position.y())
-            self.value[index]=Vector(p1, p2).absAng
+            p2=GeoPoint(position.x, position.y)
+            ang=Vector(p1, p2).absAng
+            print "previewAngle ",ang
+            self.value[index]=ang
         except:
             print "updatePreview: Exception not managed"
             return

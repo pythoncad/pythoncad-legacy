@@ -285,6 +285,7 @@ class ICommand(object):
             return None
 
         for snapPoint in self._snap:
+            print "angle ",self._snap[snapPoint],snap 
             v=Vector(self._snap[snapPoint],snap )
             return v.absAng
         else:

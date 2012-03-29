@@ -73,8 +73,8 @@ class Arc(GeometricalEntity):
         if not get_float(self.radius) > 0.0:
             raise ValueError, "Invalid radius" 
         
-        self.startAngle = self.startAngle
-        self.endAngle= self.endAngle
+        #self.startAngle = self.startAngle
+        #self.endAngle= self.endAngle
         
     def isCircle(self):
         """

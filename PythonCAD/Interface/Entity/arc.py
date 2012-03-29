@@ -40,11 +40,8 @@ class Arc(BaseEntity):
         self.h=geoEnt.radius*2
         # By default, the span angle is 5760 (360 * 16, a full circle).
         # From pythoncad the angle are in radiant ..
-        startAngle=(startAngle*180/math.pi)*16
-        spanAngle=(spanAngle*180/math.pi)*16
-        spanAngle=spanAngle
-        self.startAngle=startAngle
-        self.spanAngle=spanAngle
+        self.startAngle=(startAngle*180/math.pi)*16
+        self.spanAngle=(spanAngle*180/math.pi)*16-self.startAngle
         return
     
     def drawShape(self, painterPath):    
@@ -57,7 +54,7 @@ class Arc(BaseEntity):
                              self.h)
         #x, y=self.startPoint.getCoords()
         painterPath.moveTo(self.xc, self.yc*-1.0)
-        painterPath.arcTo(qRect,self.startAngle/16.0,self.spanAngle/16.0) 
+        painterPath.arcTo(qRect,self.startAngle,self.spanAngle) 
         return
     
     def drawGeometry(self, painter, option, widget):
