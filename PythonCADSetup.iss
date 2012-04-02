@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3B87B49A-1A23-4E98-9C9D-D6152D970EB5}
 AppName=PythonCAD
-AppVersion=0.4
+AppVersion=0.5
 ;AppVerName=PythonCAD 0.4
 AppPublisher=PythonCAD
 AppPublisherURL=https://sourceforge.net/projects/pythoncad/
@@ -15,7 +15,7 @@ AppSupportURL=https://sourceforge.net/projects/pythoncad/
 AppUpdatesURL=https://sourceforge.net/projects/pythoncad/
 DefaultDirName={pf}\PythonCAD
 DefaultGroupName=PythonCAD
-LicenseFile=C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\Gpl_license.txt
+LicenseFile=.\PythonCAD\Gpl_license.txt
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
@@ -28,9 +28,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "C:\Users\mboscolo\Desktop\R38\pyinstaller-trunk\PythonCAD\dist\PythonCAD\PythonCAD.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\mboscolo\Desktop\R38\pythoncad\PythonCAD\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Users\mboscolo\Desktop\R38\pyinstaller-trunk\PythonCAD\dist\PythonCAD\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\pyinstaller-1.5.1\PythonCAD\dist\PythonCAD\PythonCAD.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\PythonCAD\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\pyinstaller-1.5.1\PythonCAD\dist\PythonCAD\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

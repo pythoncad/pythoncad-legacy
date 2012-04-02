@@ -21,10 +21,10 @@
 # This module provide basic class for all  the qtitems to be displayed
 #
 import sys
-if sys.version_info <(2, 7):
-    import sip
-    sip.setapi('QString', 2)
-    sip.setapi('QVariant', 2)
+#if sys.version_info <(2, 7):
+#    import sip
+#    sip.setapi('QString', 2)
+#    sip.setapi('QVariant', 2)
 
 import math
 from PyQt4  import QtCore, QtGui

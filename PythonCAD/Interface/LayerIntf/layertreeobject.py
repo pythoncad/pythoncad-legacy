@@ -25,10 +25,10 @@
 # This Class define a QTreeWidget implementation for showing the layer structure
 #
 import sys
-if sys.version_info <(2, 7):
-    import sip
-    sip.setapi('QString', 2)
-    sip.setapi('QVariant', 2)
+#if sys.version_info <(2, 7):
+#    import sip
+#    sip.setapi('QString', 2)
+#    sip.setapi('QVariant', 2)
 
 from PyQt4                              import QtCore, QtGui
 
