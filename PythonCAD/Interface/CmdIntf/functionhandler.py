@@ -77,7 +77,7 @@ class FunctionHandler(object):
             Return: command exit, the evaluated expression or "*error*"
         '''
         # commands are always defined in upper case
-        command = expression.upper()
+        command = str(expression).upper()
         # is it a command from the command table?
         self.__edit_ctrl.clear()
         if self._command_table.has_key(command):    # Interface command evaluation
