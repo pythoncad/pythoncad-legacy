@@ -61,19 +61,24 @@ class GeometricalEntity(dict):
         self.updateSnapPoint(force, fromPoint, fromEnt)
         return self.snapPoints
     
-    def addProperties(self,name,value):
+    def addPropertie(self,name,value):
         """
             add a propertys to the object
         """
         self._properties[name]=value
-    def getProperties(self,name):
+    def getPropertie(self,name):
         """
             get the properties with a given name
         """
         if name in self._properties:
             return self._properties[name]
         raise EntityMissing("No entity with name %s"%str(name))
-    
+    @property
+    def properties(self):
+        """
+            get all the properties from the entity
+        """
+        return self._properties
     @property
     def snapPoints(self):
         """

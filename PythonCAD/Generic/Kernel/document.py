@@ -116,19 +116,27 @@ class Document(BaseDb):
             raise StructuralError, 'Unable to create LayerTree structure'
         self.__logger.debug('Done inizialization')
     
-    def addProperties(self,name,value):
+    def addPropertie(self,name,value):
         """
             add a propertys to the object
         """
-        self._properties[name]=value
+        self.__property[name]=value
         
-    def getProperties(self,name):
+    def getPropertie(self,name):
         """
             get the properties with a given name
         """
-        if name in self._properties:
-            return self._properties[name]
+        if name in self.__property:
+            return self.__property[name]
         raise EntityMissing("No entity with name %s"%str(name))
+    
+    @property
+    def properties(self):
+        """
+            get all the properties from the entity
+        """
+        return self.__property
+    
     def getMainStyle(self):
         """
             get all the db styles
