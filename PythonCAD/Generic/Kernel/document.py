@@ -105,6 +105,7 @@ class Document(BaseDb):
         self.__activeStyleObj=None
         self.__activeStyleObj=self.getMainStyle()
         self.__settings=self.getDbSettingsObject()
+        self.__property={}
         #************************
         #Inizialize Layer structure
         #************************
@@ -114,7 +115,20 @@ class Document(BaseDb):
         except StructuralError:
             raise StructuralError, 'Unable to create LayerTree structure'
         self.__logger.debug('Done inizialization')
-
+    
+    def addProperties(self,name,value):
+        """
+            add a propertys to the object
+        """
+        self._properties[name]=value
+        
+    def getProperties(self,name):
+        """
+            get the properties with a given name
+        """
+        if name in self._properties:
+            return self._properties[name]
+        raise EntityMissing("No entity with name %s"%str(name))
     def getMainStyle(self):
         """
             get all the db styles
