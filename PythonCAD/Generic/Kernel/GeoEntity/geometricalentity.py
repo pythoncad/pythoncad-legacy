@@ -25,6 +25,8 @@ import math
 import sympy            as mainSympy
 import sympy.geometry   as geoSympy
 
+from Generic.Kernel.exception import EntityMissing
+
 class GeometricalEntity(dict):
     """
         This class provide the basic interface for all the geometrical entitys
@@ -47,6 +49,7 @@ class GeometricalEntity(dict):
                 raise TypeError, "Wrong argument %s "%str(k)
         self.arguments=argNameType
         self._snapPoints=[]
+        self._properties={}
     
     def updateSnapPoint(self, force=None, fromPoint=None, fromEnt=None):
         pass
@@ -57,6 +60,19 @@ class GeometricalEntity(dict):
         """
         self.updateSnapPoint(force, fromPoint, fromEnt)
         return self.snapPoints
+    
+    def addProperties(self,name,value):
+        """
+            add a propertys to the object
+        """
+        self._properties[name]=value
+    def getProperties(self,name):
+        """
+            get the properties with a given name
+        """
+        if name in self._properties:
+            return self._properties[name]
+        raise EntityMissing("No entity with name %s"%str(name))
     
     @property
     def snapPoints(self):
