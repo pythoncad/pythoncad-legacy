@@ -100,12 +100,18 @@ class Property(QDialog, Ui_Dialog):
         if len(rows)>0:
             row=rows[0]
             self.customProperty.model().removeRow(row.row())
-        
+    def uppdateCustomProperty(self):
+        """
+            update the custom property
+        """ 
+        self.entity[0]._entity._properties= dict(self.customProperty.model().arraydata)
+
     @pyqtSignature("")
     def on_buttonBox_accepted(self):
         """
             implements the accept button
         """
+        self.uppdateCustomProperty()
         self._isOk=True
         self.close()
         

@@ -154,7 +154,7 @@ class DataModel(QAbstractTableModel):
     
     def getRowData(self,index):
         return self.arraydata[index.row()]
-    
+
 def populateTable(refTable,tableObject,header,backGroundFunction=False):
     """
         Create the table elements
