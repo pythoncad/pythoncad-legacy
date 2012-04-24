@@ -25,15 +25,16 @@
 # 
 #
 #
-#Qt Import
+# Qt Import
 #
 
-from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import pyqtSignature
+from PyQt4.QtGui    import QDialog,QAbstractItemView
+from PyQt4.QtCore   import pyqtSignature
 
-from Ui_property import Ui_Dialog
+from Ui_property    import Ui_Dialog
 
 from Interface.cadinitsetting import *
+from Interface.Dialogs.dataModel import populateTable
 
 class Property(QDialog, Ui_Dialog):
     """
@@ -46,14 +47,25 @@ class Property(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.containers={}
         self._isOk=False
+        self.entity=entity
         styleprops=entity[0].style.props
         for propName in styleprops:
             val=styleprops[propName]
             if propName in PYTHONCAD_STYLE_WIDGET:
                 propDescription=PYTHONCAD_STYLE_DESCRIPTION[propName]
-                self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](parent, oldValue=val,label=propDescription)
+                self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](None, oldValue=val,label=propDescription)
                 self.propertyConteiner.addLayout(self.containers[propName])
+        self.populateCustomProperty()
         self.exec_()
+    
+    def populateCustomProperty(self):
+        """
+            populate the dialog with the custom property
+        """
+        #tableObject=self.entity[0]._entity.properties
+        tableObject=[['name','10'],['dimension','20']]
+        populateTable(self.customProperty,tableObject,['Name','Value'])
+     
         
     @pyqtSignature("")
     def on_buttonBox_accepted(self):

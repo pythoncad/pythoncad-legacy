@@ -35,6 +35,7 @@ import cadwindow_rc
 
 from Generic.application            import Application
 
+#Interface
 from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
@@ -43,6 +44,8 @@ from Interface.CmdIntf.cmdintf      import CmdIntf
 from Interface.Entity.base          import BaseEntity
 from Interface.Command.icommand     import ICommand
 from Interface.cadinitsetting       import *
+from Interface.Dialogs.preferences  import Preferences
+#Kernel
 from Kernel.exception               import *
 from Kernel.initsetting             import * #SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT
 
@@ -581,8 +584,11 @@ class CadWindowMdi(QtGui.QMainWindow):
         self.callCommand('PROPERTY')
 
     def preferences(self):
-        p=ConfigDialog()
-        #p.exec_()
+        p=Preferences(self)
+        #TODO: Fill up preferences
+        if (p.exec_() == QtGui.QDialog.Accepted):
+            #TODO: save Preferences
+            pass
 
 #---------------------------ON COMMANDS in MODIFY
 

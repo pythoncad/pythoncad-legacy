@@ -25,7 +25,6 @@ import math
 import sympy            as mainSympy
 import sympy.geometry   as geoSympy
 
-from Generic.Kernel.exception import EntityMissing
 
 class GeometricalEntity(dict):
     """
@@ -48,7 +47,6 @@ class GeometricalEntity(dict):
             else:
                 raise TypeError, "Wrong argument %s "%str(k)
         self.arguments=argNameType
-        self._snapPoints=[]
         self._properties={}
     
     def updateSnapPoint(self, force=None, fromPoint=None, fromEnt=None):
@@ -60,25 +58,7 @@ class GeometricalEntity(dict):
         """
         self.updateSnapPoint(force, fromPoint, fromEnt)
         return self.snapPoints
-    
-    def addPropertie(self,name,value):
-        """
-            add a propertys to the object
-        """
-        self._properties[name]=value
-    def getPropertie(self,name):
-        """
-            get the properties with a given name
-        """
-        if name in self._properties:
-            return self._properties[name]
-        raise EntityMissing("No entity with name %s"%str(name))
-    @property
-    def properties(self):
-        """
-            get all the properties from the entity
-        """
-        return self._properties
+
     @property
     def snapPoints(self):
         """

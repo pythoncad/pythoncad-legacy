@@ -3,13 +3,13 @@
 # This is only needed for Python v2 but is harmless for Python v3.
 #
 import sys
-if sys.version_info <(2, 7):
-    try:
-        import sip
-        sip.setapi('QString', 2)
-        sip.setapi('QVariant', 2)
-    except:
-        pass
+#if sys.version_info <(2, 7):
+#    try:
+#        import sip
+#        sip.setapi('QString', 2)
+#        sip.setapi('QVariant', 2)
+#    except:
+#        pass
     
 #
 from PyQt4 import QtCore, QtGui
