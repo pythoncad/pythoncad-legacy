@@ -28,7 +28,7 @@
 # Qt Import
 #
 
-from PyQt4.QtGui    import QDialog,QAbstractItemView
+from PyQt4.QtGui    import QDialog,QAbstractItemView,QMenu,QAction
 from PyQt4.QtCore   import pyqtSignature
 
 from Ui_property    import Ui_Dialog
@@ -49,6 +49,7 @@ class Property(QDialog, Ui_Dialog):
         self._isOk=False
         self.entity=entity
         styleprops=entity[0].style.props
+        self.customProperty.contextMenuEvent=self.customPropertyContextMenuEvent
         for propName in styleprops:
             val=styleprops[propName]
             if propName in PYTHONCAD_STYLE_WIDGET:
@@ -62,10 +63,43 @@ class Property(QDialog, Ui_Dialog):
         """
             populate the dialog with the custom property
         """
-        #tableObject=self.entity[0]._entity.properties
-        tableObject=[['name','10'],['dimension','20']]
+        tableObject=[]
+        for key,value in  self.entity[0]._entity.properties.iteritems():
+            row=[key,value]
+            tableObject.append(row)
         populateTable(self.customProperty,tableObject,['Name','Value'])
      
+     
+    def customPropertyContextMenuEvent(self,event):
+        contexMenu=QMenu(self)
+        #
+        # Create Actions
+        #
+        newAction   =   QAction("New", self, triggered=self._newCustomProperty)
+        delAction   =   QAction("Delete", self, triggered=self._delCustomProperty)  
+        #
+        # Add action to the context menu   
+        #
+        contexMenu.addAction(newAction)
+        contexMenu.addAction(delAction)
+        #
+        contexMenu.exec_(event.globalPos())
+        del(contexMenu)       
+    
+    def _newCustomProperty(self):
+        """
+            Open an empty ParameterUi
+        """
+        self.customProperty.model().addNewRow()
+                
+    def _delCustomProperty(self):
+        """
+            Edit the selected parameter values
+        """
+        rows=self.customProperty.selectionModel().selectedRows()
+        if len(rows)>0:
+            row=rows[0]
+            self.customProperty.model().removeRow(row.row())
         
     @pyqtSignature("")
     def on_buttonBox_accepted(self):

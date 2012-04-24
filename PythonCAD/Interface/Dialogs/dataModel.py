@@ -62,7 +62,7 @@ class DataModel(QAbstractTableModel):
             insert row
         """
         self.insertRows(pos, 1, row)
-  
+        self.emit(SIGNAL('layoutChanged()'))
   
     def insertRows(self, pos, count, rows):
         """
@@ -120,7 +120,7 @@ class DataModel(QAbstractTableModel):
             return QVariant() 
         elif role != Qt.DisplayRole: 
             return QVariant() 
-        return QVariant(self.arraydata[index.row()][index.column()]) 
+        return QVariant(self.arraydata[index.row()][index.column()])
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -144,10 +144,11 @@ class DataModel(QAbstractTableModel):
             
         """
         pass
+    
     def setData(self, index, value, role=Qt.EditRole):
         row = index.row()
         col = index.column()
-        self.arraydata[row][col] = str(value)
+        self.arraydata[row][col] = str(value.toString())
         self.emit(SIGNAL('dataChanged()'))
         return True
     
@@ -159,7 +160,7 @@ def populateTable(refTable,tableObject,header,backGroundFunction=False):
         Create the table elements
     """
     modelTable=DataModel(tableObject,header)
-    modelTable._flags=[Qt.ItemIsSelectable,Qt.ItemIsEnabled]
+    modelTable._flags=[Qt.ItemIsSelectable,Qt.ItemIsEnabled,Qt.ItemIsEditable]
     if backGroundFunction!=False:
         modelTable._rule=backGroundFunction
     refTable.setModel(modelTable)

@@ -91,7 +91,7 @@ class PyCadQLineType(BaseContainer):
         self.changed=True
 
 
-class PyCadQDouble(BaseContainer ):
+class PyCadQDouble(BaseContainer):
     def __init__(self, parent=None, oldValue='0.0', label="Double"):
         super(PyCadQDouble, self).__init__(parent, label)
         self.activeValue=oldValue
