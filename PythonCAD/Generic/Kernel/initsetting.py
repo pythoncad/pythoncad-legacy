@@ -314,7 +314,8 @@ PYTHONCAD_STYLE_ATTRIBUTES=['entity_color',
                             'text_font',
                             'text_height',
                             'text_aling',
-                            'text_aline_to_point']
+                            'text_aline_to_point',
+                            'property']
 
 PYTHONCAD_STYLE_DEFAULT_VALUE=[(0, 0, 0),
                                 '1',

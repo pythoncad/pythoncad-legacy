@@ -56,17 +56,14 @@ class Property(QDialog, Ui_Dialog):
                 propDescription=PYTHONCAD_STYLE_DESCRIPTION[propName]
                 self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](None, oldValue=val,label=propDescription)
                 self.propertyConteiner.addLayout(self.containers[propName])
-        self.populateCustomProperty()
+        self.populateCustomProperty(styleprops)
         self.exec_()
     
-    def populateCustomProperty(self):
+    def populateCustomProperty(self,styleprops):
         """
             populate the dialog with the custom property
         """
-        tableObject=[]
-        for key,value in  self.entity[0]._entity.properties.iteritems():
-            row=[key,value]
-            tableObject.append(row)
+        tableObject=[[k,v] for k,v in styleprops.get('property',{}).items()]
         populateTable(self.customProperty,tableObject,['Name','Value'])
      
      
@@ -100,11 +97,12 @@ class Property(QDialog, Ui_Dialog):
         if len(rows)>0:
             row=rows[0]
             self.customProperty.model().removeRow(row.row())
+    
     def uppdateCustomProperty(self):
         """
             update the custom property
         """ 
-        self.entity[0]._entity._properties= dict(self.customProperty.model().arraydata)
+        self._properties = dict(self.customProperty.model().arraydata)
 
     @pyqtSignature("")
     def on_buttonBox_accepted(self):
@@ -137,4 +135,7 @@ class Property(QDialog, Ui_Dialog):
                 obj=self.containers[name]
                 if obj.changed:
                     exitVal[name]=obj.value
+        #Update custom propertis
+        if len(self._properties)>0:
+            exitVal['property']=self._properties
         return exitVal
