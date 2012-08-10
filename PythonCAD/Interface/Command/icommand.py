@@ -23,19 +23,10 @@
 #
 # How it works:
 #
-#
-#
-#Qt Import
-#
-from PyQt4 import QtCore, QtGui
-
-import math, string
+import logging
 #
 #Kernel Import
 #
-from Kernel.initsetting             import SNAP_POINT_ARRAY, ACTIVE_SNAP_POINT, ACTIVE_SNAP_LIST
-from Kernel.GeoEntity.point         import Point
-from Kernel.GeoUtil.geolib          import Vector
 from Kernel.GeoUtil.intersection    import *
 from Kernel.pycadevent              import *
 from Kernel.exception               import *
@@ -44,7 +35,6 @@ from Kernel.unitparser              import *
 # Interface Import
 #
 from Interface.cadinitsetting       import RESTART_COMMAND_OPTION
-from Interface.Entity.base          import BaseEntity
 from Interface.Dialogs.property     import Property
 from Interface.Preview.factory      import *
 from Interface.DrawingHelper.snap   import *
@@ -114,14 +104,16 @@ class ICommand(object):
         #
         # Compute snap distance and position force
         #
-        #print "log: addMauseEvent", str(point), str(entity), str(distance), str(angle), str(text), str(force)
+        logging.debug("log: addMauseEvent [%s][%s][%s][%s][%s][%s]"%( str(point), str(entity), str(distance), str(angle), str(text), str(force)))
         if correct!=None:
             snap=self.scene.snappingPoint.getSnapPoint(point,self.getEntity(point))
             snap=self.correctPositionForcedDirection(snap, self._scene.forceDirection)
         else:
             snap=point
+            
         if angle==None:
             angle=self.calculateAngle(snap)
+            
         if distance==None:
             distance=self.getDistance(snap)
         #
@@ -212,25 +204,28 @@ class ICommand(object):
         self.scene.hideSnapMarks()
         try:
             self.kernelCommand.applyCommand()
-            if RESTART_COMMAND_OPTION:
-                self.restartCommand()
-                self.updateInput(self.kernelCommand.activeMessage)
-                self.scene.clearSelection()
-                self.scene.fromPoint=None
-                self.scene.isGuided=None
-                self.scene.isGuideLocked=None
-                self.scene.GuideHandler.reset()
+            if RESTART_COMMAND_OPTION and self.kernelCommand.autorestart:
+                    self.restartCommand()
+                    self.updateInput(self.kernelCommand.activeMessage)
+                    self.scene.clearSelection()
+                    self.scene.fromPoint=None
+                    self.scene.isGuided=None
+                    self.scene.isGuideLocked=None
+                    self.scene.GuideHandler.reset()
             else:
                 self.scene.cancelCommand()
                 self.updateInput("Ready")
+                self.scene.clearPreview()
+                self.removePreviewItemToTheScene()
                 self=None
+                return
             self.scene.clearPreview()
+            self.removePreviewItemToTheScene()
         except Exception as e:
             print type(e)     # the exception instance
             print "ICommand applyCommand Errore ", str(e)
             self.restartCommand()
-        self.removePreviewItemToTheScene()
-        return
+
 
     def getEntity(self, position):
         """
@@ -283,14 +278,16 @@ class ICommand(object):
         """
         if snap==None:
             return None
-
-        for snapPoint in self._snap:
-            print "angle ",self._snap[snapPoint],snap 
-            v=Vector(self._snap[snapPoint],snap )
-            return v.absAng
-        else:
+        try:
+            for snapPoint in self._snap:
+                print "angle ",self._snap[snapPoint],snap 
+                v=Vector(self._snap[snapPoint],snap )
+                return v.absAng
+            else:
+                return None
+        except EntityMissing:
             return None
-
+        
     def decodeText(self, value):
         """
             encode the text given from the user

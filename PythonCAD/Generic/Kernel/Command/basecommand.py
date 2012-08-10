@@ -39,7 +39,7 @@ class BaseCommand(object):
         self.index=0
         self.document=document
         self.automaticApply=True
-
+        self.autorestart=True
     def __iter__(self):
         return self
 
@@ -153,7 +153,7 @@ class BaseCommand(object):
     @property
     def lenght(self):
         """
-            get the number of command imput value that the user have to provide
+            get the number of command input value that the user have to provide
         """
         return len(self.exception)
 

@@ -21,6 +21,16 @@
 #
 # This  module Provide custom exception for the db module and kernel
 #
+class EntityMissing(Exception):
+    """
+        Wrong entity provided
+    """
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+    
+    
 class NoDefaultValue(Exception):
     """
         no default value provided by the command

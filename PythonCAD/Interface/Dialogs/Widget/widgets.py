@@ -86,8 +86,8 @@ class PyCadQLineType(BaseContainer):
         """
             change event 
         """
-        self.activeValue = QtCore.Qt.PenStyle(self.penStyleComboBox.itemData(
-                self.penStyleComboBox.currentIndex(), IdRole))
+        value=self.penStyleComboBox.currentIndex()
+        self.activeValue = QtCore.Qt.PenStyle(self.penStyleComboBox.itemData(value, IdRole).toInt()[0])
         self.changed=True
 
 

@@ -23,6 +23,7 @@
 import math
 
 from Kernel.GeoEntity.point  import Point
+from Kernel.exception import EntityMissing
 
 class Vector:
     """
@@ -33,9 +34,9 @@ class Vector:
             Default Constructor
         """
         if(not isinstance(p1,Point)):
-          raise TypeError,"Invalid Argument p1: Point Required"
+            raise EntityMissing("Invalid Argument p1: Point Required")
         if(not isinstance(p2,Point)):
-          raise TypeError,"Invalid Argument p2: Point Required"
+            raise EntityMissing("Invalid Argument p2: Point Required")
         x,y=p1.getCoords()
         x1,y1=p2.getCoords()
         self.X=x1-x

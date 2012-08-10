@@ -31,6 +31,7 @@ class PropertyCommand(BaseCommand):
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
+        self.autorestart=False
         self.exception=[ExcMultiEntity,ExcDicTuple]
         self.defaultValue=[None]
         self.message=["Select Entities: ", 
