@@ -45,8 +45,10 @@ class PropertyCommand(BaseCommand):
         entity=self.document.getEntity(_id)
         style=entity.getInnerStyle()
         style.Derived()
-        for stylePropName,stylePropValue in self.value[1].items():
-            style.setStyleProp(stylePropName,stylePropValue)
+        entity.resetProperty()
+        for PropName,PropValue in self.value[1].get('property',{}).items():
+            entity.addPropertie(PropName,PropValue)
+            #style.setStyleProp(stylePropName,stylePropValue)
         entity.style=self.document.saveEntity(style)   
         self.document.saveEntity(entity)
 

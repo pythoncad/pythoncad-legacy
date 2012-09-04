@@ -56,16 +56,15 @@ class Property(QDialog, Ui_Dialog):
                 propDescription=PYTHONCAD_STYLE_DESCRIPTION[propName]
                 self.containers[propName]=PYTHONCAD_STYLE_WIDGET[propName](None, oldValue=val,label=propDescription)
                 self.propertyConteiner.addLayout(self.containers[propName])
-        self.populateCustomProperty(styleprops)
+        self.populateCustomProperty(entity)
         self.exec_()
     
-    def populateCustomProperty(self,styleprops):
+    def populateCustomProperty(self,entity):
         """
             populate the dialog with the custom property
         """
-        tableObject=[[k,v] for k,v in styleprops.get('property',{}).items()]
+        tableObject=[[k,v] for k,v in entity[0]._entity.properties.items()]
         populateTable(self.customProperty,tableObject,['Name','Value'])
-     
      
     def customPropertyContextMenuEvent(self,event):
         contexMenu=QMenu(self)

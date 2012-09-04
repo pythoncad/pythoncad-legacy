@@ -186,7 +186,7 @@ class Application(object):
             seve the current document to the new position
         """
         if self.__ActiveDocument:
-            (name, extension)=os.path.splitext(newFileName)
+            (name, extension)=os.path.splitext(str(newFileName))
             if extension.upper()=='.DXF':
                 self.__ActiveDocument.exportExternalFormat(newFileName)
                 return self.__ActiveDocument

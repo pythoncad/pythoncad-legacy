@@ -34,6 +34,34 @@ class EntityDb(BaseDb):
     """
     def __init__(self,dbConnection):
         BaseDb.__init__(self)
+        self._entFields={
+                    'pycad_id':'INTEGER PRIMARY KEY',
+                    'pycad_entity_id':'INTEGER',
+                    'pycad_object_type':'TEXT',
+                    'pycad_object_definition':'TEXT',
+                    'pycad_object_style':'TEXT',
+                    'pycad_security_id':'INTEGER',
+                    'pycad_undo_id':'INTEGER',
+                    'pycad_entity_state':'TEXT',
+                    'pycad_index':'NUMERIC',
+                    'pycad_visible':'INTEGER',
+                    'pycad_undo_visible':'INTEGER',
+                    'pycad_locked':'INTEGER',
+                    'pycad_bbox_xmin':'REAL',
+                    'pycad_bbox_ymin':'REAL',
+                    'pycad_bbox_xmax':'REAL',
+                    'pycad_bbox_ymax':'REAL',
+                    'pycad_property':'TEXT'
+                         }
+        def creationFieldsStr():
+            outStr=''
+            for fieldName,fieldValue in self._entFields.items():
+                outStr=+'%s %s,'%(str(fieldName),str(fieldValue))
+            return outStr
+        def addTableField(fieldName,fieldType):
+            sql="ALTER TABLE pycadent ADD COLUMN %s %s "%(str(fieldName),str(fieldType))
+            self.makeUpdateInsert(sql)
+            
         if dbConnection is None:
             self.createConnection()
         else:
@@ -42,23 +70,15 @@ class EntityDb(BaseDb):
         _table=self.makeSelect(_sqlCheck).fetchone()
         if _table is None:
             _sqlCreation="""CREATE TABLE pycadent(
-                    pycad_id INTEGER PRIMARY KEY,
-                    pycad_entity_id INTEGER,
-                    pycad_object_type TEXT,
-                    pycad_object_definition TEXT,
-                    pycad_object_style TEXT,
-                    pycad_security_id INTEGER,
-                    pycad_undo_id INTEGER,
-                    pycad_entity_state TEXT,
-                    pycad_index NUMERIC,
-                    pycad_visible INTEGER,
-                    pycad_undo_visible INTEGER,
-                    pycad_locked INTEGER,
-                    pycad_bbox_xmin REAL,
-                    pycad_bbox_ymin REAL,
-                    pycad_bbox_xmax REAL,
-                    pycad_bbox_ymax REAL)"""
-            self.makeUpdateInsert(_sqlCreation)
+                    %s)"""%creationFieldsStr()
+        else:
+            rows=self.makeSelect("pragma table_info('pycadent')")
+            dbColumns=dict([(row[1],row[2]) for row in rows])
+            for classColumn in self._entFields.keys():
+                if not classColumn in dbColumns:
+                    addTableField(classColumn,self._entFields[classColumn])
+                
+                
         self.__revisionIndex=self.getRevisionIndex()
     
     def getRevisionIndex(self):
@@ -90,6 +110,7 @@ class EntityDb(BaseDb):
         _entityId=entityObj.getId()
         _entityDump=pickle.dumps(entityObj.getConstructionElements())
         _entityType=entityObj.getEntityType()
+        _property=pickle.dumps(entityObj.properties)
         _entityVisible=entityObj.visible
         _styleObject=pickle.dumps(entityObj.style)
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
@@ -108,8 +129,9 @@ class EntityDb(BaseDb):
                     pycad_bbox_ymax,
                     pycad_entity_state,
                     pycad_index,
-                    pycad_visible) VALUES
-                    (?,?,?,?,?,1,?,?,?,?,?,?,?)"""
+                    pycad_visible,
+                    pycad_property) VALUES
+                    (?,?,?,?,?,1,?,?,?,?,?,?,?,?)"""
                     
         tupleArg=(
                     _entityId,
@@ -123,7 +145,8 @@ class EntityDb(BaseDb):
                     _yMax, 
                     _revisionState,
                     _revisionIndex, 
-                    _entityVisible)
+                    _entityVisible,
+                    _property)
         self.makeUpdateInsert(_sqlInsert, tupleArg)
         
     def getEntityFromTableId(self,entityTableId):
@@ -137,7 +160,8 @@ class EntityDb(BaseDb):
                             pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
-                            pycad_visible
+                            pycad_visible,
+                            pycad_property
                 FROM pycadent
                 WHERE pycad_id=%s"""%str(entityTableId)
         _rows=self.makeSelect(_sqlGet)
@@ -150,6 +174,8 @@ class EntityDb(BaseDb):
                 _outObj.state=_row[4]
                 _outObj.index=_row[5]
                 _outObj.visible=_row[6]
+                for name,value in pickle.loads(str(_row[7])):
+                    _outObj.addPropertie(name, value)
                 _outObj.updateBBox()
         return _outObj
     
@@ -165,7 +191,8 @@ class EntityDb(BaseDb):
                             pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
-                            pycad_visible
+                            pycad_visible,
+                            pycad_property
                 FROM pycadent
                 WHERE pycad_entity_id=%s ORDER BY  pycad_id DESC"""%str(entityId)
         _dbEntRow=self.makeSelect(_sqlGet)
@@ -177,6 +204,8 @@ class EntityDb(BaseDb):
             _entObj.state=_row[5]
             _entObj.index=_row[6]
             _entObj.visible=_row[7]
+            for name,value in pickle.loads(str(_row[8])):
+                _entObj.addPropertie(name, value)
             _entObj.updateBBox()
         return _entObj
 
@@ -197,7 +226,8 @@ class EntityDb(BaseDb):
                             pycad_object_style,
                             pycad_entity_state,
                             pycad_index,
-                            pycad_visible
+                            pycad_visible,
+                            pycad_property
                     FROM pycadent
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
@@ -213,6 +243,8 @@ class EntityDb(BaseDb):
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
             _objEnt.visible=_dbEntRow[7]
+            for name,value in pickle.loads(str(_row[9])):
+                _objEnt.addPropertie(name, value)
             _objEnt.updateBBox()            
             _outObj.append(_objEnt)
         return _outObj
@@ -229,7 +261,8 @@ class EntityDb(BaseDb):
                     pycad_object_style,
                     pycad_entity_state,
                     pycad_index,
-                    pycad_visible
+                    pycad_visible,
+                    pycad_property
                     FROM pycadent
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
@@ -269,7 +302,8 @@ class EntityDb(BaseDb):
                     pycad_object_style,
                     pycad_entity_state,
                     pycad_index,
-                    pycad_visible
+                    pycad_visible,
+                    pycad_property
                     FROM pycadent
                     WHERE pycad_id IN (
                         SELECT max(pycad_id) 
@@ -295,7 +329,10 @@ class EntityDb(BaseDb):
             _objEnt.state=_row[5]
             _objEnt.index=_row[6]
             _objEnt.visible=_row[7]
-            _objEnt.updateBBox()            
+            if _row[8]!=None:
+                for name,value in pickle.loads(str(_row[8])):
+                    _objEnt.addPropertie(name, value)
+                _objEnt.updateBBox()            
             _outObj.append(_objEnt)
         return _outObj            
     
@@ -321,7 +358,8 @@ class EntityDb(BaseDb):
             pycad_object_style,
             pycad_entity_state,
             pycad_index,
-            pycad_visible
+            pycad_visible,
+            pycad_property
             FROM pycadent
         """
         _style=pickle.loads(str(row[4]))
@@ -330,6 +368,9 @@ class EntityDb(BaseDb):
         _objEnt.state=row[5]
         _objEnt.index=row[6]
         _objEnt.visible=row[7]
+        if row[8]!=None:
+            for name,value in pickle.loads(str(row[8])):
+                    _objEnt.addPropertie(name, value)
         _objEnt.updateBBox()  
         return _objEnt
         
@@ -450,6 +491,7 @@ class EntityDb(BaseDb):
         _xMin,_yMin,_xMax,_yMax=entityObj.getBBox()
         _revisionIndex=entityObj.index
         _revisionState=entityObj.state
+        _property=pickle.dumps(entityObj.property)
         _sqlInsert="""UPDATE pycadent set 
                     pycad_object_type="%s",
                     pycad_object_definition="%s",
@@ -460,7 +502,8 @@ class EntityDb(BaseDb):
                     pycad_bbox_ymax=%s,
                     pycad_entity_state="%s",
                     pycad_index=%s,
-                    pycad_visible=%s
+                    pycad_visible=%s,
+                    pycad_property=%s
                     WHERE PyCad_Id IN (
                         SELECT max(PyCad_Id) 
                         FROM pycadent  
@@ -478,7 +521,8 @@ class EntityDb(BaseDb):
                     str(_revisionState),
                     str(_revisionIndex), 
                     str(_entityVisible), 
-                    str(_entityId))
+                    str(_entityId),
+                    str(_property))
         #**************************************
         #**************Attention***************
         #**************************************
