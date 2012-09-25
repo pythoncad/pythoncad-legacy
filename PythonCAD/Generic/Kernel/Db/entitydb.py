@@ -56,8 +56,9 @@ class EntityDb(BaseDb):
         def creationFieldsStr():
             outStr=''
             for fieldName,fieldValue in self._entFields.items():
-                outStr=+'%s %s,'%(str(fieldName),str(fieldValue))
-            return outStr
+                outStr+='%s %s,'%(str(fieldName),str(fieldValue))
+            return outStr[:-1]
+        
         def addTableField(fieldName,fieldType):
             sql="ALTER TABLE pycadent ADD COLUMN %s %s "%(str(fieldName),str(fieldType))
             self.makeUpdateInsert(sql)
@@ -71,16 +72,16 @@ class EntityDb(BaseDb):
         if _table is None:
             _sqlCreation="""CREATE TABLE pycadent(
                     %s)"""%creationFieldsStr()
+            self.__revisionIndex=0
+            self.makeUpdateInsert(_sqlCreation)
         else:
             rows=self.makeSelect("pragma table_info('pycadent')")
             dbColumns=dict([(row[1],row[2]) for row in rows])
             for classColumn in self._entFields.keys():
                 if not classColumn in dbColumns:
                     addTableField(classColumn,self._entFields[classColumn])
-                
-                
-        self.__revisionIndex=self.getRevisionIndex()
-    
+            self.__revisionIndex=self.getRevisionIndex()
+            
     def getRevisionIndex(self):
         """
             get the revision index from the database

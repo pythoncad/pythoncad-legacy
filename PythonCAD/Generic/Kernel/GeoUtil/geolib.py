@@ -62,7 +62,7 @@ class Vector:
             the 2 vecror are equal
         """ 
         if(not isinstance(vector,Vector)):
-          raise TypeError,"Invalid Argument vector: Vector Required"   
+            raise TypeError,"Invalid Argument vector: Vector Required"   
         if(self.point==vector.point):
             return True             
         else:
@@ -95,7 +95,7 @@ class Vector:
         v1=vector.point.getCoords()
         som=0
         for a, b in zip(v0, v1):
-          som+=a*b
+            som+=a*b
         return som  
         
     def cross(self,vector):
