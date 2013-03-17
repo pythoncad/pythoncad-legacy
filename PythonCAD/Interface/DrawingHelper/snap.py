@@ -43,28 +43,32 @@ class SnapPoint():
             fromPoint:  [Geoent.Pointfloat]
             fromEnt:    [GeoEnt.*]
         """
+        def pointReturn(pointCalculated,realPoint):
+            if pointCalculated==None:
+                return realPoint
+            return pointCalculated
+            
         if self.activeSnap==SNAP_POINT_ARRAY["NONE"]:
             return point
         else:
             snapPoint=point
             if SNAP_POINT_ARRAY["MID"] == self.activeSnap:
-                snapPoint = self.getSnapMiddlePoint(entity)
+                return pointReturn(self.getSnapMiddlePoint(entity),point)
             elif SNAP_POINT_ARRAY["END"] == self.activeSnap:
-                snapPoint =self.getSnapEndPoint(entity, point)
+                return pointReturn(self.getSnapEndPoint(entity, point),point)
             elif SNAP_POINT_ARRAY["ORTHO"] == self.activeSnap:
-                snapPoint =self.getSnapOrtoPoint(entity, point)
+                return pointReturn(self.getSnapOrtoPoint(entity, point),point)
             elif SNAP_POINT_ARRAY["CENTER"]== self.activeSnap:
-                snapPoint =self.getSnapCenterPoint(entity)
+                return pointReturn(self.getSnapCenterPoint(entity),point)
             elif SNAP_POINT_ARRAY["QUADRANT"]== self.activeSnap:
-                snapPoint =self.getSnapQuadrantPoint(entity, snapPoint)
+                return pointReturn(self.getSnapQuadrantPoint(entity, snapPoint),point)
             elif SNAP_POINT_ARRAY["ORIG"]== self.activeSnap:
-                snapPoint=Point(0.0, 0.0)
+                return Point(0.0, 0.0)
             elif SNAP_POINT_ARRAY["INTERSECTION"]== self.activeSnap:
-                snapPoint=self.getIntersection(entity,snapPoint )
+                return pointReturn(self.getIntersection(entity,snapPoint ),point)
             elif SNAP_POINT_ARRAY["LIST"]== self.activeSnap:
-                #this should be used when checklist of snap will be enabled
+                #TODO: this should be used when checklist of snap will be enabled
                 snapPoints=[]
-
                 if ACTIVE_SNAP_LIST.count(SNAP_POINT_ARRAY["MID"])>0:
                     pnt=self.getSnapMiddlePoint(entity)
                     if pnt!=None:
@@ -102,14 +106,12 @@ class SnapPoint():
                 else:
                     if outPoint[0]!=None:
                         snapPoint=outPoint[0]
+            return pointReturn(snapPoint,point)
 
-            if snapPoint==None:
-                return point
-            return snapPoint
 
     def getSnapOrtoPoint(self, entity, point):
         """
-            this fucnticion compute the orto to point snap constraint
+            this function compute the orto to point snap constraint
         """
         # Now only works for segments and arcs. USES THE getPROJECTION METHOD
         if self._scene.fromPoint==None or entity == None:
@@ -125,7 +127,7 @@ class SnapPoint():
 
     def getSnapTangentPoint(self, point):
         """
-            this fucnticion compute the Tangent to point snap constraint
+            this function compute the Tangent to point snap constraint
         """
         #TODO: getSnapTangentPoint
         returnVal=None
@@ -136,7 +138,7 @@ class SnapPoint():
 
     def getSnapMiddlePoint(self, entity):
         """
-            this fucnticion compute midpoint snap constraint to the entity argument
+            this function compute midpoint snap constraint to the entity argument
         """
         returnVal=None
         if getattr(entity, 'geoItem', None):
@@ -146,7 +148,7 @@ class SnapPoint():
 
     def getSnapEndPoint(self, entity, point):
         """
-            this fucnticion compute the  snap endpoint
+            this function compute the  snap endpoint
         """
         if point == None or entity == None:
             return None
@@ -166,7 +168,7 @@ class SnapPoint():
 
     def getSnapCenterPoint(self, entity):
         """
-            this fucnticion compute the  snap from the center of an entity
+            this function compute the  snap from the center of an entity
         """
         returnVal=None
         if getattr(entity, 'geoItem', None):
@@ -179,22 +181,17 @@ class SnapPoint():
 
     def getIntersection(self, entity, point):
         """
-            this fucnticion compute the  snap intersection point
+            this function compute the  snap intersection point
         """
         returnVal=None
         distance=None
         if entity!=None:
             geoEntityFrom=entity.geoItem
-            import time
-            #startTime=time.clock()
             entityList=self._scene.collidingItems(entity)
-            #endTime=time.clock()-startTime
-            #print "getIntersection, collidingItems in %s"%str(endTime)
-            #startTime=time.clock()
             for ent in entityList:
+                if not isinstance(ent,BaseEntity):
+                    continue
                 if isinstance(ent, BaseEntity):
-                    #print "geoitem", ent.geoItem
-                    #print "geoEntityFrom", geoEntityFrom
                     intPoint=find_intersections(ent.geoItem,geoEntityFrom)
                     for tp in intPoint:
                         iPoint=Point(tp[0], tp[1])
@@ -206,13 +203,11 @@ class SnapPoint():
                             if distance>spoolDist:
                                 distance=spoolDist
                                 returnVal=iPoint
-            #endTime=time.clock()-startTime
-            #print "find intersection in %s"%str(endTime)
         return returnVal
 
     def getSnapQuadrantPoint(self, entity, point):
         """
-            this fucnticion compute the  snap from the quadrant
+            this function compute the  snap from the quadrant
         """
         returnVal=None
         if getattr(entity, 'geoItem', None):
@@ -244,7 +239,10 @@ class SnapMark(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
         self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, True)
         self.hide()
-
+    
+    def collidesWithItem(self,other,mode):
+        return False
+    
     def shape(self):
         """
             overloading of the shape method
@@ -277,7 +275,11 @@ class SnapEndMark(SnapMark):
         self.setToolTip("EndPoint")
         self.x=x
         self.y=y
-
+    
+    def collidesWithItem(self,other,mode):
+        print "collidesWithItem"
+        return False
+    
     def definePath(self):
         rect=QtCore.QRectF(self.x-5.0, self.y-5.0, 10.0, 10.0)
         path=QtGui.QPainterPath()

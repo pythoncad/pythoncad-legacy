@@ -500,7 +500,7 @@ class ICommand(object):
 
     def getIntersection(self, entity, point):
         """
-            this fucnticion compute the  snap intersection point
+            this function compute the  snap intersection point
         """
         returnVal=None
         distance=None

@@ -24,6 +24,7 @@ sys.path.append(os.path.join(os.getcwd(), 'Generic'))
 from Interface.cadwindow    import CadWindowMdi
 #
 def getPythonCAD():
+
     app = QtGui.QApplication(sys.argv)
     # splashscreen
     splashPath=os.path.join(os.getcwd(), 'icons', 'splashScreen1.png')

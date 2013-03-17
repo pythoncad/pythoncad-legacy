@@ -135,7 +135,7 @@ def _pol_obj_intersection(ipts, pol, obj):
     """
     for seg in pol.getSegments():
         tempIpts=[]
-        _sympy_intersection(tempipts,  seg,  obj)
+        _sympy_intersection(tempIpts,  seg,  obj)
         if len(tempIpts)>0:
             ipts=tempIpts
             break
@@ -149,7 +149,7 @@ def _pol_pol_intersection(ipts, pol1, pol2):
             for seg1 in pol1.getSegments():
                 for seg2 in pol2.getSegments():
                     tempIpts=[]
-                    _sympy_intersection(tempipts,  seg1,  seg2)
+                    _sympy_intersection(tempIpts,  seg1,  seg2)
                     if len(tempIpts)>0:
                         ipts=tempIpts
                         break
@@ -173,7 +173,7 @@ def find_intersections(obja, objb):
             try:
                 _sympy_intersection(_ipts, obja, objb)
             except:
-                print "problem with sympy intersection"
+                print "find_intersections: problem with sympy intersection",obja,objb
     return _ipts
 
 def findSegmentExtendedIntersection(obja, objb):

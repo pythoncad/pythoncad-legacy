@@ -51,7 +51,9 @@ class GuideHandler(QtGui.QGraphicsItem):
         
         self.addGuidesByIncrement(math.pi/6)
 
-        
+    def collidesWithItem(self,other,mode):
+        return False
+            
     def setForceDirection(self, a):
         '''
         set scene.forceDirection to a angle
@@ -151,6 +153,8 @@ class Guide(QtGui.QGraphicsLineItem):
         
         self.setPen(self.hidePen)
         self.hide()
+    def collidesWithItem(self,other,mode):
+        return False
     
     def hide(self):
         self.setPen(self.hidePen)

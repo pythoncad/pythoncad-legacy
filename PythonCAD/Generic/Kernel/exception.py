@@ -188,49 +188,49 @@ class ExcPoint(CommandException):
 
 class ExcLenght(CommandException):
     """
-        when this exception is trown it means that the command need a lenght
+        when this exception is thrown it means that the command need a lenght
     """
     pass
 
 class ExcAngle(CommandException):
     """
-        when this exception is trown it means that the command need a deg angle
+        when this exception is thrown it means that the command need a deg angle
     """
     pass
 
 class ExcText(CommandException):
     """
-        when this exception is trown it means that the command need text
+        when this exception is thrown it means that the command need text
     """
     pass
 
 class ExcInt(CommandException):
     """
-        when this exception is trown it means that the command need an Integer
+        when this exception is thrown it means that the command need an Integer
     """
     pass
 
 class ExcBool(CommandException):
     """
-        when this exception is trown it means that the command need an Boolean
+        when this exception is thrown it means that the command need n Boolean
     """
     pass
 
 class ExcEntity(CommandException):
     """
-        when this exception is trown it means that the command need an dbEnity
+        when this exception is thrown it means that the command need n dbEnity
     """
     pass
 
 class ExcMultiEntity(CommandException):
     """
-        when this exception is trown it means that the command need an array of id
+        when this exception is thrown it means that the command need an array of id
     """
     pass
 
 class ExcEntityPoint(CommandException):
     """
-        when this exception is trown it means that the command need an a string
+        when this exception is thrown it means that the command need an a string
         like id@x,y
     """
     pass
