@@ -254,6 +254,7 @@ class Arc(GeometricalEntity):
             return pj1 # ######################## adding return value for pj2
         else:
             return None
+        
     def GetTangentPoint(self,x,y,outx,outy):
         """
             Get the tangent from an axternal point
@@ -454,7 +455,7 @@ class Arc(GeometricalEntity):
             str(self.center), str(self.radius), str(self.startAngle), str(self.endAngle))
         return msg
         
-    def test_angle(s, e, a):
+    def test_angle(self,s, e, a):
         """
             Returns if an angle lies between the start and end angle of an arc.
             s: arc start angle

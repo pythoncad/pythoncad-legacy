@@ -346,13 +346,13 @@ True if the arc exists at that angle, otherwise the method returns False.
         return _val
 
     def getEndpoints(self):
-        """Return where the two endpoints for the arc-segment lie.
+        """Return where the two end points for the arc-segment lie.
 
-getEndpoints(self)
-
-This function returns two tuples, each containing the x-y coordinates
-of the arc endpoints. The first tuple corresponds to the endpoint at
-the start_angle, the second to the endpoint at the end_angle.
+            getEndpoints(self)
+            
+            This function returns two tuples, each containing the x-y coordinates
+            of the arc end points. The first tuple corresponds to the end point at
+            the start_angle, the second to the end point at the end_angle.
         """
         _cx, _cy = self.__center.getCoords()
         _r = self.__radius

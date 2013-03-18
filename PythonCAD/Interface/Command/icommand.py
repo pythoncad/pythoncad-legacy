@@ -164,25 +164,26 @@ class ICommand(object):
         """
             compute imput from text
         """
-        if value=="":
+        if str(value)=="":
             self.kernelCommand.applyDefault()
             self.applyCommand()
             return
-        elif value.upper()=="UNDO":
+        elif str(value).upper()=="UNDO":
             #TODO: perform a back operation to the command
             return
-        elif value.upper()=="REDO":
+        elif str(value).upper()=="REDO":
             #TODO: perform a forward operation to the command
             return
         else:
             try:
-                tValue=self.decodeText(value)
+                tValue=self.decodeText(str(value))
                 self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4], correct=None)
             except PyCadWrongImputData, msg:
                 print "Problem on ICommand.addTextEvent"
                 self.updateInput(msg)
                 self.updateInput(self.kernelCommand.activeMessage)
                 return
+            
     def applyDefault(self):
         """
             apply the default value command
@@ -297,6 +298,10 @@ class ICommand(object):
         entitys=None
         text=None
         angle=None
+        value=str(value)
+        
+        def niceReturn():
+            return (point,entitys, distance,angle, text)
         try:
             try:
                 raise self.kernelCommand.activeException()(None)
@@ -304,11 +309,13 @@ class ICommand(object):
                 if value.find(',')>-1:              # ABSOLUTE CARTESIAN INPUT
                     x, y=value.split(',')
                     point=Point(convertLengh(x), convertLengh(y))
+                    return niceReturn()
                 elif value.find(';')>-1:            # RELATIVE CARTESIAN INPUT
                     x, y=value.split(';')
                     x=self.scene.fromPoint.getx()+convertLengh(x)
                     y=self.scene.fromPoint.gety()+convertLengh(y)
                     point=Point(x, y)
+                    return niceReturn()
                 elif value.find('>')>-1:
                     ang, distance=value.split('>')
                     ang=convertAngle(ang)
@@ -318,6 +325,7 @@ class ICommand(object):
                     x=self.scene.fromPoint.getx()+float(x)
                     y=self.scene.fromPoint.gety()+float(y)
                     point=Point(x, y)
+                    return niceReturn()
                 else: # DISTANCE+ANGLE FROM SCENE set coordinate based on distance input and angle from mouse position on the scene
                     d=float(value)
                     pX=self.scene.mouseOnSceneX
@@ -333,24 +341,29 @@ class ICommand(object):
                     x=self.scene.fromPoint.getx()+d*math.cos(a)
                     y=self.scene.fromPoint.gety()+d*math.sin(a)
                     point=Point(x, y)
+                    return niceReturn()
             except (ExcEntity,ExcMultiEntity):
                 entitys=self.getIdsString(value)
+                return niceReturn()
             except ExcEntityPoint:
                 #(4@10,20)
                 id, p=value.split('@')
                 x, y=p.split(',')
                 point=Point(float(x), float(y))
                 entitys=self.getIdsString(id)
-                return
+                return niceReturn()
             except (ExcLenght, ExcInt, ExcBool):
                 distance=value
+                return niceReturn()
             except(ExcAngle):
                 angle=value
+                return niceReturn()
             except(ExcText):
                 text=value
+                return niceReturn()
         except:
             raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
-        return (point,entitys, distance,angle, text)
+        return niceReturn()
 
     def getIdsString(self, value):
         """
