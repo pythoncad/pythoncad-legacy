@@ -53,15 +53,15 @@ class Arc(GeometricalEntity):
     def __init__(self,kw):
         """
             Initialize a Arc/Circle.
-            kw['ARC_0'] center must be a point 
+            kw['ARC_0'] center must be a point
             kw['ARC_1'] radius must be a valid float
             kw['ARC_2'] startAngle must be a valid radiant float value
             kw['ARC_3'] endAngle   must be a valid radiant float value
         """
         argDescription={
                         "ARC_0":Point,
-                        "ARC_1":(float, int), 
-                        "ARC_2":(float, int), 
+                        "ARC_1":(float, int),
+                        "ARC_2":(float, int),
                         "ARC_3":(float, int)
                         }
         GeometricalEntity.__init__(self,kw, argDescription)
@@ -71,11 +71,11 @@ class Arc(GeometricalEntity):
             self.endAngle=pi_2
             __isCircle=True
         if not get_float(self.radius) > 0.0:
-            raise ValueError, "Invalid radius" 
-        
+            raise ValueError, "Invalid radius"
+
         #self.startAngle = self.startAngle
         #self.endAngle= self.endAngle
-        
+
     def isCircle(self):
         """
             return if the arc isa circle
@@ -108,9 +108,9 @@ class Arc(GeometricalEntity):
         return ((self.center != obj.center) or
                 (abs(self.radius - obj.radius) > 1e-10) or
                 (abs(self.startAngle - obj.startAngle) > 1e-10) or
-                (abs(self.endAngle - obj.endAngle) > 1e-10))                   
-        
-        
+                (abs(self.endAngle - obj.endAngle) > 1e-10))
+
+
     def getCenter(self):
         """
             Return the center Point of the Arc.
@@ -223,7 +223,7 @@ class Arc(GeometricalEntity):
         _sax = _cx + _r * math.cos(_sa )
         _say = _cy + _r * math.sin(_sa)
         _ea = self.endAngle+_sa
-        
+
         _eax = _cx + _r * math.cos(_ea )
         _eay = _cy + _r * math.sin(_ea )
         return Point(_sax, _say), Point(_eax, _eay)
@@ -232,7 +232,7 @@ class Arc(GeometricalEntity):
         """
             Return the length of the Arc.
         """
-        
+
         return self.radius*self.getAngle()
 
     def area(self):
@@ -254,7 +254,7 @@ class Arc(GeometricalEntity):
             return pj1 # ######################## adding return value for pj2
         else:
             return None
-        
+
     def GetTangentPoint(self,x,y,outx,outy):
         """
             Get the tangent from an axternal point
@@ -435,26 +435,26 @@ class Arc(GeometricalEntity):
             clone()
         """
         return Arc(self.getConstructionElements())
-    
+
     def getSympy(self):
         """
             get the sympy object in this case a circle
         """
         _cp=self.center.getSympy()
         return geoSympy.Circle(_cp, mainSympy.Rational(str(self.radius)))
-        
-    def setFromSympy(self, sympyCircle):    
+
+    def setFromSympy(self, sympyCircle):
         """
             update the points cord from a sympyobject only avaiable for circle
         """
         self.center.setFromSympy(sympyCircle[0])
         self.radius=float(sympyCircle[1])
-        
+
     def __str__(self):
         msg="Arc\Circle: Center %s , Radius %s , StartAngle=%s, EndAngle=%s"%(
             str(self.center), str(self.radius), str(self.startAngle), str(self.endAngle))
         return msg
-        
+
     def test_angle(self,s, e, a):
         """
             Returns if an angle lies between the start and end angle of an arc.
@@ -469,15 +469,15 @@ class Arc(GeometricalEntity):
             (s <= a <= e)):
             _val = True
         return _val
-    
+
     def rotate(self, rotationPoint, angle):
         """
             rotate the arc
         """
         self.startAngle+=angle
         self.center.rotate(rotationPoint, angle)
-        
-        
+
+
     def mirror(self, mirrorRef):
         """
             perform the mirror of the line
@@ -491,7 +491,7 @@ class Arc(GeometricalEntity):
         vEnd=Vector( endPoint, endMirror)
         newStart=endMirror+vEnd.point
         self.startAngle=Vector(self.center, newStart).absAng
-    
+
     def getQuadrant(self):
         """
             Return the circle intersection with the line x,y passing through the

@@ -48,7 +48,7 @@ class testCmdLine(object):
 
     def imputCommand(self):
         """
-            imput dialog
+            Input dialog
         """
         text=self.dialog.ImputCmd.text()
         self.outputMsg(">>> "+str(text))
@@ -60,7 +60,7 @@ class testCmdLine(object):
                 else:
                     self.outputMsg(self.activeCommand.getActiveMessage())
             except:
-                self.outputMsg("Unable to perfor the command")
+                self.outputMsg("Unable to perform the command")
                 self.activeCommand=None
         else:
             cmdObject=None
@@ -69,7 +69,7 @@ class testCmdLine(object):
                 cmdObject.reset()
                 self.outputMsg(cmdObject.getActiveMessage())
             else:
-                self.outputMsg('Command not avaiable write ? for command list')
+                self.outputMsg('Command not available write ? for command list')
             self.activeCommand=cmdObject
         self.dialog.ImputCmd.setText("")
 
@@ -99,7 +99,7 @@ class testCmdLine(object):
                 cObject[iv]=self.convertToInt(text)
                 return cObject
             except:
-                msg="Error on command imput"
+                msg="Error on command input"
                 self.outputMsg(msg)
                 raise CommandException, msg
 
@@ -136,7 +136,7 @@ class testCmdLine(object):
 
     def convertToPoint(self, msg):
         """
-            ask at the user to imput a point
+            ask at the user to input a point
         """
         if msg:
             coords=msg.split(',')
@@ -495,7 +495,7 @@ class TestKernel(BaseCommand):
 
     def performCommandRandomly(self, commandName, andLoop=10):
         """
-            set some random Value at the command imput
+            set some random Value at the command input
         """
         self.outputMsg("Start Command %s"%str(commandName))
         i=0
