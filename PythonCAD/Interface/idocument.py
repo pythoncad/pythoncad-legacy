@@ -129,6 +129,12 @@ class IDocument(QtGui.QMdiSubWindow):
         msgBox.setDetailedText(dmsg)
         msgBox.exec_()
         return
+
+    def closeEvent(self, event):
+        super(IDocument, self).closeEvent(event)
+        # TODO: Verify if document is being closed (self.__application.closeDocument(path))
+        self.__cadwindow.updateOpenFileList()
+
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------MANAGE SCENE EVENTS
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
