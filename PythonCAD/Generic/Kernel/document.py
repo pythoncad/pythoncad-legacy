@@ -38,7 +38,7 @@ from Kernel.exception               import *
 from Kernel.settings                import *
 from Kernel.entity                  import Entity
 from Kernel.composedentity          import ComposedEntity
-from Kernel.layertree               import LayerTree
+from Kernel.layertree               import LayerTable
 from Kernel.layer                   import Layer
 
 #***************************************************Db Import
@@ -111,7 +111,7 @@ class Document(BaseDb):
         #************************
         self.__logger.debug('Inizialize layer structure')
         try:
-            self.__LayerTree=LayerTree(self)
+            self.__LayerTable = LayerTable(self)
         except StructuralError:
             raise StructuralError, 'Unable to create LayerTree structure'
         self.__logger.debug('Done inizialization')
@@ -295,7 +295,7 @@ class Document(BaseDb):
         _cElements, entityType =self._getCelements(entity)
         _obj=self._saveDbEnt(entType=entityType,constructorElements=_cElements)
         #seve the relation layer compose ent
-        self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
+        self.__RelationDb.saveRelation(self.__LayerTable.getActiveLayer(),_obj)
         #seve the relation composed ent ent
         for c in relComp:
             self.__RelationDb.saveRelation(_obj,c)
@@ -323,7 +323,7 @@ class Document(BaseDb):
         self.__entId+=1
         _cElements, entityType=self._getCelements(entity)
         _obj=self._saveDbEnt(entityType,_cElements)
-        self.__RelationDb.saveRelation(self.__LayerTree.getActiveLater(),_obj)
+        self.__RelationDb.saveRelation(self.__LayerTable.getActiveLayer(),_obj)
         return _obj
 
     def getNewId(self):
@@ -616,12 +616,10 @@ class Document(BaseDb):
             self.__logger.error('UnsupportedFormat')
             _err={'object':extFormat, 'error':DxfUnsupportedFormat}
             self.handledErrorEvent(self,_err)#todo : test it not sure it works
+    
     @property
-    def getTreeLayer(self):
-        """
-            Retrive the layer tree object
-        """
-        return self.__LayerTree
+    def getTreeTable(self):
+        return self.__LayerTable
 
     def getAllChildrenType(self, parentObject, childrenType):
         """

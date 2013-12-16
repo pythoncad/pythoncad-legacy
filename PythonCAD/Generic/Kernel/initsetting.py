@@ -72,10 +72,6 @@ from Kernel.entity              import Entity
 from Kernel.layer               import Layer
 from Kernel.composedentity      import ComposedEntity
 #
-# Default LAyer
-#
-MAIN_LAYER="MAIN"
-#
 # Max Number of recent file
 #
 MAX_RECENT_FILE=5
