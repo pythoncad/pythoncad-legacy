@@ -29,7 +29,7 @@ from Kernel.GeoUtil.util                    import getIdPoint
 
 class BisectorCommand(BaseCommand):
     """
-        this class represents the champfer command
+        this class represents the bisector command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -43,7 +43,7 @@ class BisectorCommand(BaseCommand):
 
     def getEntsToSave(self):
         """
-            get the chamfer segments
+            get the bisector segments
         """
         id0, p0=self.value[0]
         id1, p1=self.value[1]
@@ -71,7 +71,7 @@ class BisectorCommand(BaseCommand):
 
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the bisector command
         """
         if len(self.value)!=3:
             raise PyCadWrongInputData("Wrong number of input parameters")

@@ -26,7 +26,7 @@ from Kernel.GeoEntity.ellipse          import Ellipse
 
 class EllipseCommand(BaseCommand):
     """
-        this class represents the ellips command
+        this class represents the ellipse command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)

@@ -52,7 +52,7 @@ class MoveCommand(BaseCommand):
 
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the move command
         """
         if len(self.value)!=3:
             raise PyCadWrongInputData("Wrong number of input parameter")

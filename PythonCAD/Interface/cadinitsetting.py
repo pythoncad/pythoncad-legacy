@@ -39,21 +39,21 @@ from PyQt4 import QtCore
 from Interface.Command.distance2point import Distance2Point
 
 SCENE_SUPPORTED_TYPE=["SEGMENT",
-                      "POINT", 
+                      "POINT",
                         "ARC",
-                        "TEXT", 
-                        "ELLIPSE", 
-                        "POLYLINE", 
+                        "TEXT",
+                        "ELLIPSE",
+                        "POLYLINE",
                         "DIMENSION"]
 
-SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE, 
+SCANE_OBJECT_TYPE=dict(zip(SCENE_SUPPORTED_TYPE,
                        (
-                        Segment, 
-                        Point, 
-                        Arc, 
-                        Text, 
-                        Ellipse, 
-                        Polyline, 
+                        Segment,
+                        Point,
+                        Arc,
+                        Text,
+                        Ellipse,
+                        Polyline,
                         Dimension
                        )))
 
@@ -64,27 +64,27 @@ RESTART_COMMAND_OPTION=True
 BACKGROUND_COLOR=(255, 255, 255)
 
 KEY_MAP={
-         QtCore.Qt.Key_Delete:'DELETE', 
-         QtCore.Qt.Key_L:'SEGMENT', 
-         QtCore.Qt.Key_P:'POLYLINE', 
-         QtCore.Qt.Key_G:'MOVE', 
-         QtCore.Qt.Key_C:'COPY', 
-         QtCore.Qt.Key_D:'DELETE', 
-         QtCore.Qt.Key_R:'ROTATE', 
+         QtCore.Qt.Key_Delete:'DELETE',
+         QtCore.Qt.Key_L:'SEGMENT',
+         QtCore.Qt.Key_P:'POLYLINE',
+         QtCore.Qt.Key_G:'MOVE',
+         QtCore.Qt.Key_C:'COPY',
+         QtCore.Qt.Key_D:'DELETE',
+         QtCore.Qt.Key_R:'ROTATE',
          QtCore.Qt.Key_M:'MIRROR'
          }
 
 
-   
-PYTHONCAD_STYLE_WIDGET={'entity_color':PyCadQColor, 
+
+PYTHONCAD_STYLE_WIDGET={'entity_color':PyCadQColor,
                         'entity_linetype':PyCadQLineType,
-                        'entity_thickness':PyCadQDouble, 
-                        'text_font':PyCadQFont, 
-                        'text_height':PyCadQDouble, 
+                        'entity_thickness':PyCadQDouble,
+                        'text_font':PyCadQFont,
+                        'text_height':PyCadQDouble,
                         }
-PYTHONCAD_STYLE_DESCRIPTION={'entity_color':'Color', 
+PYTHONCAD_STYLE_DESCRIPTION={'entity_color':'Color',
                         'entity_linetype':'Line Type',
-                        'entity_thickness':'Line Ticness', 
-                        'text_font':'Font', 
-                        'text_height':'Text Height', 
+                        'entity_thickness':'Line Thickness',
+                        'text_font':'Font',
+                        'text_height':'Text Height',
                         }

@@ -27,7 +27,7 @@ from Kernel.GeoEntity.dimension     import Dimension
 
 class DimensionCommand(BaseCommand):
     """
-        This class represents the segment command
+        This class represents the dimension command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -35,7 +35,7 @@ class DimensionCommand(BaseCommand):
         self.defaultValue=[None, None, None, 0]
         self.message=["Give Me The First Point: ",
                         "Give Me The Second Point: ",
-                        "Give Me Dimesion Position: ",
+                        "Give Me Dimension Position: ",
                         "Give Me The Orientation Angle"]   # what does it mean???
     @property
     def getAngle(self):

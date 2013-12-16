@@ -29,7 +29,7 @@ from Kernel.GeoUtil.util                   import getIdPoint
 
 class FilletCommand(BaseCommand):
     """
-        this class represents the champfer command
+        this class represents the fillet command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -86,7 +86,7 @@ class FilletCommand(BaseCommand):
 
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the fillet command
         """
         if len(self.value)!=4:
             raise PyCadWrongInputData("Wrong number of input parameter")

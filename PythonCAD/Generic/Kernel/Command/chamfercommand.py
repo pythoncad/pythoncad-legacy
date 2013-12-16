@@ -18,7 +18,7 @@
 # along with PythonCAD; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#This module provide a class for the champfer command
+#This module provide a class for the chamfer command
 #
 from Kernel.exception                       import *
 from Kernel.composedentity                  import ComposedEntity
@@ -29,7 +29,7 @@ from Kernel.GeoUtil.util                    import getIdPoint
 
 class ChamferCommand(BaseCommand):
     """
-        this class represents the champfer command
+        this class represents the chamfer command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -88,7 +88,7 @@ class ChamferCommand(BaseCommand):
 
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the chamfer command
         """
         if len(self.value)!=5:
             raise PyCadWrongInputData("Wrong number of input parameter")

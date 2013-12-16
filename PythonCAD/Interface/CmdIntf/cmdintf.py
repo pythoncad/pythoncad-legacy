@@ -19,7 +19,7 @@ class CmdIntf(object):
     Current implementation:
         Create static menu, toolbars and palettes.
     '''
-    
+
     def __init__(self, parent):
         # parent is the main_window object
         self.__main_window = parent
@@ -28,12 +28,12 @@ class CmdIntf(object):
         # dictionary with file action objects
         self.__actions = {}
         # categories in which commands are stored
-        self.__category = CmdCategory(self.__main_window) 
+        self.__category = CmdCategory(self.__main_window)
         # icons search path
         self.__icon_dir = os.path.join(os.getcwd(), 'icons')
         #add custom event
         return
-        
+
     #-------- properties -----------#
     @property
     def commandLine(self):
@@ -41,20 +41,20 @@ class CmdIntf(object):
             Get the command line dock window
         """
         return self.__edit_ctrl
-   
+
     @property
     def FunctionHandler(self):
         """
             Get the function handler object
         """
         return self.__edit_ctrl.FunctionHandler
-    @property 
+    @property
     def Category(self):
         """
             Get the category enumerator object
         """
-        return self.__category   
-        
+        return self.__category
+
     #-------- properties -----------#
     @QtCore.pyqtSlot(str)
     def _actionHandler(self, expression):
@@ -68,7 +68,7 @@ class CmdIntf(object):
             # command is found, evaluate it
             self.__edit_ctrl.FunctionHandler.evaluate(expression)
         return
-    
+
     def _getIcon(self, cmd):
         '''
         Create an QIcon object based on the command name.
@@ -83,8 +83,8 @@ class CmdIntf(object):
             return icon
         # icon not found, don't use an icon, return None
         return None
-        
-    
+
+
     def registerCommand(self, category_enum, cmd, text=None, callback=None):
         '''
         Register a command with it's call-back in the command table.
@@ -92,7 +92,7 @@ class CmdIntf(object):
         params:
             category_enum: enumerated attribute value of CmdCategory
             cmd: command name
-            text: menu entry text 
+            text: menu entry text
             callback: call-back function
         '''
         # get the menu for this category
@@ -136,25 +136,25 @@ class CmdIntf(object):
         If a command is found, it's callback function is called.
         If it is not a command the expression is evaluated.
         Return: command exit, the evaluated expression or "*error*"
-        '''    
+        '''
         self.__edit_ctrl.FunctionHandler.evaluate(expression)
         return
-        
+
     def evaluateInnerCommand(self, kernelCommand, selectedItems):
         '''
             evaluate a kernel command
         '''
         self.__edit_ctrl.FunctionHandler.evaluateInnerCommand(kernelCommand, selectedItems)
-     
-    def evaluateMouseImput(self,view,event):
+
+    def evaluateMouseInput(self,view,event):
         '''
             get imput from viewport
         '''
-        self.__edit_ctrl.FunctionHandler.evaluateMouseImput(event)
-        
+        self.__edit_ctrl.FunctionHandler.evaluateMouseInput(event)
+
     def resetCommand(self):
         """
-            reset the active command 
+            reset the active command
         """
         self.__edit_ctrl.FunctionHandler.resetCommand()
 
@@ -164,14 +164,14 @@ class CmdIntf(object):
         """
         if self.__actions.has_key(name):
             self.__actions[name].hide()
-    
+
     def showAction(self, name):
         """
             show the name action
         """
         if self.__actions.has_key(name):
             self.__actions[name].show()
-    
+
     def setVisible(self, name, value):
         """
             set the action name to visible value
@@ -181,7 +181,7 @@ class CmdIntf(object):
                 self.__actions[name].show()
             else:
                 self.__actions[name].hide()
-                
+
     def updateText(self, name, text):
         """
             update the label text
@@ -190,5 +190,5 @@ class CmdIntf(object):
             self.__actions[name].setText(text)
 
 
-    
-    
+
+

@@ -28,7 +28,7 @@ from Kernel.GeoUtil.util            import *
 
 class DeleteCommand(BaseCommand):
     """
-        this class represents the Trim command
+        this class represents the delete command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -43,7 +43,7 @@ class DeleteCommand(BaseCommand):
 
     def applyCommand(self):
         """
-            apply the champfer command
+            apply the delete command
         """
         if len(self.value)!=1:
             raise PyCadWrongInputData("Wrong number of input parameter")
