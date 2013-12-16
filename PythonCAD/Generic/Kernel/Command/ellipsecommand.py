@@ -26,17 +26,17 @@ from Kernel.GeoEntity.ellipse          import Ellipse
 
 class EllipseCommand(BaseCommand):
     """
-        this class rappresent the ellips command
+        this class represents the ellips command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcLenght]
         self.defaultValue=[None, 100, 50]
         self.message=["Give Me the Center Point (We know input sequence is at the moment very odd, sorry.): ", "Give Me First Axis Lenght: ", "Give Me Second Axis Half Lenght: "]
-        
+
     def applyCommand(self):
         if len(self.value)>3:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         arg={"ELLIPSE_0":self.value[0], "ELLIPSE_1":self.value[1], "ELLIPSE_2":self.value[2]}
         ellipse=Ellipse(arg)
         self.document.saveEntity(ellipse)

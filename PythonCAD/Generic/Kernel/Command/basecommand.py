@@ -48,10 +48,10 @@ class BaseCommand(object):
             set the value of the command
         """
         if not isinstance(value, tuple) or len(value)!=5:
-            raise PyCadWrongImputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
+            raise PyCadWrongInputData("BaseCommand : Wrong value provide a good tuple (point,entity,distance)")
         value=self.translateCmdValue(value)
         if value==None:
-            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
+            raise PyCadWrongInputData("BaseCommand : Wrong input parameter for the command")
         self.value.append(value)
 
     def resetToDefault(self):
@@ -77,7 +77,7 @@ class BaseCommand(object):
         """
         self.index=0
         self.value=[]
-        
+
     @property
     def valueIndex(self):
         """
@@ -208,7 +208,7 @@ class BaseCommand(object):
         except(ExcDicTuple):
             exitValue=text
         except:
-            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
+            raise PyCadWrongInputData("BaseCommand : Wrong input parameter for the command")
         finally: return exitValue
 
     def getIdsString(self, selectedItems):

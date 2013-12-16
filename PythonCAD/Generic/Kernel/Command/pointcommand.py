@@ -26,16 +26,16 @@ from Kernel.GeoEntity.point         import Point
 
 class PointCommand(BaseCommand):
     """
-        this class rappresent the point command
+        this class represents the point command
     """
     def __init__(self, kernel):
         BaseCommand.__init__(self, kernel)
         self.exception=[ExcPoint]
         self.defaultValue=[None]
         self.message=["Give Me the Point Position: "]
-        
+
     def applyCommand(self):
         if len(self.value)!=1:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         point=Point(self.value[0])
         self.document.saveEntity(point)

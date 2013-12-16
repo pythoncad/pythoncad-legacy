@@ -28,20 +28,20 @@ from Kernel.GeoEntity.point         import Point
 
 class RotateCommand(BaseCommand):
     """
-        this class rappresent the rotate command
+        this class represents the rotate command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity,
-                        ExcPoint, 
-                        ExcAngle, 
+                        ExcPoint,
+                        ExcAngle,
                         ExcText]
         self.defaultValue=[None, None, math.pi/2, "M"]
-        self.message=[  "Select Entities: ", 
-                        "Give me the Rotation Center Point: ", 
-                        "Give me the rotation angle [rad]: ", 
+        self.message=[  "Select Entities: ",
+                        "Give me the Rotation Center Point: ",
+                        "Give me the rotation angle [rad]: ",
                         "Move or Copy? [M]: "]
-              
+
     def performRotation(self):
         """
             perform the mirror of all the entity selected
@@ -61,13 +61,13 @@ class RotateCommand(BaseCommand):
             else:
                 updEnts.append(geoEnt)
         return updEnts
-        
+
     def applyCommand(self):
         """
             perform the write of the entity
         """
         if len(self.value)!=4:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
             for _ent in self.performRotation():

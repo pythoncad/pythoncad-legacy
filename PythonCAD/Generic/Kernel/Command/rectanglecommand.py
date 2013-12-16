@@ -27,7 +27,7 @@ from Kernel.GeoEntity.segment          import Segment
 
 class RectangleCommand(BaseCommand):
     """
-        this class rappresent the segment command
+        this class represents the segment command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -54,14 +54,14 @@ class RectangleCommand(BaseCommand):
         segArg={"SEGMENT_0":p3, "SEGMENT_1":p1}
         objEnt.append(Segment(segArg))
         return objEnt
-        
+
     def applyCommand(self):
         if len(self.value)!=2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
             for _ent in self.getEntsToSave():
                 self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
-        
+

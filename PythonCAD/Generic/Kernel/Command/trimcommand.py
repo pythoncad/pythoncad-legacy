@@ -34,10 +34,10 @@ class TrimCommand(BaseCommand):
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcEntityPoint,
-                        ExcEntityPoint,  
+                        ExcEntityPoint,
                         ExcText]
         self.defaultValue=[None, None,"BOTH"]
-        self.message=[  "Give me the First Entity: ", 
+        self.message=[  "Give me the First Entity: ",
                         "Give me the Second Entity: ",
                         "Give me The Trim Mode (First,Second,Both)[Both]: "]
 
@@ -47,7 +47,7 @@ class TrimCommand(BaseCommand):
         """
         id0, p0=self.value[0]
         id1, p1=self.value[1]
-        
+
         updEnts=[]
         geoEnt1=self.document.getEntity(id0)
         seg1=geoEnt1.toGeometricalEntity()
@@ -55,9 +55,9 @@ class TrimCommand(BaseCommand):
         seg2=geoEnt2.toGeometricalEntity()
         intPoint=findSegmentExtendedIntersectionPoint(seg1, seg2)
         if len(intPoint)<=0:
-            raise PythopnCadWarning("No intersection Found") 
-        
-        def getNearestPoint(pointArray, referencePoint):              
+            raise PythopnCadWarning("No intersection Found")
+
+        def getNearestPoint(pointArray, referencePoint):
             distance=None
             exitPoint=None
             for p in pointArray:
@@ -70,8 +70,8 @@ class TrimCommand(BaseCommand):
                     if newDistance<distance:
                         distance=newDistance
                         exitPoint=p
-            return exitPoint 
-            
+            return exitPoint
+
         def getSegmentCelements(obj, pickPoint, intersectionPoint):
             if isinstance(obj, Segment):
                 geoEntTrim=None
@@ -80,7 +80,7 @@ class TrimCommand(BaseCommand):
                 return _cElements
             else:
                 return None
-            
+
         if self.value[2].upper()=='FIRST' or self.value[2].upper()=='F' or self.value[2].upper()=='BOTH' or self.value[2].upper()=='B':
             nearestIntersectionPoint=getNearestPoint(intPoint, p0)
             if nearestIntersectionPoint!=None:
@@ -88,7 +88,7 @@ class TrimCommand(BaseCommand):
                 if _cElements!= None:
                     geoEnt1.setConstructionElements(_cElements)
                     updEnts.append(geoEnt1)
-            
+
         if self.value[2].upper()=='SECOND' or self.value[2].upper()=='S' or self.value[2].upper()=='BOTH' or self.value[2].upper()=='B':
             nearestIntersectionPoint=getNearestPoint(intPoint, p1)
             if nearestIntersectionPoint!=None:
@@ -97,13 +97,13 @@ class TrimCommand(BaseCommand):
                     geoEnt2.setConstructionElements(_cElements)
                     updEnts.append(geoEnt2)
         return updEnts
-        
+
     def applyCommand(self):
         """
             apply the trim command
         """
         if len(self.value)<2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         if len(self.value)==2:
             self.value.append("BOTH")   # TODO: MAKE A GLOBAL VARIABLE TO SET THIS VALUE
                                         # AS A SETTING VALUE
@@ -113,4 +113,4 @@ class TrimCommand(BaseCommand):
                 self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
-       
+

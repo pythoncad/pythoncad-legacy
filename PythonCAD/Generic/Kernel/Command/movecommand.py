@@ -26,15 +26,15 @@ from Kernel.GeoEntity.arc           import Arc
 
 class MoveCommand(BaseCommand):
     """
-        this class rappresent the Move command
+        this class represents the Move command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity,
-                        ExcPoint, 
+                        ExcPoint,
                         ExcPoint]
         self.defaultValue=[None, None,None]
-        self.message=[  "Select Entities to Move: ", 
+        self.message=[  "Select Entities to Move: ",
                         "Give me the Base Point: ",
                         "Give me the Destination Point: "]
     def getEntsToSave(self):
@@ -49,17 +49,17 @@ class MoveCommand(BaseCommand):
             dbEnt.setConstructionElements(geoEnt.getConstructionElements())
             updEnts.append(dbEnt)
         return updEnts
-        
+
     def applyCommand(self):
         """
             apply the champfer command
         """
         if len(self.value)!=3:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
             for _ent in self.getEntsToSave():
                 self.document.saveEntity(_ent)
         finally:
             self.document.stopMassiveCreation()
-       
+

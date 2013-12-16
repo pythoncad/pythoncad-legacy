@@ -29,8 +29,8 @@ class EntityMissing(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-    
-    
+
+
 class NoDefaultValue(Exception):
     """
         no default value provided by the command
@@ -162,7 +162,7 @@ class PyCadWrongCommand(Exception):
     def __str__(self):
         return repr(self.value)
 
-class PyCadWrongImputData(Exception):
+class PyCadWrongInputData(Exception):
     """
         Wrong command for the PyCadApplication
     """

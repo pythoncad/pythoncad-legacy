@@ -28,29 +28,29 @@ from Kernel.GeoUtil.util            import *
 
 class DeleteCommand(BaseCommand):
     """
-        this class rappresent the Trim command
+        this class represents the Trim command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity]
         self.message=["Select Entities to be Deleted: "]
-        
-    def applyDefault(self):    
+
+    def applyDefault(self):
         """
             aver written to  avoid apply default in this command
         """
         return
-        
+
     def applyCommand(self):
         """
             apply the champfer command
         """
         if len(self.value)!=1:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
             for id in str(self.value[0]).split(','):
                 self.document.deleteEntity(id)
         finally:
             self.document.stopMassiveCreation()
-       
+

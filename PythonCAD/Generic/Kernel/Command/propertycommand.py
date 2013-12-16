@@ -34,13 +34,13 @@ class PropertyCommand(BaseCommand):
         self.autorestart=False
         self.exception=[ExcMultiEntity,ExcDicTuple]
         self.defaultValue=[None]
-        self.message=["Select Entities: ", 
-                        "Give me the property name and value :('color','green') ", 
+        self.message=["Select Entities: ",
+                        "Give me the property name and value :('color','green') ",
                         ]
 
-    def changeProp(self, _id):    
+    def changeProp(self, _id):
         """
-            change the property at the entity 
+            change the property at the entity
         """
         entity=self.document.getEntity(_id)
         style=entity.getInnerStyle()
@@ -49,15 +49,15 @@ class PropertyCommand(BaseCommand):
         for PropName,PropValue in self.value[1].get('property',{}).items():
             entity.addPropertie(PropName,PropValue)
             #style.setStyleProp(stylePropName,stylePropValue)
-        entity.style=self.document.saveEntity(style)   
+        entity.style=self.document.saveEntity(style)
         self.document.saveEntity(entity)
 
     def applyCommand(self):
         if len(self.value)!=2:
-            raise PyCadWrongImputData("Wrong number of input parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
-            
+
             for _id in str(self.value[0]).split(','):
                 self.changeProp(_id)
         except Exception,ex:

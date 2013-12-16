@@ -26,19 +26,19 @@ from Kernel.GeoEntity.ccircle          import CCircle
 
 class CCircleCommand(BaseCommand):
     """
-        this class rappresent the arc command
+        this class represents the arc command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght]
         self.defaultValue=[None, 10]
         self.message=["Give Me the center Point", "Give Me the radius"]
-        
+
     def applyCommand(self):
         if len(self.value)<2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         arg={
-             "CCIRCLE_0":self.value[0], 
+             "CCIRCLE_0":self.value[0],
              "CCIRCLE_1":self.value[1]
              }
         ccircle=CCircle(arg)

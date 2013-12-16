@@ -29,18 +29,18 @@ from Kernel.GeoUtil.util                    import getIdPoint
 
 class BisectorCommand(BaseCommand):
     """
-        this class rappresent the champfer command
+        this class represents the champfer command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcEntityPoint,
-                        ExcEntityPoint, 
+                        ExcEntityPoint,
                         ExcLenght]
         self.defaultValue=[None, None, 100]
-        self.message=[  "Select the First Segment: ", 
-                        "Select the Second Segment: ", 
+        self.message=[  "Select the First Segment: ",
+                        "Select the Second Segment: ",
                         "Give me the Bisector Lengh: "]
-        
+
     def getEntsToSave(self):
         """
             get the chamfer segments
@@ -50,31 +50,31 @@ class BisectorCommand(BaseCommand):
         objEnt=[]
         ent1=self.document.getEntity(id0)
         ent2=self.document.getEntity(id1)
-        
+
         cel1=ent1.getConstructionElements()
         seg1=Segment(cel1)
-        
+
         cel2=ent2.getConstructionElements()
         seg2=Segment(cel2)
         arg={
              "OBJECTJOINT_0":seg1,
-             "OBJECTJOINT_1":seg2,  
-             "OBJECTJOINT_2":p0, 
-             "OBJECTJOINT_3":p1, 
-             "OBJECTJOINT_5":self.value[2], 
+             "OBJECTJOINT_1":seg2,
+             "OBJECTJOINT_2":p0,
+             "OBJECTJOINT_3":p1,
+             "OBJECTJOINT_5":self.value[2],
              }
 
         cmf=Bisector(arg)
         bisectorSegment = cmf.getReletedComponent()
         objEnt.append(bisectorSegment)
         return objEnt
-        
+
     def applyCommand(self):
         """
             apply the champfer command
         """
         if len(self.value)!=3:
-            raise PyCadWrongImputData("Wrong number of input parameters")
+            raise PyCadWrongInputData("Wrong number of input parameters")
         for _ent in self.getEntsToSave():
             self.document.saveEntity(_ent)
-       
+

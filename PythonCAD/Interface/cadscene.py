@@ -171,7 +171,7 @@ class CadScene(QtGui.QGraphicsScene):
         return
 
 
-        
+
     def mousePressEvent(self, event):
         if event.button()==QtCore.Qt.MidButton:
             self.isInPan=True
@@ -195,7 +195,7 @@ class CadScene(QtGui.QGraphicsScene):
                 if event.button()==QtCore.Qt.RightButton:
                     try:
                         self.activeICommand.applyDefault()
-                    except PyCadWrongImputData:
+                    except PyCadWrongInputData:
                         self.fireWarning("Wrong input value")
                 if event.button()==QtCore.Qt.LeftButton:
                     point=Point(event.scenePos().x(), event.scenePos().y()*-1.0)

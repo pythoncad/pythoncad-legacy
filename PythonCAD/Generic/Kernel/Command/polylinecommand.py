@@ -28,7 +28,7 @@ from Kernel.GeoEntity.point            import Point
 
 class PolylineCommand(BaseCommand):
     """
-        this class rappresent the polyline command
+        this class represents the polyline command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
