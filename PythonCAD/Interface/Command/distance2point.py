@@ -28,19 +28,19 @@ from Kernel.Command.basecommand        import *
 
 class Distance2Point(BaseCommand):
     """
-        This class rappresent the distance 2 point command
+        This class represents the distance 2 point command
     """
     def __init__(self, document, iDocument):
         BaseCommand.__init__(self, document)
         self.iDocuemnt=iDocument
         self.exception=[ExcPoint, ExcPoint]
         self.defaultValue=[None, None]
-        self.message=["Give Me the first Point", 
+        self.message=["Give Me the first Point",
                         "Give Me the second Point"]
-        
+
     def applyCommand(self):
         if len(self.value)<1:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         leng=self.value[0].dist(self.value[1])
-        msg="Lenght: "+ str(leng)
+        msg="Length: "+ str(leng)
         self.iDocuemnt.popUpInfo(msg)

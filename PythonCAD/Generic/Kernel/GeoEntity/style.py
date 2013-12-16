@@ -26,17 +26,17 @@ from Kernel.GeoUtil.util                      import getRandomString
 
 class Style(GeometricalEntity):
         """
-            This class rappresent the style in pythoncad
-            objID is the object that rappresent the id in the db
+            This class represents the style in pythoncad
+            objID is the object that represents the id in the db
         """
         def __init__(self,kw):
             """
-                kw['STYLE_0'] 
-                kw['STYLE_1'] 
+                kw['STYLE_0']
+                kw['STYLE_1']
             """
             argDescription=dict([(key,str) for key in kw])
             GeometricalEntity.__init__(self,kw, argDescription)
-            
+
             if self.has_key('STYLE_1'):
                 if self['STYLE_1'] ==None:
                     from Kernel.initsetting import getDefaultStyle
@@ -44,12 +44,12 @@ class Style(GeometricalEntity):
             else:
                 from Kernel.initsetting import getDefaultStyle
                 self['STYLE_1']=getDefaultStyle()
-                
+
             if self.has_key('STYLE_0'):
                 if self['STYLE_0'] ==None:
-                    self.name=getRandomString()       
+                    self.name=getRandomString()
             else:
-                self['STYLE_0']=getRandomString()       
+                self['STYLE_0']=getRandomString()
         @property
         def name(self):
             """
@@ -62,8 +62,8 @@ class Style(GeometricalEntity):
                 set the name of the style
             """
             self['STYLE_0']=name
-       
-        
+
+
         def getStyleProp(self, name):
             """
                 get the style property
@@ -72,10 +72,10 @@ class Style(GeometricalEntity):
                 return  self['STYLE_1'][name]
             else:
                 return None
-        
+
         def setStyleProp(self, name, value):
             """
-                set the style property 
+                set the style property
             """
             from Kernel.initsetting         import PYTHONCAD_STYLE_ATTRIBUTES
             from Kernel.exception           import EntityMissing
@@ -83,11 +83,11 @@ class Style(GeometricalEntity):
                 self['STYLE_1'][name]=value
             else:
                 raise EntityMissing,"Unable to find the property %s"%str(name)
-        
+
         def Derived(self):
             self.name=str(self)
             self['STYLE_1']['derived']=str(self.name)
-            
-        @property 
+
+        @property
         def props(self):
             return  self['STYLE_1']

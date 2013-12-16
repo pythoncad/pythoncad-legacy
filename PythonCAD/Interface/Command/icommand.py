@@ -110,10 +110,10 @@ class ICommand(object):
             snap=self.correctPositionForcedDirection(snap, self._scene.forceDirection)
         else:
             snap=point
-            
+
         if angle==None:
             angle=self.calculateAngle(snap)
-            
+
         if distance==None:
             distance=self.getDistance(snap)
         #
@@ -159,7 +159,7 @@ class ICommand(object):
                 self.applyCommand()
             else:
                 self.restartCommand()
-    
+
     def addTextEvent(self, value):
         """
             compute imput from text
@@ -178,12 +178,12 @@ class ICommand(object):
             try:
                 tValue=self.decodeText(str(value))
                 self.addMauseEvent(tValue[0], tValue[1], tValue[2], tValue[3], tValue[4], correct=None)
-            except PyCadWrongImputData, msg:
+            except PyCadWrongInputData, msg:
                 print "Problem on ICommand.addTextEvent"
                 self.updateInput(msg)
                 self.updateInput(self.kernelCommand.activeMessage)
                 return
-            
+
     def applyDefault(self):
         """
             apply the default value command
@@ -253,10 +253,10 @@ class ICommand(object):
             updIndex=self.index+1
             self._point[updIndex]=point
             self._entity[updIndex]=entity
-            
+
             if distance==None:
-                distance=self.getDistance(point) 
-            
+                distance=self.getDistance(point)
+
             self._distance[updIndex]=distance
             self._snap[updIndex]=point
             self._forceSnap[updIndex]=force
@@ -281,14 +281,14 @@ class ICommand(object):
             return None
         try:
             for snapPoint in self._snap:
-                print "angle ",self._snap[snapPoint],snap 
+                print "angle ",self._snap[snapPoint],snap
                 v=Vector(self._snap[snapPoint],snap )
                 return v.absAng
             else:
                 return None
         except EntityMissing:
             return None
-        
+
     def decodeText(self, value):
         """
             encode the text given from the user
@@ -299,7 +299,7 @@ class ICommand(object):
         text=None
         angle=None
         value=str(value)
-        
+
         def niceReturn():
             return (point,entitys, distance,angle, text)
         try:
@@ -362,7 +362,7 @@ class ICommand(object):
                 text=value
                 return niceReturn()
         except:
-            raise PyCadWrongImputData("BaseCommand : Wrong imput parameter for the command")
+            raise PyCadWrongInputData("BaseCommand : Wrong input parameter for the command")
         return niceReturn()
 
     def getIdsString(self, value):
@@ -389,7 +389,7 @@ class ICommand(object):
         """
         if self._previewItem!=None:
             self._scene.addItem(self._previewItem)
-            
+
     def removePreviewItemToTheScene(self):
         """
             Remove all the preview items from the scene
@@ -397,7 +397,7 @@ class ICommand(object):
         if self._previewItem!=None:
             self._scene.clearPreview()
             self._previewItem=None
-        
+
     def getPointClick(self, index):
         """
             return the index clicked entity

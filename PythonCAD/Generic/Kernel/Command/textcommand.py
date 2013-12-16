@@ -26,7 +26,7 @@ from Kernel.GeoEntity.text             import Text
 
 class TextCommand(BaseCommand):
     """
-        This class rappresent the segment command
+        This class represents the segment command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
@@ -34,12 +34,12 @@ class TextCommand(BaseCommand):
         self.defaultValue=[None, "Dummy Text", 0, "sw"]
         self.message=["Give Me the Insert Point: ",
                         "Type The Text String: ",
-                        "Give Me The Rotation Angle [0]: ", 
+                        "Give Me The Rotation Angle [0]: ",
                         "Give me a Point to Justify Text [sw]: "]
 
     def applyCommand(self):
         if len(self.value)!=4:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         textArgs={"TEXT_0":self.value[0], "TEXT_1":self.value[1], "TEXT_2":self.value[2], "TEXT_3":self.value[3]}
         text=Text(textArgs)
         self.document.saveEntity(text)

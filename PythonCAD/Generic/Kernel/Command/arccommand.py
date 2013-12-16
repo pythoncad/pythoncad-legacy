@@ -28,25 +28,25 @@ from Kernel.GeoEntity.arc              import Arc
 
 class ArcCommand(BaseCommand):
     """
-        this class rappresent the arc command
+        this class represents the arc command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcPoint, ExcLenght, ExcAngle, ExcAngle]
         self.defaultValue=[None, 10, 0, math.pi*2]
-        self.message=["Give Me the Center Point: ", 
-                        "Give Me the Radius: ", 
-                        "Give Me the Start Angle [Create a circle]: ", 
+        self.message=["Give Me the Center Point: ",
+                        "Give Me the Radius: ",
+                        "Give Me the Start Angle [Create a circle]: ",
                         "Give Me the Span Angle: "]
-        
+
     def applyCommand(self):
         if len(self.value)<2:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         self.applyDefault()
-        arg={"ARC_0":self.value[0], 
-                "ARC_1":self.value[1], 
-                "ARC_2":self.value[2], 
+        arg={"ARC_0":self.value[0],
+                "ARC_1":self.value[1],
+                "ARC_2":self.value[2],
                 "ARC_3":self.value[3]
-                }    
+                }
         arc=Arc(arg)
         self.document.saveEntity(arc)

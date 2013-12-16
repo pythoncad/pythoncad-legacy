@@ -27,18 +27,18 @@ from Kernel.GeoEntity.point            import Point
 
 class MirrorCommand(BaseCommand):
     """
-        This class rappresent the mirror command
+        This class represents the mirror command
     """
     def __init__(self, document):
         BaseCommand.__init__(self, document)
         self.exception=[ExcMultiEntity,
-                        ExcEntity, 
+                        ExcEntity,
                         ExcText]
         self.defaultValue=[None, None, "C"]
-        self.message=[  "Select the entity to mirror or give me a the keyword Text As: (10,20,30,...)", 
-                        "Select the reference line ", 
+        self.message=[  "Select the entity to mirror or give me a the keyword Text As: (10,20,30,...)",
+                        "Select the reference line ",
                         "Move or Copy? [M]: "]
-               
+
     def performMirror(self):
         """
             perform the mirror of all the entity selected
@@ -60,13 +60,13 @@ class MirrorCommand(BaseCommand):
             else:
                 updEnts.append(geoEnt)
         return updEnts
-        
+
     def applyCommand(self):
         """
             perform the write of the entity
         """
         if len(self.value)!=3:
-            raise PyCadWrongImputData("Wrong number of imput parameter")
+            raise PyCadWrongInputData("Wrong number of input parameter")
         try:
             self.document.startMassiveCreation()
             for _ent in self.performMirror():
