@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=PyCAD
-Comment=PythonCAD
-Icon=gtkpycad
-Exec=pythoncad
-Terminal=false
-Type=Application
-X-Desktop-File-Install-Version=0.3
-Categories=Office;X-Red-Hat-Base;
