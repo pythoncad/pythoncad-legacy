@@ -26,36 +26,28 @@
 #
 
 # This is only needed for Python v2 but is harmless for Python v3.
-import sys
-#if sys.version_info <(2, 7):
-#    import sip
-#    sip.setapi('QString', 2)
-#    sip.setapi('QVariant', 2)
+import sip
+sip.setapi('QString', 2)
+sip.setapi('QVariant', 2)
     
 from PyQt4  import QtCore, QtGui
 
-
 from Interface.pycadapp                         import PyCadApp
-
-from Interface.LayerIntf.layertreeobject        import LayerTreeObject
+from Interface.LayerIntf.layertreeobject        import LayerView
 
 class LayerDock(QtGui.QDockWidget):
-    '''
-        A dock able window containing a layer list object.
-        The layer list contains all visible layers.
-    '''
     
-    def __init__(self, parent, document):
+    def __init__(self, parent, document, model):
         '''
         Creates an edit line in which commands or expressions are evaluated.
         Evaluation of expressions is done by the FunctionHandler object.
         '''
         super(LayerDock, self).__init__('Layers', parent)
-        # only dock at the bottom or top
+        # only dock at the left or right
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
         #self.__layer_ctrl = QtGui.QTreeWidget(self, itemDoubleClicked=self._itemActivated, itemActivated=self._itemActivated, itemSelectionChanged=self._itemSelectionChanged)
         #self.setWidget(self.__layer_ctrl)
-        self._layerModel=LayerTreeObject(self, document)
+        self._layerModel=LayerView(self, document, model)
         self.setWidget(self._layerModel)
   
     def ShowAllLayers(self):
@@ -67,11 +59,7 @@ class LayerDock(QtGui.QDockWidget):
         return
         
     def RefreshStructure(self):
-        """
+        '''
             refresh the tree view
-        """
-        self._layerModel.updateTreeStructure(None)
-
-
-    
-    
+        '''
+        self._layerModel.updateView(None)

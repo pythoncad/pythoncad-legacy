@@ -51,6 +51,7 @@ class Dimension(BaseEntity):
         """
             calculate the text position
         """
+        # TODO: get text width
         t=self.getDimensioLines()
         p1, p2=t[0]
         p1=Point(p1.x(), p1.y())
@@ -93,6 +94,9 @@ class Dimension(BaseEntity):
     def drawGeometry(self, painter, option, widget):
         # Create Text
         painter.drawText(self.location,  self.text)
+        # TODO: Allow setting dimension styles in a dialog
+        pen = QtGui.QPen(QtCore.Qt.gray, 1, QtCore.Qt.DashLine)
+        painter.setPen(pen)
         for p1, p2 in self.segments:
             painter.drawLine(p1, p2)
 

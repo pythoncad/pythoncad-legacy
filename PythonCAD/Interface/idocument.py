@@ -3,6 +3,7 @@ from Generic.Kernel.document import *
 from Interface.LayerIntf.layerdock  import LayerDock
 from Interface.cadscene             import CadScene
 from Interface.cadview              import CadView
+from Interface.LayerIntf.layertreeobject import LayerModel
 
 class IDocument(QtGui.QMdiSubWindow):
     sequenceNumber = 1
@@ -16,8 +17,10 @@ class IDocument(QtGui.QMdiSubWindow):
         self.setWindowTitle(document.dbPath + '[*]')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.isUntitled = True
+        # Layer model used in dock and quick switcher
+        self.__layer_model = LayerModel(self)
         # layer list
-        self.__layer_dock = LayerDock(self,self.__document)
+        self.__layer_dock = LayerDock(self,self.__document, self.__layer_model)
         self._scene = CadScene(document, parent=self)
         self.__cmdInf.commandLine.evaluatePressed+=self.scene.textInput
         self.__view = CadView(self._scene, self)
@@ -126,6 +129,12 @@ class IDocument(QtGui.QMdiSubWindow):
         msgBox.setDetailedText(dmsg)
         msgBox.exec_()
         return
+
+    def closeEvent(self, event):
+        super(IDocument, self).closeEvent(event)
+        # TODO: Verify if document is being closed (self.__application.closeDocument(path))
+        self.__cadwindow.updateOpenFileList()
+
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------MANAGE SCENE EVENTS
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

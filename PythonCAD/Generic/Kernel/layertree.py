@@ -25,28 +25,32 @@
 
 from Kernel.layer               import Layer
 from Kernel.exception           import *
-from Kernel.initsetting         import MAIN_LAYER
 from Kernel.pycadevent          import PyCadEvent
 
-class LayerTree(object):
+class LayerTable(object):
     """
-        this class represents the layer tree structure
+    Class used to interface with the database/save file
     """
-    def __init__(self,kernel):
-        self.__kr=kernel
-        try:
-            self.__mainLayer=self.getEntLayerDb(MAIN_LAYER)
-        except EntityMissing:
-            mainLayer=Layer(MAIN_LAYER)
-            self.__mainLayer=self.__kr.saveEntity(mainLayer)
-        except:
-            raise StructuralError, "Unable to inizialize LayerTree"
-        self.__activeLayer=self.__mainLayer
-        self.setCurrentEvent=PyCadEvent()
-        self.deleteEvent=PyCadEvent()
-        self.insertEvent=PyCadEvent()
-        self.update=PyCadEvent()
-        
+
+    def __init__(self, kernel):
+        self.__kr = kernel
+
+        # TODO: Check why a layer is created without a document open
+        # Add a default layer if none exists
+        layer_count = self.getLayerCount()
+        if not layer_count:
+            new_layer = self.__kr.saveEntity(Layer('Default'))
+            self.__activeLayer = new_layer
+        else:
+            # Set active layer to first visible layer it finds
+            # TODO: Save active layer between sessions
+            self.__activeLayer = self.getVisibleLayer()
+
+        self.setCurrentEvent = PyCadEvent()
+        self.deleteEvent = PyCadEvent()
+        self.insertEvent = PyCadEvent()
+        self.updateEvent = PyCadEvent()
+
     def setActiveLayer(self, layerId):
         """
             set the active layer
@@ -58,27 +62,22 @@ class LayerTree(object):
         else:
             raise EntityMissing, "Unable to find the layer %s"%str(layerName)
 
-    def getActiveLater(self):
+    def getActiveLayer(self):
         """
             get the active layer
         """
         return self.__activeLayer
 
-    def insert(self, layer, parentLayer):
+    def insert(self, layer):
         """
             Insert a new object in the class and set it as active
         """
-        parentEntDb=self.__kr.getEntity(parentLayer.getId())
-        if not parentEntDb:
-            raise  EntityMissing, "Unable to find the root layer %s id %s "%(str(parentLayer), str(parentLayer.getId()))
-        childEndDb=self.__kr.getEntity(layer.getId())
+        childEndDb = self.__kr.getEntity(layer.getId())
         if not childEndDb:
-            childEndDb=self.__kr.saveEntity(layer)
-        if not self.__kr.getRelatioObject().relationExsist(parentEntDb.getId(),childEndDb.getId() ):
-            self.__kr.getRelatioObject().saveRelation(parentEntDb, childEndDb)
+            childEndDb = self.__kr.saveEntity(layer)
         self.__activeLayer=childEndDb
         self.insertEvent(childEndDb) #Fire Event
-        
+
     def _getLayerConstructionElement(self, pyCadEnt):
         """
             Retrive the ConstructionElement in the pyCadEnt
@@ -91,6 +90,7 @@ class LayerTree(object):
     def getLayerChildrenLayer(self,layer):
         """
             get the layer children
+            ### Unneeded ###
         """
         return self.__kr.getAllChildrenType(layer, 'LAYER')
 
@@ -100,6 +100,7 @@ class LayerTree(object):
     def getLayerChildIds(self,layer):
         """
             get all the child id of a layer
+            ### Unneeded ###
         """
         #manage in a better way the logger  self.__kr.__logger.debug('getLayerChild')
         _layerId=self.__kr.getEntLayerDb(layerName).getId()
@@ -109,6 +110,7 @@ class LayerTree(object):
     def getLayerChildren(self,layer,entityType=None):
         """
             get all dbEnt from layer of type entityType
+            ### Unneeded ###
         """
         _children=self.__kr.getAllChildrenType(layer,entityType)
         return _children
@@ -128,6 +130,33 @@ class LayerTree(object):
         else:
             raise EntityMissing,"Layer name %s missing"%str(layerName)
 
+    def getVisibleLayer(self, ignore = []):
+        # TODO: Cleanup as in getEntLayerDb
+        layer_entities = self.__kr.getEntityFromType('LAYER')
+        for layer_entity in layer_entities:
+            if layer_entity.getId() not in ignore:
+                unpickled_layer = layer_entity.getConstructionElements()
+                for layer in unpickled_layer.itervalues():
+                    if layer.visible:
+                        # TODO: Refactor, indent pretty deep
+                        return layer_entity
+        return False
+
+    def getLayerCount(self):
+        layers = self.__kr.getEntityFromType('LAYER')
+        return len(layers)
+
+    def getLayers(self):
+        """
+        Returns a dictionary of all the layers
+        """
+        layers = self.__kr.getEntityFromType('LAYER')
+        layer_dict = {}
+        for layer in layers:
+            c = self._getLayerConstructionElement(layer)
+            layer_dict[layer.getId()] = c
+        return layer_dict
+
     def getLayerTree(self):
         """
             create a dictionary with all the layer nested
@@ -145,8 +174,9 @@ class LayerTree(object):
         exitDb={}
         exitDb[rootDbEnt.getId()]=(c,createNode(rootDbEnt) )
         return exitDb
-    
+
     def getLayerdbTree(self):
+        # TODO: Update DXF export/import
         """
             create a dictionary with all the layer nested as db entity
         """
@@ -160,7 +190,7 @@ class LayerTree(object):
         exitDb={}
         exitDb[rootDbEnt.getId()]=(rootDbEnt,createNode(rootDbEnt) )
         return exitDb
-        
+
     def getParentLayer(self,layer):
         """
             get the parent layer
@@ -168,94 +198,89 @@ class LayerTree(object):
         """
         return self.__kr.getRelatioObject().getParentEnt(layer)
 
-    def delete(self,layerId):
+    def delete(self, layerId):
         """
-            delete the current layer an all the entity releted to it
+            delete the current layer and all the entity related to it
         """
-        self.__kr.startMassiveCreation()
-        deleteLayer=self.__kr.getEntity(layerId)
-        if deleteLayer is self.__activeLayer:
-            self.setActiveLayer(self.getParentLayer(deleteLayer).getId())
-        #
-        def recursiveDelete(layer):
-            # delete all children layer
-            for layer in self.getLayerChildrenLayer(deleteLayer):
-                recursiveDelete(layer)
-            # delete all the children entity
-            self.deleteLayerEntity(layer)
-            # finally delete the layer
-            layerId=layer.getId()
-            self.__kr.deleteEntity(layerId)
-            self.deleteEvent(layerId) # Fire Event
-        recursiveDelete(deleteLayer)    
-        self.__kr.stopMassiveCreation()
-        
+        deleteLayer = self.__kr.getEntity(layerId)
+
+        # If layer is currently active, find the first visible layer and set it active
+        if layerId is self.__activeLayer.getId():
+            visible_layer = self.getVisibleLayer(ignore = [layerId, ])
+            if not visible_layer:
+                raise PythonCadWarning("Unable to delete the last visible layer")
+                return False
+            self.setActiveLayer(visible_layer.getId())
+
+        # Delete all entities (SEGMENTS, TEXT, etc.)
+        self.deleteLayerEntity(deleteLayer)
+
+        # Delete the layer
+        self.__kr.deleteEntity(layerId)
+        self.deleteEvent(layerId)
+
     def deleteLayerEntity(self, layer):
         """
             delete all layer entity
         """
         for ent in self.getLayerChildren(layer):
                 self.__kr.deleteEntity(ent.getId())
-                
+
     def rename(self, layerId, newName):
         """
             rename the layer
         """
         layer=self.__kr.getEntity(layerId)
         self._rename(layer, newName)
-        self.update(layerId) # fire update event
-        
+        self.updateEvent(layerId) # fire update event
+
     def _rename(self, layer, newName):
         """
             rename the layer internal use
         """
         layer.getConstructionElements()['LAYER'].name=newName
+        print layer.getConstructionElements()['LAYER'].__dict__
         self.__kr.saveEntity(layer)
-        self.update(layer)
-        
-    def _Hide(self, layer, hide=True):
-        """
-            inner function for hiding the layer
-        """
-        # Hide/Show all the children entity
-        self.hideLayerEntity(layer, hide)
-        # Hide and update the layer object    
-        layer.getConstructionElements()['LAYER'].Visible=not hide
+        self.updateEvent(layer)
+
+    def _show(self, layer):
+        # Show all the children entity
+        for entity in self.getLayerChildren(layer):
+            self.__kr.unHideEntity(entity = entity)
+        # Show and update the layer object
+        layer.getConstructionElements()['LAYER'].visible = True
         self.__kr.saveEntity(layer)
-        self.update(layer)
-        
-    def isMainLayer(self, layer):
-        """
-            check if the layer is the main layer
-        """
-        if layer.getConstructionElements()['LAYER'].name==MAIN_LAYER:
-            return True
-        return False
-        
-    def Hide(self, layerId, hide=True):
-        self.__kr.startMassiveCreation()
-        topLayer=self.__kr.getEntity(layerId)  
-        if self.isMainLayer(topLayer):
-            raise PythonCadWarning("Unable to hide/show the main Layer")   
+        self.updateEvent(layer)
+
+    def show(self, layer_id):
+        layer = self.__kr.getEntity(layer_id)
+        self._show(layer)
+
+    def _hide(self, layer):
+        # Hide all the children entity
+        for entity in self.getLayerChildren(layer):
+            self.__kr.hideEntity(entity = entity)
+
+        # Hide and update the layer object
+        layer.getConstructionElements()['LAYER'].visible = False
+        self.__kr.saveEntity(layer)
+
+        self.updateEvent(layer)
+
+    def hide(self, layerId):
+        # Prevent trying to hide the only layer 
+        if self.getLayerCount() <= 1:
+            raise PythonCadWarning("Unable to hide the only Layer")
+            return False
+
+        layer = self.__kr.getEntity(layerId)
+
+        # If layer is currently active, find the first visible layer and set it active
         if layerId is self.__activeLayer.getId():
-            self.setActiveLayer(self.getParentLayer(topLayer).getId())
-        #
-        def recursiveHide(layer):
-            self._Hide(layer, hide)
-            # hide/show all children layer
-            for layer in self.getLayerChildrenLayer(layer):
-                recursiveHide(layer)
-           
-        recursiveHide(topLayer)    
-        self.__kr.stopMassiveCreation()
-    
-    def hideLayerEntity(self, layer, hide=True):    
-        """
-            hide all the entity of the layer
-        """
-        if hide:
-            for ent in self.getLayerChildren(layer):
-                self.__kr.hideEntity(entity=ent)
-        else:
-            for ent in self.getLayerChildren(layer):
-                self.__kr.unHideEntity(entity=ent)
+            visible_layer = self.getVisibleLayer(ignore = [layerId, ])
+            if not visible_layer:
+                raise PythonCadWarning("Unable to hide the last visible layer")
+                return False
+            self.setActiveLayer(visible_layer.getId())
+
+        self._hide(layer)
