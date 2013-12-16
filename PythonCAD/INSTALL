@@ -8,7 +8,7 @@ Install Python 2.6 or later
 Install Sympy
 Install Pyqt 4.6 or later
 
-execute python pythoncad_qt.py (under the pythoncad Folder)
+execute python pythoncad.py (under the pythoncad Folder)
 
 
 Problems
